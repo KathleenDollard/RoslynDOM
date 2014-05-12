@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30324.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynK", "RoslynK\RoslynK.csproj", "{CAD14691-4EE9-4A18-8E80-52F8CE6CC3E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynKTests", "RoslynKTests\RoslynKTests.csproj", "{AE9958C6-5141-4D37-ACBF-FE71494F9634}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3FF83A0-B4B4-4367-9A6F-597B98BD0060}"
+	ProjectSection(SolutionItems) = preProject
+		TODO Items.txt = TODO Items.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KadCommon", "KadCommon\KadCommon.csproj", "{7A7032D1-D5BE-4489-8A07-957684CCAE9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityTests", "UtilityTests\UtilityTests.csproj", "{E2C5F3B2-8A3B-4634-B315-63EA837F72F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KadCommonUtilities", "KadCommonUtilities\KadCommonUtilities.csproj", "{59C9B248-1742-47C1-8717-B6D6FF6845A8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAD14691-4EE9-4A18-8E80-52F8CE6CC3E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAD14691-4EE9-4A18-8E80-52F8CE6CC3E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAD14691-4EE9-4A18-8E80-52F8CE6CC3E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAD14691-4EE9-4A18-8E80-52F8CE6CC3E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE9958C6-5141-4D37-ACBF-FE71494F9634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE9958C6-5141-4D37-ACBF-FE71494F9634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE9958C6-5141-4D37-ACBF-FE71494F9634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE9958C6-5141-4D37-ACBF-FE71494F9634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A7032D1-D5BE-4489-8A07-957684CCAE9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A7032D1-D5BE-4489-8A07-957684CCAE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A7032D1-D5BE-4489-8A07-957684CCAE9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A7032D1-D5BE-4489-8A07-957684CCAE9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2C5F3B2-8A3B-4634-B315-63EA837F72F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2C5F3B2-8A3B-4634-B315-63EA837F72F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2C5F3B2-8A3B-4634-B315-63EA837F72F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2C5F3B2-8A3B-4634-B315-63EA837F72F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59C9B248-1742-47C1-8717-B6D6FF6845A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59C9B248-1742-47C1-8717-B6D6FF6845A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59C9B248-1742-47C1-8717-B6D6FF6845A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59C9B248-1742-47C1-8717-B6D6FF6845A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
