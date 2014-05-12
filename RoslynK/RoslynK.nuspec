@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>RoslynDOM</id>
+    <version>$version$</version>
+    <description>
+	This provides programmer friendly view of your application via the Roslyn AST
+    </description>
+    <language>en-US</language>
+    <authors>Kathleen Dollard</authors>
+    <projectUrl>https://github.com/KathleenDollard/RoslynDOM</projectUrl>
+  </metadata>
+</package>
