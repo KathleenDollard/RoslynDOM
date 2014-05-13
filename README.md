@@ -8,6 +8,14 @@ Available on NuGet
 
 Examples
 ---
+```C#
+    string cSharpCode = File.ReadAllText("something.cs");
+    SyntaxTree tree = CSharpSyntaxTree.ParseText(cSharpCode);
+    IRoot root = new KFactory().CreateTreeWrapper(tree).Root ;
+    INamespace nameSpace = root.Namespaces.First();
+    string name = nameSpace.Name;
+    
+```
 
 ## LICENSE
 [Apache 2.0 License](https://github.com/SignalR/SignalR/blob/master/LICENSE.md)
