@@ -1,5 +1,6 @@
 packages/
 nuget_packages/
+*.ide/
 #################
 ## Eclipse
 #################
