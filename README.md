@@ -4,6 +4,7 @@ This provides programmer friendly view of your application via the Roslyn AST
 
 Available on NuGet
 ---
+[Install-Package RoslynDOM -Pre](https://www.nuget.org/packages/RoslynDOM/)
 
 Examples
 ---
