@@ -21,11 +21,6 @@ namespace RoslynDom
             : base(rawItem, members)
         { }
   
-        public override string BestInContextName
-        {
-            get { return TypedRawItem.Identifier.BestInContextNameFrom(); }
-        }
-
         public IEnumerable<IClass> Classes
         {
             get

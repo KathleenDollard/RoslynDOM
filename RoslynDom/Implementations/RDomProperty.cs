@@ -28,13 +28,14 @@ namespace RoslynDom
 
         public override string QualifiedName
         {
-            get { return TypedRawItem.Identifier.QualifiedNameFrom(); }
+            get
+            {
+                // TODO: Manage static member's qualified names
+                throw new InvalidOperationException("You can't get qualified name for an instance property");
+            }
         }
 
-        public override string BestInContextName
-        {
-            get { return TypedRawItem.Identifier.BestInContextNameFrom(); }
-        }
+
         public Type ReturnType
         {
             get

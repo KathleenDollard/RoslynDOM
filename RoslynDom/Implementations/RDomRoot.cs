@@ -27,9 +27,5 @@ namespace RoslynDom
             get { return Name; }
         }
 
-          public override string BestInContextName
-        {
-            get { return Name; }
-        }
     }
 }

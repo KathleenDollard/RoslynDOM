@@ -285,11 +285,19 @@ namespace Namespace1
         [TestMethod]
         public void Can_get_namespace_qualified_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        namespace Namespace2
+                        {
+                        namespace testing.Namespace1
+                            { }
+                        }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Namespace2.testing.Namespace1", root.Namespaces.First().Namespaces.First().QualifiedName);
         }
         #endregion
 
-#region qualified name tests
+        #region qualified name tests
         [TestMethod]
         public void Can_get_class_qualified_name()
         {
@@ -305,25 +313,40 @@ namespace Namespace1
         }
 
         [TestMethod]
-        public void Can_get_field_qualified_name()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Get_field_qualified_name_throws_exception()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myField; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var x = root.Classes.First().Fields.First().QualifiedName;
         }
 
         [TestMethod]
-        public void Can_get_property_qualified_name()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Get_property_qualified_name_throws_exception()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myProperty { get; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var x = root.Classes.First().Properties.First().QualifiedName;
         }
 
         [TestMethod]
-        public void Can_get_method_qualified_name()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Can_get_method_qualified_name_throws_exception()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myMethod(int x) { return x; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var x = root.Classes.First().Methods.First().QualifiedName;
         }
 
         [TestMethod]
-        public void Can_get_nestedType_qualified_name()
+        public void Get_nestedType_qualified_name()
         {
             var csharpCode = @"
 namespace Namespace1
@@ -337,7 +360,9 @@ namespace Namespace1
                         }
 }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Namespace1.MyClass.MyNestedClass.MyNestedNestedClass", root.Classes.First().Classes.First().Classes.First().OriginalName);
+            Assert.AreEqual("Namespace1.MyClass.MyNestedClass.MyNestedNestedClass", 
+                root.Namespaces.First().Classes.First().Classes.First().Classes.First()
+                .QualifiedName);
         }
         #endregion
     }

@@ -22,9 +22,5 @@ namespace RoslynDom
             get { return TypedRawItem.Name.QualifiedNameFrom(); }
         }
 
-        public override string BestInContextName
-        {
-            get { return TypedRawItem.Name.BestInContextNameFrom(); }
-        }
     }
 }

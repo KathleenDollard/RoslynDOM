@@ -41,12 +41,12 @@ namespace RoslynDom
 
         public override string QualifiedName
         {
-            get { return variableDeclaration.Identifier.QualifiedNameFrom(); }
+            get
+            {
+                // TODO: Manage static member's qualified names
+                throw new InvalidOperationException("You can't get qualified name for an instance field");
+            }
         }
 
-        public override string BestInContextName
-        {
-            get { return variableDeclaration.Identifier.QualifiedNameFrom(); }
-        }
     }
 }

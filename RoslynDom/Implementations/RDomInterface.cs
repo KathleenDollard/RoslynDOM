@@ -29,12 +29,7 @@ namespace RoslynDom
 
         public override string QualifiedName
         {
-            get { return TypedRawItem.Identifier.QualifiedNameFrom(); }
-        }
-
-        public override string BestInContextName
-        {
-            get { return TypedRawItem.Identifier.BestInContextNameFrom(); }
+            get { return TypedRawItem.QualifiedNameFrom(); }
         }
 
         public string OriginalName

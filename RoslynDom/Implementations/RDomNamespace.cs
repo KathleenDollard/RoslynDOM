@@ -37,11 +37,6 @@ namespace RoslynDom
                 return this.TypedRawItem.Name.NameFrom();
             }
         }
-        public override string BestInContextName
-        {
-            get { return TypedRawItem.Name.BestInContextNameFrom(); }
-        }
-
   
     }
 }

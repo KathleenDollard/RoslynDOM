@@ -20,7 +20,6 @@ namespace RoslynDom
 
         public abstract string Name { get; }
         public abstract string QualifiedName { get; }
-        public abstract string BestInContextName { get; }
     }
 
     public abstract class RDomBase<T> : RDomBase
