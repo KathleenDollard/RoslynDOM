@@ -4,5 +4,6 @@ namespace RoslynDom.Common
     {
         object RawItem { get; }
         string Name { get; }
+        string QualifiedName { get; }
     }
 }

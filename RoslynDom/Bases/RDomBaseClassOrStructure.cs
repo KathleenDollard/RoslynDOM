@@ -49,5 +49,12 @@ namespace RoslynDom
             }
         }
 
+        public string OriginalName
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

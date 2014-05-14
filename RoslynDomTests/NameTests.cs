@@ -11,6 +11,7 @@ namespace RoslynDomTests
     [TestClass]
     public class NameTests
     {
+#region simple name methods
         [TestMethod]
         public void Root_is_named_root()
         {
@@ -83,11 +84,38 @@ namespace RoslynDomTests
                         public class MyClass
                         { public class MyNestedClass {  } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyNestedClass", root.Classes.First().Classes.First().Name);
+            Assert.AreEqual("MyClass.MyNestedClass", root.Classes.First().Classes.First().Name);
         }
 
         [TestMethod]
+        public void Can_get_nestedType_originalName()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public class MyNestedClass {  } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyNestedClass", root.Classes.First().Classes.First().OriginalName);
+        }
+        #endregion
+
+#region nested name tests
+        [TestMethod]
         public void Can_get_nested_namespace_name()
+        {
+            var csharpCode = @"
+                        using System.Diagnostics.Tracing;
+                        namespace Namespace2
+                        {
+                        namespace testing.Namespace1
+                            { }
+                        }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Namespae2.testing.Namespace1", root.Namespaces.First().Namespaces.First().Name);
+        }
+
+        [TestMethod]
+        public void Can_get_nested_namespace_original_name()
         {
             var csharpCode = @"
                         using System.Diagnostics.Tracing;
@@ -175,6 +203,9 @@ namespace Namespace1
             Assert.AreEqual("MyNestedNestedClass", root.Classes.First().Classes.First().Classes.First().Name);
         }
 
+#endregion
+
+        #region keyword name tests
         [TestMethod]
         public void Can_get_keyword_namespace_name()
         {
@@ -201,23 +232,41 @@ namespace Namespace1
         [TestMethod]
         public void Can_get_keyword_field_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int @class; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("class", root.Classes.First().Fields.First().Name);
         }
 
         [TestMethod]
         public void Can_get_keyword_property_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int @class { get; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("class", root.Classes.First().Properties.First().Name);
         }
+
         [TestMethod]
         public void Can_get_keyword_method_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int @class(int x) { return x; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("class", root.Classes.First().Methods.First().Name);
         }
+
         [TestMethod]
         public void Can_get_keyword_nestedType_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public class @public {  } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("public", root.Classes.First().Classes.First().Name);
         }
 
         [TestMethod]
@@ -225,7 +274,9 @@ namespace Namespace1
         {
             Assert.Inconclusive();
         }
+        #endregion
 
+#region qualified name tests
         [TestMethod]
         public void Can_get_class_qualified_name()
         {
@@ -255,6 +306,6 @@ namespace Namespace1
         {
             Assert.Inconclusive();
         }
-
+#endregion
     }
 }
