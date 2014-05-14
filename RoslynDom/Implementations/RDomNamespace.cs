@@ -21,26 +21,27 @@ namespace RoslynDom
         {
             get
             {
-                return this.TypedRawItem.Name.NameFrom();
+                return this.TypedRawItem.QualifiedNameFrom();
             }
         }
 
         public override string QualifiedName
         {
-            get { return TypedRawItem.Name.QNameFrom(); }
-        }
-
-        public override string BestInContextName
-        {
-            get { return TypedRawItem.Name.BestInContextNameFrom(); }
+            get { return TypedRawItem.QualifiedNameFrom(); }
         }
 
         public string OriginalName
         {
             get
             {
-                throw new NotImplementedException();
+                return this.TypedRawItem.Name.NameFrom();
             }
         }
+        public override string BestInContextName
+        {
+            get { return TypedRawItem.Name.BestInContextNameFrom(); }
+        }
+
+  
     }
 }

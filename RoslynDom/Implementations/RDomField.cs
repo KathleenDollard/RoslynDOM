@@ -41,12 +41,12 @@ namespace RoslynDom
 
         public override string QualifiedName
         {
-            get { return variableDeclaration.Identifier.QNameFrom(); }
+            get { return variableDeclaration.Identifier.QualifiedNameFrom(); }
         }
 
         public override string BestInContextName
         {
-            get { return variableDeclaration.Identifier.QNameFrom(); }
+            get { return variableDeclaration.Identifier.QualifiedNameFrom(); }
         }
     }
 }

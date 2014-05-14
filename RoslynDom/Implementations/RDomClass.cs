@@ -20,19 +20,7 @@ namespace RoslynDom
             IEnumerable<ITypeMember> members)
             : base(rawItem, members)
         { }
-        public override string Name
-        {
-            get
-            {
-                return this.TypedRawItem.NameFrom();
-            }
-        }
-
-        public override string QualifiedName
-        {
-            get { return TypedRawItem.Identifier.QNameFrom(); }
-        }
-
+  
         public override string BestInContextName
         {
             get { return TypedRawItem.Identifier.BestInContextNameFrom(); }

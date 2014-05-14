@@ -13,13 +13,7 @@ namespace RoslynDom
     public static class Utilities
     {
 
-        internal static string QualifiedNameFrom(this SyntaxNode node)
-        {
-            var token = node.ChildTokens().Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken).First();
-            return token.NameFrom();
-        }
-
-        internal static string NameFrom(this SyntaxNode node)
+         internal static string NameFrom(this SyntaxNode node)
         {
             var token = node.ChildTokens().Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken).First();
             return token.NameFrom();
@@ -57,8 +51,31 @@ namespace RoslynDom
             //return retName;
         }
 
-   
-        internal static string QNameFrom(this SyntaxToken token)
+        internal static string NestedNameFrom(this SyntaxNode node)
+        {
+            var realParent = node.Parent;
+            if (realParent is CompilationUnitSyntax || realParent is NamespaceDeclarationSyntax)
+            { return node.NameFrom(); }
+            return realParent.NestedNameFrom() + "." + node.NameFrom();
+        }
+
+        internal static string QualifiedNameFrom(this SyntaxNode node)
+        {
+            var nameNode = node.ChildNodes()
+                        .OfType<NameSyntax>()
+                        .SingleOrDefault();
+            if (nameNode != null)
+            {
+                return QualifiedNameFrom(nameNode);
+            }
+            var nameToken = node.ChildTokens()
+                        .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+                        .SingleOrDefault();
+            return nameToken.ValueText;
+        }
+
+
+        internal static string QualifiedNameFrom(this SyntaxToken token)
         {
             //if (token.CSharpKind() != SyntaxKind)
             //{
@@ -66,12 +83,12 @@ namespace RoslynDom
             throw new NotImplementedException();
         }
 
-        internal static string QNameFrom(this NameSyntax nameSyntax)
+        internal static string QualifiedNameFrom(this NameSyntax nameSyntax)
         {
-            //if (token.CSharpKind() != SyntaxKind)
-            //{
-            //}
-            throw new NotImplementedException();
+            var realParent = nameSyntax.Parent.Parent;
+            if (realParent is CompilationUnitSyntax )
+            { return nameSyntax.NameFrom(); }
+            return realParent.QualifiedNameFrom() + "." + nameSyntax.NameFrom();
         }
 
         internal static string BestInContextNameFrom(this SyntaxToken token)

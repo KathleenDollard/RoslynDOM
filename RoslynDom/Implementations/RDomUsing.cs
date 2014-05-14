@@ -20,7 +20,7 @@ namespace RoslynDom
 
         public override string QualifiedName
         {
-            get { return TypedRawItem.Name.QNameFrom(); }
+            get { return TypedRawItem.Name.QualifiedNameFrom(); }
         }
 
         public override string BestInContextName

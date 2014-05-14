@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
     public abstract class RDomBaseClassOrStructure<T> : RDomSyntaxNodeBase<T>, IClassOrStruct
+        where T : SyntaxNode
     {
         private IEnumerable<ITypeMember> _members;
         internal RDomBaseClassOrStructure(
@@ -17,6 +19,25 @@ namespace RoslynDom
             : base(rawItem)
         {
             _members = members;
+        }
+
+        public override string Name
+        {
+            get
+            { return this.TypedRawItem.NestedNameFrom(); }
+        }
+
+        public override string QualifiedName
+        {
+            get { return TypedRawItem.QualifiedNameFrom(); }
+        }
+
+        public string OriginalName
+        {
+            get
+            {
+                return this.TypedRawItem.NameFrom();
+            }
         }
 
         public IEnumerable<ITypeMember> Members
@@ -49,12 +70,6 @@ namespace RoslynDom
             }
         }
 
-        public string OriginalName
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+
     }
 }

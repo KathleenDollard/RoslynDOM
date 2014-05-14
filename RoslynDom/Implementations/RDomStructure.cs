@@ -15,17 +15,7 @@ namespace RoslynDom
             : base(rawItem, members)
         { }
 
-        public override string Name
-        {
-            get { return TypedRawItem.Identifier.NameFrom(); }
-        }
-
-        public override string QualifiedName
-        {
-            get { return TypedRawItem.Identifier.QNameFrom(); }
-        }
-
-        public override string BestInContextName
+           public override string BestInContextName
         {
             get { return TypedRawItem.Identifier.BestInContextNameFrom(); }
         }
