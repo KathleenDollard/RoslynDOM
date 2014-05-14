@@ -28,7 +28,6 @@ namespace RoslynDomTests
         public void Can_get_namespace_name()
         {
             var csharpCode = @"
-                        using System.Diagnostics.Tracing;
                         namespace testing.Namespace1
                             { }
                         ";
@@ -103,7 +102,6 @@ namespace RoslynDomTests
         public void Can_get_nested_namespace_name()
         {
             var csharpCode = @"
-                        using System.Diagnostics.Tracing;
                         namespace Namespace2
                         {
                         namespace testing.Namespace1
@@ -118,7 +116,6 @@ namespace RoslynDomTests
         public void Can_get_nested_namespace_original_name()
         {
             var csharpCode = @"
-                        using System.Diagnostics.Tracing;
                         namespace Namespace2
                         {
                         namespace testing.Namespace1
@@ -126,7 +123,7 @@ namespace RoslynDomTests
                         }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("testing.Namespace1", root.Namespaces.First().Namespaces.First().Name);
+            Assert.AreEqual("testing.Namespace1", root.Namespaces.First().Namespaces.First().OriginalName);
         }
 
         [TestMethod]
