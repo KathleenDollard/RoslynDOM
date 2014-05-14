@@ -47,6 +47,41 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        public void Can_get_enums_name()
+        {
+            var csharpCode = @"
+                        public Enum MyEnum
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyEnum", root.Enums.First().Name);
+        }
+
+
+        [TestMethod]
+        public void Can_get_struct_name()
+        {
+            var csharpCode = @"
+                        public struct MyStruct
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyStruct", root.Structures.First().Name);
+        }
+
+
+        [TestMethod]
+        public void Can_get_interface_name()
+        {
+            var csharpCode = @"
+                        public interface MyInterface
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyInterface", root.Interfaces.First().Name);
+        }
+
+        [TestMethod]
         public void Can_get_field_name()
         {
             var csharpCode = @"
@@ -138,6 +173,47 @@ namespace Namespace1
 }";
             var root = RDomFactory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass", root.Namespaces.First().Classes.First().Name);
+        }
+
+        [TestMethod]
+        public void Can_get_nested_enums_name()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                        public Enum MyEnum
+                            { }
+                        }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyEnum", root.Enums.First().Name);
+        }
+
+
+        [TestMethod]
+        public void Can_ge_nestedt_struct_name()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                        public struct MyStruct
+                            { }
+                        }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyStruct", root.Structures.First().Name);
+        }
+
+
+        [TestMethod]
+        public void Can_get_nested_interface_name()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                        public interface MyInterface
+                            { }
+                        }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyInterface", root.Interfaces.First().Name);
         }
 
         [TestMethod]
@@ -243,6 +319,41 @@ namespace Namespace1
         }
 
         [TestMethod]
+        public void Can_get_keyword_enums_name()
+        {
+            var csharpCode = @"
+                        public Enum @class
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("class", root.Enums.First().Name);
+        }
+
+
+        [TestMethod]
+        public void Can_get_keyword_struct_name()
+        {
+            var csharpCode = @"
+                        public struct @class
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyStruct", root.Structures.First().Name);
+        }
+
+
+        [TestMethod]
+        public void Can_get_keyword_interface_name()
+        {
+            var csharpCode = @"
+                        public interface @class
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyInterface", root.Interfaces.First().Name);
+        }
+
+        [TestMethod]
         public void Can_get_keyword_field_name()
         {
             var csharpCode = @"
@@ -310,6 +421,44 @@ namespace Namespace1
 }";
             var root = RDomFactory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1.MyClass", root.Namespaces.First().Classes.First().QualifiedName);
+        }
+
+        [TestMethod]
+        public void Can_get_qualified_enums_name()
+        {
+            var csharpCode = @"
+ namespace Namespace1
+{                       public Enum MyEnum
+                            { }
+  }                      ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyEnum", root.Enums.First().QualifiedName);
+        }
+
+
+        [TestMethod]
+        public void Can_get_qualified_struct_name()
+        {
+            var csharpCode = @"
+namespace Namespace1
+{                        public struct MyStruct
+                            { }
+ }                       ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyStruct", root.Structures.First().QualifiedName);
+        }
+
+
+        [TestMethod]
+        public void Can_get_qualified_interface_name()
+        {
+            var csharpCode = @"
+namespace Namespace1
+{                        public interface MyInterface
+                            { }
+}                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyInterface", root.Interfaces.First().QualifiedName);
         }
 
         [TestMethod]
