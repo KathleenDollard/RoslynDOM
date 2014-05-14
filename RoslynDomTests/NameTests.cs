@@ -118,25 +118,61 @@ namespace Namespace1
         [TestMethod]
         public void Can_get_nested_field_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                            public class MyNestedClass
+                            { 
+                                public int myField; 
+                            }
+                        }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("myField", root.Classes.First().Classes.First().Fields.First().Name);
         }
 
         [TestMethod]
         public void Can_get_nested_property_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                            public class MyNestedClass
+                            { 
+                                public int myProperty { get; } 
+                            }
+                        }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("myProperty", root.Classes.First().Classes.First().Properties.First().Name);
         }
 
         [TestMethod]
         public void Can_get_nested_method_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                            public class MyNestedClass
+                            { 
+                                public int myMethod(int x) { return x; } 
+                            }
+                        }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("myMethod", root.Classes.First().Classes.First().Methods.First().Name);
         }
 
         [TestMethod]
         public void Can_get_nested_nestedType_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                            public class MyNestedClass
+                            { 
+                                public class MyNestedNestedClass {}
+                            }
+                        }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyNestedNestedClass", root.Classes.First().Classes.First().Classes.First().Name);
         }
 
         [TestMethod]
