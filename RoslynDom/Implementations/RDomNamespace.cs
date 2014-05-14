@@ -34,5 +34,13 @@ namespace RoslynDom
         {
             get { return TypedRawItem.Name.BestInContextNameFrom(); }
         }
+
+        public string OriginalName
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

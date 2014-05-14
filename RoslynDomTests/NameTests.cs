@@ -83,7 +83,17 @@ namespace RoslynDomTests
                         public class MyClass
                         { public class MyNestedClass {  } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyNestedClass", root.Classes.First().Classes.First().Name);
+            Assert.AreEqual("MyClass.MyNestedClass", root.Classes.First().Classes.First().Name);
+        }
+
+        [TestMethod]
+        public void Can_get_nestedType_originalName()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public class MyNestedClass {  } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyNestedClass", root.Classes.First().Classes.First().OriginalName);
         }
 
         [TestMethod]
@@ -165,23 +175,41 @@ namespace Namespace1
         [TestMethod]
         public void Can_get_keyword_field_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int @class; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("class", root.Classes.First().Fields.First().Name);
         }
 
         [TestMethod]
         public void Can_get_keyword_property_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int @class { get; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("class", root.Classes.First().Properties.First().Name);
         }
+
         [TestMethod]
         public void Can_get_keyword_method_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int @class(int x) { return x; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("class", root.Classes.First().Methods.First().Name);
         }
+
         [TestMethod]
         public void Can_get_keyword_nestedType_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public class @public {  } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("public", root.Classes.First().Classes.First().Name);
         }
 
         [TestMethod]

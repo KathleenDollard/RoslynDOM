@@ -22,7 +22,7 @@ namespace RoslynDom
 
         public override string Name
         {
-            get { return TypedRawItem.Identifier.ToString(); }
+            get { return TypedRawItem.Identifier.NameFrom(); }
         }
 
         public override string QualifiedName
