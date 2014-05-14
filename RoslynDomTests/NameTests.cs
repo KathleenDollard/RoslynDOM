@@ -49,23 +49,39 @@ namespace RoslynDomTests
         [TestMethod]
         public void Can_get_field_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myField; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("myField", root.Classes.First().Fields.First().Name);
         }
 
         [TestMethod]
         public void Can_get_property_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myProperty { get; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("myProperty", root.Classes.First().Properties.First().Name);
         }
         [TestMethod]
         public void Can_get_method_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myMethod(int x) { return x; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("myMethod", root.Classes.First().Methods.First().Name);
         }
         [TestMethod]
         public void Can_get_nestedType_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { public class MyNestedClass {  } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyNestedClass", root.Classes.First().Classes.First().Name);
         }
 
         [TestMethod]
