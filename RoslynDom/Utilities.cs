@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,19 @@ namespace RoslynDom
 {
     public static class Utilities
     {
- 
+
+        internal static string QualifiedNameFrom(this SyntaxNode node)
+        {
+            var token = node.ChildTokens().Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken).First();
+            return token.NameFrom();
+        }
+
+        internal static string NameFrom(this SyntaxNode node)
+        {
+            var token = node.ChildTokens().Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken).First();
+            return token.NameFrom();
+        }
+
         internal static string NameFrom(this SyntaxToken token)
          {
             if (token.CSharpKind() != SyntaxKind.IdentifierToken )

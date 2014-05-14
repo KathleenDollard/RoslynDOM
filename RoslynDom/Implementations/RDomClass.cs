@@ -22,8 +22,9 @@ namespace RoslynDom
         { }
         public override string Name
         {
-            get {
-                return this.RawItem.ToString();
+            get
+            {
+                return this.TypedRawItem.NameFrom();
             }
         }
 

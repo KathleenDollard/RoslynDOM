@@ -16,6 +16,8 @@ namespace RoslynDom
     /// </summary>
     public abstract class RDomBase
     {
+        public abstract object RawItem { get; }
+
         public abstract string Name { get; }
         public abstract string QualifiedName { get; }
         public abstract string BestInContextName { get; }
@@ -36,7 +38,7 @@ namespace RoslynDom
             { return _rawItem; }
         }
 
-        public object RawItem
+        public override object RawItem
         {
             get
             { return _rawItem; }
@@ -45,6 +47,7 @@ namespace RoslynDom
 
     public abstract class RDomSyntaxNodeBase<T> : RDomBase<T>
     {
+        // TODO: Consider why this isn't collapsed into the RDomBase<T>
         private T _rawItem;
 
         protected RDomSyntaxNodeBase(T rawItem) : base(rawItem)
