@@ -1,0 +1,21 @@
+﻿using KadGen.KadMan;
+using TestRoslyn;
+
+namespace KadGen.ETWPreMan
+{
+    /// <summary>
+    /// This is a test
+    /// </summary>
+    /// <remarks>
+    /// This is more testing
+    /// </remarks>
+    [Name("KadGen-EtwSamples2-NormalEventSource")]
+    public class NormalEventSource2 : TestRoslyn.INormalLogger
+    {
+        public void foo() { }
+        public void MyFirstActionStart(string param1, int param2){}
+        public void MyFirstActionStop(){}
+        public void MySecondActionStart(){}
+        public void MySecondActionStop(){}
+    }
+}

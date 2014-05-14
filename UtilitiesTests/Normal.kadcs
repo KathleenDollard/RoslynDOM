@@ -1,0 +1,17 @@
+﻿using KadMan.Common;
+
+namespace ETWPreMan
+{
+    [ LocalizationResources("Fred") ]
+    [ Name("KadGen-Test-Temp")]
+    public class NormalEventSource
+    {
+        [Version(2)]
+        [Keyword(3)]
+        public void foo(int Bar, string Bar2)      {        }
+
+        [Version(2)]
+        [Keyword(3)]
+        public void foo2()      {        }
+    }
+}
