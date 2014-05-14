@@ -1,6 +1,6 @@
 RoslynDOM
 =========
-This provides programmer friendly view of your application via the Roslyn AST
+This provides programmer friendly view of your application via the Roslyn AST, currently in a very preliminary form
 
 Available on NuGet
 ---
@@ -10,8 +10,7 @@ Examples
 ---
 ```C#
     string cSharpCode = File.ReadAllText("something.cs");
-    SyntaxTree tree = CSharpSyntaxTree.ParseText(cSharpCode);
-    IRoot root = new KFactory().CreateTreeWrapper(tree).Root ;
+    IRoot root = RDomFactory.GetRootFromString(csharpCode);
     INamespace nameSpace = root.Namespaces.First();
     string name = nameSpace.Name;
     
