@@ -11,6 +11,7 @@ namespace RoslynDomTests
     [TestClass]
     public class NameTests
     {
+#region simple name methods
         [TestMethod]
         public void Root_is_named_root()
         {
@@ -95,9 +96,26 @@ namespace RoslynDomTests
             var root = RDomFactory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyNestedClass", root.Classes.First().Classes.First().OriginalName);
         }
+        #endregion
 
+#region nested name tests
         [TestMethod]
         public void Can_get_nested_namespace_name()
+        {
+            var csharpCode = @"
+                        using System.Diagnostics.Tracing;
+                        namespace Namespace2
+                        {
+                        namespace testing.Namespace1
+                            { }
+                        }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Namespae2.testing.Namespace1", root.Namespaces.First().Namespaces.First().Name);
+        }
+
+        [TestMethod]
+        public void Can_get_nested_namespace_original_name()
         {
             var csharpCode = @"
                         using System.Diagnostics.Tracing;
@@ -149,6 +167,9 @@ namespace Namespace1
             Assert.Inconclusive();
         }
 
+#endregion
+
+        #region keyword name tests
         [TestMethod]
         public void Can_get_keyword_namespace_name()
         {
@@ -217,7 +238,9 @@ namespace Namespace1
         {
             Assert.Inconclusive();
         }
+        #endregion
 
+#region qualified name tests
         [TestMethod]
         public void Can_get_class_qualified_name()
         {
@@ -247,6 +270,6 @@ namespace Namespace1
         {
             Assert.Inconclusive();
         }
-
+#endregion
     }
 }
