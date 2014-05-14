@@ -65,6 +65,7 @@ namespace RoslynDomTests
             var root = RDomFactory.GetRootFromString(csharpCode);
             Assert.AreEqual("myProperty", root.Classes.First().Properties.First().Name);
         }
+
         [TestMethod]
         public void Can_get_method_name()
         {
@@ -74,6 +75,7 @@ namespace RoslynDomTests
             var root = RDomFactory.GetRootFromString(csharpCode);
             Assert.AreEqual("myMethod", root.Classes.First().Methods.First().Name);
         }
+
         [TestMethod]
         public void Can_get_nestedType_name()
         {
@@ -87,13 +89,30 @@ namespace RoslynDomTests
         [TestMethod]
         public void Can_get_nested_namespace_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        using System.Diagnostics.Tracing;
+                        namespace Namespace2
+                        {
+                        namespace testing.Namespace1
+                            { }
+                        }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("testing.Namespace1", root.Namespaces.First().Namespaces.First().Name);
         }
 
         [TestMethod]
         public void Can_get_nested_class_name()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+namespace Namespace1
+{
+                        public class MyClass
+                            { }
+                        
+}";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyClass", root.Namespaces.First().Classes.First().Name);
         }
 
         [TestMethod]
@@ -107,11 +126,13 @@ namespace RoslynDomTests
         {
             Assert.Inconclusive();
         }
+
         [TestMethod]
         public void Can_get_nested_method_name()
         {
             Assert.Inconclusive();
         }
+
         [TestMethod]
         public void Can_get_nested_nestedType_name()
         {
@@ -162,5 +183,42 @@ namespace RoslynDomTests
         {
             Assert.Inconclusive();
         }
+
+        [TestMethod]
+        public void Can_get_namespace_qualified_name()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void Can_get_class_qualified_name()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void Can_get_field_qualified_name()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void Can_get_property_qualified_name()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void Can_get_method_qualified_name()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void Can_get_nestedType_qualified_name()
+        {
+            Assert.Inconclusive();
+        }
+
     }
 }
