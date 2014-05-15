@@ -10,9 +10,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace RoslynDom
 {
-    public static class Utilities
+    public static class RoslynUtilities
     {
-
         internal static string NameFrom(this SyntaxNode node)
         {
             var nameNode = node.ChildNodes()
@@ -26,8 +25,6 @@ namespace RoslynDom
                                       .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
                                       .SingleOrDefault();
             return nameToken.ValueText;
-            var token = node.ChildTokens().Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken).First();
-            return token.NameFrom();
         }
 
         internal static string NameFrom(this SyntaxToken token)
@@ -64,22 +61,6 @@ namespace RoslynDom
             { return node.NameFrom(); }
             return realParent.QualifiedNameFrom() + "." + node.NameFrom();
         }
-
-        //internal static string QualifiedNameFrom(this SyntaxToken token)
-        //{
-        //    //if (token.CSharpKind() != SyntaxKind)
-        //    //{
-        //    //}
-        //    throw new NotImplementedException();
-        //}
-
-        //internal static string QualifiedNameFrom(this NameSyntax nameSyntax)
-        //{
-        //    var realParent = nameSyntax.Parent.Parent;
-        //    if (realParent is CompilationUnitSyntax )
-        //    { return nameSyntax.NameFrom(); }
-        //    return realParent.QualifiedNameFrom() + "." + nameSyntax.NameFrom();
-        //}
 
     }
 }

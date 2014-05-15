@@ -19,6 +19,7 @@ namespace RoslynDom
 
         public override string QualifiedName
         {
+            // TODO: Name of attribute is the same as the name of the type, so work this out
             get { return TypedRawItem.Name.QualifiedNameFrom(); }
         }
 

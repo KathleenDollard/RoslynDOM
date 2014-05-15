@@ -16,7 +16,7 @@ namespace RoslynDom
         {
             get
             {
-                throw new NotImplementedException();
+                return this.AttributesFrom();
             }
         }
 

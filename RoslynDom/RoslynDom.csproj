@@ -73,7 +73,8 @@
     <Compile Include="Implementations\RDomUsing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RDomFactory.cs" />
-    <Compile Include="Utilities.cs" />
+    <Compile Include="RoslynUtilities.cs" />
+    <Compile Include="RoslynDomUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 
-namespace RoslynDom.Implementations
+namespace RoslynDom
 {
     public class RDomEnum : RDomSyntaxNodeBase<EnumDeclarationSyntax>, IEnum
     {
@@ -17,13 +17,13 @@ namespace RoslynDom.Implementations
         {
             get
             {
-                throw new NotImplementedException();
+                return this.AttributesFrom();
             }
         }
 
         public override string Name
         {
-            get { return TypedRawItem.NameFrom(); }
+            get { return TypedRawItem.NestedNameFrom(); }
         }
 
         public override string QualifiedName
@@ -35,7 +35,7 @@ namespace RoslynDom.Implementations
         {
             get
             {
-                throw new NotImplementedException();
+               return this.OriginalNameFrom();
             }
         }
     }

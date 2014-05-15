@@ -36,7 +36,7 @@ namespace RoslynDom
         {
             get
             {
-                return this.TypedRawItem.NameFrom();
+                return this.OriginalNameFrom();
             }
         }
 
@@ -66,7 +66,7 @@ namespace RoslynDom
         {
             get
             {
-                throw new NotImplementedException();
+                return this.AttributesFrom();
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
-using RoslynDom.Implementations;
+using RoslynDom;
 using RoslynDomUtilities;
 
 namespace RoslynDom
@@ -16,7 +17,8 @@ namespace RoslynDom
     {
         public static IRoot GetRootFromFile(string fileName)
         {
-            throw new NotImplementedException();
+            var code = File.ReadAllText(fileName);
+            return GetRootFromString(code);
         }
 
         public static IRoot GetRootFromString(string code)
@@ -92,18 +94,19 @@ namespace RoslynDom
         /// </summary>
         /// <param name="rawMember"></param>
         /// <returns></returns>
-        private static ITypeMember MakeTypeMember(MemberDeclarationSyntax rawMember)
+        private static IEnumerable<ITypeMember> MakeTypeMembers(MemberDeclarationSyntax rawMember)
         {
             var type = rawMember.GetType();
-            IMember ret;
+            var  retList = new List<ITypeMember>(); // This list is modified in DoMembers
             // The action happens in DoMember. I felt it read better with else than negation and it made copying new lines easier
-            if (DoMember<MethodDeclarationSyntax>(rawMember, MakeMethod, out ret)) { }
-            else if (DoMember<FieldDeclarationSyntax>(rawMember, MakeField, out ret)) { }
-            else if (DoMember<PropertyDeclarationSyntax>(rawMember, MakeProperty, out ret)) { }
-            else if (DoMember<ClassDeclarationSyntax>(rawMember, MakeClass, out ret)) { }
-            else if (DoMember<StructDeclarationSyntax>(rawMember, MakeStructure, out ret)) { }
-            else if (DoMember<EnumDeclarationSyntax>(rawMember, MakeEnum, out ret)) { }
-            return ret as ITypeMember;
+            if (DoMember<MethodDeclarationSyntax>(rawMember, MakeMethod,  retList)) { }
+            else if (DoMember<FieldDeclarationSyntax>(rawMember, MakeField,  retList)) { }
+            else if (DoMember<PropertyDeclarationSyntax>(rawMember, MakeProperty,  retList)) { }
+            else if (DoMember<ClassDeclarationSyntax>(rawMember, MakeClass,  retList)) { }
+            else if (DoMember<InterfaceDeclarationSyntax>(rawMember, MakeInterface,  retList)) { }
+            else if (DoMember<StructDeclarationSyntax>(rawMember, MakeStructure,  retList)) { }
+            else if (DoMember<EnumDeclarationSyntax>(rawMember, MakeEnum,  retList)) { }
+            return retList as ITypeMember;
         }
         private static IMember MakeNamespace(NamespaceDeclarationSyntax rawNamespace)
         {

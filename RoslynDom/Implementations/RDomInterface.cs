@@ -18,13 +18,13 @@ namespace RoslynDom
         {
             get
             {
-                throw new NotImplementedException();
+                return this.AttributesFrom();
             }
         }
 
         public override string Name
         {
-            get { return TypedRawItem.Identifier.NameFrom(); }
+            get { return TypedRawItem.NestedNameFrom(); }
         }
 
         public override string QualifiedName
@@ -36,7 +36,7 @@ namespace RoslynDom
         {
             get
             {
-                throw new NotImplementedException();
+                return this.OriginalNameFrom();
             }
         }
     }
