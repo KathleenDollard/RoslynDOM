@@ -71,7 +71,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomNamespace)root.Namespaces.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Namespaces.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("testing.Namespace1", symbol.Name);
         }
@@ -84,7 +84,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomClass)root.Classes.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Classes.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyClass", symbol.Name);
         }
@@ -97,7 +97,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomEnum)root.Enums.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Enums.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyEnum", symbol.Name);
         }
@@ -110,7 +110,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomStructure)root.Structures.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Structures.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyStruct", symbol.Name);
         }
@@ -123,7 +123,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomInterface)root.Interfaces.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Interfaces.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyInterface", symbol.Name);
         }
@@ -136,7 +136,7 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myField; }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomField)root.Classes.First().Fields.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Classes.First().Fields.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("myField", symbol.Name);
         }
@@ -148,7 +148,7 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myProperty { get; } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomProperty)root.Classes.First().Properties.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Classes.First().Properties.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("myProperty", symbol.Name);
         }
@@ -160,7 +160,7 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myMethod(int x) { return x; } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomMethod)root.Classes.First().Methods.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Classes.First().Methods.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("myMethod", symbol.Name);
         }
@@ -172,50 +172,9 @@ namespace RoslynDomTests
                         public class MyClass
                         { public class MyNestedClass {  } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var symbol = ((RDomClass)root.Classes.First().Types.First()).Symbol;
+            var symbol = ((IRoslynDom)root.Classes.First().Types.First()).Symbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyNestedClass", symbol.Name);
-        }
-
-        [TestMethod]
-        public void problem_Can_get_symbol_for_field()
-        {
-            var csharpCode = @"
-                        public class MyClass
-                        { public int myField; }";
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(csharpCode);
-            var syntax = tree.GetCompilationUnitRoot()
-                        .DescendantNodes()
-                        .OfType<FieldDeclarationSyntax>()
-                        .First();
-            var compilation = CSharpCompilation.Create("MyCompilation",
-                        options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-                        syntaxTrees: new[] { tree },
-                        references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
-            var model = compilation.GetSemanticModel(tree);
-            var symbol =  model.GetDeclaredSymbol(syntax);
-            Assert.IsNotNull(symbol);
-        }
-
-
-        [TestMethod]
-        public void problem_Can_get_symbol_for_property()
-        {
-            var csharpCode = @"
-                        public class MyClass
-                        { public int myProperty { get; } }";
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(csharpCode);
-            var syntax = tree.GetCompilationUnitRoot()
-                        .DescendantNodes()
-                        .OfType<PropertyDeclarationSyntax >()
-                        .First();
-         var compilation = CSharpCompilation.Create("MyCompilation",
-                        options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-                        syntaxTrees: new[] { tree },
-                        references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
-            var model = compilation.GetSemanticModel(tree);
-            var symbol = model.GetDeclaredSymbol(syntax);
-            Assert.IsNotNull(symbol);
         }
 
         #endregion

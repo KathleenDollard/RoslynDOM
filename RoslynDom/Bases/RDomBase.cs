@@ -14,7 +14,7 @@ namespace RoslynDom
     /// <summary>
     /// Base class for Roslyn Dom navigation tree
     /// </summary>
-    public abstract class RDomBase
+    public abstract class RDomBase : IRoslynDom
     {
         /// <summary>
         /// 
@@ -60,12 +60,13 @@ namespace RoslynDom
             get
             {
                 if (_symbol == null)
-                { _symbol = GetSymbol(); }
+                { _symbol = GetSymbol(TypedRawItem); }
                 return _symbol;
             }
         }
 
         private SemanticModel GetModel()
+            // TODO: Change this scope to assembly protected as soon as it is available
         {
             var tree = TypedRawItem.SyntaxTree;
             var compilation = CSharpCompilation.Create("MyCompilation",
@@ -92,10 +93,10 @@ namespace RoslynDom
         }
 
 
-        private ISymbol GetSymbol()
+        protected ISymbol GetSymbol(SyntaxNode node)
         {
             var model = GetModel();
-            return model.GetDeclaredSymbol(TypedRawItem);
+            return model.GetDeclaredSymbol(node);
         }
     }
 

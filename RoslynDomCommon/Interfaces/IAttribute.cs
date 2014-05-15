@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IAttribute : IRoslynDom
+    public interface IAttribute : IDom
     {
     }
 }

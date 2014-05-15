@@ -11,7 +11,21 @@ namespace RoslynDomUtilities
         public static IEnumerable<T> MakeList<T, TInput, TRaw>(
               TInput input,
               Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
-              Func<TRaw, T> makeNewItem)
+              Func<TRaw, IEnumerable<T>> makeNewItems)
+        {
+            var ret = new List<T>();
+            foreach (var rawItem in getItemsDeleg(input))
+            {
+                var items = makeNewItems(rawItem);
+                ret.AddRange(items);
+            }
+            return ret;
+        }
+
+        public static IEnumerable<T> MakeList<T, TInput, TRaw>(
+               TInput input,
+               Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
+               Func<TRaw, T> makeNewItem)
         {
             var ret = new List<T>();
             foreach (var rawItem in getItemsDeleg(input))

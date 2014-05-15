@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface INestableType : IRoslynDom, IStemMember
+    public interface INestableType : IDom, IStemMember
     {
         string OriginalName { get; }
     }

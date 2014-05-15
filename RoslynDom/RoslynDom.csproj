@@ -71,6 +71,7 @@
     <Compile Include="Implementations\RDomRoot.cs" />
     <Compile Include="Implementations\RDomStructure.cs" />
     <Compile Include="Implementations\RDomUsing.cs" />
+    <Compile Include="IRoslynDom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RDomFactory.cs" />
     <Compile Include="RoslynUtilities.cs" />

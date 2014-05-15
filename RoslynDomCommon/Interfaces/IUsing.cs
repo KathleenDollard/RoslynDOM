@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public  interface IUsing : IRoslynDom
+    public  interface IUsing : IDom
     {
     }
 }

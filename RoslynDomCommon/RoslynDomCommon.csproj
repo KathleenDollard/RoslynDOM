@@ -54,7 +54,7 @@
     <Compile Include="Interfaces\INestedMemberContainer.cs" />
     <Compile Include="Interfaces\IProperty.cs" />
     <Compile Include="Interfaces\IRoot.cs" />
-    <Compile Include="Interfaces\IRoslynDom.cs" />
+    <Compile Include="Interfaces\IDom.cs" />
     <Compile Include="Interfaces\IStemContainer.cs" />
     <Compile Include="Interfaces\IStemMember.cs" />
     <Compile Include="Interfaces\IStructure.cs" />

@@ -32,7 +32,8 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("testing.Namespace1", root.Namespaces.First().Name);
+            var ns = root.Namespaces.First();
+            Assert.AreEqual("testing.Namespace1", ns.Name);
         }
 
         [TestMethod]
@@ -43,7 +44,8 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass", root.Classes.First().Name);
+            var cl = root.Classes.First();
+            Assert.AreEqual("MyClass", cl.Name);
         }
 
         [TestMethod]
@@ -54,7 +56,8 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyEnum", root.Enums.First().Name);
+            var en= root.Enums.First();
+            Assert.AreEqual("MyEnum", en.Name);
         }
 
 
@@ -66,7 +69,8 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyStruct", root.Structures.First().Name);
+            var st= root.Structures.First();
+            Assert.AreEqual("MyStruct", st.Name);
         }
 
 
@@ -78,7 +82,8 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyInterface", root.Interfaces.First().Name);
+           var inter =root.Interfaces.First();
+            Assert.AreEqual("MyInterface", inter.Name);
         }
 
         [TestMethod]
@@ -88,7 +93,21 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myField; }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("myField", root.Classes.First().Fields.First().Name);
+            var fld = root.Classes.First().Fields.First();
+            Assert.AreEqual("myField", fld.Name);
+        }
+
+        [TestMethod]
+        public void Can_get_multi_field_name()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myField, myField2; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var fld =root.Classes.First().Fields.First();
+            var fld2 = root.Classes.First().Fields.Last();
+            Assert.AreEqual("myField", fld.Name);
+            Assert.AreEqual("myField2", fld2.Name);
         }
 
         [TestMethod]
@@ -98,7 +117,8 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myProperty { get; } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("myProperty", root.Classes.First().Properties.First().Name);
+            var pr = root.Classes.First().Properties.First();
+            Assert.AreEqual("myProperty", pr.Name);
         }
 
         [TestMethod]
@@ -108,7 +128,8 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myMethod(int x) { return x; } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("myMethod", root.Classes.First().Methods.First().Name);
+            var me = root.Classes.First().Methods.First();
+            Assert.AreEqual("myMethod", me.Name);
         }
 
         [TestMethod]
@@ -118,7 +139,8 @@ namespace RoslynDomTests
                         public class MyClass
                         { public class MyNestedClass {  } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass.MyNestedClass", root.Classes.First().Classes.First().Name);
+            var nestedType = root.Classes.First().Classes.First();
+            Assert.AreEqual("MyClass.MyNestedClass", nestedType.Name);
         }
 
         [TestMethod]
@@ -128,7 +150,8 @@ namespace RoslynDomTests
                         public class MyClass
                         { public class MyNestedClass {  } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyNestedClass", root.Classes.First().Classes.First().OriginalName);
+            var nestedType = root.Classes.First().Classes.First();
+            Assert.AreEqual("MyNestedClass", nestedType.OriginalName);
         }
         #endregion
 

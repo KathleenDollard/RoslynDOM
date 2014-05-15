@@ -96,7 +96,13 @@ namespace RoslynDomTests
         [TestMethod]
         public void Can_get_attributes_on_field()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { [Serializable]  public int myField; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var attributes = root.Classes.First().Fields.First().Attributes;
+            Assert.AreEqual(1, attributes.Count());
+            Assert.AreEqual("Serializable", attributes.First().Name);
         }
         #endregion
 
@@ -200,7 +206,17 @@ namespace RoslynDomTests
         [TestMethod]
         public void Can_get_multiple_attributes_in_separate_brackets_on_field()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                        [Serializable] 
+                        [TestClass]                        
+                        public int myField;  }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var attributes = root.Classes.First().Fields.First().Attributes;
+            Assert.AreEqual(2, attributes.Count());
+            Assert.AreEqual("Serializable", attributes.First().Name);
+            Assert.AreEqual("TestClass", attributes.Last().Name);
         }
 
         #endregion
@@ -302,7 +318,17 @@ namespace RoslynDomTests
         [TestMethod]
         public void Can_get_multiple_attributes_in_shared_brackets_on_field()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                        [Serializable] 
+                        [TestClass]                        
+                        public int myField;  }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var attributes = root.Classes.First().Fields.First().Attributes;
+            Assert.AreEqual(2, attributes.Count());
+            Assert.AreEqual("Serializable", attributes.First().Name);
+            Assert.AreEqual("TestClass", attributes.Last().Name);
         }
         #endregion
 
@@ -413,7 +439,18 @@ namespace RoslynDomTests
         [TestMethod]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_field()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+                        public class MyClass
+                       { 
+                        [Serializable, TestClass]
+                        [Ignore]                  
+                        public int myField;  }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var attributes = root.Classes.First().Fields.First().Attributes;
+            Assert.AreEqual(3, attributes.Count());
+            Assert.AreEqual("Serializable", attributes.First().Name);
+            Assert.AreEqual("TestClass", attributes.Skip(1).First().Name);
+            Assert.AreEqual("Ignore", attributes.Last().Name);
         }
         #endregion
     }

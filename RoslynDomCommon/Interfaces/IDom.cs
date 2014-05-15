@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface IRoslynDom
+    public interface IDom
     {
         object RawItem { get; }
         string Name { get; }

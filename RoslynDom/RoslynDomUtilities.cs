@@ -12,7 +12,7 @@ namespace RoslynDom
     public static class RoslynDomUtilities
     {
 
-        public static IEnumerable<IAttribute> AttributesFrom(this IRoslynDom item)
+        public static IEnumerable<IAttribute> AttributesFrom(this IDom item)
         {
             if (!(item is IHasAttributes)) throw new InvalidOperationException();
 
@@ -36,7 +36,7 @@ namespace RoslynDom
             return retList;
         }
 
-        internal static string OriginalNameFrom(this IRoslynDom item)
+        internal static string OriginalNameFrom(this IDom item)
         {
             var name = item.Name;
             if (!name.Contains(".")) return name;

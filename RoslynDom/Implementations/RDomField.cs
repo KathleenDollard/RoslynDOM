@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -20,20 +21,25 @@ namespace RoslynDom
     /// </remarks>
     public class RDomField : RDomSyntaxNodeBase<FieldDeclarationSyntax>, IField
     {
-        internal RDomField(FieldDeclarationSyntax rawItem) : base(rawItem) { }
+        private VariableDeclaratorSyntax _varSyntax;
+
+        internal RDomField(FieldDeclarationSyntax rawItem, VariableDeclaratorSyntax varSyntax) : base(rawItem)
+        { _varSyntax = varSyntax; }
 
         public IEnumerable<IAttribute> Attributes
         {
             get
             {
-                throw new NotImplementedException();
+                return this.AttributesFrom();
             }
         }
 
+
         private VariableDeclaratorSyntax variableDeclaration
         {
-            get { return TypedRawItem.Declaration.Variables.First(); }
+            get { return _varSyntax; }
         }
+
         public override string Name
         {
             get { return variableDeclaration.Identifier.NameFrom(); }
@@ -45,6 +51,14 @@ namespace RoslynDom
             {
                 // TODO: Manage static member's qualified names
                 throw new InvalidOperationException("You can't get qualified name for an instance field");
+            }
+        }
+
+        public override ISymbol Symbol
+        {
+            get
+            {
+                return base.GetSymbol(_varSyntax);
             }
         }
 

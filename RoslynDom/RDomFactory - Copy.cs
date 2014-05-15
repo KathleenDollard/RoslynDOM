@@ -57,22 +57,9 @@ namespace RoslynDom
             return new RDomRoot(kRoot, members, usings);
         }
 
-        private static IUsing MakeUsingDirective(UsingDirectiveSyntax x)
-        {
-            return new RDomUsingDirective(x);
-        }
-
-        private static bool DoMember<T>(MemberDeclarationSyntax val, Func<T,
-                IMember> doAction, out IMember retValue)
-            where T : class
-        {
-            var item = val as T;
-            retValue = item != null ? doAction(item) : null;
-            return (retValue != null);
-        }
 
         private static bool DoMembers<T>(MemberDeclarationSyntax val,
-                Action<T, List<IMember>> doAction, List<IMember> list)
+                    Action<T, List<IMember>> doAction, List<IMember> list)
             where T : class
         {
             var item = val as T;
@@ -81,23 +68,22 @@ namespace RoslynDom
             return (list.Count() > 0);
         }
 
-
         /// <summary>
         /// Creates namespace and class
         /// </summary>
         /// <param name="rawMember"></param>
         /// <returns></returns>
-        private static IStemMember MakeStemMember(MemberDeclarationSyntax rawMember)
+        private static IEnumerable<IStemMember> MakeStemMember(MemberDeclarationSyntax rawMember)
         {
             var type = rawMember.GetType();
-            IMember ret;
+            var retList = new List<IMember>(); // This list is modified in DoMembers
             // The action happens in DoMember. I felt it read better with else than negation and it made copying new lines easier
-            if (DoMember<NamespaceDeclarationSyntax>(rawMember, MakeNamespace, out ret)) { }
-            else if (DoMember<ClassDeclarationSyntax>(rawMember, MakeClass, out ret)) { }
-            else if (DoMember<InterfaceDeclarationSyntax>(rawMember, MakeInterface, out ret)) { }
-            else if (DoMember<StructDeclarationSyntax>(rawMember, MakeStructure, out ret)) { }
-            else if (DoMember<EnumDeclarationSyntax>(rawMember, MakeEnum, out ret)) { }
-            return ret as IStemMember;
+            if (DoMembers<NamespaceDeclarationSyntax>(rawMember, MakeNamespace, retList)) { }
+            else if (DoMembers<ClassDeclarationSyntax>(rawMember, MakeClass, retList)) { }
+            else if (DoMembers<InterfaceDeclarationSyntax>(rawMember, MakeInterface, retList)) { }
+            else if (DoMembers<StructDeclarationSyntax>(rawMember, MakeStructure, retList)) { }
+            else if (DoMembers<EnumDeclarationSyntax>(rawMember, MakeEnum, retList)) { }
+            return retList.OfType<IStemMember>();
         }
 
         /// <summary>
@@ -108,66 +94,65 @@ namespace RoslynDom
         private static IEnumerable<ITypeMember> MakeTypeMembers(MemberDeclarationSyntax rawMember)
         {
             var type = rawMember.GetType();
-            IMember item;
-            var retList = new List<IMember>();
+            var retList = new List<IMember>(); // This list is modified in DoMembers
             // The action happens in DoMember. I felt it read better with else than negation and it made copying new lines easier
-            if (DoMember<MethodDeclarationSyntax>(rawMember, MakeMethod, out item)) { }
-            else if (DoMember<PropertyDeclarationSyntax>(rawMember, MakeProperty, out item)) { }
-            else if (DoMember<ClassDeclarationSyntax>(rawMember, MakeClass, out item)) { }
-            else if (DoMember<InterfaceDeclarationSyntax>(rawMember, MakeInterface, out item)) { }
-            else if (DoMember<StructDeclarationSyntax>(rawMember, MakeStructure, out item)) { }
-            else if (DoMember<EnumDeclarationSyntax>(rawMember, MakeEnum, out item)) { }
-            else if (DoMembers<FieldDeclarationSyntax>(rawMember, MakeFields, retList)) { };
-            if (item != null) retList.Add(item); 
+            if (DoMembers<MethodDeclarationSyntax>(rawMember, MakeMethod, retList)) { }
+            else if (DoMembers<FieldDeclarationSyntax>(rawMember, MakeField, retList)) { }
+            else if (DoMembers<PropertyDeclarationSyntax>(rawMember, MakeProperty, retList)) { }
+            else if (DoMembers<ClassDeclarationSyntax>(rawMember, MakeClass, retList)) { }
+            else if (DoMembers<InterfaceDeclarationSyntax>(rawMember, MakeInterface, retList)) { }
+            else if (DoMembers<StructDeclarationSyntax>(rawMember, MakeStructure, retList)) { }
+            else if (DoMembers<EnumDeclarationSyntax>(rawMember, MakeEnum, retList)) { }
             return retList.OfType<ITypeMember>();
         }
-        private static IMember MakeNamespace(NamespaceDeclarationSyntax rawNamespace)
+
+        private static IUsing MakeUsingDirective(UsingDirectiveSyntax x)
+        {
+            return new RDomUsingDirective(x);
+        }
+
+        private static void MakeNamespace(NamespaceDeclarationSyntax rawNamespace, List<IMember> list)
         {
             var members = ListUtilities.MakeList(rawNamespace, x => x.Members, x => MakeStemMember(x));
             var usings = ListUtilities.MakeList(rawNamespace, x => x.Usings, x => MakeUsingDirective(x));
-            return new RDomNamespace(rawNamespace, members, usings);
+            list.Add(new RDomNamespace(rawNamespace, members, usings));
         }
 
-        private static IMember MakeClass(ClassDeclarationSyntax rawClass)
+        private static void MakeClass(ClassDeclarationSyntax rawClass, List<IMember> list)
         {
             var members = ListUtilities.MakeList(rawClass, x => x.Members, x => MakeTypeMembers(x));
-            return new RDomClass(rawClass, members);
+            list.Add(new RDomClass(rawClass, members));
         }
 
-        private static IMember MakeStructure(StructDeclarationSyntax rawStruct)
+        private static void MakeStructure(StructDeclarationSyntax rawStruct, List<IMember> list)
         {
             var members = ListUtilities.MakeList(rawStruct, x => x.Members, x => MakeTypeMembers(x));
-            return new RDomStructure(rawStruct, members);
+            list.Add(new RDomStructure(rawStruct, members));
         }
 
-        private static IMember MakeInterface(InterfaceDeclarationSyntax rawInterface)
+        private static void MakeInterface(InterfaceDeclarationSyntax rawInterface, List<IMember> list)
         {
             var members = ListUtilities.MakeList(rawInterface, x => x.Members, x => MakeTypeMembers(x));
-            return new RDomInterface(rawInterface, members);
+            list.Add(new RDomInterface(rawInterface, members));
         }
 
-        private static IMember MakeEnum(EnumDeclarationSyntax rawEnum)
+        private static void MakeEnum(EnumDeclarationSyntax rawEnum, List<IMember> list)
         {
-            return new RDomEnum(rawEnum);
+            list.Add(new RDomEnum(rawEnum));
         }
-        private static IMember MakeMethod(MethodDeclarationSyntax rawMethod)
+        private static void MakeMethod(MethodDeclarationSyntax rawMethod, List<IMember> list)
         {
-            return new RDomMethod(rawMethod);
-        }
-
-        private static IMember MakeProperty(PropertyDeclarationSyntax rawProperty)
-        {
-            return new RDomProperty(rawProperty);
+            list.Add(new RDomMethod(rawMethod));
         }
 
-        private static void MakeFields(FieldDeclarationSyntax rawField, List<IMember> list)
+        private static void MakeProperty(PropertyDeclarationSyntax rawProperty, List<IMember> list)
         {
-            var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
-            foreach(var decl in declarators )
-            {
-                list.Add(new RDomField(rawField, decl));
+            list.Add(new RDomProperty(rawProperty));
+        }
 
-            }
+        private static void MakeField(FieldDeclarationSyntax rawField, List<IMember> list)
+        {
+            list.Add(new RDomField(rawField));
         }
         #endregion
     }
