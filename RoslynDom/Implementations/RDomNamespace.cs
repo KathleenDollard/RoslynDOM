@@ -17,26 +17,15 @@ namespace RoslynDom
             : base(rawItem, members, usings)
         { }
 
-        public override string Name
+   
+        public override string OuterName
         {
             get
             {
-                return this.TypedRawItem.QualifiedNameFrom();
+         var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
+                return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
+                       Name;
             }
         }
-
-        public override string QualifiedName
-        {
-            get { return TypedRawItem.QualifiedNameFrom(); }
-        }
-
-        public string OriginalName
-        {
-            get
-            {
-                return this.TypedRawItem.Name.NameFrom();
-            }
-        }
-  
     }
 }

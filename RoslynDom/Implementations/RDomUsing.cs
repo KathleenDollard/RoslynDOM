@@ -20,8 +20,10 @@ namespace RoslynDom
 
         public override string QualifiedName
         {
-            get { return TypedRawItem.Name.QualifiedNameFrom(); }
+            get
+            {
+                throw new InvalidOperationException("You can't get qualified name for a using statement");
+            }
         }
-
     }
 }

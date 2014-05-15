@@ -35,13 +35,5 @@ namespace RoslynDom
             }
             return retList;
         }
-
-        internal static string OriginalNameFrom(this IDom item)
-        {
-            var name = item.Name;
-            if (!name.Contains(".")) return name;
-            return name.SubstringAfterLast(".");
-        }
-
     }
 }

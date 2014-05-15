@@ -20,12 +20,7 @@ namespace RoslynDom
             }
         }
 
-        public override string Name
-        {
-            get { return TypedRawItem.Identifier.NameFrom(); }
-        }
-
-        public override string QualifiedName
+            public override string QualifiedName
         {
             get
             {

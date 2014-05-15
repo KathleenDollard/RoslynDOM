@@ -21,23 +21,5 @@ namespace RoslynDom
                 return this.AttributesFrom();
             }
         }
-
-        public override string Name
-        {
-            get { return TypedRawItem.NestedNameFrom(); }
-        }
-
-        public override string QualifiedName
-        {
-            get { return TypedRawItem.QualifiedNameFrom(); }
-        }
-
-        public string OriginalName
-        {
-            get
-            {
-                return this.OriginalNameFrom();
-            }
-        }
     }
 }

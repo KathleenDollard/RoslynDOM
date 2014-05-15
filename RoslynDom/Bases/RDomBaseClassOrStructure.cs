@@ -21,25 +21,6 @@ namespace RoslynDom
             _members = members;
         }
 
-        public override string Name
-        {
-            get
-            { return this.TypedRawItem.NestedNameFrom(); }
-        }
-
-        public override string QualifiedName
-        {
-            get { return TypedRawItem.QualifiedNameFrom(); }
-        }
-
-        public string OriginalName
-        {
-            get
-            {
-                return this.OriginalNameFrom();
-            }
-        }
-
         public IEnumerable<ITypeMember> Members
         {
             get

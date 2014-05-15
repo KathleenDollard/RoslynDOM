@@ -40,10 +40,10 @@ namespace RoslynDom
             get { return _varSyntax; }
         }
 
-        public override string Name
-        {
-            get { return variableDeclaration.Identifier.NameFrom(); }
-        }
+        //public override string Name
+        //{
+        //    get { return variableDeclaration.Identifier.NameFrom(); }
+        //}
 
         public override string QualifiedName
         {

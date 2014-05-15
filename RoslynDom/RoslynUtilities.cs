@@ -54,13 +54,13 @@ namespace RoslynDom
             return realParent.NestedNameFrom() + "." + node.NameFrom();
         }
 
-        internal static string QualifiedNameFrom(this SyntaxNode node)
-        {
-            var realParent = node.Parent;
-            if (realParent is CompilationUnitSyntax)
-            { return node.NameFrom(); }
-            return realParent.QualifiedNameFrom() + "." + node.NameFrom();
-        }
+        //internal static string QualifiedNameFrom(this SyntaxNode node)
+        //{
+        //    var realParent = node.Parent;
+        //    if (realParent is CompilationUnitSyntax)
+        //    { return node.NameFrom(); }
+        //    return realParent.QualifiedNameFrom() + "." + node.NameFrom();
+        //}
 
     }
 }

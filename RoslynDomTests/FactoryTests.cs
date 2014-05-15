@@ -73,7 +73,6 @@ namespace RoslynDomTests
             var root = RDomFactory.GetRootFromString(csharpCode);
             var symbol = ((IRoslynDom)root.Namespaces.First()).Symbol;
             Assert.IsNotNull(symbol);
-            Assert.AreEqual("testing.Namespace1", symbol.Name);
         }
 
         [TestMethod]
