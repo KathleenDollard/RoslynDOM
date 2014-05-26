@@ -2,9 +2,11 @@ namespace RoslynDom.Common
 {
     public interface IDom
     {
-        object RawItem { get; }
+        object RawSyntax { get; }
         string Name { get; }
         string QualifiedName { get; }
         string OuterName { get; }
+
+        string Namespace { get; }
     }
 }

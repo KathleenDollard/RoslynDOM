@@ -11,8 +11,18 @@ namespace RoslynDomTests
     [TestClass]
     public class NameTests
     {
+        // Test categories
+        private const string SimpleNameCategory = "SimpleName";
+        private const string NestedNameCategory = "NestedName";
+        private const string KeywordNameCategory = "KeywordName";
+        private const string QualifiedNameCategory = "QualifiedName";
+        private const string OuterNameCategory = "OuterName";
+        private const string NamespaceNameCategory = "NamespaceName";
+        private const string ReferencedTypeNamingCategory = "ReferencedTypeNameing";
+
         #region simple name methods
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Root_is_named_root()
         {
             var csharpCode = @"
@@ -25,6 +35,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_namespace_name()
         {
             var csharpCode = @"
@@ -35,11 +46,12 @@ namespace RoslynDomTests
             var ns = root.Namespaces.First();
             var symbol = ((IRoslynDom)ns).Symbol;
             Assert.AreEqual("Namespace1", ns.Name);
-            Assert.AreEqual("Namespace1", symbol.MetadataName,"meta");
+            Assert.AreEqual("Namespace1", symbol.MetadataName, "meta");
             Assert.AreEqual("Namespace1", symbol.Name);
         }
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_class_name()
         {
             var csharpCode = @"
@@ -55,6 +67,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_enums_name()
         {
             var csharpCode = @"
@@ -62,7 +75,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var en= root.Enums.First();
+            var en = root.Enums.First();
             var symbol = ((IRoslynDom)en).Symbol;
             Assert.AreEqual("MyEnum", en.Name);
             Assert.AreEqual("MyEnum", symbol.MetadataName);
@@ -71,6 +84,7 @@ namespace RoslynDomTests
 
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_struct_name()
         {
             var csharpCode = @"
@@ -78,7 +92,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var st= root.Structures.First();
+            var st = root.Structures.First();
             var symbol = ((IRoslynDom)st).Symbol;
             Assert.AreEqual("MyStruct", st.Name);
             Assert.AreEqual("MyStruct", symbol.MetadataName);
@@ -87,6 +101,7 @@ namespace RoslynDomTests
 
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_interface_name()
         {
             var csharpCode = @"
@@ -94,7 +109,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-           var inter =root.Interfaces.First();
+            var inter = root.Interfaces.First();
             var symbol = ((IRoslynDom)inter).Symbol;
             Assert.AreEqual("MyInterface", inter.Name);
             Assert.AreEqual("MyInterface", symbol.MetadataName);
@@ -102,6 +117,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_field_name()
         {
             var csharpCode = @"
@@ -116,17 +132,18 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_multi_field_name()
         {
             var csharpCode = @"
                         public class MyClass
                         { public int myField, myField2; }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var fld =root.Classes.First().Fields.First();
+            var fld = root.Classes.First().Fields.First();
             var fld2 = root.Classes.First().Fields.Last();
             var symbol = ((IRoslynDom)fld).Symbol;
-             var symbol2 = ((IRoslynDom)fld2).Symbol;
-           Assert.AreEqual("myField", fld.Name);
+            var symbol2 = ((IRoslynDom)fld2).Symbol;
+            Assert.AreEqual("myField", fld.Name);
             Assert.AreEqual("myField2", fld2.Name);
             Assert.AreEqual("myField", symbol.MetadataName);
             Assert.AreEqual("myField2", symbol2.MetadataName);
@@ -135,6 +152,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_property_name()
         {
             var csharpCode = @"
@@ -149,6 +167,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_method_name()
         {
             var csharpCode = @"
@@ -163,6 +182,25 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
+        public void Can_get_namespace_qualified_name()
+        {
+            var csharpCode = @"
+                        namespace Namespace2
+                        {
+                        namespace testing.Namespace1
+                            { }
+                        }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Namespace2.testing.Namespace1", root.Namespaces.First().Namespaces.First().QualifiedName);
+        }
+
+        #endregion
+
+        #region nested name tests
+        [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_nestedType_name()
         {
             var csharpCode = @"
@@ -176,11 +214,8 @@ namespace RoslynDomTests
             Assert.AreEqual("MyNestedClass", symbol.Name);
         }
 
-     
-        #endregion
-
-        #region nested name tests
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_namespace_name()
         {
             var csharpCode = @"
@@ -193,11 +228,11 @@ namespace RoslynDomTests
             var root = RDomFactory.GetRootFromString(csharpCode);
             var ns = root.Namespaces.First().Namespaces.First();
             var symbol = ((IRoslynDom)ns).Symbol;
-            Assert.AreEqual("testing.Namespace1", symbol.MetadataName, "Meta");
-            Assert.AreEqual("testing.Namespace1", ns.Name);
+            Assert.AreEqual("Namespace1", root.Namespaces.First().Namespaces.First().Name);
         }
 
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_class_name()
         {
             var csharpCode = @"
@@ -212,6 +247,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_enums_name()
         {
             var csharpCode = @"
@@ -225,6 +261,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_struct_name()
         {
             var csharpCode = @"
@@ -239,6 +276,7 @@ namespace Namespace1
 
 
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_interface_name()
         {
             var csharpCode = @"
@@ -252,6 +290,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_field_name()
         {
             var csharpCode = @"
@@ -267,6 +306,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_property_name()
         {
             var csharpCode = @"
@@ -282,6 +322,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_method_name()
         {
             var csharpCode = @"
@@ -297,6 +338,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(NestedNameCategory)]
         public void Can_get_nested_nestedType_name()
         {
             var csharpCode = @"
@@ -312,11 +354,12 @@ namespace Namespace1
         }
 
 
-   
+
         #endregion
 
         #region keyword name tests
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_namespace_name()
         {
             var csharpCode = @"
@@ -329,6 +372,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_class_name()
         {
             var csharpCode = @"
@@ -340,6 +384,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_enums_name()
         {
             var csharpCode = @"
@@ -352,6 +397,7 @@ namespace Namespace1
 
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_struct_name()
         {
             var csharpCode = @"
@@ -363,6 +409,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_interface_name()
         {
             var csharpCode = @"
@@ -374,6 +421,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_field_name()
         {
             var csharpCode = @"
@@ -384,6 +432,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_property_name()
         {
             var csharpCode = @"
@@ -394,6 +443,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_method_name()
         {
             var csharpCode = @"
@@ -404,6 +454,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(KeywordNameCategory)]
         public void Can_get_keyword_nestedType_name()
         {
             var csharpCode = @"
@@ -413,19 +464,7 @@ namespace Namespace1
             Assert.AreEqual("public", root.Classes.First().Classes.First().Name);
         }
 
-        [TestMethod]
-        public void Can_get_namespace_qualified_name()
-        {
-            var csharpCode = @"
-                        namespace Namespace2
-                        {
-                        namespace testing.Namespace1
-                            { }
-                        }
-                        ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Namespace2.testing.Namespace1", root.Namespaces.First().Namespaces.First().QualifiedName);
-        }
+
         #endregion
 
         #region qualified name tests
@@ -444,6 +483,18 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
+        public void Can_get_class_qualified_name_without_namespace()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                            { }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("MyClass", root.Classes.First().QualifiedName);
+        }
+
+        [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
         public void Can_get_qualified_enums_name()
         {
             var csharpCode = @"
@@ -457,6 +508,7 @@ namespace Namespace1
 
 
         [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
         public void Can_get_qualified_struct_name()
         {
             var csharpCode = @"
@@ -470,6 +522,7 @@ namespace Namespace1
 
 
         [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
         public void Can_get_qualified_interface_name()
         {
             var csharpCode = @"
@@ -482,6 +535,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Get_field_qualified_name_throws_exception()
         {
@@ -493,6 +547,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Get_property_qualified_name_throws_exception()
         {
@@ -504,6 +559,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Can_get_method_qualified_name_throws_exception()
         {
@@ -515,6 +571,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
         public void Get_nestedType_qualified_name()
         {
             var csharpCode = @"
@@ -537,6 +594,7 @@ namespace Namespace1
 
         #region outer name tests
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_namespace_name()
         {
             var csharpCode = @"
@@ -550,7 +608,9 @@ namespace Namespace1
             Assert.AreEqual("Namespace2.testing.Namespace1", root.Namespaces.First().Namespaces.First().OuterName);
         }
 
+     
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_class_name()
         {
             var csharpCode = @"
@@ -565,6 +625,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_enums_name()
         {
             var csharpCode = @"
@@ -577,8 +638,8 @@ namespace Namespace1
             Assert.AreEqual("MyClass.MyEnum", root.Classes.First().Enums.First().OuterName);
         }
 
-
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_struct_name()
         {
             var csharpCode = @"
@@ -591,8 +652,8 @@ namespace Namespace1
             Assert.AreEqual("MyClass.MyStruct", root.Classes.First().Structures.First().OuterName);
         }
 
-
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_interface_name()
         {
             var csharpCode = @"
@@ -606,6 +667,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_field_name()
         {
             var csharpCode = @"
@@ -621,6 +683,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_property_name()
         {
             var csharpCode = @"
@@ -636,6 +699,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_method_name()
         {
             var csharpCode = @"
@@ -651,6 +715,7 @@ namespace Namespace1
         }
 
         [TestMethod]
+        [TestCategory(OuterNameCategory)]
         public void Can_get_outer_nestedType_name()
         {
             var csharpCode = @"
@@ -664,7 +729,197 @@ namespace Namespace1
             var root = RDomFactory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass.MyNestedClass.MyNestedNestedClass", root.Classes.First().Classes.First().Classes.First().OuterName);
         }
-        
+
+        #endregion
+
+        #region namespace tests
+        [TestMethod]
+        [TestCategory(NamespaceNameCategory)]
+        public void Can_get_class_namespace()
+        {
+            var csharpCode = @"
+namespace NamespaceOuter
+{namespace Namespace1
+{
+                        public class MyClass
+                            { }
+                        
+}}";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Classes.First().Namespace);
+        }
+
+        [TestMethod]
+        [TestCategory(NamespaceNameCategory)]
+        public void Can_get_class_empty_namespace()
+        {
+            var csharpCode = @"
+namespace Namespace1
+{
+                        public class MyClass
+                            { }
+                        
+}";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Namespace1", root.Namespaces.First().Classes.First().Namespace);
+        }
+
+        [TestMethod]
+        [TestCategory(NamespaceNameCategory)]
+        public void Can_get_empty_namespace()
+        {
+            var csharpCode = @"
+namespace Namespace1
+{
+                        public class MyClass
+                            { }
+                        
+}";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("", root.Namespaces.First().Namespace);
+        }
+
+        [TestMethod]
+        [TestCategory(NamespaceNameCategory)]
+        public void Can_get_enums_namespace()
+        {
+            var csharpCode = @"
+namespace NamespaceOuter
+{ namespace Namespace1
+{                       public enum MyEnum
+                            { }
+  } }                     ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Enums.First().Namespace);
+        }
+
+
+        [TestMethod]
+        [TestCategory(NamespaceNameCategory)]
+        public void Can_get_struct_namespace()
+        {
+            var csharpCode = @"
+namespace NamespaceOuter
+{namespace Namespace1
+{                        public struct MyStruct
+                            { }
+ }   }                    ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Structures.First().Namespace);
+        }
+
+
+        [TestMethod]
+        [TestCategory(NamespaceNameCategory)]
+        public void Can_get_interface_namespace()
+        {
+            var csharpCode = @"
+namespace NamespaceOuter
+{namespace Namespace1
+{                        public interface MyInterface
+                            { }
+}   }                     ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Interfaces.First().Namespace);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        [TestCategory(NamespaceNameCategory)]
+        public void Get_field_namespace_throws_exception()
+        {
+            var csharpCode = @"namespace NamespaceOuter
+{
+                        public class MyClass
+                        { public int myField; }}";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var x = ((RDomField)root.Namespaces.First().Classes.First().Fields.First()).Namespace;
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        [TestCategory(NamespaceNameCategory)]
+        public void Get_property_namespace_throws_exception()
+        {
+            var csharpCode = @"namespace NamespaceOuter
+{
+                        public class MyClass
+                        { public int myProperty { get; } }}";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var x = ((RDomProperty)root.Namespaces.First().Classes.First().Properties.First()).Namespace;
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        [TestCategory(NamespaceNameCategory)]
+        public void Can_get_method_namespace_throws_exception()
+        {
+            var csharpCode = @"
+                       namespace NamespaceOuter
+                        { public class MyClass
+                        { public int myMethod(int x) { return x; } } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var x = ((RDomMethod)root.Namespaces.First().Classes.First().Methods.First()).Namespace;
+        }
+
+        [TestMethod]
+        public void Get_nestedType_namespace()
+        {
+            var csharpCode = @"
+namespace NamespaceOuter
+{namespace Namespace1
+{
+                        public class MyClass
+                        { 
+                            public class MyNestedClass
+                            { 
+                                public class MyNestedNestedClass {}
+                            }
+                        }
+}}";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("NamespaceOuter.Namespace1",
+                root.Namespaces.First().Namespaces.First().Classes.First().Classes.First().Classes.First()
+                .Namespace);
+        }
+        #endregion
+
+        #region referenced type tests
+        [TestMethod]
+        [TestCategory(ReferencedTypeNamingCategory)]
+        public void Can_get_names_for_referenced_type()
+        {
+            var csharpCode = @"
+namespace MyNamespace
+{
+   public class Foo
+   {
+      public A Bar() {};
+      public B Bar() {};
+      public class B   { } 
+   }
+   public class A   { }
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var method = root.Namespaces.First().Classes.First().Methods.First();
+            var retTypeA = method.ReturnType;
+            Assert.IsNotNull(retTypeA);
+            Assert.AreEqual("A", retTypeA.Name, "Name A");
+            Assert.AreEqual("MyNamespace.A", retTypeA.QualifiedName, "QualifiedName A");
+            Assert.AreEqual("A", retTypeA.OuterName, "OuterName A");
+            Assert.AreEqual("MyNamespace", retTypeA.Namespace, "Namespace A");
+            method = root.Namespaces.First().Classes.First().Methods.Last();
+            var retTypeB = method.ReturnType;
+            Assert.IsNotNull(retTypeB);
+            Assert.AreEqual("B", retTypeB.Name, "Name B");
+            Assert.AreEqual("MyNamespace.Foo.B", retTypeB.QualifiedName, "QualifiedName B");
+            Assert.AreEqual("Foo.B", retTypeB.OuterName, "OuterName B");
+            Assert.AreEqual("MyNamespace", retTypeB.Namespace, "Namespace B");
+        }
+
+
+
         #endregion
 
     }

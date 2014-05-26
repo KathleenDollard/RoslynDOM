@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IHasReturnType
+    public interface ITypeMember :IMember, IHasAttributes , IDom, IHasAccessModifier  
     {
-        Type ReturnType { get; }
     }
 }

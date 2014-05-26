@@ -12,7 +12,7 @@ namespace TestRoslyn
         private string endIndex = "123456.";
         private string startIndex = ".123456";
         private string noIndex = "123456";
-        private string emptyString = "";
+        //private string emptyString = "";
 
         [TestMethod]
         public void SubstringAfter_finds_part_after_delimiter()

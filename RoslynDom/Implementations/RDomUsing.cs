@@ -15,7 +15,7 @@ namespace RoslynDom
         public override string Name
         {
             get
-            { return TypedRawItem.Name.NameFrom(); }
+            { return TypedSyntax.Name.NameFrom(); }
         }
 
         public override string QualifiedName

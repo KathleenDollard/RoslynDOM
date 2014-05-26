@@ -14,7 +14,7 @@ namespace RoslynDom
     /// <remarks>
     /// I'm not currently supporting parameters (am supporting type parameters) because I don't understand them
     /// </remarks>
-    public class RDomClass : RDomBaseClassOrStructure<ClassDeclarationSyntax>, IClass
+    public class RDomClass : RDomBaseType<ClassDeclarationSyntax>, IClass
     {
         internal RDomClass(ClassDeclarationSyntax rawItem,
             IEnumerable<ITypeMember> members)
@@ -31,7 +31,7 @@ namespace RoslynDom
         {
             get
             {
-                IEnumerable<IStemMember> ret = ClassesAndStructures.Concat<IStemMember>(Interfaces).Concat(Enums);
+                IEnumerable<IStemMember> ret = Classes.Concat<IStemMember>(Structures).Concat(Interfaces).Concat(Enums);
                 return ret;
             }
         }
@@ -54,10 +54,5 @@ namespace RoslynDom
             { return Members.OfType<IEnum>(); }
         }
 
-        public IEnumerable<IClassOrStruct> ClassesAndStructures
-        {
-            get
-            { return Members.OfType<IClassOrStruct>(); }
-        }
     }
 }

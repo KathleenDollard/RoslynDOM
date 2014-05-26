@@ -76,7 +76,6 @@ namespace RoslynDom
             where T : class
         {
             var item = val as T;
-            if (item == null) return false;
             doAction(item, list);
             return (list.Count() > 0);
         }

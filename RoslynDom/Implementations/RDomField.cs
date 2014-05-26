@@ -34,7 +34,14 @@ namespace RoslynDom
             }
         }
 
-
+        public AccessModifier AccessModifier
+        {
+            get
+            {
+                Accessibility accessibility = Symbol.DeclaredAccessibility;
+                return (AccessModifier)accessibility;
+            }
+        }
         private VariableDeclaratorSyntax variableDeclaration
         {
             get { return _varSyntax; }
@@ -54,13 +61,29 @@ namespace RoslynDom
             }
         }
 
+        public override string Namespace
+        {
+            get
+            {
+                throw new InvalidOperationException("You can't get namespace for an instance method");
+            }
+        }
+
         public override ISymbol Symbol
         {
             get
             {
-                return base.GetSymbol(_varSyntax);
+                return base.GetSymbol(variableDeclaration);
             }
         }
 
+        public IReferencedType ReturnType
+        {
+            get
+            {
+                var localSymbol = Symbol as IFieldSymbol ;
+                return new RDomReferencedType(localSymbol.DeclaringSyntaxReferences, localSymbol.Type);
+            }
+        }
     }
 }

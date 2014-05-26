@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -19,8 +20,16 @@ namespace RoslynDom
                 return this.AttributesFrom();
             }
         }
+        public AccessModifier AccessModifier
+        {
+            get
+            {
+                Accessibility accessibility = Symbol.DeclaredAccessibility;
+                return (AccessModifier)accessibility;
+            }
+        }
 
-            public override string QualifiedName
+        public override string QualifiedName
         {
             get
             {
@@ -29,5 +38,21 @@ namespace RoslynDom
             }
         }
 
+        public override string Namespace
+        {
+            get
+            {
+                throw new InvalidOperationException("You can't get namespace for an instance method");
+            }
+        }
+
+        public IReferencedType ReturnType
+        {
+            get
+            {
+                var localSymbol = Symbol as IMethodSymbol;
+                return new RDomReferencedType(localSymbol.DeclaringSyntaxReferences , localSymbol.ReturnType );
+            }
+        }
     }
 }

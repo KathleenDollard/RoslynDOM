@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface IMethod :ITypeMember
+    public interface IMethod :ITypeMember, IHasReturnType
     {
     }
 }

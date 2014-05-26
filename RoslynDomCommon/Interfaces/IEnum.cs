@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface IEnum :IStemMember, ITypeMember, INestableType
+    public interface IEnum : IType
     {
     }
 }

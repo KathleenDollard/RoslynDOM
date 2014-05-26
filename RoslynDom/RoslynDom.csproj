@@ -68,6 +68,7 @@
     <Compile Include="Implementations\RDomMethod.cs" />
     <Compile Include="Implementations\RDomNamespace.cs" />
     <Compile Include="Implementations\RDomProperty.cs" />
+    <Compile Include="Implementations\RDomReferencedType.cs" />
     <Compile Include="Implementations\RDomRoot.cs" />
     <Compile Include="Implementations\RDomStructure.cs" />
     <Compile Include="Implementations\RDomUsing.cs" />

@@ -9,6 +9,5 @@ namespace RoslynDom.Common
         IEnumerable<IStructure> Structures { get; }
         IEnumerable<IInterface> Interfaces { get; }
         IEnumerable<IEnum> Enums { get; }
-        IEnumerable<IClassOrStruct> ClassesAndStructures { get; }
     }
 }

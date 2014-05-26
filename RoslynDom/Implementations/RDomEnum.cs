@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -21,5 +22,13 @@ namespace RoslynDom
             }
         }
 
+        public AccessModifier AccessModifier
+        {
+            get
+            {
+                Accessibility accessibility = Symbol.DeclaredAccessibility;
+                return (AccessModifier)accessibility;
+            }
+        }
     }
 }

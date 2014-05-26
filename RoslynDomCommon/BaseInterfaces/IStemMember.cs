@@ -8,5 +8,6 @@ namespace RoslynDom.Common
 {
     public interface IStemMember : IMember
     {
+        string Namespace { get; }
     }
 }

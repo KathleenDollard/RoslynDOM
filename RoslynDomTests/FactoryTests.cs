@@ -12,6 +12,12 @@ namespace RoslynDomTests
     [TestClass]
     public class FactoryTests
     {
+        // Test categories
+        private const string SymbolCategory = "Symbol";
+        private const string RawSyntaxCategory = "RawSyntax";
+        private const string TypedSyntaxCategory = "TypedSyntax";
+        private const string StemContainerCategory = "StemContainerSyntax";
+
         [TestMethod]
         public void Can_get_root_from_file()
         {
@@ -64,6 +70,7 @@ namespace RoslynDomTests
 
         #region symbol tests
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_namespace()
         {
             var csharpCode = @"
@@ -76,6 +83,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_class()
         {
             var csharpCode = @"
@@ -89,6 +97,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_enum()
         {
             var csharpCode = @"
@@ -102,6 +111,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_struct()
         {
             var csharpCode = @"
@@ -115,6 +125,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_interface()
         {
             var csharpCode = @"
@@ -129,6 +140,7 @@ namespace RoslynDomTests
 
 
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_field()
         {
             var csharpCode = @"
@@ -141,6 +153,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_property()
         {
             var csharpCode = @"
@@ -153,6 +166,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_method()
         {
             var csharpCode = @"
@@ -165,6 +179,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_nestedType()
         {
             var csharpCode = @"
@@ -175,7 +190,404 @@ namespace RoslynDomTests
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyNestedClass", symbol.Name);
         }
-
         #endregion
+
+        #region rawSyntax tests
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_namespace()
+        {
+            var csharpCode = @"
+                        namespace testing.Namespace1
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Namespaces.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_class()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Classes.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+            Assert.IsTrue(rawSyntax is ClassDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_enum()
+        {
+            var csharpCode = @"
+                        public enum MyEnum
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Enums.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+            Assert.IsTrue(rawSyntax is EnumDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_struct()
+        {
+            var csharpCode = @"
+                        public struct MyStruct
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Structures.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+            Assert.IsTrue(rawSyntax is StructDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_interface()
+        {
+            var csharpCode = @"
+                        public interface MyInterface
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Interfaces.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+            Assert.IsTrue(rawSyntax is InterfaceDeclarationSyntax);
+        }
+
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_field()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myField; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Classes.First().Fields.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+            Assert.IsTrue(rawSyntax is FieldDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_property()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myProperty { get; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Classes.First().Properties.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+            Assert.IsTrue(rawSyntax is PropertyDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_method()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myMethod(int x) { return x; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Classes.First().Methods.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+            Assert.IsTrue(rawSyntax is MethodDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_nestedType()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public class MyNestedClass {  } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var rawSyntax = ((IRoslynDom)root.Classes.First().Types.First()).RawSyntax;
+            Assert.IsNotNull(rawSyntax);
+            Assert.IsTrue(rawSyntax is ClassDeclarationSyntax);
+        }
+        #endregion
+
+        #region typedSyntax tests
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_namespace()
+        {
+            var csharpCode = @"
+                        namespace testing.Namespace1
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomNamespace)root.Namespaces.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is NamespaceDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_class()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomClass)root.Classes.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is ClassDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_enum()
+        {
+            var csharpCode = @"
+                        public enum MyEnum
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomEnum)root.Enums.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is EnumDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_struct()
+        {
+            var csharpCode = @"
+                        public struct MyStruct
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomStructure)root.Structures.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is StructDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_interface()
+        {
+            var csharpCode = @"
+                        public interface MyInterface
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomInterface)root.Interfaces.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is InterfaceDeclarationSyntax);
+        }
+
+
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_field()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myField; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomField)root.Classes.First().Fields.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is FieldDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_property()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myProperty { get; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomProperty)root.Classes.First().Properties.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is PropertyDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_method()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myMethod(int x) { return x; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomMethod)root.Classes.First().Methods.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is MethodDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSyntaxCategory)]
+        public void Can_get_typedSyntax_for_nestedType()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public class MyNestedClass {  } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var typedSyntax = ((RDomClass)root.Classes.First()).TypedSyntax;
+            Assert.IsNotNull(typedSyntax);
+            Assert.IsTrue(typedSyntax is ClassDeclarationSyntax);
+        }
+        #endregion
+
+        #region stemContainer
+        [TestMethod]
+        [TestCategory(StemContainerCategory)]
+        public void Can_get_namespaces()
+        {
+            var csharpCode = @"
+                        namespace testing.Namespace1
+                            { }
+
+                        namespace testing.Namespace2
+                            { }
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual(2, root.Namespaces.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(StemContainerCategory)]
+        public void Can_get_classes()
+        {
+            var csharpCode = @"
+                        class Class1
+                            { }
+ class Class2
+                            { }
+class Class3
+                            { }
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual(3, root.Classes.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(StemContainerCategory)]
+        public void Can_get_interfaces()
+        {
+            var csharpCode = @"
+                        interface Interface
+                            {
+
+private string Foo{get;}}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual(1, root.Interfaces.Count());
+        }
+
+        //        public void Can_get_members()
+        //        {
+        //            var csharpCode = @"
+        //                        class Interface
+        //                            { 
+        //string Foo{get;}
+        //int Bar;
+        //int FooBar(int cnt);
+        //}
+        //";
+        //            var root = RDomFactory.GetRootFromString(csharpCode);
+        //            Assert.AreEqual(1, root.Interfaces.First().Members.Count());
+        //        }
+
+        [TestMethod]
+        [TestCategory(StemContainerCategory)]
+        public void Can_get_structures()
+        {
+            var csharpCode = @"
+                        struct Struct1
+                            { 
+string Foo{get;}}
+                        struct Struct1
+                            { }
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual(2, root.Structures.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(StemContainerCategory)]
+        public void Can_get_enums()
+        {
+            var csharpCode = @"
+                        enum A
+                            { }
+                        enum B
+                            { }
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual(2, root.Enums.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(StemContainerCategory)]
+        public void Can_get_usings()
+        {
+            var csharpCode = @"
+                        using A;
+                        using B;
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual(2, root.Usings.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(StemContainerCategory)]
+        public void Can_get_usings_in_namespaces()
+        {
+            var csharpCode = @"
+namespace Foo
+{
+                        using A;
+                        using B;
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual(2, root.Namespaces.First().Usings.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(StemContainerCategory)]
+        public void Can_get_types()
+        {
+            var csharpCode = @"
+                        enum A
+                            { }
+                        enum B
+                            { }
+                        class C
+                            { }
+                        interface D
+                            { }
+                        interface E
+                            { }
+                        interface F
+                            { }
+                        struct G
+                            { }
+                      struct G
+                            { }
+                      struct H
+                            { }
+                      struct I
+                            { }
+                      struct J
+                            { }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual(11, root.Types.Count());
+        }
+        #endregion
+
     }
 }

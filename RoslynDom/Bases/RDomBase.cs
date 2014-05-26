@@ -23,7 +23,7 @@ namespace RoslynDom
         /// <remarks>
         /// Return type is object, not SyntaxNode to match interface
         /// </remarks>
-        public abstract object RawItem { get; }
+        public abstract object RawSyntax { get; }
 
         /// <summary>
         /// For a discussion of names <see cref="OuterName"/>
@@ -91,24 +91,24 @@ namespace RoslynDom
     public abstract class RDomBase<T> : RDomBase
         where T : SyntaxNode
     {
-        private T _rawItem;
+        private T _rawSyntax;
         private ISymbol _symbol;
 
         protected RDomBase(T rawItem)
         {
-            _rawItem = rawItem;
+            _rawSyntax = rawItem;
         }
 
-        public T TypedRawItem
+        public T TypedSyntax
         {
             get
-            { return _rawItem; }
+            { return _rawSyntax; }
         }
 
-        public override object RawItem
+        public override object RawSyntax
         {
             get
-            { return _rawItem; }
+            { return _rawSyntax; }
         }
 
         public override ISymbol Symbol
@@ -116,7 +116,7 @@ namespace RoslynDom
             get
             {
                 if (_symbol == null)
-                { _symbol = GetSymbol(TypedRawItem); }
+                { _symbol = GetSymbol(TypedSyntax); }
                 return _symbol;
             }
         }
@@ -147,9 +147,9 @@ namespace RoslynDom
             {
                 var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
                 var typeName = GetContainingTypeName(Symbol.ContainingType);
-                return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
-                       (string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".") +
-                       Name;
+                namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
+                typeName = string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".";
+                return namespaceName + typeName + Name;
             }
         }
 
@@ -157,11 +157,12 @@ namespace RoslynDom
         {
             get
             {
-                var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
-                var typeName = GetContainingTypeName(Symbol.ContainingType);
-                return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
-                       (string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".") +
-                       Name;
+                return  GetContainingNamespaceName(Symbol.ContainingNamespace);
+                //var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
+                //var typeName = GetContainingTypeName(Symbol.ContainingType);
+                //return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
+                //       (string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".") +
+                //       Name;
             }
         }
 
@@ -185,7 +186,7 @@ namespace RoslynDom
         private SemanticModel GetModel()
         // TODO: Change this scope to assembly protected as soon as it is available
         {
-            var tree = TypedRawItem.SyntaxTree;
+            var tree = TypedSyntax.SyntaxTree;
             var compilation = CSharpCompilation.Create("MyCompilation",
                                            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                                            syntaxTrees: new[] { tree },

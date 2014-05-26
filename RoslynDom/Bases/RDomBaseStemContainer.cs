@@ -24,14 +24,14 @@ namespace RoslynDom
             _usings = usings;
         }
 
+        public IEnumerable<INamespace> Namespaces
+        {
+            get { return Members.OfType<INamespace>(); }
+        }
+
         public IEnumerable<IClass> Classes
         {
             get { return Members.OfType<IClass>(); }
-        }
-
-        public IEnumerable<IClassOrStruct> ClassesAndStructures
-        {
-            get { return Members.OfType<IClassOrStruct>(); }
         }
 
         public IEnumerable<IInterface> Interfaces
@@ -45,11 +45,7 @@ namespace RoslynDom
             get { return _members; }
         }
 
-           public IEnumerable<INamespace> Namespaces
-        {
-            get { return Members.OfType<INamespace>(); }
-        }
-
+ 
         public IEnumerable<IStructure> Structures
         {
             get { return Members.OfType<IStructure>(); }
@@ -68,7 +64,7 @@ namespace RoslynDom
 
         public IEnumerable<IStemMember> Types
         {
-            get { return Members.OfType<INestableType>(); }
+            get { return Members.OfType<IType>(); }
         }
     }
 }

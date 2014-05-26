@@ -8,10 +8,10 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomInterface : RDomSyntaxNodeBase<InterfaceDeclarationSyntax>, IInterface
+    public class RDomInterface : RDomBaseType<InterfaceDeclarationSyntax>, IInterface
     {
         internal RDomInterface(InterfaceDeclarationSyntax rawItem,
-            IEnumerable<ITypeMember> members) : base(rawItem)
+            IEnumerable<ITypeMember> members) : base(rawItem, members)
         { }
 
         public IEnumerable<IAttribute> Attributes

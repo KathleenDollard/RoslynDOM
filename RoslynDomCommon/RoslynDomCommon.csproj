@@ -39,27 +39,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CharacteristicInterfaces\IHasAccessModifier.cs" />
+    <Compile Include="AccessModifier.cs" />
     <Compile Include="Interfaces\IAttribute.cs" />
     <Compile Include="Interfaces\IClass.cs" />
-    <Compile Include="Interfaces\IClassOrStruct.cs" />
+    <Compile Include="Interfaces\IReferecedType.cs" />
+    <Compile Include="BaseInterfaces\IType.cs" />
     <Compile Include="Interfaces\IEnum.cs" />
     <Compile Include="Interfaces\IField.cs" />
-    <Compile Include="Interfaces\IHasAttributes.cs" />
-    <Compile Include="Interfaces\IHasReturnType.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasAttributes.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasReturnType.cs" />
     <Compile Include="Interfaces\IInterface.cs" />
-    <Compile Include="Interfaces\IMember.cs" />
+    <Compile Include="BaseInterfaces\IMember.cs" />
     <Compile Include="Interfaces\IMethod.cs" />
     <Compile Include="Interfaces\INamespace.cs" />
-    <Compile Include="Interfaces\INestableType.cs" />
-    <Compile Include="Interfaces\INestedMemberContainer.cs" />
+    <Compile Include="BaseInterfaces\INestedContainer.cs" />
     <Compile Include="Interfaces\IProperty.cs" />
     <Compile Include="Interfaces\IRoot.cs" />
-    <Compile Include="Interfaces\IDom.cs" />
-    <Compile Include="Interfaces\IStemContainer.cs" />
-    <Compile Include="Interfaces\IStemMember.cs" />
+    <Compile Include="BaseInterfaces\IDom.cs" />
+    <Compile Include="BaseInterfaces\IStemContainer.cs" />
+    <Compile Include="BaseInterfaces\IStemMember.cs" />
     <Compile Include="Interfaces\IStructure.cs" />
-    <Compile Include="Interfaces\ITypeMember.cs" />
-    <Compile Include="Interfaces\ITypeMemberContainer.cs" />
+    <Compile Include="BaseInterfaces\ITypeMember.cs" />
+    <Compile Include="BaseInterfaces\ITypeMemberContainer.cs" />
     <Compile Include="Interfaces\IUsing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
