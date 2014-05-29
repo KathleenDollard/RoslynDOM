@@ -68,7 +68,9 @@
   <ItemGroup>
     <Compile Include="AttributeTests.cs" />
     <Compile Include="CharacteristicTests.cs" />
+    <Compile Include="ContainerTests.cs" />
     <Compile Include="FactoryTests.cs" />
+    <Compile Include="GenericsTests.cs" />
     <Compile Include="NameTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

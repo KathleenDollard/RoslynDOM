@@ -14,11 +14,35 @@ namespace RoslynDom
             IEnumerable<ITypeMember> members) : base(rawItem, members)
         { }
 
+        public IEnumerable<IReferencedType> AllImplementedInterfaces
+        {
+            get
+            {
+                return this.ImpementedInterfacesFrom(true);
+            }
+        }
+
         public IEnumerable<IAttribute> Attributes
         {
             get
             {
                 return this.AttributesFrom();
+            }
+        }
+
+        public IEnumerable<IReferencedType> ImplementedInterfaces
+        {
+            get
+            {
+                return this.ImpementedInterfacesFrom(false);
+            }
+        }
+
+        public IEnumerable<ITypeParameter> TypeParameters
+        {
+            get
+            {
+                return this.TypedSymbol.TypeParametersFrom();
             }
         }
     }

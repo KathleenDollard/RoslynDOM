@@ -6,7 +6,6 @@ namespace RoslynDom.Common
         string Name { get; }
         string QualifiedName { get; }
         string OuterName { get; }
-
         string Namespace { get; }
     }
 }

@@ -9,7 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseType<T> : RDomSyntaxNodeBase<T>, IType
+    public abstract class RDomBaseType<T> : RDomSyntaxNodeBase<T, INamedTypeSymbol>, IType
         where T : SyntaxNode
     {
         private IEnumerable<ITypeMember> _members;
@@ -55,9 +55,10 @@ namespace RoslynDom
         {
             get
             {
-                Accessibility accessibility =  Symbol.DeclaredAccessibility;
+                Accessibility accessibility = Symbol.DeclaredAccessibility;
                 return (AccessModifier)accessibility;
             }
         }
     }
 }
+

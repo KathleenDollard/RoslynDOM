@@ -9,14 +9,14 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public static class RoslynDomUtilities
+    internal static class RoslynDomUtilities
     {
 
-        public static IEnumerable<IAttribute> AttributesFrom(this IDom item)
+        internal static IEnumerable<IAttribute> AttributesFrom(this IDom item)
         {
-            if (!(item is IHasAttributes)) throw new InvalidOperationException();
-
             var retList = new List<IAttribute>();
+            if (!(item is IHasAttributes)) return retList;
+
             var rdomBase = item as RDomBase;
             var attributeData = rdomBase.Symbol.GetAttributes();
             foreach (var data in attributeData)
@@ -26,14 +26,52 @@ namespace RoslynDom
             return retList;
         }
 
-        private static IEnumerable<IAttribute> AttributesFromInternal(AttributeListSyntax list)
+        //private static IEnumerable<IAttribute> AttributesFromInternal(AttributeListSyntax list)
+        //{
+        //    var retList = new List<IAttribute>();
+        //    foreach (var attrib in list.ChildNodes().OfType<AttributeSyntax>())
+        //    {
+        //        retList.Add(new RDomAttribute(attrib));
+        //    }
+        //    return retList;
+        //}
+
+        internal static IEnumerable<ITypeParameter> TypeParametersFrom(this INamedTypeSymbol rDomType)
         {
-            var retList = new List<IAttribute>();
-            foreach (var attrib in list.ChildNodes().OfType<AttributeSyntax>())
+            return TypeParametersFrom(rDomType.TypeParameters);
+        }
+
+        internal static IEnumerable<ITypeParameter> TypeParametersFrom(this IMethodSymbol rDomType)
+        {
+            return TypeParametersFrom(rDomType.TypeParameters);
+        }
+
+   
+        private static IEnumerable<ITypeParameter> TypeParametersFrom(IEnumerable<ITypeParameterSymbol> typeParameters)
+        {
+            var retList = new List<ITypeParameter>();
+            foreach (var param in typeParameters)
             {
-                retList.Add(new RDomAttribute(attrib));
+                retList.Add(new RDomTypeParameter(param.DeclaringSyntaxReferences, param));
+            }
+            //throw new NotImplementedException();
+            return retList;
+        }
+
+        internal static IEnumerable<IReferencedType > ImpementedInterfacesFrom(this IHasImplementedInterfaces rDomType, bool all)
+        {
+            var symbol = ((IRoslynDom)rDomType).Symbol as INamedTypeSymbol;
+            var retList = new List<IReferencedType>();
+            IEnumerable<INamedTypeSymbol> interfaces;
+            if (all) { interfaces = symbol.AllInterfaces; }
+            else { interfaces = symbol.Interfaces; }
+            foreach (var inter in interfaces)
+            {
+                retList.Add(new RDomReferencedType(inter.DeclaringSyntaxReferences, inter));
+
             }
             return retList;
+
         }
     }
 }

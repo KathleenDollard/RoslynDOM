@@ -36,6 +36,45 @@ namespace RoslynDomTests
 
         [TestMethod]
         [TestCategory(SimpleNameCategory)]
+        public void Root_qualified_name_is_root()
+        {
+            var csharpCode = @"
+                        using System.Diagnostics.Tracing;
+                        namespace testing.Namespace1
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Root", root.QualifiedName);
+        }
+
+        [TestMethod]
+        [TestCategory(SimpleNameCategory)]
+        public void Can_get_using_name_multipart()
+        {
+            var csharpCode = @"
+                        using System.Diagnostics.Tracing;
+                        namespace testing.Namespace1
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("System.Diagnostics.Tracing", root.Usings.First().Name);
+        }
+
+        [TestMethod]
+        [TestCategory(SimpleNameCategory)]
+        public void Can_get_using_name()
+        {
+            var csharpCode = @"
+                        using System;
+                        namespace testing.Namespace1
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("System", root.Usings.First().Name);
+        }
+
+        [TestMethod]
+        [TestCategory(SimpleNameCategory)]
         public void Can_get_namespace_name()
         {
             var csharpCode = @"
@@ -468,7 +507,23 @@ namespace Namespace1
         #endregion
 
         #region qualified name tests
+
         [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
+        [ExpectedException(typeof(InvalidOperationException ))]
+        public void Can_get_using_qualified_name()
+        {
+            var csharpCode = @"
+                        using System.Diagnostics.Tracing;
+                        namespace testing.Namespace1
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("System.Diagnostics.Tracing", root.Usings.First().QualifiedName);
+        }
+
+        [TestMethod]
+        [TestCategory(QualifiedNameCategory)]
         public void Can_get_class_qualified_name()
         {
             var csharpCode = @"
@@ -608,7 +663,19 @@ namespace Namespace1
             Assert.AreEqual("Namespace2.testing.Namespace1", root.Namespaces.First().Namespaces.First().OuterName);
         }
 
-     
+        [TestMethod]
+        [TestCategory(OuterNameCategory)]
+        public void Can_get_outer_namespace_empty_name()
+        {
+            var csharpCode = @"
+                        namespace Namespace1
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Namespace1", root.Namespaces.First().OuterName);
+        }
+
+
         [TestMethod]
         [TestCategory(OuterNameCategory)]
         public void Can_get_outer_class_name()
@@ -894,28 +961,38 @@ namespace MyNamespace
 {
    public class Foo
    {
-      public A Bar() {};
-      public B Bar() {};
+      public A Bar1() {};
+      public B Bar2() {};
+      public C Bar3() {};
       public class B   { } 
    }
    public class A   { }
 }
+public class C   { }
 ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var method = root.Namespaces.First().Classes.First().Methods.First();
+            var methods = root.Namespaces.First().Classes.First().Methods.ToArray();
+            var method = methods[0];
             var retTypeA = method.ReturnType;
             Assert.IsNotNull(retTypeA);
             Assert.AreEqual("A", retTypeA.Name, "Name A");
             Assert.AreEqual("MyNamespace.A", retTypeA.QualifiedName, "QualifiedName A");
             Assert.AreEqual("A", retTypeA.OuterName, "OuterName A");
             Assert.AreEqual("MyNamespace", retTypeA.Namespace, "Namespace A");
-            method = root.Namespaces.First().Classes.First().Methods.Last();
+            method = methods[1];
             var retTypeB = method.ReturnType;
             Assert.IsNotNull(retTypeB);
             Assert.AreEqual("B", retTypeB.Name, "Name B");
             Assert.AreEqual("MyNamespace.Foo.B", retTypeB.QualifiedName, "QualifiedName B");
             Assert.AreEqual("Foo.B", retTypeB.OuterName, "OuterName B");
             Assert.AreEqual("MyNamespace", retTypeB.Namespace, "Namespace B");
+            method = methods[2];
+            var retTypeC = method.ReturnType;
+            Assert.IsNotNull(retTypeC);
+            Assert.AreEqual("C", retTypeC.Name, "Name C");
+            Assert.AreEqual("C", retTypeC.QualifiedName, "QualifiedName C");
+            Assert.AreEqual("C", retTypeC.OuterName, "OuterName C");
+            Assert.AreEqual("", retTypeC.Namespace, "Namespace C");
         }
 
 

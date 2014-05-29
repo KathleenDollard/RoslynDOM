@@ -10,10 +10,20 @@ using RoslynDom.Common;
 namespace RoslynDomTests
 {
     [TestClass]
-   public class CharacteristicTests
+    public class CharacteristicTests
     {
         private const string ReturnedTypeCategory = "ReturnedType";
         private const string AccessModifierCategory = "AccessModifier";
+        private const string VirtualCategory = "Virtual";
+        private const string AbstractCategory = "Abstract";
+        private const string SealedCategory = "Sealed";
+        private const string OverrideCategory = "Override";
+        private const string NewCategory = "New";
+        private const string StaticCategory = "Static";
+        private const string EnumsCategory = "Enums";
+        private const string ImplementedInterfacesCategory = "ImplementedInterfaces";
+        private const string BaseTypeCategory = "BaseType";
+        private const string ParameterAndMethodCategory = "ParameterAndMethod";
 
         #region returned type tests
         [TestMethod]
@@ -64,24 +74,22 @@ public int Bar{get;};
             var csharpCode = @"
                         public class Foo
 {
-public string Bar() {};
+public System.ComponentModel.ByteConverter  Bar() {};
 }
 ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             var method = root.Classes.First().Methods.First();
             var retType = method.ReturnType;
             Assert.IsNotNull(retType);
-            Assert.AreEqual("String", retType.Name, "Name");
-            Assert.AreEqual("System.String", retType.QualifiedName, "QualifiedName");
-            Assert.AreEqual("String", retType.OuterName, "OuterName");
-            Assert.AreEqual("System", retType.Namespace, "Namespace");
+            Assert.AreEqual("ByteConverter", retType.Name, "Name");
+            Assert.AreEqual("System.ComponentModel.ByteConverter", retType.QualifiedName, "QualifiedName");
+            Assert.AreEqual("ByteConverter", retType.OuterName, "OuterName");
+            Assert.AreEqual("System.ComponentModel", retType.Namespace, "Namespace");
         }
 
-        public class A
-        { }
         #endregion
 
-#region access modifier tests
+        #region access modifier tests
         [TestMethod]
         [TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_class()
@@ -293,6 +301,625 @@ public interface Foo1
             Assert.AreEqual(AccessModifier.Public, members[1].AccessModifier);
             Assert.AreEqual(AccessModifier.Public, members[2].AccessModifier);
         }
-        #endregion 
+        #endregion
+
+        #region virtual tests
+        [TestMethod]
+        [TestCategory(VirtualCategory)]
+        public void Can_get_virtual_for_method()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public virtual string Bar1(){}
+  public string Bar2(){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Methods.ToArray();
+            Assert.IsTrue(methods[0].IsVirtual);
+            Assert.IsFalse(methods[0].IsAbstract);
+            Assert.IsFalse(methods[0].IsOverride);
+            Assert.IsFalse(methods[0].IsSealed);
+            Assert.IsFalse(methods[1].IsVirtual);
+            Assert.IsFalse(methods[1].IsAbstract);
+            Assert.IsFalse(methods[1].IsOverride);
+            Assert.IsFalse(methods[1].IsSealed);
+
+        }
+
+        [TestMethod]
+        [TestCategory(VirtualCategory)]
+        public void Can_get_virtual_for_property()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public virtual string Bar1{get;}
+  public string Bar2{get;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Properties.ToArray();
+            Assert.IsTrue(methods[0].IsVirtual);
+            Assert.IsFalse(methods[0].IsAbstract);
+            Assert.IsFalse(methods[0].IsOverride);
+            Assert.IsFalse(methods[0].IsSealed);
+            Assert.IsFalse(methods[1].IsVirtual);
+            Assert.IsFalse(methods[1].IsAbstract);
+            Assert.IsFalse(methods[1].IsOverride);
+            Assert.IsFalse(methods[1].IsSealed);
+
+        }
+
+        #endregion
+
+        #region override tests
+        [TestMethod]
+        [TestCategory(OverrideCategory)]
+        public void Can_get_override_for_method()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public override string Bar1(){}
+  public string Bar2(){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var properties = root.Classes.First().Methods.ToArray();
+            Assert.IsFalse(properties[0].IsVirtual);
+            Assert.IsFalse(properties[0].IsAbstract);
+            Assert.IsTrue(properties[0].IsOverride);
+            Assert.IsFalse(properties[0].IsSealed);
+            Assert.IsFalse(properties[1].IsVirtual);
+            Assert.IsFalse(properties[1].IsAbstract);
+            Assert.IsFalse(properties[1].IsOverride);
+            Assert.IsFalse(properties[1].IsSealed);
+
+        }
+
+        [TestMethod]
+        [TestCategory(OverrideCategory)]
+        public void Can_get_override_for_property()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public override string Bar1{get;}
+  public string Bar2{get;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var properties = root.Classes.First().Properties.ToArray();
+            Assert.IsFalse(properties[0].IsVirtual);
+            Assert.IsFalse(properties[0].IsAbstract);
+            Assert.IsTrue(properties[0].IsOverride);
+            Assert.IsFalse(properties[0].IsSealed);
+            Assert.IsFalse(properties[1].IsVirtual);
+            Assert.IsFalse(properties[1].IsAbstract);
+            Assert.IsFalse(properties[1].IsOverride);
+            Assert.IsFalse(properties[1].IsSealed);
+
+        }
+
+        #endregion
+
+        #region abstract tests
+        [TestMethod]
+        [TestCategory(AbstractCategory)]
+        public void Can_get_abstract_for_method()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public abstract string Bar1(){}
+  public string Bar2(){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Methods.ToArray();
+            Assert.IsFalse(methods[0].IsVirtual);
+            Assert.IsTrue(methods[0].IsAbstract);
+            Assert.IsFalse(methods[0].IsOverride);
+            Assert.IsFalse(methods[0].IsSealed);
+            Assert.IsFalse(methods[1].IsVirtual);
+            Assert.IsFalse(methods[1].IsAbstract);
+            Assert.IsFalse(methods[1].IsOverride);
+            Assert.IsFalse(methods[1].IsSealed);
+
+        }
+
+        [TestMethod]
+        [TestCategory(AbstractCategory)]
+        public void Can_get_abstract_for_property()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public abstract string Bar1{get;}
+  public string Bar2{get;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var properties = root.Classes.First().Properties.ToArray();
+            Assert.IsFalse(properties[0].IsVirtual);
+            Assert.IsTrue(properties[0].IsAbstract);
+            Assert.IsFalse(properties[0].IsOverride);
+            Assert.IsFalse(properties[0].IsSealed);
+            Assert.IsFalse(properties[1].IsVirtual);
+            Assert.IsFalse(properties[1].IsAbstract);
+            Assert.IsFalse(properties[1].IsOverride);
+            Assert.IsFalse(properties[1].IsSealed);
+
+        }
+
+        [TestMethod]
+        [TestCategory(AbstractCategory)]
+        public void Can_get_abstract_for_class()
+        {
+            var csharpCode = @"
+public abstract class Foo1{}
+public class Foo2{}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var classes = root.Classes.ToArray();
+            Assert.IsTrue(classes[0].IsAbstract);
+            Assert.IsFalse(classes[0].IsSealed);
+            Assert.IsFalse(classes[1].IsAbstract);
+            Assert.IsFalse(classes[1].IsSealed);
+
+        }
+
+        #endregion
+
+        #region sealed tests
+        [TestMethod]
+        [TestCategory(SealedCategory)]
+        public void Can_get_sealed_for_method()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public sealed string Bar1(){}
+  public string Bar2(){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Methods.ToArray();
+            Assert.IsFalse(methods[0].IsVirtual);
+            Assert.IsFalse(methods[0].IsAbstract);
+            Assert.IsFalse(methods[0].IsOverride);
+            Assert.IsTrue(methods[0].IsSealed);
+            Assert.IsFalse(methods[1].IsVirtual);
+            Assert.IsFalse(methods[1].IsAbstract);
+            Assert.IsFalse(methods[1].IsOverride);
+            Assert.IsFalse(methods[1].IsSealed);
+
+        }
+
+        [TestMethod]
+        [TestCategory(SealedCategory)]
+        public void Can_get_sealed_for_property()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public sealed string Bar1{get;}
+  public string Bar2{get;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var properties = root.Classes.First().Properties.ToArray();
+            Assert.IsFalse(properties[0].IsVirtual);
+            Assert.IsFalse(properties[0].IsAbstract);
+            Assert.IsFalse(properties[0].IsOverride);
+            Assert.IsTrue(properties[0].IsSealed);
+            Assert.IsFalse(properties[1].IsVirtual);
+            Assert.IsFalse(properties[1].IsAbstract);
+            Assert.IsFalse(properties[1].IsOverride);
+            Assert.IsFalse(properties[1].IsSealed);
+
+        }
+
+        [TestMethod]
+        [TestCategory(SealedCategory)]
+        public void Can_get_sealed_for_class()
+        {
+            var csharpCode = @"
+public sealed class Foo1{}
+public class Foo2{}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var classes = root.Classes.ToArray();
+            Assert.IsFalse(classes[0].IsAbstract);
+            Assert.IsTrue(classes[0].IsSealed);
+            Assert.IsFalse(classes[1].IsAbstract);
+            Assert.IsFalse(classes[1].IsSealed);
+
+        }
+
+        #endregion
+
+        #region new tests
+        [TestMethod]
+        [TestCategory(NewCategory)]
+        public void Can_get_new_for_method()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public new string Bar1(){}
+  public string Bar2(){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Methods.ToArray();
+            Assert.IsFalse(methods[0].IsVirtual);
+            Assert.IsFalse(methods[0].IsAbstract);
+            Assert.IsFalse(methods[0].IsOverride);
+            Assert.IsFalse(methods[0].IsSealed);
+            Assert.IsFalse(methods[1].IsVirtual);
+            Assert.IsFalse(methods[1].IsAbstract);
+            Assert.IsFalse(methods[1].IsOverride);
+            Assert.IsFalse(methods[1].IsSealed);
+
+        }
+
+        [TestMethod]
+        [TestCategory(NewCategory)]
+        public void Can_get_new_for_property()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public new string Bar1{get;}
+  public string Bar2{get;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Properties.ToArray();
+            Assert.IsFalse(methods[0].IsVirtual);
+            Assert.IsFalse(methods[0].IsAbstract);
+            Assert.IsFalse(methods[0].IsOverride);
+            Assert.IsFalse(methods[0].IsSealed);
+            Assert.IsFalse(methods[1].IsVirtual);
+            Assert.IsFalse(methods[1].IsAbstract);
+            Assert.IsFalse(methods[1].IsOverride);
+            Assert.IsFalse(methods[1].IsSealed);
+
+        }
+
+        #endregion
+
+        #region static tests
+        [TestMethod]
+        [TestCategory(StaticCategory)]
+        public void Can_get_static_for_field()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public static string Bar1;
+  public string Bar2
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var fields = root.Classes.First().Fields.ToArray();
+            Assert.IsTrue(fields[0].IsStatic);
+            Assert.IsFalse(fields[1].IsStatic);
+
+        }
+
+        [TestMethod]
+        [TestCategory(StaticCategory)]
+        public void Can_get_static_for_method()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public static abstract virtual override sealed string Bar1(){}
+  public string Bar2(){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Methods.ToArray();
+            Assert.IsTrue(methods[0].IsVirtual);
+            Assert.IsTrue(methods[0].IsAbstract);
+            Assert.IsTrue(methods[0].IsOverride);
+            Assert.IsTrue(methods[0].IsSealed);
+            Assert.IsTrue(methods[0].IsStatic);
+            Assert.IsFalse(methods[1].IsVirtual);
+            Assert.IsFalse(methods[1].IsAbstract);
+            Assert.IsFalse(methods[1].IsOverride);
+            Assert.IsFalse(methods[1].IsSealed);
+            Assert.IsFalse(methods[1].IsStatic);
+
+        }
+
+        [TestMethod]
+        [TestCategory(StaticCategory)]
+        public void Can_get_static_for_property()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public static string Bar1{get;}
+  public string Bar2{get;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var properties = root.Classes.First().Properties.ToArray();
+            Assert.IsFalse(properties[0].IsVirtual);
+            Assert.IsFalse(properties[0].IsAbstract);
+            Assert.IsFalse(properties[0].IsOverride);
+            Assert.IsFalse(properties[0].IsSealed);
+            Assert.IsTrue(properties[0].IsStatic);
+            Assert.IsFalse(properties[1].IsVirtual);
+            Assert.IsFalse(properties[1].IsAbstract);
+            Assert.IsFalse(properties[1].IsOverride);
+            Assert.IsFalse(properties[1].IsSealed);
+            Assert.IsFalse(properties[1].IsStatic);
+
+
+        }
+
+        [TestMethod]
+        [TestCategory(StaticCategory)]
+        public void Can_get_static_for_class()
+        {
+            var csharpCode = @"
+public abstract static class Foo1{}
+public class Foo2{}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var classes = root.Classes.ToArray();
+            Assert.IsTrue(classes[0].IsAbstract);
+            Assert.IsFalse(classes[0].IsSealed);
+            Assert.IsTrue(classes[0].IsStatic);
+            Assert.IsFalse(classes[1].IsAbstract);
+            Assert.IsFalse(classes[1].IsSealed);
+            Assert.IsFalse(classes[1].IsStatic);
+
+        }
+
+        #endregion
+
+        #region enum tests
+        [TestMethod]
+        [TestCategory(StaticCategory)]
+        public void Can_get_underlyig_type_for_enum()
+        {
+            var csharpCode = @"
+public enum Foo1 : byte {}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var en = root.Enums.First();
+            Assert.AreEqual("Byte", en.UnderlyingType.Name);
+            Assert.AreEqual("System.Byte", en.UnderlyingType.QualifiedName);
+
+        }
+        #endregion
+
+        #region implemented interfaces tests
+
+        private string csharpCodeForInterfaceTests = @"
+public class Foo1A : IFooA, IFooC { }
+public class Foo1B : Foo1A, IFooB, IFooC { }
+public class Foo1C : Foo1B {} 
+
+public struct Foo2A : IFooA, IFooC { }
+
+public interface IFoo3A : IFooA, IFooC { }
+public interface IFoo3B : IFoo3A, IFooB, IFooC { }
+public interface IFoo3C : IFoo3B {}
+
+public interface IFooA{}
+public interface IFooB{}
+public interface IFooC{}
+
+";
+
+
+        [TestMethod]
+        [TestCategory(ImplementedInterfacesCategory)]
+        public void Can_get_implemented_interfaces_for_class()
+        {
+            var root = RDomFactory.GetRootFromString(csharpCodeForInterfaceTests);
+            var classes = root.Classes.ToArray();
+            Assert.AreEqual(2, classes[0].ImplementedInterfaces.Count());
+            Assert.AreEqual(2, classes[1].ImplementedInterfaces.Count());
+            Assert.AreEqual(0, classes[2].ImplementedInterfaces.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(ImplementedInterfacesCategory)]
+        public void Can_get_all_implemented_interfaces_for_class()
+        {
+            var root = RDomFactory.GetRootFromString(csharpCodeForInterfaceTests);
+            var classes = root.Classes.ToArray();
+            Assert.AreEqual(2, classes[0].AllImplementedInterfaces.Count());
+            Assert.AreEqual(3, classes[1].AllImplementedInterfaces.Count());
+            Assert.AreEqual(3, classes[2].AllImplementedInterfaces.Count());
+        }
+
+
+        [TestMethod]
+        [TestCategory(ImplementedInterfacesCategory)]
+        public void Can_get_implemented_interfaces_for_structure()
+        {
+            var root = RDomFactory.GetRootFromString(csharpCodeForInterfaceTests);
+            var structures = root.Structures.ToArray();
+            Assert.AreEqual(2, structures[0].ImplementedInterfaces.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(ImplementedInterfacesCategory)]
+        public void Can_get_all_implemented_interfaces_for_structure()
+        {
+            var root = RDomFactory.GetRootFromString(csharpCodeForInterfaceTests);
+            var structures = root.Structures.ToArray();
+            Assert.AreEqual(2, structures[0].AllImplementedInterfaces.Count());
+        }
+
+
+        [TestMethod]
+        [TestCategory(ImplementedInterfacesCategory)]
+        public void Can_get_implemented_interfaces_for_interface()
+        {
+            var root = RDomFactory.GetRootFromString(csharpCodeForInterfaceTests);
+            var interfaces = root.Interfaces.ToArray();
+            Assert.AreEqual(2, interfaces[0].ImplementedInterfaces.Count());
+            Assert.AreEqual(3, interfaces[1].ImplementedInterfaces.Count());
+            Assert.AreEqual(1, interfaces[2].ImplementedInterfaces.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(ImplementedInterfacesCategory)]
+        public void Can_get_all_implemented_interfaces_for_interface()
+        {
+            var root = RDomFactory.GetRootFromString(csharpCodeForInterfaceTests);
+            var interfaces = root.Interfaces.ToArray();
+            Assert.AreEqual(2, interfaces[0].AllImplementedInterfaces.Count());
+            Assert.AreEqual(4, interfaces[1].AllImplementedInterfaces.Count());
+            Assert.AreEqual(5, interfaces[2].AllImplementedInterfaces.Count());
+        }
+
+        #endregion
+
+        #region base type tests
+        [TestMethod]
+        [TestCategory(BaseTypeCategory)]
+        public void Can_get_base_type_for_class()
+        {
+            var csharpCode = @"
+public class Foo1  {}
+public class Foo2 : Foo1 {}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var classes = root.Classes.ToArray();
+            Assert.IsNotNull(classes[0].BaseType);
+            Assert.AreEqual("System.Object", classes[0].BaseType.QualifiedName);
+            Assert.IsNotNull(classes[1].BaseType);
+            Assert.AreEqual("Foo1", classes[1].BaseType.QualifiedName);
+
+        }
+        #endregion
+
+        #region parameter tests
+        [TestMethod]
+        [TestCategory(ParameterAndMethodCategory)]
+        public void Can_get_parameters_for_methods_in_class()
+        {
+            var csharpCode = @"
+public class Foo  
+{
+   public string Foo1(){}
+   public string Foo2(int i){}
+   public string Foo3(int i, string s){}
+   public string Foo4(ref int i, out string s, params string[] moreStrings){}
+   public string Foo5(this A a, int i = 0, string s = ""){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Methods.ToArray();
+            Assert.AreEqual(0, methods[0].Parameters.Count());
+            Assert.AreEqual(1, methods[1].Parameters.Count());
+            Assert.AreEqual(2, methods[2].Parameters.Count());
+            Assert.AreEqual(3, methods[3].Parameters.Count());
+            ParameterCheck(methods[1].Parameters.First(), 0, "i", "Int32");
+            ParameterCheck(methods[2].Parameters.First(), 0, "i", "Int32");
+            ParameterCheck(methods[2].Parameters.Last(), 1, "s", "String");
+            var parameters = methods[3].Parameters.ToArray();
+            ParameterCheck(parameters[0], 0, "i", "Int32", isRef: true);
+            ParameterCheck(parameters[1], 1, "s", "String", isOut: true);
+            ParameterCheck(parameters[2], 2, "moreStrings", "String[]", isParamArray: true);
+            parameters = methods[4].Parameters.ToArray();
+            ParameterCheck(parameters[0], 0, "a", "A");
+            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true);
+            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true);
+
+        }
+
+        [TestMethod]
+        [TestCategory(ParameterAndMethodCategory)]
+        public void Can_get_param_array_type_name()
+        {
+            var csharpCode = @"
+public class Foo  
+{
+   public string Foo4(params string[] moreStrings){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var parameter = root.Classes.First().Methods.First().Parameters.First();
+            ParameterCheck(parameter, 0, "moreStrings", "String[]", isParamArray: true);
+
+        }
+
+        [TestMethod]
+        [TestCategory(ParameterAndMethodCategory)]
+        public void Can_get_parameters_for_extension_methods()
+        {
+            var csharpCode = @"
+public static class Foo  
+{
+   public static string Foo5(this A a, int i = 0, string s = ""){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
+            ParameterCheck(parameters[0], 0, "a", "A");
+            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true);
+            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true);
+
+        }
+
+        [TestMethod]
+        [TestCategory(ParameterAndMethodCategory)]
+        public void Can_determine_extension_method()
+        {
+            var csharpCode = @"
+public static class Foo  
+{
+   public static string Foo5(this A a, int i = 0, string s = ""){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var method = root.Classes.First().Methods.First();
+            Assert.IsTrue(method.IsExtensionMethod);
+
+        }
+
+        [TestMethod]
+        [TestCategory(ParameterAndMethodCategory)]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Throw_exception_on_attempt_to_get_qualified_name_of_parameter()
+        {
+            var csharpCode = @"
+public static class Foo  
+{
+   public static string Foo5(this A a, int i = 0, string s = ""){}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var method = root.Classes.First().Methods.First();
+            var name = method.Parameters.First().QualifiedName;
+        }
+        
+
+        private void ParameterCheck(IParameter parm, int ordinal, string name, string typeName,
+                bool isOut = false, bool isRef = false, bool isParamArray = false,
+                bool isOptional = false)
+        {
+            Assert.AreEqual(name, parm.Name);
+            Assert.AreEqual(typeName, parm.Type.Name);
+            Assert.AreEqual(isOut, parm.IsOut);
+            Assert.AreEqual(isRef, parm.IsRef);
+            Assert.AreEqual(isParamArray, parm.IsParamArray);
+            Assert.AreEqual(isOptional, parm.IsOptional);
+            Assert.AreEqual(ordinal, parm.Ordinal);
+        }
+        #endregion
     }
 }

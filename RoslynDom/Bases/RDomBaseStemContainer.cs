@@ -9,8 +9,9 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseStemContainer<T> : RDomSyntaxNodeBase<T>
+    public abstract class RDomBaseStemContainer<T, TSymbol> : RDomSyntaxNodeBase<T, TSymbol>
         where T : SyntaxNode
+        where TSymbol : ISymbol
     {
         private IEnumerable<IStemMember> _members;
         private IEnumerable<IUsing> _usings;

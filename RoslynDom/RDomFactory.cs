@@ -151,7 +151,13 @@ namespace RoslynDom
         }
         private static IMember MakeMethod(MethodDeclarationSyntax rawMethod)
         {
-            return new RDomMethod(rawMethod);
+            var parms = ListUtilities.MakeList(rawMethod, x => x.ParameterList.Parameters, x => MakeParameter(x));
+            return new RDomMethod(rawMethod, parms);
+        }
+
+        private static IParameter MakeParameter(ParameterSyntax rawParm)
+        {
+            return new RDomParameter(rawParm);
         }
 
         private static IMember MakeProperty(PropertyDeclarationSyntax rawProperty)

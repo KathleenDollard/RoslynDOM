@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,12 +14,16 @@ namespace RoslynDomTests
     public class FactoryTests
     {
         // Test categories
+        private const string GeneralFactoryCategory = "GeneralFactory";
         private const string SymbolCategory = "Symbol";
+        private const string TypedSymbolCategory = "TypedSymbol";
         private const string RawSyntaxCategory = "RawSyntax";
         private const string TypedSyntaxCategory = "TypedSyntax";
         private const string StemContainerCategory = "StemContainerSyntax";
 
+        #region general factory tests
         [TestMethod]
+        [TestCategory(GeneralFactoryCategory)]
         public void Can_get_root_from_file()
         {
             IRoot root = RDomFactory.GetRootFromFile(@"..\..\TestFile.cs");
@@ -27,6 +32,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(GeneralFactoryCategory)]
         public void Can_get_root_from_string()
         {
             var csharpCode = @"
@@ -40,6 +46,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(GeneralFactoryCategory)]
         public void Can_get_root_from_syntaxtree()
         {
             var csharpCode = @"
@@ -54,6 +61,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(GeneralFactoryCategory)]
         public void Can_get_root_from_string_with_invalid_code()
         {
             var csharpCode = @"
@@ -67,6 +75,7 @@ namespace RoslynDomTests
             Assert.IsNotNull(root);
             Assert.AreEqual(1, root.Namespaces.Count());
         }
+#endregion 
 
         #region symbol tests
         [TestMethod]
@@ -180,6 +189,19 @@ namespace RoslynDomTests
 
         [TestMethod]
         [TestCategory(SymbolCategory)]
+        public void Can_get_symbol_for_parameter()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myMethod(int x) { return x; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((IRoslynDom)root.Classes.First().Methods.First().Parameters.First()).Symbol;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("x", symbol.Name);
+        }
+
+        [TestMethod]
+        [TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_nestedType()
         {
             var csharpCode = @"
@@ -187,6 +209,131 @@ namespace RoslynDomTests
                         { public class MyNestedClass {  } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
             var symbol = ((IRoslynDom)root.Classes.First().Types.First()).Symbol;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("MyNestedClass", symbol.Name);
+        }
+        #endregion
+
+        #region typed symbol tests
+        [TestMethod]
+        [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_namespace()
+        {
+            var csharpCode = @"
+                        namespace testing.Namespace1
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomNamespace)root.Namespaces.First()).TypedSymbol as INamespaceSymbol ;
+            Assert.AreEqual("Namespace1", symbol.Name);
+            Assert.IsNotNull(symbol);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_class()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomClass)root.Classes.First()).TypedSymbol as INamedTypeSymbol;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("MyClass", symbol.Name);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_enum()
+        {
+            var csharpCode = @"
+                        public enum MyEnum
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomEnum )root.Enums.First()).TypedSymbol as INamedTypeSymbol ;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("MyEnum", symbol.Name);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_struct()
+        {
+            var csharpCode = @"
+                        public struct MyStruct
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomStructure )root.Structures.First()).TypedSymbol as INamedTypeSymbol;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("MyStruct", symbol.Name);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_interface()
+        {
+            var csharpCode = @"
+                        public interface MyInterface
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomInterface )root.Interfaces.First()).TypedSymbol as INamedTypeSymbol;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("MyInterface", symbol.Name);
+        }
+
+
+        [TestMethod]
+       [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_field()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myField; }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomField)root.Classes.First().Fields.First()).TypedSymbol as IFieldSymbol ;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("myField", symbol.Name);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_property()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myProperty { get; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomProperty)root.Classes.First().Properties.First()).TypedSymbol as IPropertySymbol;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("myProperty", symbol.Name);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_method()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public int myMethod(int x) { return x; } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomMethod)root.Classes.First().Methods.First()).TypedSymbol as IMethodSymbol;
+            Assert.IsNotNull(symbol);
+            Assert.AreEqual("myMethod", symbol.Name);
+        }
+
+        [TestMethod]
+        [TestCategory(TypedSymbolCategory)]
+        public void Can_get_typed_symbol_for_nestedType()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { public class MyNestedClass {  } }";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var symbol = ((RDomClass)root.Classes.First().Types.First()).TypedSymbol as INamedTypeSymbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyNestedClass", symbol.Name);
         }
@@ -262,7 +409,6 @@ namespace RoslynDomTests
             Assert.IsTrue(rawSyntax is InterfaceDeclarationSyntax);
         }
 
-
         [TestMethod]
         [TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_field()
@@ -313,6 +459,36 @@ namespace RoslynDomTests
             var rawSyntax = ((IRoslynDom)root.Classes.First().Types.First()).RawSyntax;
             Assert.IsNotNull(rawSyntax);
             Assert.IsTrue(rawSyntax is ClassDeclarationSyntax);
+        }
+
+        [TestMethod]
+        [TestCategory(RawSyntaxCategory)]
+        public void Can_get_rawSyntax_for_referencedType()
+        {
+            var csharpCode = @"
+                        public class Foo
+{
+public string Bar1;
+public string Bar2 {get;};
+public string Bar3() {};
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var field = root.Classes.First().Fields.First();
+            var retType = field.ReturnType;
+            var rawSyntax = retType.RawSyntax;
+            Assert.IsNotNull(rawSyntax, "field");
+            Assert.IsTrue(rawSyntax is ImmutableArray<SyntaxReference>, "field");
+            var property = root.Classes.First().Properties.First();
+            retType = property.ReturnType;
+            rawSyntax = retType.RawSyntax;
+            Assert.IsNotNull(rawSyntax, "property");
+            Assert.IsTrue(rawSyntax is ImmutableArray<SyntaxReference>, "property");
+            var method = root.Classes.First().Methods.First();
+            retType = method.ReturnType;
+            rawSyntax = retType.RawSyntax;
+            Assert.IsNotNull(rawSyntax, "method");
+            Assert.IsTrue(rawSyntax is ImmutableArray<SyntaxReference>, "method");
         }
         #endregion
 

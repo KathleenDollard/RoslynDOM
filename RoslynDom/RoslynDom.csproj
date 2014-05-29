@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bases\RDomBase.cs" />
-    <Compile Include="Bases\RDomBaseClassOrStructure.cs" />
+    <Compile Include="Bases\RDomBaseType.cs" />
     <Compile Include="Bases\RDomBaseStemContainer.cs" />
     <Compile Include="Implementations\RDomAttribute.cs" />
     <Compile Include="Implementations\RDomClass.cs" />
@@ -67,10 +67,12 @@
     <Compile Include="Implementations\RDomInterface.cs" />
     <Compile Include="Implementations\RDomMethod.cs" />
     <Compile Include="Implementations\RDomNamespace.cs" />
+    <Compile Include="Implementations\RDomParameter.cs" />
     <Compile Include="Implementations\RDomProperty.cs" />
     <Compile Include="Implementations\RDomReferencedType.cs" />
     <Compile Include="Implementations\RDomRoot.cs" />
     <Compile Include="Implementations\RDomStructure.cs" />
+    <Compile Include="Implementations\RDomTypeParameter.cs" />
     <Compile Include="Implementations\RDomUsing.cs" />
     <Compile Include="IRoslynDom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

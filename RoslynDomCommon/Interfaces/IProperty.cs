@@ -1,6 +1,7 @@
 namespace RoslynDom.Common
 {
-    public interface IProperty : ITypeMember  , IHasReturnType
+    public interface IProperty : IPropertyOrMethod
     {
+
     }
 }

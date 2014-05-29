@@ -88,11 +88,12 @@ namespace RoslynDom
         public abstract ISymbol Symbol { get; }
     }
 
-    public abstract class RDomBase<T> : RDomBase
+    public abstract class RDomBase<T, TSymbol> : RDomBase, IRoslynDom<T, TSymbol>
         where T : SyntaxNode
+        where TSymbol : ISymbol
     {
         private T _rawSyntax;
-        private ISymbol _symbol;
+        private TSymbol _symbol;
 
         protected RDomBase(T rawItem)
         {
@@ -112,6 +113,14 @@ namespace RoslynDom
         }
 
         public override ISymbol Symbol
+        {
+            get
+            {
+                return TypedSymbol;
+            }
+        }
+
+        public virtual TSymbol TypedSymbol
         {
             get
             {
@@ -157,7 +166,7 @@ namespace RoslynDom
         {
             get
             {
-                return  GetContainingNamespaceName(Symbol.ContainingNamespace);
+                return GetContainingNamespaceName(Symbol.ContainingNamespace);
                 //var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
                 //var typeName = GetContainingTypeName(Symbol.ContainingType);
                 //return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
@@ -167,15 +176,15 @@ namespace RoslynDom
         }
 
         internal string GetContainingNamespaceName(INamespaceSymbol nspaceSymbol)
-            // TODO: Change to assembly protected when it is available
+        // TODO: Change to assembly protected when it is available
         {
             if (nspaceSymbol == null) return "";
-            var parentName = GetContainingNamespaceName(nspaceSymbol.ContainingNamespace) ;
+            var parentName = GetContainingNamespaceName(nspaceSymbol.ContainingNamespace);
             return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
                 nspaceSymbol.Name;
         }
 
-        private string GetContainingTypeName(ITypeSymbol  typeSymbol)
+        private string GetContainingTypeName(ITypeSymbol typeSymbol)
         {
             if (typeSymbol == null) return "";
             var parentName = GetContainingTypeName(typeSymbol.ContainingType);
@@ -211,15 +220,17 @@ namespace RoslynDom
         }
 
 
-        protected ISymbol GetSymbol(SyntaxNode node)
+        protected TSymbol GetSymbol(SyntaxNode node)
         {
             var model = GetModel();
-            return model.GetDeclaredSymbol(node);
+            var symbol =  (TSymbol)model.GetDeclaredSymbol(node);
+            return symbol;
         }
     }
 
-    public abstract class RDomSyntaxNodeBase<T> : RDomBase<T>
-         where T : SyntaxNode
+    public abstract class RDomSyntaxNodeBase<T, TSymbol> : RDomBase<T, TSymbol>
+        where T : SyntaxNode
+        where TSymbol : ISymbol
     {
         // TODO: Consider why this isn't collapsed into the RDomBase<T>
         private T _rawItem;

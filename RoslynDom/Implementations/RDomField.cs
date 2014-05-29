@@ -19,7 +19,7 @@ namespace RoslynDom
     /// obviously). At that point, the variable declaration will need to be held in
     /// the class. 
     /// </remarks>
-    public class RDomField : RDomSyntaxNodeBase<FieldDeclarationSyntax>, IField
+    public class RDomField : RDomSyntaxNodeBase<FieldDeclarationSyntax, IFieldSymbol>, IField
     {
         private VariableDeclaratorSyntax _varSyntax;
 
@@ -77,12 +77,27 @@ namespace RoslynDom
             }
         }
 
+        public override IFieldSymbol TypedSymbol
+        {
+            get
+            {
+                return base.GetSymbol(variableDeclaration);
+            }
+        }
+
         public IReferencedType ReturnType
         {
             get
             {
-                var localSymbol = Symbol as IFieldSymbol ;
-                return new RDomReferencedType(localSymbol.DeclaringSyntaxReferences, localSymbol.Type);
+                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
+            }
+        }
+
+        public bool IsStatic
+        {
+            get
+            {
+                return Symbol.IsStatic;
             }
         }
     }

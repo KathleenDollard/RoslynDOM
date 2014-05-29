@@ -12,4 +12,13 @@ namespace RoslynDom
     {
         ISymbol Symbol { get; }
     }
+
+    public interface IRoslynDom<TSyntax, TSymbol> : IDom
+        where TSyntax : SyntaxNode
+        where TSymbol : ISymbol
+    {
+        TSymbol TypedSymbol { get; }
+        TSyntax TypedSyntax { get; }
+    }
 }
+

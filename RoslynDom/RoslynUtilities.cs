@@ -14,53 +14,65 @@ namespace RoslynDom
     {
         internal static string NameFrom(this SyntaxNode node)
         {
-            var nameNode = node.ChildNodes()
-                                      .OfType<NameSyntax>()
+            var qualifiedNameNode = node.ChildNodes()
+                                      .OfType<QualifiedNameSyntax>()
                                       .SingleOrDefault();
-            if (nameNode != null)
+            var identifierNameNode = node.ChildNodes()
+                               .OfType<IdentifierNameSyntax >()
+                               .SingleOrDefault();
+            var name = "";
+            if (qualifiedNameNode != null)
             {
-                return NameFrom(nameNode);
+                name = name + qualifiedNameNode.ToString();
             }
+            if (identifierNameNode != null)
+            {
+                var identifierName = identifierNameNode.ToString();
+                if (!(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(identifierName)))
+                    { name += "."; }
+                name = name += identifierName ;
+            }
+            if (!string.IsNullOrWhiteSpace(name)) return name;
             var nameToken = node.ChildTokens()
                                       .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
                                       .SingleOrDefault();
             return nameToken.ValueText;
         }
 
-        internal static string NameFrom(this SyntaxToken token)
-        {
-            if (token.CSharpKind() != SyntaxKind.IdentifierToken)
-            {
-                throw new InvalidOperationException();
-            }
-            return token.ValueText;
-        }
+        //internal static string NameFrom(this SyntaxToken token)
+        //{
+        //    if (token.CSharpKind() != SyntaxKind.IdentifierToken)
+        //    {
+        //        throw new InvalidOperationException();
+        //    }
+        //    return token.ValueText;
+        //}
 
-        /// <summary>
-        /// Return the simple name without any qualifiers
-        /// </summary>
-        /// <param name="nameSyntax"></param>
-        /// <returns></returns>
-        internal static string NameFrom(this NameSyntax nameSyntax)
-        {
-            return nameSyntax.ToString().Replace("@", "");
-        }
+        ///// <summary>
+        ///// Return the simple name without any qualifiers
+        ///// </summary>
+        ///// <param name="nameSyntax"></param>
+        ///// <returns></returns>
+        //internal static string NameFrom(this NameSyntax nameSyntax)
+        //{
+        //    return nameSyntax.ToString().Replace("@", "");
+        //}
 
-        internal static string NestedNameFrom(this SyntaxNode node)
-        {
-            var realParent = node.Parent;
-            if (realParent is CompilationUnitSyntax || realParent is NamespaceDeclarationSyntax)
-            { return node.NameFrom(); }
-            return realParent.NestedNameFrom() + "." + node.NameFrom();
-        }
-
-        //internal static string QualifiedNameFrom(this SyntaxNode node)
+        //internal static string NestedNameFrom(this SyntaxNode node)
         //{
         //    var realParent = node.Parent;
-        //    if (realParent is CompilationUnitSyntax)
+        //    if (realParent is CompilationUnitSyntax || realParent is NamespaceDeclarationSyntax)
         //    { return node.NameFrom(); }
-        //    return realParent.QualifiedNameFrom() + "." + node.NameFrom();
+        //    return realParent.NestedNameFrom() + "." + node.NameFrom();
         //}
+
+        ////internal static string QualifiedNameFrom(this SyntaxNode node)
+        ////{
+        ////    var realParent = node.Parent;
+        ////    if (realParent is CompilationUnitSyntax)
+        ////    { return node.NameFrom(); }
+        ////    return realParent.QualifiedNameFrom() + "." + node.NameFrom();
+        ////}
 
     }
 }

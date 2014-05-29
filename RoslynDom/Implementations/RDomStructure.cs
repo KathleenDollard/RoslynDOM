@@ -47,5 +47,29 @@ namespace RoslynDom
             get
             { return Members.OfType<IEnum>(); }
         }
+
+        public IEnumerable<ITypeParameter> TypeParameters
+        {
+            get
+            {
+                return this.TypedSymbol.TypeParametersFrom();
+            }
+        }
+
+        public IEnumerable<IReferencedType> ImplementedInterfaces
+        {
+            get
+            {
+                return this.ImpementedInterfacesFrom(false);
+            }
+        }
+
+        public IEnumerable<IReferencedType> AllImplementedInterfaces
+        {
+            get
+            {
+                return this.ImpementedInterfacesFrom(true);
+            }
+        }
     }
 }

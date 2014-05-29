@@ -39,10 +39,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseInterfaces\IPropertyOrMethod.cs" />
+    <Compile Include="CharacteristicInterfaces\ICanBeStatic.cs" />
     <Compile Include="CharacteristicInterfaces\IHasAccessModifier.cs" />
-    <Compile Include="AccessModifier.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasImplementedInterfaces.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasTypeParameters.cs" />
+    <Compile Include="Enums\Variance.cs" />
+    <Compile Include="Enums\AccessModifier.cs" />
     <Compile Include="Interfaces\IAttribute.cs" />
     <Compile Include="Interfaces\IClass.cs" />
+    <Compile Include="Interfaces\IParameter.cs" />
     <Compile Include="Interfaces\IReferecedType.cs" />
     <Compile Include="BaseInterfaces\IType.cs" />
     <Compile Include="Interfaces\IEnum.cs" />
@@ -62,6 +68,7 @@
     <Compile Include="Interfaces\IStructure.cs" />
     <Compile Include="BaseInterfaces\ITypeMember.cs" />
     <Compile Include="BaseInterfaces\ITypeMemberContainer.cs" />
+    <Compile Include="Interfaces\ITypeParameter.cs" />
     <Compile Include="Interfaces\IUsing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

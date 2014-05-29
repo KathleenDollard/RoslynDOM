@@ -22,6 +22,7 @@ namespace RoslynDom
             _symbol = symbol;
         }
 
+
         public override object RawSyntax
         {
             get
@@ -40,7 +41,10 @@ namespace RoslynDom
         {
             get
             {
-                return Symbol.Name;
+                var arraySymbol = Symbol as IArrayTypeSymbol;
+                if (arraySymbol == null) { return Symbol.Name; }
+                // CSharp specific
+                return arraySymbol.ElementType.Name + "[]";
             }
         }
 
@@ -84,15 +88,16 @@ namespace RoslynDom
         internal string GetContainingNamespaceName(INamespaceSymbol nspaceSymbol)
         // TODO: Change to assembly protected when it is available
         {
-            if (nspaceSymbol == null) return "";
+            if (nspaceSymbol == null  ) return "";
             var parentName = GetContainingNamespaceName(nspaceSymbol.ContainingNamespace);
-            return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
-                nspaceSymbol.Name;
+            if (!string.IsNullOrWhiteSpace(parentName))
+            { parentName = parentName + "."; }
+            return  parentName +                 nspaceSymbol.Name;
         }
 
         private string GetContainingTypeName(ITypeSymbol typeSymbol)
         {
-            if (typeSymbol == null) return "";
+            if (typeSymbol == null || typeSymbol.Kind == SymbolKind.ErrorType) return "";
             var parentName = GetContainingTypeName(typeSymbol.ContainingType);
             return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
                 typeSymbol.Name;

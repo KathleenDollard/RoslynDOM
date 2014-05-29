@@ -10,7 +10,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomEnum : RDomSyntaxNodeBase<EnumDeclarationSyntax>, IEnum
+    public class RDomEnum : RDomSyntaxNodeBase<EnumDeclarationSyntax, ISymbol>, IEnum
     {
         internal RDomEnum(EnumDeclarationSyntax rawItem) : base(rawItem) { }
 
@@ -28,6 +28,17 @@ namespace RoslynDom
             {
                 Accessibility accessibility = Symbol.DeclaredAccessibility;
                 return (AccessModifier)accessibility;
+            }
+        }
+
+        public IReferencedType UnderlyingType
+        {
+            get
+            {
+                var symbol = Symbol as INamedTypeSymbol;
+                var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType ;
+                var ret = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
+                return ret;
             }
         }
     }

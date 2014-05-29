@@ -9,9 +9,13 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomMethod : RDomSyntaxNodeBase<MethodDeclarationSyntax>, IMethod
+    public class RDomMethod : RDomSyntaxNodeBase<MethodDeclarationSyntax, IMethodSymbol>, IMethod
     {
-        internal RDomMethod(MethodDeclarationSyntax rawItem) : base(rawItem) { }
+        private IEnumerable<IParameter > _parameters;
+        internal RDomMethod(MethodDeclarationSyntax rawItem, IEnumerable<IParameter> parametrs) : base(rawItem)
+        {
+            _parameters = parametrs;
+        }
 
         public IEnumerable<IAttribute> Attributes
         {
@@ -50,8 +54,71 @@ namespace RoslynDom
         {
             get
             {
-                var localSymbol = Symbol as IMethodSymbol;
-                return new RDomReferencedType(localSymbol.DeclaringSyntaxReferences , localSymbol.ReturnType );
+                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences , TypedSymbol.ReturnType );
+            }
+        }
+
+        public bool IsAbstract
+        {
+            get
+            {
+                return Symbol.IsAbstract;
+            }
+        }
+
+        public bool IsVirtual
+        {
+            get
+            {
+                return Symbol.IsVirtual;
+            }
+        }
+
+        public bool IsOverride
+        {
+            get
+            {
+                return Symbol.IsOverride;
+            }
+        }
+
+        public bool IsSealed
+        {
+            get
+            {
+                return Symbol.IsSealed;
+            }
+        }
+
+        public bool IsStatic
+        {
+            get
+            {
+                return Symbol.IsStatic;
+            }
+        }
+
+        public IEnumerable<ITypeParameter> TypeParameters
+        {
+            get
+            {
+                return this.TypedSymbol.TypeParametersFrom();
+            }
+        }
+
+        public IEnumerable<IParameter> Parameters
+        {
+            get
+            {
+                return _parameters;
+            }
+        }
+
+        public bool IsExtensionMethod
+        {
+            get
+            {
+                return TypedSymbol.IsExtensionMethod;
             }
         }
     }

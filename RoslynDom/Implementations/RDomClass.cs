@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -54,5 +55,60 @@ namespace RoslynDom
             { return Members.OfType<IEnum>(); }
         }
 
+        public bool IsAbstract
+        {
+            get
+            {
+                return Symbol.IsAbstract;
+            }
+        }
+
+        public bool IsSealed
+        {
+            get
+            {
+                return Symbol.IsSealed;
+            }
+        }
+
+        public bool IsStatic
+        {
+            get
+            {
+                return Symbol.IsStatic;
+            }
+        }
+
+        public IEnumerable<ITypeParameter> TypeParameters
+        {
+            get
+            {
+                return this.TypedSymbol.TypeParametersFrom();
+            }
+        }
+
+        public IReferencedType BaseType
+        {
+            get
+            {
+                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType );
+            }
+        }
+
+        public IEnumerable<IReferencedType> ImplementedInterfaces
+        {
+            get
+            {
+                return this.ImpementedInterfacesFrom(false);
+            }
+        }
+
+        public IEnumerable<IReferencedType> AllImplementedInterfaces
+        {
+            get
+            {
+                return this.ImpementedInterfacesFrom(true);
+            }
+        }
     }
 }

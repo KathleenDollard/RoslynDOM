@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface IStructure :IType, INestedContainer, ITypeMemberContainer
+    public interface IStructure :IType, INestedContainer, ITypeMemberContainer, IHasTypeParameters, IHasImplementedInterfaces
     {
     }
 }
