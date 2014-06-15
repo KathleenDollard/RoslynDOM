@@ -21,7 +21,7 @@ namespace RoslynDom
             IEnumerable<ITypeMember> members)
             : base(rawItem, members)
         { }
-  
+
         public IEnumerable<IClass> Classes
         {
             get
@@ -91,7 +91,7 @@ namespace RoslynDom
         {
             get
             {
-                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType );
+                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType);
             }
         }
 
@@ -104,11 +104,8 @@ namespace RoslynDom
         }
 
         public IEnumerable<IReferencedType> AllImplementedInterfaces
-        {
-            get
-            {
-                return this.ImpementedInterfacesFrom(true);
-            }
-        }
+        { get { return this.ImpementedInterfacesFrom(true); } }
+
+        public string ClassName { get { return this.Name; } }
     }
 }

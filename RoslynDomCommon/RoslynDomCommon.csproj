@@ -44,8 +44,10 @@
     <Compile Include="CharacteristicInterfaces\IHasAccessModifier.cs" />
     <Compile Include="CharacteristicInterfaces\IHasImplementedInterfaces.cs" />
     <Compile Include="CharacteristicInterfaces\IHasTypeParameters.cs" />
+    <Compile Include="Enums\LiteralType.cs" />
     <Compile Include="Enums\Variance.cs" />
     <Compile Include="Enums\AccessModifier.cs" />
+    <Compile Include="Interfaces\IAttributeValue.cs" />
     <Compile Include="Interfaces\IAttribute.cs" />
     <Compile Include="Interfaces\IClass.cs" />
     <Compile Include="Interfaces\IParameter.cs" />

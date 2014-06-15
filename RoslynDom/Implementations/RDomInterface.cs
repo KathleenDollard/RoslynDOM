@@ -22,14 +22,6 @@ namespace RoslynDom
             }
         }
 
-        public IEnumerable<IAttribute> Attributes
-        {
-            get
-            {
-                return this.AttributesFrom();
-            }
-        }
-
         public IEnumerable<IReferencedType> ImplementedInterfaces
         {
             get

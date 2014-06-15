@@ -60,6 +60,7 @@
     <Compile Include="Bases\RDomBase.cs" />
     <Compile Include="Bases\RDomBaseType.cs" />
     <Compile Include="Bases\RDomBaseStemContainer.cs" />
+    <Compile Include="Implementations\RDomAttributeValue.cs" />
     <Compile Include="Implementations\RDomAttribute.cs" />
     <Compile Include="Implementations\RDomClass.cs" />
     <Compile Include="Implementations\RDomEnum.cs" />

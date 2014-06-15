@@ -17,9 +17,7 @@ namespace RoslynDom
         public IEnumerable<IAttribute> Attributes
         {
             get
-            {
-                return this.AttributesFrom();
-            }
+            { return GetAttributes(); }
         }
 
         public AccessModifier AccessModifier

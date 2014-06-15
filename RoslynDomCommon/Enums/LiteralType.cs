@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IStemMember : IMember
+    public enum LiteralType
     {
+        Unknown = 0,
+        Numeric,
+        Boolean,
+        String,
+        Type
     }
 }

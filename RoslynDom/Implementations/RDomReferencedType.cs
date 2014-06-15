@@ -18,24 +18,25 @@ namespace RoslynDom
 
         internal RDomReferencedType(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
         {
+            var named = symbol as INamedTypeSymbol;
+            var typeParam = symbol as ITypeParameterSymbol;
+            var arrayTypeParam = symbol as IArrayTypeSymbol;
+            if (named == null && typeParam == null && arrayTypeParam == null)
+            { System.Diagnostics.Debugger.Break(); }
             _raw = raw;
             _symbol = symbol;
         }
 
 
-        public override object RawSyntax
+        public override object RawItem
         {
+            // I want to understand how people are using this before exposing it
             get
-            { return _raw; }
+            { throw new NotImplementedException(); }
         }
 
         public override ISymbol Symbol
-        {
-            get
-            {
-                return _symbol;
-            }
-        }
+        {            get            {                return _symbol;            }        }
 
         public override string Name
         {
@@ -64,6 +65,7 @@ namespace RoslynDom
         {
             get
             {
+                //return Symbol.ToDisplayString();
                 var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
                 var typeName = GetContainingTypeName(Symbol.ContainingType);
                 namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
@@ -88,11 +90,11 @@ namespace RoslynDom
         internal string GetContainingNamespaceName(INamespaceSymbol nspaceSymbol)
         // TODO: Change to assembly protected when it is available
         {
-            if (nspaceSymbol == null  ) return "";
+            if (nspaceSymbol == null) return "";
             var parentName = GetContainingNamespaceName(nspaceSymbol.ContainingNamespace);
             if (!string.IsNullOrWhiteSpace(parentName))
             { parentName = parentName + "."; }
-            return  parentName +                 nspaceSymbol.Name;
+            return parentName + nspaceSymbol.Name;
         }
 
         private string GetContainingTypeName(ITypeSymbol typeSymbol)
@@ -103,5 +105,9 @@ namespace RoslynDom
                 typeSymbol.Name;
         }
 
+        public override object RequestValue( string name)
+        {  // This is temporary so I know how this is used. Probably can just be removed and fallback to base
+            throw new NotImplementedException();
+        }
     }
 }

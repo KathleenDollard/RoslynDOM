@@ -14,12 +14,7 @@ namespace RoslynDom
         internal RDomProperty(PropertyDeclarationSyntax rawItem) : base(rawItem) { }
 
         public IEnumerable<IAttribute> Attributes
-        {
-            get
-            {
-                return this.AttributesFrom();
-            }
-        }
+        { get { return GetAttributes(); } }
 
         public AccessModifier AccessModifier
         {
@@ -31,69 +26,36 @@ namespace RoslynDom
         }
 
         public override string QualifiedName
-        {
-            get
-            {
-                // TODO: Manage static member's qualified names
-                throw new InvalidOperationException("You can't get qualified name for an instance property");
-            }
-        }
-        
+        { get { throw new InvalidOperationException("You can't get qualified name for an instance property"); } }
+
         public override string Namespace
-        {
-            get
-            {
-                throw new InvalidOperationException("You can't get namespace for an instance method");
-            }
-        }
+        { get { throw new InvalidOperationException("You can't get namespace for an instance method"); } }
 
         public IReferencedType ReturnType
         {
-                get
-                {
-                    return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences , TypedSymbol.Type);
-                }
+            get
+            {
+                //var info = GetTypeInfo(TypedSyntax.Type );
+                var refType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
+                INamedTypeSymbol namedTypeSymbol = refType.Symbol as INamedTypeSymbol;
+                return refType;
             }
+        }
 
         public bool IsAbstract
-        {
-            get
-            {
-                return Symbol.IsAbstract;
-            }
-        }
+        { get { return Symbol.IsAbstract; } }
 
         public bool IsVirtual
-        {
-            get
-            {
-                return Symbol.IsVirtual;
-            }
-        }
+        { get { return Symbol.IsVirtual; } }
 
         public bool IsOverride
-        {
-            get
-            {
-                return Symbol.IsOverride;
-            }
-        }
+        { get { return Symbol.IsOverride; } }
 
         public bool IsSealed
-        {
-            get
-            {
-                return Symbol.IsSealed;
-            }
-        }
+        { get { return Symbol.IsSealed; } }
 
         public bool IsStatic
-        {
-            get
-            {
-                return Symbol.IsStatic;
-            }
-        }
+        { get { return Symbol.IsStatic; } }
 
         /// <summary>
         /// 
@@ -106,11 +68,15 @@ namespace RoslynDom
         /// Can't test until VB is active
         /// </remarks>
         public IEnumerable<IParameter> Parameters
+        { get { throw new NotImplementedException(); } }
+
+        public override object RequestValue(string name)
         {
-            get
+            if (name == "TypeName")
             {
-                throw new NotImplementedException();
+                return ReturnType.QualifiedName;
             }
+            return base.RequestValue(name);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace RoslynDomTests
         private const string GeneralFactoryCategory = "GeneralFactory";
         private const string SymbolCategory = "Symbol";
         private const string TypedSymbolCategory = "TypedSymbol";
-        private const string RawSyntaxCategory = "RawSyntax";
+        private const string RawSyntaxCategory = "RawItem";
         private const string TypedSyntaxCategory = "TypedSyntax";
         private const string StemContainerCategory = "StemContainerSyntax";
 
@@ -339,7 +339,7 @@ namespace RoslynDomTests
         }
         #endregion
 
-        #region rawSyntax tests
+        #region RawItem tests
         [TestMethod]
         [TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_namespace()
@@ -349,8 +349,8 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Namespaces.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
+            var RawItem = ((IRoslynDom)root.Namespaces.First()).RawItem;
+            Assert.IsNotNull(RawItem);
         }
 
         [TestMethod]
@@ -362,9 +362,9 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Classes.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
-            Assert.IsTrue(rawSyntax is ClassDeclarationSyntax);
+            var RawItem = ((IRoslynDom)root.Classes.First()).RawItem;
+            Assert.IsNotNull(RawItem);
+            Assert.IsTrue(RawItem is ClassDeclarationSyntax);
         }
 
         [TestMethod]
@@ -376,9 +376,9 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Enums.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
-            Assert.IsTrue(rawSyntax is EnumDeclarationSyntax);
+            var RawItem = ((IRoslynDom)root.Enums.First()).RawItem;
+            Assert.IsNotNull(RawItem);
+            Assert.IsTrue(RawItem is EnumDeclarationSyntax);
         }
 
         [TestMethod]
@@ -390,9 +390,9 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Structures.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
-            Assert.IsTrue(rawSyntax is StructDeclarationSyntax);
+            var RawItem = ((IRoslynDom)root.Structures.First()).RawItem;
+            Assert.IsNotNull(RawItem);
+            Assert.IsTrue(RawItem is StructDeclarationSyntax);
         }
 
         [TestMethod]
@@ -404,9 +404,9 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Interfaces.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
-            Assert.IsTrue(rawSyntax is InterfaceDeclarationSyntax);
+            var RawItem = ((IRoslynDom)root.Interfaces.First()).RawItem;
+            Assert.IsNotNull(RawItem);
+            Assert.IsTrue(RawItem is InterfaceDeclarationSyntax);
         }
 
         [TestMethod]
@@ -417,9 +417,9 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myField; }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Classes.First().Fields.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
-            Assert.IsTrue(rawSyntax is FieldDeclarationSyntax);
+            var RawItem = ((IRoslynDom)root.Classes.First().Fields.First()).RawItem;
+            Assert.IsNotNull(RawItem);
+            Assert.IsTrue(RawItem is FieldDeclarationSyntax);
         }
 
         [TestMethod]
@@ -430,9 +430,9 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myProperty { get; } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Classes.First().Properties.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
-            Assert.IsTrue(rawSyntax is PropertyDeclarationSyntax);
+            var RawItem = ((IRoslynDom)root.Classes.First().Properties.First()).RawItem;
+            Assert.IsNotNull(RawItem);
+            Assert.IsTrue(RawItem is PropertyDeclarationSyntax);
         }
 
         [TestMethod]
@@ -443,9 +443,9 @@ namespace RoslynDomTests
                         public class MyClass
                         { public int myMethod(int x) { return x; } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Classes.First().Methods.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
-            Assert.IsTrue(rawSyntax is MethodDeclarationSyntax);
+            var RawItem = ((IRoslynDom)root.Classes.First().Methods.First()).RawItem;
+            Assert.IsNotNull(RawItem);
+            Assert.IsTrue(RawItem is MethodDeclarationSyntax);
         }
 
         [TestMethod]
@@ -456,9 +456,9 @@ namespace RoslynDomTests
                         public class MyClass
                         { public class MyNestedClass {  } }";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var rawSyntax = ((IRoslynDom)root.Classes.First().Types.First()).RawSyntax;
-            Assert.IsNotNull(rawSyntax);
-            Assert.IsTrue(rawSyntax is ClassDeclarationSyntax);
+            var RawItem = ((IRoslynDom)root.Classes.First().Types.First()).RawItem;
+            Assert.IsNotNull(RawItem);
+            Assert.IsTrue(RawItem is ClassDeclarationSyntax);
         }
 
         [TestMethod]
@@ -473,22 +473,23 @@ public string Bar2 {get;};
 public string Bar3() {};
 }
 ";
+            Assert.Inconclusive();
             var root = RDomFactory.GetRootFromString(csharpCode);
             var field = root.Classes.First().Fields.First();
             var retType = field.ReturnType;
-            var rawSyntax = retType.RawSyntax;
-            Assert.IsNotNull(rawSyntax, "field");
-            Assert.IsTrue(rawSyntax is ImmutableArray<SyntaxReference>, "field");
+            var RawItem = retType.RawItem;
+            Assert.IsNotNull(RawItem, "field");
+            Assert.IsTrue(RawItem is ImmutableArray<SyntaxReference>, "field");
             var property = root.Classes.First().Properties.First();
             retType = property.ReturnType;
-            rawSyntax = retType.RawSyntax;
-            Assert.IsNotNull(rawSyntax, "property");
-            Assert.IsTrue(rawSyntax is ImmutableArray<SyntaxReference>, "property");
+            RawItem = retType.RawItem;
+            Assert.IsNotNull(RawItem, "property");
+            Assert.IsTrue(RawItem is ImmutableArray<SyntaxReference>, "property");
             var method = root.Classes.First().Methods.First();
             retType = method.ReturnType;
-            rawSyntax = retType.RawSyntax;
-            Assert.IsNotNull(rawSyntax, "method");
-            Assert.IsTrue(rawSyntax is ImmutableArray<SyntaxReference>, "method");
+            RawItem = retType.RawItem;
+            Assert.IsNotNull(RawItem, "method");
+            Assert.IsTrue(RawItem is ImmutableArray<SyntaxReference>, "method");
         }
         #endregion
 

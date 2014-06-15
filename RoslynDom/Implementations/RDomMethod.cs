@@ -11,19 +11,15 @@ namespace RoslynDom
 {
     public class RDomMethod : RDomSyntaxNodeBase<MethodDeclarationSyntax, IMethodSymbol>, IMethod
     {
-        private IEnumerable<IParameter > _parameters;
+        private IEnumerable<IParameter> _parameters;
         internal RDomMethod(MethodDeclarationSyntax rawItem, IEnumerable<IParameter> parametrs) : base(rawItem)
         {
             _parameters = parametrs;
         }
 
         public IEnumerable<IAttribute> Attributes
-        {
-            get
-            {
-                return this.AttributesFrom();
-            }
-        }
+        { get { return GetAttributes(); } }
+
         public AccessModifier AccessModifier
         {
             get
@@ -34,92 +30,50 @@ namespace RoslynDom
         }
 
         public override string QualifiedName
-        {
-            get
-            {
-                // TODO: Manage static member's qualified names
-                throw new InvalidOperationException("You can't get qualified name for an instance method");
-            }
-        }
+        { get { throw new InvalidOperationException("You can't get qualified name for an instance method"); } }
 
         public override string Namespace
-        {
-            get
-            {
-                throw new InvalidOperationException("You can't get namespace for an instance method");
-            }
-        }
+        { get { throw new InvalidOperationException("You can't get namespace for an instance method"); } }
 
         public IReferencedType ReturnType
         {
             get
             {
-                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences , TypedSymbol.ReturnType );
+                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.ReturnType);
             }
         }
 
         public bool IsAbstract
-        {
-            get
-            {
-                return Symbol.IsAbstract;
-            }
-        }
+        { get { return Symbol.IsAbstract; } }
 
         public bool IsVirtual
-        {
-            get
-            {
-                return Symbol.IsVirtual;
-            }
-        }
+        { get { return Symbol.IsVirtual; } }
 
         public bool IsOverride
-        {
-            get
-            {
-                return Symbol.IsOverride;
-            }
-        }
+        { get { return Symbol.IsOverride; } }
 
         public bool IsSealed
-        {
-            get
-            {
-                return Symbol.IsSealed;
-            }
-        }
+        { get { return Symbol.IsSealed; } }
 
         public bool IsStatic
-        {
-            get
-            {
-                return Symbol.IsStatic;
-            }
-        }
+        { get { return Symbol.IsStatic; } }
 
         public IEnumerable<ITypeParameter> TypeParameters
-        {
-            get
-            {
-                return this.TypedSymbol.TypeParametersFrom();
-            }
-        }
+        { get { return this.TypedSymbol.TypeParametersFrom(); } }
 
         public IEnumerable<IParameter> Parameters
-        {
-            get
-            {
-                return _parameters;
-            }
-        }
+        { get { return _parameters; } }
 
         public bool IsExtensionMethod
+        { get { return TypedSymbol.IsExtensionMethod; } }
+
+        public override object RequestValue(string name)
         {
-            get
+            if (name == "TypeName")
             {
-                return TypedSymbol.IsExtensionMethod;
+                return ReturnType.QualifiedName;
             }
+            return base.RequestValue(name);
         }
     }
 }

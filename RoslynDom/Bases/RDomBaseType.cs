@@ -13,6 +13,7 @@ namespace RoslynDom
         where T : SyntaxNode
     {
         private IEnumerable<ITypeMember> _members;
+        private IEnumerable<IAttribute> _attributes;
         internal RDomBaseType(
             T rawItem,
             IEnumerable<ITypeMember> members)
@@ -46,9 +47,7 @@ namespace RoslynDom
         public IEnumerable<IAttribute> Attributes
         {
             get
-            {
-                return this.AttributesFrom();
-            }
+            {                return GetAttributes();            }
         }
 
         public AccessModifier AccessModifier

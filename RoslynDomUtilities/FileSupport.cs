@@ -14,7 +14,7 @@ namespace RoslynDom.Common
                 string startDirectory,
                 bool includeSubdirectories = false)
         {
-  
+
             var options = includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
             return Directory.GetFiles(startDirectory, pattern, options);
         }
@@ -32,7 +32,7 @@ namespace RoslynDom.Common
         {
             // I want to isolate this for fear I've got trouble with unicode as I localize
             // and because I want not finding the file to return null
-            if (File.Exists(path))           return File.ReadAllText(path);
+            if (File.Exists(path)) return File.ReadAllText(path);
             return null;
         }
     }

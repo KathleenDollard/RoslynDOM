@@ -23,7 +23,7 @@ namespace RoslynDom
         /// <remarks>
         /// Return type is object, not SyntaxNode to match interface
         /// </remarks>
-        public abstract object RawSyntax { get; }
+        public abstract object RawItem { get; }
 
         /// <summary>
         /// For a discussion of names <see cref="OuterName"/>
@@ -86,6 +86,8 @@ namespace RoslynDom
         public abstract string Namespace { get; }
 
         public abstract ISymbol Symbol { get; }
+
+        public abstract object RequestValue( string name);
     }
 
     public abstract class RDomBase<T, TSymbol> : RDomBase, IRoslynDom<T, TSymbol>
@@ -94,6 +96,7 @@ namespace RoslynDom
     {
         private T _rawSyntax;
         private TSymbol _symbol;
+        private IEnumerable<IAttribute> _attributes;
 
         protected RDomBase(T rawItem)
         {
@@ -106,7 +109,7 @@ namespace RoslynDom
             { return _rawSyntax; }
         }
 
-        public override object RawSyntax
+        public override object RawItem
         {
             get
             { return _rawSyntax; }
@@ -225,6 +228,40 @@ namespace RoslynDom
             var model = GetModel();
             var symbol =  (TSymbol)model.GetDeclaredSymbol(node);
             return symbol;
+        }
+
+        protected IEnumerable<IAttribute > GetAttributes()
+        {
+            if (_attributes == null)
+            {
+                _attributes = RDomAttribute.MakeAttributes(Symbol, TypedSyntax);
+            }
+            return _attributes;
+        }
+
+        protected Microsoft.CodeAnalysis.TypeInfo GetTypeInfo(SyntaxNode node)
+        {
+            var model = GetModel();
+            var tyypeInfo = model.GetTypeInfo(node);
+            return tyypeInfo;
+        }
+
+        /// <summary>
+        /// Fallback for getting requested values. 
+        /// <br/>
+        /// For special values (those that don't just return a property) override
+        /// this method, return the approparite value, and olny call this base method when needed
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public override object RequestValue( string name)
+        {
+            if (ReflectionUtilities.CanGetProperty(this, name))
+            {
+                var value = ReflectionUtilities.GetPropertyValue(this, name);
+                return value;
+            }
+            return null;
         }
     }
 

@@ -14,69 +14,37 @@ namespace RoslynDom
         internal RDomParameter(ParameterSyntax rawItem) : base(rawItem) { }
 
 
-    public override string QualifiedName
-    {
-        get
-        {
-            // TODO: Manage static member's qualified names
-            throw new InvalidOperationException("You can't get qualified name for an instance property");
-        }
-    }
+        public override string QualifiedName
+        { get { throw new InvalidOperationException("You can't get qualified name for an instance property"); } }
 
-    public IReferencedType Type
-    {
-        get
-        { 
-            return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
-        }
-    }
+        public IReferencedType Type
+        { get { return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type); } }
 
         public IEnumerable<IAttribute> Attributes
-        {
-            get
-            {
-                return this.AttributesFrom();
-            }
-        }
+        { get { return GetAttributes(); } }
 
         public bool IsOut
-        {
-            get
-            {
-                return TypedSymbol.RefKind == RefKind.Out;
-            }
-        }
+        { get { return TypedSymbol.RefKind == RefKind.Out; } }
 
         public bool IsRef
-        {
-            get
-            {
-                return TypedSymbol.RefKind == RefKind.Ref;
-            }
-        }
+        { get { return TypedSymbol.RefKind == RefKind.Ref; } }
 
         public bool IsParamArray
-        {
-            get
-            {
-                return TypedSymbol.IsParams ;
-            }
-        }
+        { get { return TypedSymbol.IsParams; } }
 
         public bool IsOptional
-        {
-            get
-            {
-                return TypedSymbol.IsOptional ;
-            }
-        }
+        { get { return TypedSymbol.IsOptional; } }
 
         public int Ordinal
+        { get { return TypedSymbol.Ordinal; } }
+
+        public override object RequestValue(string name)
         {
-            get
+            if (name == "TypeName")
             {
-               return TypedSymbol.Ordinal ;
+                return Type.QualifiedName;
             }
+            return base.RequestValue(name);
         }
     }
 

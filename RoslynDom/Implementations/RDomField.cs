@@ -27,12 +27,7 @@ namespace RoslynDom
         { _varSyntax = varSyntax; }
 
         public IEnumerable<IAttribute> Attributes
-        {
-            get
-            {
-                return this.AttributesFrom();
-            }
-        }
+        { get { return GetAttributes(); } }
 
         public AccessModifier AccessModifier
         {
@@ -43,62 +38,34 @@ namespace RoslynDom
             }
         }
         private VariableDeclaratorSyntax variableDeclaration
-        {
-            get { return _varSyntax; }
-        }
+        { get { return _varSyntax; } }
 
-        //public override string Name
-        //{
-        //    get { return variableDeclaration.Identifier.NameFrom(); }
-        //}
 
         public override string QualifiedName
-        {
-            get
-            {
-                // TODO: Manage static member's qualified names
-                throw new InvalidOperationException("You can't get qualified name for an instance field");
-            }
-        }
+        { get { throw new InvalidOperationException("You can't get qualified name for an instance field"); } }
 
         public override string Namespace
-        {
-            get
-            {
-                throw new InvalidOperationException("You can't get namespace for an instance method");
-            }
-        }
+        { get { throw new InvalidOperationException("You can't get namespace for an instance method"); } }
 
         public override ISymbol Symbol
-        {
-            get
-            {
-                return base.GetSymbol(variableDeclaration);
-            }
-        }
+        { get { return base.GetSymbol(variableDeclaration); } }
 
         public override IFieldSymbol TypedSymbol
-        {
-            get
-            {
-                return base.GetSymbol(variableDeclaration);
-            }
-        }
+        { get { return base.GetSymbol(variableDeclaration); } }
 
         public IReferencedType ReturnType
-        {
-            get
-            {
-                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
-            }
-        }
+        { get { return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type); } }
 
         public bool IsStatic
+        { get { return Symbol.IsStatic; } }
+
+        public override object RequestValue(string name)
         {
-            get
+            if (name == "TypeName")
             {
-                return Symbol.IsStatic;
+                return ReturnType.QualifiedName;
             }
+            return base.RequestValue(name);
         }
     }
 }

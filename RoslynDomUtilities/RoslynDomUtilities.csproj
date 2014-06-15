@@ -43,6 +43,7 @@
     <Compile Include="GeneralUtilities.cs" />
     <Compile Include="ListUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectionUtilities.cs" />
     <Compile Include="StringUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

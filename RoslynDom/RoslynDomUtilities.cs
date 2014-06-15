@@ -12,19 +12,20 @@ namespace RoslynDom
     internal static class RoslynDomUtilities
     {
 
-        internal static IEnumerable<IAttribute> AttributesFrom(this IDom item)
-        {
-            var retList = new List<IAttribute>();
-            if (!(item is IHasAttributes)) return retList;
+        //internal static IEnumerable<IAttribute> AttributesFrom(this IDom item)
+        //{
+        //    var retList = new List<IAttribute>();
+        //    if (!(item is IHasAttributes)) return retList;
 
-            var rdomBase = item as RDomBase;
-            var attributeData = rdomBase.Symbol.GetAttributes();
-            foreach (var data in attributeData)
-            {
-                retList.Add(new RDomAttribute((AttributeSyntax)data.ApplicationSyntaxReference.GetSyntax()));
-            }
-            return retList;
-        }
+        //    var rdomBase = item as RDomBase;
+        //    var attributeData = rdomBase.Symbol.GetAttributes();
+        //    foreach (var data in attributeData)
+        //    {
+        //        var attributeValues = new List<IAttributeValue>();
+        //        retList.Add(new RDomAttribute((AttributeSyntax)data.ApplicationSyntaxReference.GetSyntax(), attributeValues));
+        //    }
+        //    return retList;
+        //}
 
         //private static IEnumerable<IAttribute> AttributesFromInternal(AttributeListSyntax list)
         //{
