@@ -33,6 +33,11 @@ namespace RoslynDom
             return root;
         }
 
+        public static IRoot GetRootFromDocument(Document document)
+        {
+            SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
+            return GetRootFromSyntaxTree(tree);
+        }
 
         #region Private Methods
 
@@ -120,6 +125,7 @@ namespace RoslynDom
             if (item != null) retList.Add(item); 
             return retList.OfType<ITypeMember>();
         }
+
         private static IMember MakeNamespace(NamespaceDeclarationSyntax rawNamespace)
         {
             var members = ListUtilities.MakeList(rawNamespace, x => x.Members, x => MakeStemMember(x));

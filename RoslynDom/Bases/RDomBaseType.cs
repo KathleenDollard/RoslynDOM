@@ -37,7 +37,6 @@ namespace RoslynDom
             get
             { return Members.OfType<IProperty>(); }
         }
-
         public IEnumerable<IField> Fields
         {
             get
@@ -47,7 +46,7 @@ namespace RoslynDom
         public IEnumerable<IAttribute> Attributes
         {
             get
-            {                return GetAttributes();            }
+            { return GetAttributes(); }
         }
 
         public AccessModifier AccessModifier

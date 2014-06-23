@@ -1,4 +1,3 @@
-                        using System.Diagnostics.Tracing;
-                        namespace testing.Namespace1
-                            { }
-                        ";
+using System.Diagnostics.Tracing;
+namespace testing.Namespace1
+{ }

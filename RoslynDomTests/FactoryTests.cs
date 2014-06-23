@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
 using RoslynDom.Common;
@@ -59,6 +60,24 @@ namespace RoslynDomTests
             Assert.IsNotNull(root);
             Assert.AreEqual(1, root.Namespaces.Count());
         }
+
+        [TestMethod]
+        [TestCategory(GeneralFactoryCategory)]
+        public void Can_get_root_from_document()
+        {
+            var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
+
+            var ws = MSBuildWorkspace.Create();
+            // For now: wait for the result
+            var solution = ws.OpenSolutionAsync(slnFile).Result;
+            var project = solution.Projects.Where(x => x.Name == "RoslynDomExampleTests").FirstOrDefault();
+            var document = project.Documents.Where(x => x.Name == "WorkspaceTests.cs").FirstOrDefault();
+            Assert.IsNotNull(document);
+            var root = RDomFactory.GetRootFromDocument(document);
+            Assert.IsNotNull(root);
+            Assert.AreEqual(1, root.Namespaces.Count());
+        }
+
 
         [TestMethod]
         [TestCategory(GeneralFactoryCategory)]
