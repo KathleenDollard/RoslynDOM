@@ -8,7 +8,11 @@ namespace testing
     { }
 }
 
-    namespace testing.Namespace1
+namespace testing.Namespace1
+{
+}
+
+namespace Namespace2
 {
     public class FooClass
     {
@@ -21,10 +25,13 @@ namespace testing
     {   }
 
 
-    public class FooStruct
+    public struct FooStruct
     {    }
 
-    public class FooInterface
+    public interface FooInterface
     {    }
+
+    public enum FooEnum
+    { One = 1, Two, Three}
 }
                         
