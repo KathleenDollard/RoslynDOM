@@ -17,15 +17,14 @@ namespace RoslynDom
             var qualifiedNameNode = node.ChildNodes()
                                       .OfType<QualifiedNameSyntax>()
                                       .SingleOrDefault();
-            var identifierNameNode = node.ChildNodes()
-                               .OfType<IdentifierNameSyntax >()
-                               .SingleOrDefault();
+            var identifierNameNodes = node.ChildNodes()
+                               .OfType<IdentifierNameSyntax >();
             var name = "";
             if (qualifiedNameNode != null)
             {
                 name = name + qualifiedNameNode.ToString();
             }
-            if (identifierNameNode != null)
+            foreach (var identifierNameNode in identifierNameNodes )
             {
                 var identifierName = identifierNameNode.ToString();
                 if (!(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(identifierName)))
