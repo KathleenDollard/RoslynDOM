@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IRoot : IDom , IStemContainer
+    public interface IRoot : IDom, IStemContainer
     {
-  
 
     }
 }

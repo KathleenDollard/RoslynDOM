@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ITypeMember :IMember, IHasAttributes , IDom, IHasAccessModifier  
+    public enum StemMemberType
     {
-        MemberType MemberType { get; }
+        Unknown = 0,
+        Using,
+        Namespace,
+        Class,
+        Structure,
+        Enum,
+        Interface
     }
 }

@@ -12,7 +12,7 @@ namespace RoslynDom
     {
         internal RDomStructure(StructDeclarationSyntax rawItem,
            IEnumerable<ITypeMember> members)
-            : base(rawItem, members)
+            : base(rawItem, MemberType.Structure , StemMemberType.Structure, members)
         { }
 
         public IEnumerable<IClass> Classes

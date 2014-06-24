@@ -67,6 +67,11 @@ namespace RoslynDom
         public bool IsExtensionMethod
         { get { return TypedSymbol.IsExtensionMethod; } }
 
+        public MemberType MemberType
+        {
+            get { return MemberType.Method; }
+        }
+
         public override object RequestValue(string name)
         {
             if (name == "TypeName")

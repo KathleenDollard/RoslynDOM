@@ -7,5 +7,7 @@ namespace RoslynDom.Common
         IEnumerable<IUsing> Usings { get; }
         IEnumerable<IStemMember> Members { get; }
         IEnumerable<INamespace> Namespaces { get; }
+        IEnumerable<INamespace> AllChildNamespaces { get; }
+        IEnumerable<INamespace> NonEmptyNamespaces { get; }
     }
 }

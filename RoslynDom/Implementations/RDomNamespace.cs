@@ -18,15 +18,37 @@ namespace RoslynDom
             : base(rawItem, members, usings)
         { }
 
+        public IEnumerable<INamespace> AllChildNamespaces
+        {
+            get
+            {
+                return RoslynDomUtilities.GetAllChildNamespaces(this);
+            }
+        }
+
+        public IEnumerable<INamespace> NonEmptyNamespaces
+        {
+            get
+            {
+                return RoslynDomUtilities.GetNonEmptyNamespaces(this);
+            }
+        }
+
 
         public override string OuterName
         {
             get
             {
-                var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
+                var namespaceName = RoslynDomUtilities. GetContainingNamespaceName(Symbol.ContainingNamespace);
                 namespaceName =string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
                 return namespaceName +                       Name;
             }
+        }
+
+        public StemMemberType StemMemberType
+        {
+            get
+            { return StemMemberType.Namespace; }
         }
     }
 }

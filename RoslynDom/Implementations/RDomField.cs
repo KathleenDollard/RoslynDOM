@@ -59,12 +59,15 @@ namespace RoslynDom
         public bool IsStatic
         { get { return Symbol.IsStatic; } }
 
+        public MemberType MemberType
+        {
+            get { return MemberType.Field; }
+        }
+
         public override object RequestValue(string name)
         {
             if (name == "TypeName")
-            {
-                return ReturnType.QualifiedName;
-            }
+            {                return ReturnType.QualifiedName;            }
             return base.RequestValue(name);
         }
     }

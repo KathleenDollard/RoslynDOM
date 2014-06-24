@@ -18,9 +18,25 @@ namespace RoslynDom
         : base(rawItem, members, usings)
         { }
 
-        public override string Name
+        public IEnumerable<INamespace> AllChildNamespaces
+        {
+            get
+            {
+                return RoslynDomUtilities.GetAllChildNamespaces(this);
+            }
+        }
+
+          public override string Name
         {
             get { return "Root"; }
+        }
+
+        public IEnumerable<INamespace> NonEmptyNamespaces
+        {
+            get
+            {
+                return RoslynDomUtilities.GetNonEmptyNamespaces(this);
+            }
         }
 
         public override string QualifiedName

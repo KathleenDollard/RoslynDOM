@@ -14,12 +14,19 @@ namespace RoslynDom
     {
         private IEnumerable<ITypeMember> _members;
         private IEnumerable<IAttribute> _attributes;
+        private MemberType _memberType;
+        private StemMemberType _stemMemberType;
+
         internal RDomBaseType(
             T rawItem,
+            MemberType memberType,
+            StemMemberType stemMemberType,
             IEnumerable<ITypeMember> members)
             : base(rawItem)
         {
             _members = members;
+            _memberType = memberType;
+            _stemMemberType = stemMemberType;
         }
 
         public IEnumerable<ITypeMember> Members
@@ -56,6 +63,19 @@ namespace RoslynDom
                 Accessibility accessibility = Symbol.DeclaredAccessibility;
                 return (AccessModifier)accessibility;
             }
+        }
+
+        public MemberType MemberType
+        {
+            get
+            { return _memberType; }
+        }
+
+        public StemMemberType StemMemberType
+        {
+            get
+            { return _stemMemberType; }
+
         }
     }
 }

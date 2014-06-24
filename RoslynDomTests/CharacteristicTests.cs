@@ -25,6 +25,7 @@ namespace RoslynDomTests
         private const string BaseTypeCategory = "BaseType";
         private const string ParameterAndMethodCategory = "ParameterAndMethod";
         private const string ReturnTypeNameCategory = "ReturnTypeName";
+        private const string NamespaceCategory = "Namespace";
 
         #region returned type tests
         [TestMethod]
@@ -1012,5 +1013,34 @@ public class Foo
             Assert.AreEqual("BadName", parameters[3].RequestValue("TypeName"));
         }
         #endregion
+
+#region namespace tests
+        [TestMethod]
+        [TestCategory(NamespaceCategory)]
+        public void Can_get_all_namespaces()
+        {
+            var csharpCode = @"
+namespace Foo
+{
+   namespace Bar1
+   {
+       namespace FooBar
+       { public enum Foo1 : byte {} }
+   }
+   namespace Bar2 {}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var namespaces = root.Namespaces;
+            var allNamespaces = root.AllChildNamespaces;
+            var nonEmptyNamespaces = root.NonEmptyNamespaces;
+            Assert.AreEqual(1, namespaces.Count());
+            Assert.AreEqual(4, allNamespaces.Count());
+            Assert.AreEqual(3, allNamespaces.First().AllChildNamespaces.Count());
+            Assert.AreEqual(1, nonEmptyNamespaces.Count());
+            Assert.AreEqual("FooBar", nonEmptyNamespaces.First().QualifiedName);
+        }
+
+        #endregion 
     }
 }

@@ -87,7 +87,7 @@ namespace RoslynDom
 
         public abstract ISymbol Symbol { get; }
 
-        public abstract object RequestValue( string name);
+        public abstract object RequestValue(string name);
     }
 
     public abstract class RDomBase<T, TSymbol> : RDomBase, IRoslynDom<T, TSymbol>
@@ -151,13 +151,12 @@ namespace RoslynDom
                        Name;
             }
         }
-
-
+        
         public override string QualifiedName
         {
             get
             {
-                var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
+                var namespaceName = RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
                 var typeName = GetContainingTypeName(Symbol.ContainingType);
                 namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
                 typeName = string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".";
@@ -169,7 +168,7 @@ namespace RoslynDom
         {
             get
             {
-                return GetContainingNamespaceName(Symbol.ContainingNamespace);
+                return RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
                 //var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
                 //var typeName = GetContainingTypeName(Symbol.ContainingType);
                 //return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
@@ -178,16 +177,7 @@ namespace RoslynDom
             }
         }
 
-        internal string GetContainingNamespaceName(INamespaceSymbol nspaceSymbol)
-        // TODO: Change to assembly protected when it is available
-        {
-            if (nspaceSymbol == null) return "";
-            var parentName = GetContainingNamespaceName(nspaceSymbol.ContainingNamespace);
-            return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
-                nspaceSymbol.Name;
-        }
-
-        private string GetContainingTypeName(ITypeSymbol typeSymbol)
+         private string GetContainingTypeName(ITypeSymbol typeSymbol)
         {
             if (typeSymbol == null) return "";
             var parentName = GetContainingTypeName(typeSymbol.ContainingType);
@@ -196,7 +186,6 @@ namespace RoslynDom
         }
 
         private SemanticModel GetModel()
-        // TODO: Change this scope to assembly protected as soon as it is available
         {
             var tree = TypedSyntax.SyntaxTree;
             var compilation = CSharpCompilation.Create("MyCompilation",
@@ -226,11 +215,11 @@ namespace RoslynDom
         protected TSymbol GetSymbol(SyntaxNode node)
         {
             var model = GetModel();
-            var symbol =  (TSymbol)model.GetDeclaredSymbol(node);
+            var symbol = (TSymbol)model.GetDeclaredSymbol(node);
             return symbol;
         }
 
-        protected IEnumerable<IAttribute > GetAttributes()
+        protected IEnumerable<IAttribute> GetAttributes()
         {
             if (_attributes == null)
             {
@@ -254,7 +243,7 @@ namespace RoslynDom
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public override object RequestValue( string name)
+        public override object RequestValue(string name)
         {
             if (ReflectionUtilities.CanGetProperty(this, name))
             {

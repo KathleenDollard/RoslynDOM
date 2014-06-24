@@ -70,6 +70,12 @@ namespace RoslynDom
         public IEnumerable<IParameter> Parameters
         { get { throw new NotImplementedException(); } }
 
+        public MemberType MemberType
+        {
+            get
+            {                return MemberType.Property ;            }
+        }
+
         public override object RequestValue(string name)
         {
             if (name == "TypeName")

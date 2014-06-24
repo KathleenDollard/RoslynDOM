@@ -39,5 +39,17 @@ namespace RoslynDom
                 return ret;
             }
         }
+
+        public MemberType MemberType
+        {
+            get { return MemberType.Enum; }
+
+        }
+
+        public StemMemberType StemMemberType
+        {
+            get { return StemMemberType.Enum; }
+
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace RoslynDom
     {
         internal RDomClass(ClassDeclarationSyntax rawItem,
             IEnumerable<ITypeMember> members)
-            : base(rawItem, members)
+            : base(rawItem, MemberType.Class, StemMemberType.Class, members)
         { }
 
         public IEnumerable<IClass> Classes
