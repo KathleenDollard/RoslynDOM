@@ -1038,9 +1038,51 @@ namespace Foo
             Assert.AreEqual(4, allNamespaces.Count());
             Assert.AreEqual(3, allNamespaces.First().AllChildNamespaces.Count());
             Assert.AreEqual(1, nonEmptyNamespaces.Count());
-            Assert.AreEqual("FooBar", nonEmptyNamespaces.First().QualifiedName);
+            Assert.AreEqual("FooBar", nonEmptyNamespaces.First().Name);
+            Assert.AreEqual("Foo.Bar1.FooBar", nonEmptyNamespaces.First().QualifiedName);
         }
 
+        [TestMethod]
+        [TestCategory(NamespaceCategory)]
+        public void Does_not_crash_on_empty_namespaces()
+        {
+            var csharpCode = @"
+namespace Foo
+{
+   namespace Bar1
+   {
+       namespace FooBar
+       {  }
+   }
+   namespace Bar2 {}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var namespaces = root.Namespaces;
+            var allNamespaces = root.AllChildNamespaces;
+            var nonEmptyNamespaces = root.NonEmptyNamespaces;
+            Assert.AreEqual(1, namespaces.Count());
+            Assert.AreEqual(4, allNamespaces.Count());
+            Assert.AreEqual(3, allNamespaces.First().AllChildNamespaces.Count());
+            Assert.AreEqual(0, nonEmptyNamespaces.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(NamespaceCategory)]
+        public void Does_not_crash_on_no_namespaces()
+        {
+            var csharpCode = @"
+public enum Foo1 : byte {}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var namespaces = root.Namespaces;
+            var allNamespaces = root.AllChildNamespaces;
+            var nonEmptyNamespaces = root.NonEmptyNamespaces;
+            Assert.AreEqual(0, namespaces.Count());
+            Assert.AreEqual(0, allNamespaces.Count());
+            Assert.AreEqual(0, nonEmptyNamespaces.Count());
+        }
         #endregion 
+
     }
 }

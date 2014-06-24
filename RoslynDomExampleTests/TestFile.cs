@@ -4,8 +4,11 @@ using System.Linq;
 
 namespace testing
 {
-    namespace Namespace1
-    { }
+    namespace Namespace3
+    {
+        public class FooClass
+        { }
+    }
 }
 
 namespace testing.Namespace1
