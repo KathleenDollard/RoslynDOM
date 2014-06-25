@@ -88,6 +88,8 @@ namespace RoslynDom
         public abstract ISymbol Symbol { get; }
 
         public abstract object RequestValue(string name);
+
+        internal abstract ISymbol GetSymbol(SyntaxNode node);
     }
 
     public abstract class RDomBase<T, TSymbol> : RDomBase, IRoslynDom<T, TSymbol>
@@ -128,7 +130,7 @@ namespace RoslynDom
             get
             {
                 if (_symbol == null)
-                { _symbol = GetSymbol(TypedSyntax); }
+                { _symbol = (TSymbol)GetSymbol(TypedSyntax); }
                 return _symbol;
             }
         }
@@ -177,7 +179,7 @@ namespace RoslynDom
             }
         }
 
-         private string GetContainingTypeName(ITypeSymbol typeSymbol)
+        private string GetContainingTypeName(ITypeSymbol typeSymbol)
         {
             if (typeSymbol == null) return "";
             var parentName = GetContainingTypeName(typeSymbol.ContainingType);
@@ -212,7 +214,7 @@ namespace RoslynDom
         }
 
 
-        protected TSymbol GetSymbol(SyntaxNode node)
+        internal override ISymbol GetSymbol(SyntaxNode node)
         {
             var model = GetModel();
             var symbol = (TSymbol)model.GetDeclaredSymbol(node);
@@ -223,7 +225,7 @@ namespace RoslynDom
         {
             if (_attributes == null)
             {
-                _attributes = RDomAttribute.MakeAttributes(Symbol, TypedSyntax);
+                _attributes = RDomAttribute.MakeAttributes(this, Symbol, TypedSyntax);
             }
             return _attributes;
         }

@@ -51,7 +51,7 @@ namespace RoslynDom
         { get { return base.GetSymbol(variableDeclaration); } }
 
         public override IFieldSymbol TypedSymbol
-        { get { return base.GetSymbol(variableDeclaration); } }
+        { get { return (IFieldSymbol)base.GetSymbol(variableDeclaration); } }
 
         public IReferencedType ReturnType
         { get { return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type); } }

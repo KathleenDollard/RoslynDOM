@@ -26,6 +26,8 @@ namespace RoslynDomTests
         private const string ParameterAndMethodCategory = "ParameterAndMethod";
         private const string ReturnTypeNameCategory = "ReturnTypeName";
         private const string NamespaceCategory = "Namespace";
+        private const string MemberTypeCategory = "MemberType";
+        private const string MiscellaneousCategory = "Miscellaneous";
 
         #region returned type tests
         [TestMethod]
@@ -965,11 +967,12 @@ public class Foo
 }
 ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Properties.ToArray();
-            Assert.AreEqual("System.String", methods[0].RequestValue("TypeName"));
-            Assert.AreEqual("System.Int32", methods[1].RequestValue("TypeName"));
-            Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", methods[2].RequestValue("TypeName"));
-            Assert.AreEqual("BadName", methods[3].RequestValue("TypeName"));
+            var properties = root.Classes.First().Properties.ToArray();
+            Assert.AreEqual("System.String", properties[0].RequestValue("TypeName"));
+            Assert.AreEqual("System.Int32", properties[1].RequestValue("TypeName"));
+            Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", properties[2].RequestValue("TypeName"));
+            Assert.AreEqual("BadName", properties[3].RequestValue("TypeName"));
+            Assert.AreEqual("Foo4", properties[3].RequestValue("Name"));
         }
 
         [TestMethod]
@@ -1014,10 +1017,10 @@ public class Foo
         }
         #endregion
 
-#region namespace tests
+        #region namespace tests
         [TestMethod]
         [TestCategory(NamespaceCategory)]
-        public void Can_get_all_namespaces()
+        public void Can_get_all_namespaces_from_root()
         {
             var csharpCode = @"
 namespace Foo
@@ -1044,7 +1047,7 @@ namespace Foo
 
         [TestMethod]
         [TestCategory(NamespaceCategory)]
-        public void Does_not_crash_on_empty_namespaces()
+        public void Does_not_crash_on_empty_namespaces_from_root()
         {
             var csharpCode = @"
 namespace Foo
@@ -1069,7 +1072,7 @@ namespace Foo
 
         [TestMethod]
         [TestCategory(NamespaceCategory)]
-        public void Does_not_crash_on_no_namespaces()
+        public void Does_not_crash_on_no_namespaces_from_root()
         {
             var csharpCode = @"
 public enum Foo1 : byte {}
@@ -1082,7 +1085,191 @@ public enum Foo1 : byte {}
             Assert.AreEqual(0, allNamespaces.Count());
             Assert.AreEqual(0, nonEmptyNamespaces.Count());
         }
-        #endregion 
 
+        [TestMethod]
+        [TestCategory(NamespaceCategory)]
+        public void Can_get_all_namespaces_from_namespace()
+        {
+            var csharpCode = @"
+namespace Foo
+{
+   namespace Bar1
+   {
+       namespace FooBar
+       { public enum Foo1 : byte {} }
+   }
+   namespace Bar2 {}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var topNamespace = root.Namespaces.First();
+            var namespaces = topNamespace.Namespaces;
+            var allNamespaces = topNamespace.AllChildNamespaces;
+            var nonEmptyNamespaces = topNamespace.NonEmptyNamespaces;
+            Assert.AreEqual(2, namespaces.Count());
+            Assert.AreEqual(3, allNamespaces.Count());
+            Assert.AreEqual(1, allNamespaces.First().AllChildNamespaces.Count());
+            Assert.AreEqual(1, nonEmptyNamespaces.Count());
+            Assert.AreEqual("FooBar", nonEmptyNamespaces.First().Name);
+            Assert.AreEqual("Foo.Bar1.FooBar", nonEmptyNamespaces.First().QualifiedName);
+        }
+
+        [TestMethod]
+        [TestCategory(NamespaceCategory)]
+        public void Does_not_crash_on_empty_namespaces_from_namespace()
+        {
+            var csharpCode = @"
+namespace Foo
+{
+   namespace Bar1
+   {
+       namespace FooBar
+       {  }
+   }
+   namespace Bar2 {}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var topNamespace = root.Namespaces.First();
+            var namespaces = topNamespace.Namespaces;
+            var allNamespaces = topNamespace.AllChildNamespaces;
+            var nonEmptyNamespaces = topNamespace.NonEmptyNamespaces;
+            Assert.AreEqual(2, namespaces.Count());
+            Assert.AreEqual(3, allNamespaces.Count());
+            Assert.AreEqual(1, allNamespaces.First().AllChildNamespaces.Count());
+            Assert.AreEqual(0, nonEmptyNamespaces.Count());
+        }
+
+        [TestMethod]
+        [TestCategory(NamespaceCategory)]
+        public void Does_not_crash_on_no_namespaces_from_namespace()
+        {
+            var csharpCode = @"
+namespace Namespace1
+{
+   public enum Foo1 : byte {}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var topNamespace = root.Namespaces.First();
+            var namespaces = topNamespace.Namespaces;
+            var allNamespaces = topNamespace.AllChildNamespaces;
+            var nonEmptyNamespaces = topNamespace.NonEmptyNamespaces;
+            Assert.AreEqual(0, namespaces.Count());
+            Assert.AreEqual(0, allNamespaces.Count());
+            Assert.AreEqual(0, nonEmptyNamespaces.Count());
+        }
+        #endregion
+
+        #region member type
+        [TestMethod]
+        [TestCategory(MemberTypeCategory)]
+        public void Can_get_member_type_for_members()
+        {
+            var csharpCode = @"
+using System
+public class Foo  
+{
+   public string Foo1{get; set;}
+   public Int32 Foo2(){}
+   public string Foo3;
+   public class Foo4{}
+   public struct Foo5{}
+   public interface Foo6{}
+   public enum Foo7{}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var members = root.Classes.First().Members.ToArray();
+            Assert.AreEqual(MemberType.Property, members[0].MemberType);
+            Assert.AreEqual(MemberType.Method,   members[1].MemberType);
+            Assert.AreEqual(MemberType.Field,    members[2].MemberType);
+            Assert.AreEqual(MemberType.Class,    members[3].MemberType);
+            Assert.AreEqual(MemberType.Structure,members[4].MemberType);
+            Assert.AreEqual(MemberType.Interface,members[5].MemberType);
+            Assert.AreEqual(MemberType.Enum,     members[6].MemberType);
+        }
+
+        [TestMethod]
+        [TestCategory(MemberTypeCategory)]
+        public void Can_get_member_type_for_members_via_requestValue()
+        {
+            var csharpCode = @"
+using System
+public class Foo  
+{
+   public string Foo1{get; set;}
+   public Int32 Foo2(){}
+   public string Foo3;
+   public class Foo4{}
+   public struct Foo5{}
+   public interface Foo6{}
+   public enum Foo7{}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var members = root.Classes.First().Members.ToArray();
+            Assert.AreEqual(MemberType.Property, members[0].RequestValue("MemberType"));
+            Assert.AreEqual(MemberType.Method, members[1].RequestValue("MemberType"));
+            Assert.AreEqual(MemberType.Field, members[2].RequestValue("MemberType"));
+            Assert.AreEqual(MemberType.Class, members[3].RequestValue("MemberType"));
+            Assert.AreEqual(MemberType.Structure, members[4].RequestValue("MemberType"));
+            Assert.AreEqual(MemberType.Interface, members[5].RequestValue("MemberType"));
+            Assert.AreEqual(MemberType.Enum, members[6].RequestValue("MemberType"));
+        }
+
+        [TestMethod]
+        [TestCategory(MemberTypeCategory)]
+        public void RequestValue_returns_null_if_property_not_found()
+        {
+            var csharpCode = @"
+using System
+public class Foo  
+{
+   public string Foo1{get; set;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var members = root.Classes.First().Members.ToArray();
+            Assert.IsNull(members[0].RequestValue("MemberTypeX"));
+        }
+
+
+        [TestMethod]
+        [TestCategory(MemberTypeCategory)]
+        public void Can_get_value_from_parameter_via_RequestValue()
+        {
+            var csharpCode = @"
+using System
+public class Foo  
+{
+   public string Foo1(int Bar) {}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
+            Assert.AreEqual(false, (bool)parameters[0].RequestValue("IsOut"));
+        }
+        #endregion
+
+        #region miscellaneous
+        [TestMethod]
+        [TestCategory(MemberTypeCategory)]
+        public void Can_get_class_name_for_class()
+        {
+            var csharpCode = @"
+using System
+public class Foo  
+{
+   public string Foo1{get; set;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var cl =(RDomClass) root.Classes.First();
+            Assert.AreEqual("Foo",cl.ClassName) ;
+        }
+
+
+        #endregion
     }
 }

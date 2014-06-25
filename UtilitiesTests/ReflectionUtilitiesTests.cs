@@ -23,6 +23,7 @@ namespace TestRoslyn
             Assert.IsTrue(ReflectionUtilities.CanGetProperty(obj, "Foo"));
             Assert.IsTrue(ReflectionUtilities.CanGetProperty(obj, "Bar"));
             Assert.IsFalse(ReflectionUtilities.CanGetProperty(obj, "FooBar"));
+            Assert.IsFalse(ReflectionUtilities.CanGetProperty(obj, "FooBarX"));
         }
 
         [TestMethod]
@@ -32,6 +33,7 @@ namespace TestRoslyn
             Assert.IsFalse(ReflectionUtilities. CanSetProperty(obj, "Foo"));
             Assert.IsTrue(ReflectionUtilities. CanSetProperty(obj, "Bar"));
             Assert.IsTrue(ReflectionUtilities.CanSetProperty(obj, "FooBar"));
+            Assert.IsFalse(ReflectionUtilities.CanSetProperty(obj, "FooBarX"));
         }
 
         [TestMethod]

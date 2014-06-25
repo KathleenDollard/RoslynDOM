@@ -13,20 +13,22 @@ namespace RoslynDom
     public class RDomReferencedType : RDomBase, IReferencedType
     {
         private ImmutableArray<SyntaxReference> _raw;
+        private TypeInfo _typeInfo;
         private ISymbol _symbol;
 
 
         internal RDomReferencedType(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
         {
-            var named = symbol as INamedTypeSymbol;
-            var typeParam = symbol as ITypeParameterSymbol;
-            var arrayTypeParam = symbol as IArrayTypeSymbol;
-            if (named == null && typeParam == null && arrayTypeParam == null)
-            { System.Diagnostics.Debugger.Break(); }
             _raw = raw;
             _symbol = symbol;
         }
 
+
+        internal RDomReferencedType(TypeInfo typeInfo, ISymbol symbol)
+        {
+            _typeInfo = typeInfo;
+            _symbol = symbol;
+        }
 
         public override object RawItem
         {
@@ -36,12 +38,13 @@ namespace RoslynDom
         }
 
         public override ISymbol Symbol
-        {            get            {                return _symbol;            }        }
+        { get { return _symbol; } }
 
         public override string Name
         {
             get
             {
+                if (Symbol == null && (_typeInfo.Type != null )) { return _typeInfo.Type.ToString(); }
                 var arraySymbol = Symbol as IArrayTypeSymbol;
                 if (arraySymbol == null) { return Symbol.Name; }
                 // CSharp specific
@@ -105,8 +108,13 @@ namespace RoslynDom
                 typeSymbol.Name;
         }
 
-        public override object RequestValue( string name)
+        public override object RequestValue(string name)
         {  // This is temporary so I know how this is used. Probably can just be removed and fallback to base
+            throw new NotImplementedException();
+        }
+
+        internal override ISymbol GetSymbol(SyntaxNode node)
+        {
             throw new NotImplementedException();
         }
     }

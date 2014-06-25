@@ -68,12 +68,12 @@ namespace RoslynDom
         /// Can't test until VB is active
         /// </remarks>
         public IEnumerable<IParameter> Parameters
+        // This is for VB, wihch I have not yet implemented
         { get { throw new NotImplementedException(); } }
 
         public MemberType MemberType
         {
-            get
-            {                return MemberType.Property ;            }
+            get { return MemberType.Property; }
         }
 
         public override object RequestValue(string name)

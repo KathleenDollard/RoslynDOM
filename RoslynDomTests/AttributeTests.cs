@@ -16,6 +16,8 @@ namespace RoslynDomTests
         private const string SimpleAttributeCategory = "AttributesSimple";
         private const string SeparateBracketsAttributeCategory = "AttributesSeparateBracket";
         private const string AttributesCombinedInBracketsCategory = "AttributesCombinedBracket";
+        private const string AttributesMixedBracketingCategory = "AttributesMixedBracketing";
+        private const string AttributeValuesCategory = "AttributesValues";
 
         #region get attributes
         [TestMethod]
@@ -374,6 +376,7 @@ namespace RoslynDomTests
 
         #region get multiple attributes with mixed bracketing
         [TestMethod]
+        [TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_class()
         {
             var csharpCode = @"
@@ -391,6 +394,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_enum()
         {
             var csharpCode = @"
@@ -408,6 +412,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_struct()
         {
             var csharpCode = @"
@@ -425,6 +430,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_interface()
         {
             var csharpCode = @"
@@ -442,6 +448,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_method()
         {
             var csharpCode = @"
@@ -459,6 +466,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_property()
         {
             var csharpCode = @"
@@ -476,6 +484,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_field()
         {
             var csharpCode = @"
@@ -495,6 +504,7 @@ namespace RoslynDomTests
 
         #region get attribute values
         [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
         public void Can_get_attribute_values_on_class()
         {
             var csharpCode = @"
@@ -528,7 +538,8 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
-        public void Can_get_attribute_values_of_most_types_on_class()
+        [TestCategory(AttributeValuesCategory)]
+        public void Can_get_attribute_values_of_most_types_on_class_with_equals()
         {
             var csharpCode = @"
                         [Test(Int=42, Bool=true, Double=3.14, StringTest = ""Foo"")]
@@ -566,15 +577,55 @@ namespace RoslynDomTests
 
         }
 
-                [TestMethod]
-        public void Can_get_attribute_values_of_typeof_on_class()
+        [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
+        public void Can_get_attribute_values_of_most_types_on_class_with_colons()
+        {
+            var csharpCode = @"
+                        [Test(Int:42, Bool : true, Double :3.14, StringTest: ""Foo"")]
+                        public class MyClass
+                            { }
+                        ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var attributeValues = root.Classes.First().Attributes.First().AttributeValues.ToArray();
+            Assert.AreEqual(4, attributeValues.Count());
+
+            var current = attributeValues[0];
+            Assert.AreEqual("Int", current.Name);
+            Assert.AreEqual(42, current.Value);
+            Assert.AreEqual(LiteralType.Numeric, current.ValueType);
+
+            current = attributeValues[1];
+            Assert.AreEqual("Bool", current.Name);
+            Assert.AreEqual(true, current.Value);
+            Assert.AreEqual(LiteralType.Boolean, current.ValueType);
+
+            current = attributeValues[2];
+            Assert.AreEqual("Double", current.Name);
+            Assert.AreEqual(3.14, current.Value);
+            Assert.AreEqual(LiteralType.Numeric, current.ValueType);
+
+            current = attributeValues[3];
+            Assert.AreEqual("StringTest", current.Name);
+            Assert.AreEqual("Foo", current.Value);
+            Assert.AreEqual(LiteralType.String, current.ValueType);
+
+            //current = attributeValues[4];
+            //Assert.AreEqual("TypeTest", current.Name);
+            //Assert.AreEqual(stringType, current.Value);
+            //Assert.AreEqual(intType, current.ValueType);
+
+        }
+
+        [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
+        public void Can_get_attribute_value_of_typeof_primitive_on_class()
         {
             var csharpCode = @"
                         [Test(TypeTest = typeof(string))]
                         public class MyClass
                             { }
                         ";
-            Assert.Inconclusive();
 
             var root = RDomFactory.GetRootFromString(csharpCode);
             var attributeValues = root.Classes.First().Attributes.First().AttributeValues.ToArray() ;
@@ -582,12 +633,60 @@ namespace RoslynDomTests
 
             var current = attributeValues[0];
             Assert.AreEqual("TypeTest", current.Name);
-            //Assert.AreEqual(stringType, current.Value);
-            Assert.AreEqual(LiteralType.String, current.ValueType);
+            Assert.AreEqual(LiteralType.Type, current.ValueType);
+            var refType = current.Value as RDomReferencedType;
+            Assert.IsNotNull(refType);
+            Assert.AreEqual("string", refType.Name);
 
         }
 
         [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
+        public void Can_get_attribute_value_of_typeof_identifier_only_on_class()
+        {
+            var csharpCode = @"
+                        [Test(TypeTest = typeof(Foo))]
+                        public class MyClass
+                            { }
+                        ";
+
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var attributeValues = root.Classes.First().Attributes.First().AttributeValues.ToArray();
+            Assert.AreEqual(1, attributeValues.Count());
+
+            var current = attributeValues[0];
+            Assert.AreEqual("TypeTest", current.Name);
+            Assert.AreEqual(LiteralType.Type, current.ValueType);
+            var refType = current.Value as RDomReferencedType;
+            Assert.IsNotNull(refType);
+            Assert.AreEqual("Foo", refType.Name);
+        }
+
+        [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
+        public void Can_get_attribute_value_of_typeof_referenced_on_class()
+        {
+            var csharpCode = @"
+                        [Test(TypeTest = typeof(DateTime))]
+                        public class MyClass
+                            { }
+                        ";
+
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var attributeValues = root.Classes.First().Attributes.First().AttributeValues.ToArray();
+            Assert.AreEqual(1, attributeValues.Count());
+
+            var current = attributeValues[0];
+            Assert.AreEqual("TypeTest", current.Name);
+            Assert.AreEqual(LiteralType.Type, current.ValueType);
+            var refType = current.Value as RDomReferencedType;
+            Assert.IsNotNull(refType);
+            Assert.AreEqual("DateTime", refType.Name);
+
+        }
+
+        [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_class()
         {
             var csharpCode = @"
@@ -613,6 +712,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_structure()
         {
             var csharpCode = @"
@@ -638,6 +738,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_enum()
         {
             var csharpCode = @"
@@ -664,6 +765,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_method()
         {
             var csharpCode = @"
@@ -692,6 +794,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_property()
         {
             var csharpCode = @"
@@ -719,6 +822,8 @@ namespace RoslynDomTests
 
         }
 
+        [TestMethod]
+        [TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_field()
         {
             var csharpCode = @"

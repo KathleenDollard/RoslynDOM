@@ -11,7 +11,8 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomAttributeValue : RDomSyntaxNodeBase<AttributeArgumentSyntax, ISymbol>, IAttributeValue
+    public class RDomAttributeValue 
+        : RDomSyntaxNodeBase<AttributeArgumentSyntax, ISymbol>, IAttributeValue
     {
         private string _name;
         private LiteralType _literalType;
@@ -20,22 +21,25 @@ namespace RoslynDom
         internal RDomAttributeValue(
             AttributeArgumentSyntax rawItem,
             AttributeSyntax attributeSyntax,
-            ISymbol attributeSymbol)
+            RDomBase attributedItem)
             : base(rawItem)
         {
-            _name = GetAttributeValueName(rawItem, attributeSyntax, attributeSymbol);
-            var tuple = GetAttributeValueValue(rawItem, attributeSyntax, attributeSymbol);
+            _name = GetAttributeValueName(rawItem, attributeSyntax, attributedItem);
+            var tuple = GetAttributeValueValue(rawItem, attributeSyntax, attributedItem);
             _value = tuple.Item1;
             _literalType = tuple.Item2;
         }
 
-        private Tuple<object, LiteralType> GetAttributeValueValue(AttributeArgumentSyntax arg, AttributeSyntax attributeSyntax, ISymbol attributeSymbol)
+        private Tuple<object, LiteralType> GetAttributeValueValue(
+                    AttributeArgumentSyntax arg, 
+                    AttributeSyntax attributeSyntax,
+                    RDomBase attributedItem)
         {
             // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
             var expr = arg.Expression;
             var literalExpression = expr as LiteralExpressionSyntax;
             object value = null;
-           var literalType = LiteralType.Unknown ;
+            var literalType = LiteralType.Unknown ;
             if (literalExpression != null)
             {
                 switch (literalExpression.Token.CSharpKind())
@@ -51,7 +55,8 @@ namespace RoslynDom
                         literalType = LiteralType.Boolean;
                         break;
                     default:
-                        break;
+                        // I don't know how to get here, but if I get here, I want to know it :)
+                        throw new NotImplementedException();
                 }
                 value = literalExpression.Token.Value;
             }
@@ -60,16 +65,33 @@ namespace RoslynDom
             {
                 var typeSyntax = typeExpression.Type;
                 literalType = LiteralType.Type;
-                throw new NotImplementedException();
-            }
+                var predefinedTypeSyntax = typeSyntax as PredefinedTypeSyntax;
+                var identifierNameSyntax = typeSyntax as IdentifierNameSyntax;
+                if (predefinedTypeSyntax != null)
+                {
+                    var typeInfo = GetTypeInfo(predefinedTypeSyntax);
+                    value = new RDomReferencedType(typeInfo, null);
+                }
+                else if (identifierNameSyntax != null)
+                {
+                    var typeInfo = GetTypeInfo(identifierNameSyntax);
+                    value = new RDomReferencedType(typeInfo, null);
+                }
+                else
+                {
+                    // I don't know how to get here, but if I get here, I want to know it :)
+                    throw new NotImplementedException();
+                }
+              }
             return new Tuple<object, LiteralType >(value, literalType);
         }
 
-        private string GetAttributeValueName(AttributeArgumentSyntax arg, AttributeSyntax attributeSyntax, ISymbol attributeSymbol)
+        private string GetAttributeValueName(
+            AttributeArgumentSyntax arg, AttributeSyntax attributeSyntax, RDomBase attributedItem)
         {
             if (arg.NameColon != null)
             {
-                throw new NotImplementedException();
+                return arg.NameColon.Name.ToString().Replace(":","").Trim();
             }
             else if (arg.NameEquals != null)
             {
@@ -103,7 +125,8 @@ namespace RoslynDom
             }
         }
 
-        internal static IEnumerable<IAttributeValue> MakeAttributeValues(AttributeSyntax attrib, ISymbol symbol)
+        internal static IEnumerable<IAttributeValue> MakeAttributeValues(
+                AttributeSyntax attrib, RDomBase attributedItem)
         {
             var ret = new List<IAttributeValue>();
             if (attrib.ArgumentList != null)
@@ -111,7 +134,7 @@ namespace RoslynDom
                 var arguments = attrib.ArgumentList.Arguments;
                 foreach (AttributeArgumentSyntax arg in arguments)
                 {
-                    ret.Add(new RDomAttributeValue(arg, attrib, symbol));
+                    ret.Add(new RDomAttributeValue(arg, attrib, attributedItem));
                 }
             }
             return ret;
