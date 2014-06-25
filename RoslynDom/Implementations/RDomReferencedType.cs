@@ -69,6 +69,7 @@ namespace RoslynDom
             get
             {
                 //return Symbol.ToDisplayString();
+                //return Symbol.ToString();
                 var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
                 var typeName = GetContainingTypeName(Symbol.ContainingType);
                 namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
@@ -102,7 +103,7 @@ namespace RoslynDom
 
         private string GetContainingTypeName(ITypeSymbol typeSymbol)
         {
-            if (typeSymbol == null || typeSymbol.Kind == SymbolKind.ErrorType) return "";
+            if (typeSymbol == null ) return "";
             var parentName = GetContainingTypeName(typeSymbol.ContainingType);
             return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
                 typeSymbol.Name;

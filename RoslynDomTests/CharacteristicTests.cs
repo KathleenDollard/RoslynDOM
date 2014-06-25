@@ -77,22 +77,21 @@ public int Bar{get;};
         {
             // This test is failing and I believe it to be due to a temporary CTP bug. So, I made it inconclusive
             // to avoid confusing people interested in the library release
-            Assert.Inconclusive();
+            //Assert.Inconclusive();
 
             var csharpCode = @"
                         public class Foo
 {
-public System.ComponentModel.ByteConverter  Bar() {};
+public Namespace1.A  Bar() {};
 }
 ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             var method = root.Classes.First().Methods.First();
             var retType = method.ReturnType;
             Assert.IsNotNull(retType);
-            Assert.AreEqual("ByteConverter", retType.Name, "Name");
-            Assert.AreEqual("System.ComponentModel.ByteConverter", retType.QualifiedName, "QualifiedName");
-            Assert.AreEqual("ByteConverter", retType.OuterName, "OuterName");
-            Assert.AreEqual("System.ComponentModel", retType.Namespace, "Namespace");
+            Assert.AreEqual("A", retType.Name, "Name");
+            Assert.AreEqual("Namespace1.A", retType.QualifiedName, "QualifiedName");
+            Assert.AreEqual("Namespace1.A", retType.OuterName, "OuterName");
         }
 
         #endregion
