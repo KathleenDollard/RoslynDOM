@@ -1253,7 +1253,7 @@ public class Foo
 
         #region miscellaneous
         [TestMethod]
-        [TestCategory(MemberTypeCategory)]
+        [TestCategory(MiscellaneousCategory )]
         public void Can_get_class_name_for_class()
         {
             var csharpCode = @"
@@ -1268,7 +1268,25 @@ public class Foo
             Assert.AreEqual("Foo",cl.ClassName) ;
         }
 
-
+        [TestMethod]
+        [TestCategory(MiscellaneousCategory)]
+        public void Can_get_root_classes()
+        {
+            var csharpCode = @"
+using System
+public class Foo  {}
+namespace Namespace1
+{
+   public class Foo1{}
+   public class Foo2{}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var cl = root.RootClasses.ToArray();
+            Assert.AreEqual("Foo", ((RDomClass)cl[0]).ClassName);
+            Assert.AreEqual("Foo1", ((RDomClass)cl[1]).ClassName);
+            Assert.AreEqual("Foo2", ((RDomClass)cl[2]).ClassName);
+        }
         #endregion
     }
 }

@@ -26,7 +26,7 @@ namespace RoslynDom
             }
         }
 
-          public override string Name
+        public override string Name
         {
             get { return "Root"; }
         }
@@ -44,5 +44,16 @@ namespace RoslynDom
             get { return Name; }
         }
 
+          public IEnumerable<IClass> RootClasses
+        {
+            get
+            {
+                var classes = Classes;
+                var rootclasses = from x in NonEmptyNamespaces
+                                  from y in x.Classes
+                                  select y;
+                return classes.Union(rootclasses);
+            }
+        }
     }
 }

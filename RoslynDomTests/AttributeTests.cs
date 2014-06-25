@@ -18,6 +18,7 @@ namespace RoslynDomTests
         private const string AttributesCombinedInBracketsCategory = "AttributesCombinedBracket";
         private const string AttributesMixedBracketingCategory = "AttributesMixedBracketing";
         private const string AttributeValuesCategory = "AttributesValues";
+        private const string RootClassAttributesCategory = "RootClassAttributes";
 
         #region get attributes
         [TestMethod]
@@ -852,5 +853,11 @@ namespace RoslynDomTests
         }
 
         #endregion
+
+        #region get root class attributes
+ 
+
+        #endregion
+
     }
 }

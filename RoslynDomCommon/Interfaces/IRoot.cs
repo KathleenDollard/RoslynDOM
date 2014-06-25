@@ -8,6 +8,6 @@ namespace RoslynDom.Common
 {
     public interface IRoot : IDom, IStemContainer
     {
-
+        IEnumerable<IClass> RootClasses { get; }
     }
 }
