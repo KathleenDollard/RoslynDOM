@@ -27,6 +27,7 @@ namespace RoslynDomTests
         private const string ReturnTypeNameCategory = "ReturnTypeName";
         private const string NamespaceCategory = "Namespace";
         private const string MemberTypeCategory = "MemberType";
+        private const string PropertyAccessCategory = "PropertyAccess";
         private const string MiscellaneousCategory = "Miscellaneous";
 
         #region returned type tests
@@ -928,7 +929,7 @@ public static class Foo
         }
         #endregion
 
-        #region parameter tests
+        #region returned type tests
         [TestMethod]
         [TestCategory(ReturnTypeNameCategory)]
         public void Can_get_return_type_name_for_method()
@@ -1249,6 +1250,33 @@ public class Foo
             var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
             Assert.AreEqual(false, (bool)parameters[0].RequestValue("IsOut"));
         }
+        #endregion
+
+        #region property access
+        [TestMethod]
+        [TestCategory(PropertyAccessCategory )]
+        public void Can_get_property_access()
+        {
+            var csharpCode = @"
+using System
+public class Foo  
+{
+   public string Foo1{get; set;}
+   public string Foo2{get;}
+   public string Foo3{set;}
+}
+";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var properties = root.Classes.First().Properties .ToArray();
+            Assert.IsTrue(properties[0].CanGet);
+            Assert.IsTrue(properties[0].CanSet);
+            Assert.IsTrue(properties[1].CanGet);
+            Assert.IsFalse(properties[1].CanSet);
+            Assert.IsFalse(properties[2].CanGet);
+            Assert.IsTrue(properties[2].CanSet);
+        }
+
+
         #endregion
 
         #region miscellaneous

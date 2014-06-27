@@ -31,7 +31,7 @@ namespace RoslynDom
         public override string Namespace
         { get { throw new InvalidOperationException("You can't get namespace for an instance method"); } }
 
-        public IReferencedType ReturnType
+        public IReferencedType PropertyType
         {
             get
             {
@@ -39,6 +39,14 @@ namespace RoslynDom
                 var refType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
                 INamedTypeSymbol namedTypeSymbol = refType.Symbol as INamedTypeSymbol;
                 return refType;
+            }
+        }
+
+        public IReferencedType ReturnType
+        {
+            get
+            {
+                return PropertyType;
             }
         }
 
@@ -56,6 +64,16 @@ namespace RoslynDom
 
         public bool IsStatic
         { get { return Symbol.IsStatic; } }
+
+        public bool CanGet
+        {
+            get { return (!((IPropertySymbol)Symbol).IsWriteOnly); }
+        }
+
+        public bool CanSet
+        {
+            get { return (!((IPropertySymbol)Symbol).IsReadOnly); }
+        }
 
         /// <summary>
         /// 
@@ -79,9 +97,7 @@ namespace RoslynDom
         public override object RequestValue(string name)
         {
             if (name == "TypeName")
-            {
-                return ReturnType.QualifiedName;
-            }
+            { return ReturnType.QualifiedName; }
             return base.RequestValue(name);
         }
     }
