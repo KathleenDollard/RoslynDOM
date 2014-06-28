@@ -25,6 +25,16 @@ namespace RoslynDom
             _usings = usings;
         }
 
+        public string Namespace
+        {
+            get { return GetNamespace(); }
+        }
+
+        public string QualifiedName
+        {
+            get { return GetQualifiedName(); }
+        }
+
         public IEnumerable<INamespace> Namespaces
         {
             get { return Members.OfType<INamespace>(); }

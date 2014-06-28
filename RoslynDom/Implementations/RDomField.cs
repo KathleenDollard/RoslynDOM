@@ -40,13 +40,6 @@ namespace RoslynDom
         private VariableDeclaratorSyntax variableDeclaration
         { get { return _varSyntax; } }
 
-
-        public override string QualifiedName
-        { get { throw new InvalidOperationException("You can't get qualified name for an instance field"); } }
-
-        public override string Namespace
-        { get { throw new InvalidOperationException("You can't get namespace for an instance method"); } }
-
         public override ISymbol Symbol
         { get { return base.GetSymbol(variableDeclaration); } }
 

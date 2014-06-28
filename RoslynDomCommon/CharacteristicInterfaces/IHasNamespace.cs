@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IStemMember : IMember, IHasNamespace
+    public interface IHasNamespace
     {
-        StemMemberType StemMemberType { get; }
+        string Namespace { get; }
+        string QualifiedName { get; }
     }
 }

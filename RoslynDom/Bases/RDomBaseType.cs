@@ -29,6 +29,16 @@ namespace RoslynDom
             _stemMemberType = stemMemberType;
         }
 
+        public string Namespace
+        {
+            get { return GetNamespace(); }
+        }
+
+        public string QualifiedName
+        {
+            get { return GetQualifiedName(); }
+        }
+
         public IEnumerable<ITypeMember> Members
         {
             get

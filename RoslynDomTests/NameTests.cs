@@ -36,19 +36,6 @@ namespace RoslynDomTests
 
         [TestMethod]
         [TestCategory(SimpleNameCategory)]
-        public void Root_qualified_name_is_root()
-        {
-            var csharpCode = @"
-                        using System.Diagnostics.Tracing;
-                        namespace testing.Namespace1
-                            { }
-                        ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Root", root.QualifiedName);
-        }
-
-        [TestMethod]
-        [TestCategory(SimpleNameCategory)]
         public void Can_get_using_name_multipart()
         {
             var csharpCode = @"
@@ -510,20 +497,6 @@ namespace Namespace1
 
         [TestMethod]
         [TestCategory(QualifiedNameCategory)]
-        [ExpectedException(typeof(InvalidOperationException ))]
-        public void Can_get_using_qualified_name()
-        {
-            var csharpCode = @"
-                        using System.Diagnostics.Tracing;
-                        namespace testing.Namespace1
-                            { }
-                        ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("System.Diagnostics.Tracing", root.Usings.First().QualifiedName);
-        }
-
-        [TestMethod]
-        [TestCategory(QualifiedNameCategory)]
         public void Can_get_class_qualified_name()
         {
             var csharpCode = @"
@@ -587,42 +560,6 @@ namespace Namespace1
 }                        ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1.MyInterface", root.Namespaces.First().Interfaces.First().QualifiedName);
-        }
-
-        [TestMethod]
-        [TestCategory(QualifiedNameCategory)]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Get_field_qualified_name_throws_exception()
-        {
-            var csharpCode = @"
-                        public class MyClass
-                        { public int myField; }";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var x = root.Classes.First().Fields.First().QualifiedName;
-        }
-
-        [TestMethod]
-        [TestCategory(QualifiedNameCategory)]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Get_property_qualified_name_throws_exception()
-        {
-            var csharpCode = @"
-                        public class MyClass
-                        { public int myProperty { get; } }";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var x = root.Classes.First().Properties.First().QualifiedName;
-        }
-
-        [TestMethod]
-        [TestCategory(QualifiedNameCategory)]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Can_get_method_qualified_name_throws_exception()
-        {
-            var csharpCode = @"
-                        public class MyClass
-                        { public int myMethod(int x) { return x; } }";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var x = root.Classes.First().Methods.First().QualifiedName;
         }
 
         [TestMethod]
@@ -888,45 +825,6 @@ namespace NamespaceOuter
 }   }                     ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Interfaces.First().Namespace);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        [TestCategory(NamespaceNameCategory)]
-        public void Get_field_namespace_throws_exception()
-        {
-            var csharpCode = @"namespace NamespaceOuter
-{
-                        public class MyClass
-                        { public int myField; }}";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var x = ((RDomField)root.Namespaces.First().Classes.First().Fields.First()).Namespace;
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        [TestCategory(NamespaceNameCategory)]
-        public void Get_property_namespace_throws_exception()
-        {
-            var csharpCode = @"namespace NamespaceOuter
-{
-                        public class MyClass
-                        { public int myProperty { get; } }}";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var x = ((RDomProperty)root.Namespaces.First().Classes.First().Properties.First()).Namespace;
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        [TestCategory(NamespaceNameCategory)]
-        public void Can_get_method_namespace_throws_exception()
-        {
-            var csharpCode = @"
-                       namespace NamespaceOuter
-                        { public class MyClass
-                        { public int myMethod(int x) { return x; } } }";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var x = ((RDomMethod)root.Namespaces.First().Classes.First().Methods.First()).Namespace;
         }
 
         [TestMethod]

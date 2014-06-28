@@ -25,13 +25,7 @@ namespace RoslynDom
             }
         }
 
-        public override string QualifiedName
-        { get { throw new InvalidOperationException("You can't get qualified name for an instance property"); } }
-
-        public override string Namespace
-        { get { throw new InvalidOperationException("You can't get namespace for an instance method"); } }
-
-        public IReferencedType PropertyType
+          public IReferencedType PropertyType
         {
             get
             {

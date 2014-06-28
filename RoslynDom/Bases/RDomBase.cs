@@ -71,19 +71,19 @@ namespace RoslynDom
         /// </remarks>
         public abstract string OuterName { get; }
 
-        /// <summary>
-        /// For a discussion of names <see cref="OuterName"/>
-        /// </summary>
-        /// <returns>The qualified name, containing namespaces, containing types, and name</returns>
-        public abstract string QualifiedName { get; }
+        ///// <summary>
+        ///// For a discussion of names <see cref="OuterName"/>
+        ///// </summary>
+        ///// <returns>The qualified name, containing namespaces, containing types, and name</returns>
+        //public abstract string QualifiedName { get; }
 
-        /// <summary>
-        /// The contaning namespace.
-        /// </summary>
-        /// <returns>The current namespace, empty string for the root, and 
-        /// containing namespace for namespaces (not including the current namespace)
-        /// </returns>
-        public abstract string Namespace { get; }
+        ///// <summary>
+        ///// The contaning namespace.
+        ///// </summary>
+        ///// <returns>The current namespace, empty string for the root, and 
+        ///// containing namespace for namespaces (not including the current namespace)
+        ///// </returns>
+        //public abstract string Namespace { get; }
 
         public abstract ISymbol Symbol { get; }
 
@@ -153,30 +153,24 @@ namespace RoslynDom
                        Name;
             }
         }
-        
-        public override string QualifiedName
+
+        public virtual string GetQualifiedName()
         {
-            get
-            {
-                var namespaceName = RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
-                var typeName = GetContainingTypeName(Symbol.ContainingType);
-                namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
-                typeName = string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".";
-                return namespaceName + typeName + Name;
-            }
+            var namespaceName = RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
+            var typeName = GetContainingTypeName(Symbol.ContainingType);
+            namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
+            typeName = string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".";
+            return namespaceName + typeName + Name;
         }
 
-        public override string Namespace
+        public virtual string GetNamespace()
         {
-            get
-            {
-                return RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
-                //var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
-                //var typeName = GetContainingTypeName(Symbol.ContainingType);
-                //return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
-                //       (string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".") +
-                //       Name;
-            }
+            return RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
+            //var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
+            //var typeName = GetContainingTypeName(Symbol.ContainingType);
+            //return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
+            //       (string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".") +
+            //       Name;
         }
 
         private string GetContainingTypeName(ITypeSymbol typeSymbol)

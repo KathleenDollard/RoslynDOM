@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
-    public interface IReferencedType : IDom
+    public interface IReferencedType : IDom, IHasNamespace 
     {
     }
 }

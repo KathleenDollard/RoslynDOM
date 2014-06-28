@@ -39,6 +39,7 @@
     <Compile Include="CharacteristicInterfaces\ICanBeStatic.cs" />
     <Compile Include="CharacteristicInterfaces\IHasAccessModifier.cs" />
     <Compile Include="CharacteristicInterfaces\IHasImplementedInterfaces.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasNamespace.cs" />
     <Compile Include="CharacteristicInterfaces\IHasTypeParameters.cs" />
     <Compile Include="Enums\LiteralType.cs" />
     <Compile Include="Enums\MemberType.cs" />

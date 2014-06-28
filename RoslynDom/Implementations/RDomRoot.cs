@@ -39,11 +39,6 @@ namespace RoslynDom
             }
         }
 
-        public override string QualifiedName
-        {
-            get { return Name; }
-        }
-
           public IEnumerable<IClass> RootClasses
         {
             get

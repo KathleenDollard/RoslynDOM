@@ -898,22 +898,6 @@ public static class Foo
 
         }
 
-        [TestMethod]
-        [TestCategory(ParameterAndMethodCategory)]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Throw_exception_on_attempt_to_get_qualified_name_of_parameter()
-        {
-            var csharpCode = @"
-public static class Foo  
-{
-   public static string Foo5(this A a, int i = 0, string s = ""){}
-}
-";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var method = root.Classes.First().Methods.First();
-            var name = method.Parameters.First().QualifiedName;
-        }
-
 
         private void ParameterCheck(IParameter parm, int ordinal, string name, string typeName,
                 bool isOut = false, bool isRef = false, bool isParamArray = false,

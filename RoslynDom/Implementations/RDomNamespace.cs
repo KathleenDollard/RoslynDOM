@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
 
-    public class RDomNamespace : RDomBaseStemContainer<NamespaceDeclarationSyntax,INamespaceSymbol >, INamespace
+    public class RDomNamespace : RDomBaseStemContainer<NamespaceDeclarationSyntax, INamespaceSymbol>, INamespace
     {
         internal RDomNamespace(NamespaceDeclarationSyntax rawItem,
             IEnumerable<IStemMember> members,
@@ -20,18 +20,12 @@ namespace RoslynDom
 
         public IEnumerable<INamespace> AllChildNamespaces
         {
-            get
-            {
-                return RoslynDomUtilities.GetAllChildNamespaces(this);
-            }
+            get { return RoslynDomUtilities.GetAllChildNamespaces(this); }
         }
 
-        public IEnumerable<INamespace> NonEmptyNamespaces
+         public IEnumerable<INamespace> NonEmptyNamespaces
         {
-            get
-            {
-                return RoslynDomUtilities.GetNonEmptyNamespaces(this);
-            }
+            get { return RoslynDomUtilities.GetNonEmptyNamespaces(this); }
         }
 
 
@@ -39,13 +33,13 @@ namespace RoslynDom
         {
             get
             {
-                var namespaceName = RoslynDomUtilities. GetContainingNamespaceName(Symbol.ContainingNamespace);
-                namespaceName =string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
-                return namespaceName +                       Name;
+                var namespaceName = RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
+                namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
+                return namespaceName + Name;
             }
         }
 
-        public StemMemberType StemMemberType
+         public StemMemberType StemMemberType
         {
             get
             { return StemMemberType.Namespace; }

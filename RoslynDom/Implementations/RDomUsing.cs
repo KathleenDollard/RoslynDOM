@@ -18,13 +18,5 @@ namespace RoslynDom
             get
             { return TypedSyntax.Name.NameFrom(); }
         }
-
-        public override string QualifiedName
-        {
-            get
-            {
-                throw new InvalidOperationException("You can't get qualified name for a using statement");
-            }
-        }
     }
 }

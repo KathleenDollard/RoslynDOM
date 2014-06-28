@@ -13,10 +13,6 @@ namespace RoslynDom
     {
         internal RDomParameter(ParameterSyntax rawItem) : base(rawItem) { }
 
-
-        public override string QualifiedName
-        { get { throw new InvalidOperationException("You can't get qualified name for an instance property"); } }
-
         public IReferencedType Type
         { get { return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type); } }
 

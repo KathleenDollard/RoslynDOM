@@ -20,6 +20,16 @@ namespace RoslynDom
             { return GetAttributes(); }
         }
 
+        public string Namespace
+        {
+            get { return GetNamespace(); }
+        }
+
+        public string QualifiedName
+        {
+            get { return GetQualifiedName(); }
+        }
+
         public AccessModifier AccessModifier
         {
             get

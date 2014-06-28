@@ -64,7 +64,7 @@ namespace RoslynDom
         }
 
 
-        public override string QualifiedName
+        public  string QualifiedName
         {
             get
             {
@@ -78,7 +78,7 @@ namespace RoslynDom
             }
         }
 
-        public override string Namespace
+        public  string Namespace
         {
             get
             {
