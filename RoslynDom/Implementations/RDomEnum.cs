@@ -12,7 +12,10 @@ namespace RoslynDom
 {
     public class RDomEnum : RDomSyntaxNodeBase<EnumDeclarationSyntax, ISymbol>, IEnum
     {
-        internal RDomEnum(EnumDeclarationSyntax rawItem) : base(rawItem) { }
+        internal RDomEnum(
+            EnumDeclarationSyntax rawItem,
+            params PublicAnnotation[] publicAnnotations)
+          : base(rawItem, publicAnnotations) { }
 
         public IEnumerable<IAttribute> Attributes
         {

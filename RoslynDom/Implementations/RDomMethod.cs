@@ -12,7 +12,11 @@ namespace RoslynDom
     public class RDomMethod : RDomSyntaxNodeBase<MethodDeclarationSyntax, IMethodSymbol>, IMethod
     {
         private IEnumerable<IParameter> _parameters;
-        internal RDomMethod(MethodDeclarationSyntax rawItem, IEnumerable<IParameter> parametrs) : base(rawItem)
+        internal RDomMethod(
+            MethodDeclarationSyntax rawItem, 
+            IEnumerable<IParameter> parametrs,
+            params PublicAnnotation[] publicAnnotations) 
+          : base(rawItem, publicAnnotations )
         {
             _parameters = parametrs;
         }

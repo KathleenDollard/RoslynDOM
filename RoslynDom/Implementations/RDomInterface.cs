@@ -10,9 +10,11 @@ namespace RoslynDom
 {
     public class RDomInterface : RDomBaseType<InterfaceDeclarationSyntax>, IInterface
     {
-        internal RDomInterface(InterfaceDeclarationSyntax rawItem,
-            IEnumerable<ITypeMember> members) 
-            : base(rawItem, MemberType.Interface,StemMemberType.Interface,  members)
+        internal RDomInterface(
+            InterfaceDeclarationSyntax rawItem,
+            IEnumerable<ITypeMember> members,
+            params PublicAnnotation[] publicAnnotations) 
+            : base(rawItem, MemberType.Interface,StemMemberType.Interface,  members, publicAnnotations )
         { }
 
         public IEnumerable<IReferencedType> AllImplementedInterfaces

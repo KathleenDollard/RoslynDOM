@@ -16,6 +16,14 @@ namespace RoslynDom
     /// </summary>
     public abstract class RDomBase : IRoslynDom
     {
+        private List<PublicAnnotation> _publicAnnotations = new List<PublicAnnotation>();
+
+        public RDomBase(params PublicAnnotation[] publicAnnotations)
+        {
+            foreach (var publicAnnotation in publicAnnotations)
+            { this._publicAnnotations.Add(publicAnnotation); }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -71,25 +79,68 @@ namespace RoslynDom
         /// </remarks>
         public abstract string OuterName { get; }
 
-        ///// <summary>
-        ///// For a discussion of names <see cref="OuterName"/>
-        ///// </summary>
-        ///// <returns>The qualified name, containing namespaces, containing types, and name</returns>
-        //public abstract string QualifiedName { get; }
-
-        ///// <summary>
-        ///// The contaning namespace.
-        ///// </summary>
-        ///// <returns>The current namespace, empty string for the root, and 
-        ///// containing namespace for namespaces (not including the current namespace)
-        ///// </returns>
-        //public abstract string Namespace { get; }
-
         public abstract ISymbol Symbol { get; }
+
+        private IEnumerable<PublicAnnotation> PublicAnnotations
+        {
+            get { return _publicAnnotations; }
+        }
 
         public abstract object RequestValue(string name);
 
         internal abstract ISymbol GetSymbol(SyntaxNode node);
+
+        public object GetPublicAnnotationValue(string name, string key)
+        {
+            var annotation = GetAnnotation(name);
+            if (annotation == null) return null;
+            return annotation[key];
+        }
+
+        public T GetPublicAnnotationValue<T>(string name, string key)
+        {
+            var annotation = GetAnnotation(name);
+            if (annotation == null) return default(T);
+            return annotation.GetValue<T>(key);
+        }
+
+        public void AddPublicAnnotationValue(string name, string key, object value)
+        {
+            var publicAnnotation = GetAnnotation(name);
+            if (publicAnnotation == null)
+            {
+                publicAnnotation = new PublicAnnotation(name);
+                _publicAnnotations.Add(publicAnnotation);
+            }
+            publicAnnotation.AddItem(key,value);
+        }
+
+        public void AddPublicAnnotationValue(string name, object value)
+        {
+            AddPublicAnnotationValue(name, name, value);
+        }
+
+        private PublicAnnotation GetAnnotation(string name)
+        {
+            return _publicAnnotations
+                                .Where(x => x.Name == name)
+                                .FirstOrDefault();
+        }
+
+        public bool HasPublicAnnotation(string name)
+        {
+            return (GetAnnotation(name) != null);
+        }
+
+        public object GetPublicAnnotationValue(string name)
+        {
+            return GetPublicAnnotationValue(name, name);
+        }
+
+        public T GetPublicAnnotationValue<T>(string name)
+        {
+            return GetPublicAnnotationValue<T>(name, name);
+        }
     }
 
     public abstract class RDomBase<T, TSymbol> : RDomBase, IRoslynDom<T, TSymbol>
@@ -100,9 +151,11 @@ namespace RoslynDom
         private TSymbol _symbol;
         private IEnumerable<IAttribute> _attributes;
 
-        protected RDomBase(T rawItem)
+        protected RDomBase(T rawItem, params PublicAnnotation[] publicAnnotations)
+            : base(publicAnnotations)
         {
             _rawSyntax = rawItem;
+
         }
 
         public T TypedSyntax
@@ -257,7 +310,9 @@ namespace RoslynDom
         // TODO: Consider why this isn't collapsed into the RDomBase<T>
         private T _rawItem;
 
-        protected RDomSyntaxNodeBase(T rawItem) : base(rawItem)
+        protected RDomSyntaxNodeBase(T rawItem,
+                       params PublicAnnotation[] publicAnnotations)
+                 : base(rawItem, publicAnnotations)
         {
             _rawItem = rawItem;
         }

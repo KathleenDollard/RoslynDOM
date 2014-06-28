@@ -11,7 +11,10 @@ namespace RoslynDom
 {
     public class RDomUsingDirective : RDomSyntaxNodeBase<UsingDirectiveSyntax, ISymbol>, IUsing
     {
-        internal RDomUsingDirective(UsingDirectiveSyntax rawItem) : base(rawItem) { }
+        internal RDomUsingDirective(
+            UsingDirectiveSyntax rawItem,
+            params PublicAnnotation[] publicAnnotations) 
+          : base(rawItem, publicAnnotations ) { }
 
         public override string Name
         {

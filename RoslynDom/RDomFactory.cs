@@ -59,12 +59,15 @@ namespace RoslynDom
             var kRoot = tree.GetRoot() as CompilationUnitSyntax;
             var members = ListUtilities.MakeList(kRoot, x => x.Members, x => MakeStemMember(x));
             var usings = ListUtilities.MakeList(kRoot, x => x.Usings, x => MakeUsingDirective(x));
-            return new RDomRoot(kRoot, members, usings);
+            var publicAnnotations = GetPublicAnnotations(kRoot).ToArray();
+            return new RDomRoot(kRoot, members, usings, publicAnnotations);
         }
+
 
         private static IUsing MakeUsingDirective(UsingDirectiveSyntax x)
         {
-            return new RDomUsingDirective(x);
+            var publicAnnotations = GetPublicAnnotations(x).ToArray();
+            return new RDomUsingDirective(x, publicAnnotations);
         }
 
         private static bool DoMember<T>(MemberDeclarationSyntax val, Func<T,
@@ -122,7 +125,7 @@ namespace RoslynDom
             else if (DoMember<StructDeclarationSyntax>(rawMember, MakeStructure, out item)) { }
             else if (DoMember<EnumDeclarationSyntax>(rawMember, MakeEnum, out item)) { }
             else if (DoMembers<FieldDeclarationSyntax>(rawMember, MakeFields, retList)) { };
-            if (item != null) retList.Add(item); 
+            if (item != null) retList.Add(item);
             return retList.OfType<ITypeMember>();
         }
 
@@ -130,55 +133,152 @@ namespace RoslynDom
         {
             var members = ListUtilities.MakeList(rawNamespace, x => x.Members, x => MakeStemMember(x));
             var usings = ListUtilities.MakeList(rawNamespace, x => x.Usings, x => MakeUsingDirective(x));
-            return new RDomNamespace(rawNamespace, members, usings);
+            var publicAnnotations = GetPublicAnnotations(rawNamespace).ToArray();
+            return new RDomNamespace(rawNamespace, members, usings, publicAnnotations );
         }
 
         private static IMember MakeClass(ClassDeclarationSyntax rawClass)
         {
             var members = ListUtilities.MakeList(rawClass, x => x.Members, x => MakeTypeMembers(x));
-            return new RDomClass(rawClass, members);
+            var publicAnnotations = GetPublicAnnotations(rawClass).ToArray();
+            return new RDomClass(rawClass, members, publicAnnotations);
         }
 
         private static IMember MakeStructure(StructDeclarationSyntax rawStruct)
         {
             var members = ListUtilities.MakeList(rawStruct, x => x.Members, x => MakeTypeMembers(x));
-            return new RDomStructure(rawStruct, members);
+            var publicAnnotations = GetPublicAnnotations(rawStruct).ToArray();
+            return new RDomStructure(rawStruct, members, publicAnnotations);
         }
 
         private static IMember MakeInterface(InterfaceDeclarationSyntax rawInterface)
         {
             var members = ListUtilities.MakeList(rawInterface, x => x.Members, x => MakeTypeMembers(x));
-            return new RDomInterface(rawInterface, members);
+            var publicAnnotations = GetPublicAnnotations(rawInterface).ToArray();
+            return new RDomInterface(rawInterface, members, publicAnnotations);
         }
 
         private static IMember MakeEnum(EnumDeclarationSyntax rawEnum)
         {
-            return new RDomEnum(rawEnum);
+            var publicAnnotations = GetPublicAnnotations(rawEnum).ToArray();
+            return new RDomEnum(rawEnum, publicAnnotations);
         }
         private static IMember MakeMethod(MethodDeclarationSyntax rawMethod)
         {
             var parms = ListUtilities.MakeList(rawMethod, x => x.ParameterList.Parameters, x => MakeParameter(x));
-            return new RDomMethod(rawMethod, parms);
+            var publicAnnotations = GetPublicAnnotations(rawMethod).ToArray();
+            return new RDomMethod(rawMethod, parms, publicAnnotations);
         }
 
         private static IParameter MakeParameter(ParameterSyntax rawParm)
         {
-            return new RDomParameter(rawParm);
+            var publicAnnotations = GetPublicAnnotations(rawParm).ToArray();
+            return new RDomParameter(rawParm, publicAnnotations);
         }
 
         private static IMember MakeProperty(PropertyDeclarationSyntax rawProperty)
         {
-            return new RDomProperty(rawProperty);
+            var publicAnnotations = GetPublicAnnotations(rawProperty).ToArray();
+            return new RDomProperty(rawProperty, publicAnnotations);
         }
 
         private static void MakeFields(FieldDeclarationSyntax rawField, List<IMember> list)
         {
             var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
-            foreach(var decl in declarators )
+            foreach (var decl in declarators)
             {
-                list.Add(new RDomField(rawField, decl));
-
+                var publicAnnotations = GetPublicAnnotations(rawField).ToArray();
+                list.Add(new RDomField(rawField, decl, publicAnnotations ));
             }
+        }
+
+        #endregion
+
+        #region Private methods to support public annotations
+        private static IEnumerable<PublicAnnotation> GetPublicAnnotations(CompilationUnitSyntax kRoot)
+        {
+            var ret = new List<PublicAnnotation>();
+            var nodes = kRoot.ChildNodes();
+            foreach (var node in nodes)
+            {
+                ret.AddRange(GetPublicAnnotationFromFirstToken(node, true));
+            }
+            return ret;
+        }
+
+        private static IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode node)
+        {
+            return GetPublicAnnotationFromFirstToken(node, false);
+        }
+        private static IEnumerable<PublicAnnotation> GetPublicAnnotationFromFirstToken(
+                   SyntaxNode node, bool isRoot)
+        {
+            var ret = new List<PublicAnnotation>();
+            var firstToken = node.GetFirstToken();
+            if (firstToken != default(SyntaxToken))
+            {
+                ret.AddRange(GetPublicAnnotationFromToken(firstToken, isRoot));
+            }
+            return ret;
+        }
+
+        private static IEnumerable<PublicAnnotation> GetPublicAnnotationFromToken(
+               SyntaxToken token, bool isRoot)
+        {
+            var ret = new List<PublicAnnotation>();
+            var trivias = token.LeadingTrivia
+                              .Where(x => x.CSharpKind() == SyntaxKind.SingleLineCommentTrivia);
+            foreach (var trivia in trivias)
+            {
+                var str = GetPublicAnnotationAsString(trivia);
+                var strRoot = GetSpecialRootAnnotation(str);
+                if (isRoot)
+                { str = strRoot; }
+                else
+                { str = string.IsNullOrWhiteSpace(strRoot) ? str : ""; }
+                if (!string.IsNullOrWhiteSpace(str))
+                {
+                    var attrib = GetAnnotationStringAsAttribute(str);
+                    var newPublicAnnotation = new PublicAnnotation(attrib.Name.ToString());
+                    var args = attrib.ArgumentList.Arguments;
+                    foreach (var arg in args)
+                    {
+                        // reuse parsing
+                        var tempRDomAttributeValue = new RDomAttributeValue(arg, attrib, null);
+                        newPublicAnnotation.AddItem(tempRDomAttributeValue.Name, tempRDomAttributeValue.Value);
+                    }
+                    ret.Add(newPublicAnnotation);
+                }
+            }
+            return ret;
+        }
+
+        private static AttributeSyntax GetAnnotationStringAsAttribute(string str)
+        {
+            // Trick Roslyn into thinking it's an attribute
+            str = "[" + str + "] public class {}";
+            var tree = CSharpSyntaxTree.ParseText(str);
+            var attrib = tree.GetRoot().DescendantNodes()
+                        .Where(x => x.CSharpKind() == SyntaxKind.Attribute)
+                        .FirstOrDefault();
+            return attrib as AttributeSyntax;
+        }
+
+        private static string GetPublicAnnotationAsString(SyntaxTrivia trivia)
+        {
+            var str = trivia.ToString().Trim();
+            if (!str.StartsWith("//")) throw new InvalidOperationException("Unexpected commment format");
+            str = str.SubstringAfter("//").SubstringAfter("[[").SubstringBefore("]]").Trim();
+            return str;
+        }
+
+        private static string GetSpecialRootAnnotation(string str)
+        {
+            str  = str.Trim();
+
+            if (str.StartsWith("file:")) return str.SubstringAfter("file:");
+            if (str.StartsWith("root:")) return str.SubstringAfter("root:");
+            return null;
         }
         #endregion
     }

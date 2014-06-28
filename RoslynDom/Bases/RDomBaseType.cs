@@ -21,8 +21,9 @@ namespace RoslynDom
             T rawItem,
             MemberType memberType,
             StemMemberType stemMemberType,
-            IEnumerable<ITypeMember> members)
-            : base(rawItem)
+            IEnumerable<ITypeMember> members,
+            params PublicAnnotation[] publicAnnotations)
+            : base(rawItem, publicAnnotations )
         {
             _members = members;
             _memberType = memberType;

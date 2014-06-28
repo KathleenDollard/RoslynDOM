@@ -14,8 +14,9 @@ namespace RoslynDom
 
         internal RDomRoot(CompilationUnitSyntax rawItem,
             IEnumerable<IStemMember> members,
-            IEnumerable<IUsing> usings)
-        : base(rawItem, members, usings)
+            IEnumerable<IUsing> usings,
+            params PublicAnnotation[] publicAnnotations)
+        : base(rawItem, members, usings, publicAnnotations)
         { }
 
         public IEnumerable<INamespace> AllChildNamespaces
@@ -48,6 +49,42 @@ namespace RoslynDom
                                   from y in x.Classes
                                   select y;
                 return classes.Union(rootclasses);
+            }
+        }
+
+        public IEnumerable<IEnum > RootEnums
+        {
+            get
+            {
+                var enums = Enums;
+                var rootenums = from x in NonEmptyNamespaces
+                                  from y in x.Enums
+                                  select y;
+                return rootenums.Union(rootenums);
+            }
+        }
+
+        public IEnumerable<IInterface > RootInterfaces
+        {
+            get
+            {
+                var interfaces = Interfaces;
+                var rootinterfaces = from x in NonEmptyNamespaces
+                                  from y in x.Interfaces 
+                                  select y;
+                return interfaces.Union(rootinterfaces);
+            }
+        }
+
+        public IEnumerable<IStructure > RootStructures
+        {
+            get
+            {
+                var structures = Structures;
+                var rootstructures= from x in NonEmptyNamespaces
+                                  from y in x.Structures
+                                  select y;
+                return structures.Union(rootstructures);
             }
         }
     }

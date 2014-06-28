@@ -68,6 +68,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="PubicAnnotatoinTests.cs" />
     <Compile Include="AttributeTests.cs" />
     <Compile Include="CharacteristicTests.cs" />
     <Compile Include="ContainerTests.cs" />

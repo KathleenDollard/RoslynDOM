@@ -18,8 +18,9 @@ namespace RoslynDom
     public class RDomClass : RDomBaseType<ClassDeclarationSyntax>, IClass
     {
         internal RDomClass(ClassDeclarationSyntax rawItem,
-            IEnumerable<ITypeMember> members)
-            : base(rawItem, MemberType.Class, StemMemberType.Class, members)
+            IEnumerable<ITypeMember> members,
+            params PublicAnnotation[] publicAnnotations)
+            : base(rawItem, MemberType.Class, StemMemberType.Class, members, publicAnnotations )
         { }
 
         public IEnumerable<IClass> Classes

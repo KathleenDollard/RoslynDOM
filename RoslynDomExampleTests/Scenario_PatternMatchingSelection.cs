@@ -79,6 +79,38 @@ namespace Namespace1
             var matches = attributeNames.Where(x => x == name);
             return (matches.Count() > 0);
         }
-#endregion 
+
+        [TestMethod]
+        public void Can_get_and_retrieve_public_annotations()
+        {
+            var csharpCode = @"
+            //[[ file: kad_Test4(val1 = ""George"", val2 = 43) ]]
+            //[[ kad_Test1(val1 : ""Fred"", val2 : 40) ]]
+            using Foo;
+                     
+            //[[ kad_Test2(""Bill"", val2 : 41) ]]
+            //[[ kad_Test3(val1 =""Percy"", val2 : 42) ]]
+            public class MyClass
+            { }
+            ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+
+            var using1 = root.Usings.First();
+            Assert.AreEqual("Fred",using1.GetPublicAnnotationValue <string>("kad_Test1","val1"));
+            Assert.AreEqual("Fred",using1.GetPublicAnnotationValue("kad_Test1","val1"));
+            Assert.AreEqual(40,    using1.GetPublicAnnotationValue <int>("kad_Test1","val2"));
+            Assert.AreEqual(40,    using1.GetPublicAnnotationValue("kad_Test1","val2"));
+
+            var class1 = root.RootClasses.First();
+            Assert.AreEqual("Bill",  class1.GetPublicAnnotationValue( "kad_Test2"));
+            Assert.AreEqual(41,      class1.GetPublicAnnotationValue("kad_Test2", "val2"));
+            Assert.AreEqual("Percy", class1.GetPublicAnnotationValue("kad_Test3", "val1"));
+            Assert.AreEqual(42,      class1.GetPublicAnnotationValue("kad_Test3", "val2"));
+
+            Assert.AreEqual("George", root.GetPublicAnnotationValue("kad_Test4", "val1"));
+            Assert.AreEqual(43,       root.GetPublicAnnotationValue("kad_Test4", "val2"));
+
+        }
+        #endregion
     }
 }

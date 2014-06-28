@@ -11,7 +11,10 @@ namespace RoslynDom
 {
     public class RDomProperty : RDomSyntaxNodeBase<PropertyDeclarationSyntax, IPropertySymbol>, IProperty
     {
-        internal RDomProperty(PropertyDeclarationSyntax rawItem) : base(rawItem) { }
+        internal RDomProperty(
+            PropertyDeclarationSyntax rawItem,
+            params PublicAnnotation[] publicAnnotations) 
+          : base(rawItem, publicAnnotations ) { }
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }

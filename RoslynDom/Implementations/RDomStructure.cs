@@ -10,9 +10,11 @@ namespace RoslynDom
 {
     public class RDomStructure : RDomBaseType<StructDeclarationSyntax>, IStructure
     {
-        internal RDomStructure(StructDeclarationSyntax rawItem,
-           IEnumerable<ITypeMember> members)
-            : base(rawItem, MemberType.Structure , StemMemberType.Structure, members)
+        internal RDomStructure(
+            StructDeclarationSyntax rawItem,
+           IEnumerable<ITypeMember> members,
+            params PublicAnnotation[] publicAnnotations)
+            : base(rawItem, MemberType.Structure , StemMemberType.Structure, members, publicAnnotations )
         { }
 
         public IEnumerable<IClass> Classes

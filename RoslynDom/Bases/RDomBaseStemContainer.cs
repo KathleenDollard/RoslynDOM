@@ -17,9 +17,10 @@ namespace RoslynDom
         private IEnumerable<IUsing> _usings;
 
         internal RDomBaseStemContainer(T rawItem,
-            IEnumerable<IStemMember> members,
-            IEnumerable<IUsing> usings)
-        : base(rawItem)
+                        IEnumerable<IStemMember> members,
+                        IEnumerable<IUsing> usings,
+                        params PublicAnnotation[] publicAnnotations)
+        : base(rawItem, publicAnnotations )
         {
             _members = members;
             _usings = usings;

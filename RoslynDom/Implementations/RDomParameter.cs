@@ -11,7 +11,10 @@ namespace RoslynDom
 {
     public class RDomParameter : RDomSyntaxNodeBase<ParameterSyntax, IParameterSymbol>, IParameter
     {
-        internal RDomParameter(ParameterSyntax rawItem) : base(rawItem) { }
+        internal RDomParameter(
+            ParameterSyntax rawItem,
+            params PublicAnnotation[] publicAnnotations)
+          : base(rawItem, publicAnnotations ) { }
 
         public IReferencedType Type
         { get { return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type); } }

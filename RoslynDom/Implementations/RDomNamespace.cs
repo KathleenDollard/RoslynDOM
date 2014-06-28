@@ -14,8 +14,9 @@ namespace RoslynDom
     {
         internal RDomNamespace(NamespaceDeclarationSyntax rawItem,
             IEnumerable<IStemMember> members,
-            IEnumerable<IUsing> usings)
-            : base(rawItem, members, usings)
+            IEnumerable<IUsing> usings,
+            params PublicAnnotation[] publicAnnotations)
+            : base(rawItem, members, usings, publicAnnotations)
         { }
 
         public IEnumerable<INamespace> AllChildNamespaces

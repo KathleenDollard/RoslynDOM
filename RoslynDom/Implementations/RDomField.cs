@@ -23,7 +23,11 @@ namespace RoslynDom
     {
         private VariableDeclaratorSyntax _varSyntax;
 
-        internal RDomField(FieldDeclarationSyntax rawItem, VariableDeclaratorSyntax varSyntax) : base(rawItem)
+        internal RDomField(
+                    FieldDeclarationSyntax rawItem, 
+                    VariableDeclaratorSyntax varSyntax,
+                    params PublicAnnotation[] publicAnnotations)
+            : base(rawItem, publicAnnotations )
         { _varSyntax = varSyntax; }
 
         public IEnumerable<IAttribute> Attributes
