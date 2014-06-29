@@ -70,7 +70,7 @@
   <ItemGroup>
     <Compile Include="BugResponseTests.cs" />
     <Compile Include="DiagnosticsTests.cs" />
-    <Compile Include="PublicAnnotatoinTests.cs" />
+    <Compile Include="PublicAnnotationTests.cs" />
     <Compile Include="AttributeTests.cs" />
     <Compile Include="CharacteristicTests.cs" />
     <Compile Include="ContainerTests.cs" />

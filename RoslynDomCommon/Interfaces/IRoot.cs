@@ -12,7 +12,6 @@ namespace RoslynDom.Common
         IEnumerable<IInterface > RootInterfaces { get; }
         IEnumerable<IEnum> RootEnums { get; }
         IEnumerable<IStructure > RootStructures { get; }
-
         bool HasSyntaxErrors { get; }
     }
 }

@@ -90,7 +90,6 @@ namespace RoslynDom
             return (list.Count() > startCount);
         }
 
-
         /// <summary>
         /// Creates namespace and class
         /// </summary>
