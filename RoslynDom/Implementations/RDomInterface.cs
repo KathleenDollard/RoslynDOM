@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RoslynDom.Common;
+
+namespace RoslynDom
+{
+    public class RDomInterface : RDomBaseType<InterfaceDeclarationSyntax>, IInterface
+    {
+        internal RDomInterface(
+            InterfaceDeclarationSyntax rawItem,
+            IEnumerable<ITypeMember> members,
+            params PublicAnnotation[] publicAnnotations) 
+            : base(rawItem, MemberType.Interface,StemMemberType.Interface,  members, publicAnnotations )
+        { }
+
+        public IEnumerable<IReferencedType> AllImplementedInterfaces
+        {
+            get
+            {
+                return this.ImpementedInterfacesFrom(true);
+            }
+        }
+
+        public IEnumerable<IReferencedType> ImplementedInterfaces
+        {
+            get
+            {
+                return this.ImpementedInterfacesFrom(false);
+            }
+        }
+
+        public IEnumerable<ITypeParameter> TypeParameters
+        {
+            get
+            {
+                return this.TypedSymbol.TypeParametersFrom();
+            }
+        }
+    }
+}
