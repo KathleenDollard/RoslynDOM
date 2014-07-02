@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface INamespace : IStemMember, IStemContainer
+    public interface INamespace : IDom<INamespace >, IStemMember, IStemContainer
     {
 
     }

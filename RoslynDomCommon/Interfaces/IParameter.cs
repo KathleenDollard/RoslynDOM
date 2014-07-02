@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IParameter : IHasAttributes, IDom
+    public interface IParameter : IHasAttributes, IDom<IParameter >
     {
         IReferencedType Type { get; }
         bool IsOut { get; }

@@ -10,14 +10,18 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomEnum : RDomSyntaxNodeBase<EnumDeclarationSyntax, ISymbol>, IEnum
+    public class RDomEnum : RDomSyntaxNodeBase<IEnum,EnumDeclarationSyntax, ISymbol>, IEnum
     {
         internal RDomEnum(
             EnumDeclarationSyntax rawItem,
             params PublicAnnotation[] publicAnnotations)
           : base(rawItem, publicAnnotations) { }
 
-        public IEnumerable<IAttribute> Attributes
+        internal RDomEnum(RDomEnum oldRDom)
+             : base(oldRDom)
+        { }
+
+           public IEnumerable<IAttribute> Attributes
         {
             get
             { return GetAttributes(); }

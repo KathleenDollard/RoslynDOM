@@ -9,8 +9,9 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseType<T> : RDomSyntaxNodeBase<T, INamedTypeSymbol>, IType
-        where T : SyntaxNode
+    public abstract class RDomBaseType<T, TSyntax> : RDomSyntaxNodeBase<T, TSyntax, INamedTypeSymbol>, IType<T>
+        where TSyntax : SyntaxNode
+        where T : IType<T>
     {
         private IEnumerable<ITypeMember> _members;
         private IEnumerable<IAttribute> _attributes;
@@ -18,54 +19,52 @@ namespace RoslynDom
         private StemMemberType _stemMemberType;
 
         internal RDomBaseType(
-            T rawItem,
+            TSyntax rawItem,
             MemberType memberType,
             StemMemberType stemMemberType,
             IEnumerable<ITypeMember> members,
             params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, publicAnnotations )
+            : base(rawItem, publicAnnotations)
         {
             _members = members;
             _memberType = memberType;
             _stemMemberType = stemMemberType;
         }
 
-        public string Namespace
+        internal RDomBaseType(T oldRDom)
+             : base(oldRDom)
+        { }
+
+        public override bool SameIntent(T other, bool includePublicAnnotations)
         {
-            get { return GetNamespace(); }
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            var otherItem = other as RDomBaseType<T, TSyntax>;
+            if (!CheckSameIntentChildList(Fields, otherItem.Fields)) return false;
+            if (!CheckSameIntentChildList(Properties, otherItem.Properties)) return false;
+            if (!CheckSameIntentChildList(Methods, otherItem.Methods)) return false;
+            return true;
         }
+
+        public string Namespace
+        { get { return GetNamespace(); } }
 
         public string QualifiedName
-        {
-            get { return GetQualifiedName(); }
-        }
+        { get { return GetQualifiedName(); } }
 
         public IEnumerable<ITypeMember> Members
-        {
-            get
-            { return _members; }
-        }
+        { get { return _members; } }
+
         public IEnumerable<IMethod> Methods
-        {
-            get
-            { return Members.OfType<IMethod>(); }
-        }
+        { get { return Members.OfType<IMethod>(); } }
+
         public IEnumerable<IProperty> Properties
-        {
-            get
-            { return Members.OfType<IProperty>(); }
-        }
+        { get { return Members.OfType<IProperty>(); } }
+
         public IEnumerable<IField> Fields
-        {
-            get
-            { return Members.OfType<IField>(); }
-        }
+        { get { return Members.OfType<IField>(); } }
 
         public IEnumerable<IAttribute> Attributes
-        {
-            get
-            { return GetAttributes(); }
-        }
+        { get { return GetAttributes(); } }
 
         public AccessModifier AccessModifier
         {
@@ -77,17 +76,10 @@ namespace RoslynDom
         }
 
         public MemberType MemberType
-        {
-            get
-            { return _memberType; }
-        }
+        { get { return _memberType; } }
 
         public StemMemberType StemMemberType
-        {
-            get
-            { return _stemMemberType; }
-
-        }
+        { get { return _stemMemberType; } }
     }
 }
 

@@ -8,7 +8,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomInterface : RDomBaseType<InterfaceDeclarationSyntax>, IInterface
+    public class RDomInterface : RDomBaseType<IInterface,InterfaceDeclarationSyntax>, IInterface
     {
         internal RDomInterface(
             InterfaceDeclarationSyntax rawItem,
@@ -16,6 +16,18 @@ namespace RoslynDom
             params PublicAnnotation[] publicAnnotations) 
             : base(rawItem, MemberType.Interface,StemMemberType.Interface,  members, publicAnnotations )
         { }
+
+        internal RDomInterface(RDomInterface oldRDom)
+             : base(oldRDom)
+        { }
+
+        public override bool SameIntent(IInterface  other, bool includePublicAnnotations)
+        {
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!CheckSameIntentChildList(TypeParameters, other.TypeParameters)) return false;
+            if (!CheckSameIntentChildList(AllImplementedInterfaces, other.AllImplementedInterfaces)) return false;
+            return true;
+        }
 
         public IEnumerable<IReferencedType> AllImplementedInterfaces
         {

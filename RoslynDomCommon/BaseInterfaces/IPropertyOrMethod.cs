@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IPropertyOrMethod : ITypeMember, IHasReturnType, ICanBeStatic
+    public interface IPropertyOrMethod : IHasReturnType, ICanBeStatic
     {
         bool IsAbstract { get; }
         bool IsVirtual { get; }
@@ -15,4 +15,8 @@ namespace RoslynDom.Common
 
         IEnumerable<IParameter> Parameters { get; }
     }
+
+    public interface IPropertyOrMethod<T> : IPropertyOrMethod, ITypeMember<T>
+        where T : IPropertyOrMethod<T>
+    { }
 }

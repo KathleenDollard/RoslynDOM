@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IInvalidTypeMember : ITypeMember
+    public interface IInvalidTypeMember : ITypeMember<IInvalidTypeMember>
     {
     }
 }

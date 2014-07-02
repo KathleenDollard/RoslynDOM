@@ -15,13 +15,34 @@ namespace RoslynDom
     /// <remarks>
     /// I'm not currently supporting parameters (am supporting type parameters) because I don't understand them
     /// </remarks>
-    public class RDomClass : RDomBaseType<ClassDeclarationSyntax>, IClass
+    public class RDomClass : RDomBaseType<IClass, ClassDeclarationSyntax>, IClass
     {
         internal RDomClass(ClassDeclarationSyntax rawItem,
             IEnumerable<ITypeMember> members,
             params PublicAnnotation[] publicAnnotations)
             : base(rawItem, MemberType.Class, StemMemberType.Class, members, publicAnnotations )
         { }
+
+        internal RDomClass(RDomClass oldRDom)
+             : base(oldRDom)
+        { }
+
+        public override bool SameIntent(IClass other, bool includePublicAnnotations)
+        {
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (IsAbstract != other.IsAbstract) return false;
+            if (IsSealed != other.IsSealed) return false;
+            if (IsStatic != other.IsStatic) return false;
+            if (IsAbstract != other.IsAbstract) return false;
+            if (!BaseType.SameIntent( other.BaseType)) return false;
+            if (!CheckSameIntentChildList(Classes, other.Classes)) return false;
+            if (!CheckSameIntentChildList(Structures, other.Structures)) return false;
+            if (!CheckSameIntentChildList(Interfaces, other.Interfaces)) return false;
+            if (!CheckSameIntentChildList(Enums, other.Enums)) return false;
+            if (!CheckSameIntentChildList(TypeParameters, other.TypeParameters)) return false;
+            if (!CheckSameIntentChildList(AllImplementedInterfaces , other.AllImplementedInterfaces)) return false;
+            return true;
+        }
 
         public IEnumerable<IClass> Classes
         {

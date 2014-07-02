@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IAttribute : IDom
+    public interface IAttribute : IDom<IAttribute>
     {
         // TODO: Determine how AllowMultiple will play
         // Not including Attribute usage, scope and other info about the attribute class at this point

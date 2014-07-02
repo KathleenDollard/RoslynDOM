@@ -9,12 +9,17 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomUsingDirective : RDomSyntaxNodeBase<UsingDirectiveSyntax, ISymbol>, IUsing
+    public class RDomUsingDirective : RDomSyntaxNodeBase<IUsing, UsingDirectiveSyntax, ISymbol>, IUsing
     {
         internal RDomUsingDirective(
             UsingDirectiveSyntax rawItem,
-            params PublicAnnotation[] publicAnnotations) 
-          : base(rawItem, publicAnnotations ) { }
+            params PublicAnnotation[] publicAnnotations)
+          : base(rawItem, publicAnnotations)
+        { }
+
+        internal RDomUsingDirective(RDomUsingDirective oldRDom)
+             : base(oldRDom)
+        { }
 
         public override string Name
         {

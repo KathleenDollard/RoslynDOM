@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
-using RoslynDom.Common;
 
 namespace RoslynDomTests
 {
@@ -242,7 +236,7 @@ namespace RoslynDomTests
         #region public annotation values
         [TestMethod]
         [TestCategory(PublicAnnotationValuesCategory)]
-        public void Does_notcash_when_public_annotations_does_not_exist()
+        public void Does_not_crash_when_public_annotations_does_not_exist()
         {
             var csharpCode = @"
             using Foo;

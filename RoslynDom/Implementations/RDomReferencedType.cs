@@ -16,13 +16,33 @@ namespace RoslynDom
         private TypeInfo _typeInfo;
         private ISymbol _symbol;
 
-
         internal RDomReferencedType(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
         {
             _raw = raw;
             _symbol = symbol;
         }
+        internal RDomReferencedType(RDomReferencedType oldRDom)
+             : base(oldRDom)
+        { }
 
+        public IReferencedType Copy()
+        {
+            return new RDomReferencedType(this);
+        }
+
+       public bool SameIntent(IReferencedType other)
+        {
+            return SameIntent(other, true);
+        }
+
+        public bool SameIntent(IReferencedType other, bool includePublicAnnotations)
+        {
+            var otherItem = other as RDomReferencedType;
+            if (!base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
+            // The following is probably inadequate, but we need to find the edge cases
+            if (this.QualifiedName != otherItem.QualifiedName ) return false ;
+            return true;
+        }
 
         internal RDomReferencedType(TypeInfo typeInfo, ISymbol symbol)
         {
@@ -44,7 +64,7 @@ namespace RoslynDom
         {
             get
             {
-                if (Symbol == null && (_typeInfo.Type != null )) { return _typeInfo.Type.ToString(); }
+                if (Symbol == null && (_typeInfo.Type != null)) { return _typeInfo.Type.ToString(); }
                 var arraySymbol = Symbol as IArrayTypeSymbol;
                 if (arraySymbol == null) { return Symbol.Name; }
                 // CSharp specific
@@ -64,7 +84,7 @@ namespace RoslynDom
         }
 
 
-        public  string QualifiedName
+        public string QualifiedName
         {
             get
             {
@@ -78,7 +98,7 @@ namespace RoslynDom
             }
         }
 
-        public  string Namespace
+        public string Namespace
         {
             get
             {
@@ -103,7 +123,7 @@ namespace RoslynDom
 
         private string GetContainingTypeName(ITypeSymbol typeSymbol)
         {
-            if (typeSymbol == null ) return "";
+            if (typeSymbol == null) return "";
             var parentName = GetContainingTypeName(typeSymbol.ContainingType);
             return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
                 typeSymbol.Name;

@@ -9,7 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomParameter : RDomSyntaxNodeBase<ParameterSyntax, IParameterSymbol>, IParameter
+    public class RDomParameter : RDomSyntaxNodeBase<IParameter,ParameterSyntax, IParameterSymbol>, IParameter
     {
         internal RDomParameter(
             ParameterSyntax rawItem,
@@ -21,6 +21,11 @@ namespace RoslynDom
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
+
+        //public override string Name
+        //{
+        //    get { return TypedSyntax.NameFrom(); }
+        //}
 
         public bool IsOut
         { get { return TypedSymbol.RefKind == RefKind.Out; } }

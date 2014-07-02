@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ITypeMember :IMember, IHasAttributes , IDom, IHasAccessModifier  
+    public interface ITypeMember : IDom,IMember, IHasAttributes ,  IHasAccessModifier  
     {
         MemberType MemberType { get; }
+    }
+    public interface ITypeMember<T> : ITypeMember, IDom<T>
+        where T : ITypeMember<T>
+    {
     }
 }

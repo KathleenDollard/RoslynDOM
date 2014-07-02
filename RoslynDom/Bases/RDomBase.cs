@@ -24,6 +24,19 @@ namespace RoslynDom
             { this._publicAnnotations.Add(publicAnnotation); }
         }
 
+        protected RDomBase(IDom oldIDom)
+        {
+            // PublicAnnotation is a structure, so this copies
+            var oldRDom = (RDomBase)oldIDom;
+            foreach (var item in oldRDom._publicAnnotations)
+            { this._publicAnnotations.Add(item); }
+        }
+
+        private IEnumerable<PublicAnnotation> PublicAnnotations
+        {
+            get { return _publicAnnotations; }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -81,11 +94,6 @@ namespace RoslynDom
 
         public abstract ISymbol Symbol { get; }
 
-        private IEnumerable<PublicAnnotation> PublicAnnotations
-        {
-            get { return _publicAnnotations; }
-        }
-
         public abstract object RequestValue(string name);
 
         internal abstract ISymbol GetSymbol(SyntaxNode node);
@@ -93,26 +101,26 @@ namespace RoslynDom
         public object GetPublicAnnotationValue(string name, string key)
         {
             var annotation = GetAnnotation(name);
-            if (annotation == null) return null;
+            if (annotation == default(PublicAnnotation)) return null;
             return annotation[key];
         }
 
         public T GetPublicAnnotationValue<T>(string name, string key)
         {
             var annotation = GetAnnotation(name);
-            if (annotation == null) return default(T);
+            if (annotation == default(PublicAnnotation)) return default(T);
             return annotation.GetValue<T>(key);
         }
 
         public void AddPublicAnnotationValue(string name, string key, object value)
         {
             var publicAnnotation = GetAnnotation(name);
-            if (publicAnnotation == null)
+            if (publicAnnotation == default(PublicAnnotation))
             {
                 publicAnnotation = new PublicAnnotation(name);
                 _publicAnnotations.Add(publicAnnotation);
             }
-            publicAnnotation.AddItem(key,value);
+            publicAnnotation.AddItem(key, value);
         }
 
         public void AddPublicAnnotationValue(string name, object value)
@@ -129,7 +137,7 @@ namespace RoslynDom
 
         public bool HasPublicAnnotation(string name)
         {
-            return (GetAnnotation(name) != null);
+            return (GetAnnotation(name) != default(PublicAnnotation));
         }
 
         public object GetPublicAnnotationValue(string name)
@@ -141,42 +149,233 @@ namespace RoslynDom
         {
             return GetPublicAnnotationValue<T>(name, name);
         }
+
+        protected bool CheckSameIntent(RDomBase other, bool includePublicAnnotations)
+        {
+            if (other == null) return false;
+            if (includePublicAnnotations)
+            { if (!this.AnnotationsMatch(other)) return false; }
+            return true;
+        }
+        internal bool AnnotationsMatch(IDom other)
+        {
+            var rDomOther = other as RDomBase;
+            foreach (var annotation in _publicAnnotations)
+            {
+                var otherAnnotation = rDomOther.GetAnnotation(annotation.Name);
+                if (otherAnnotation != annotation) return false;
+            }
+            return true;
+        }
     }
 
-    public abstract class RDomBase<T, TSymbol> : RDomBase, IRoslynDom<T, TSymbol>
-        where T : SyntaxNode
-        where TSymbol : ISymbol
+    public abstract class RDomBase<T> : RDomBase, IDom<T>
+            where T : IDom<T>
     {
-        private T _rawSyntax;
+        protected RDomBase(params PublicAnnotation[] publicAnnotations)
+           : base(publicAnnotations)
+        { }
+
+        protected RDomBase(T oldRDom)
+             : base(oldRDom)
+        { }
+
+        protected static IEnumerable<T> CopyMembers(IEnumerable<T> members)
+        {
+            var ret = new List<T>();
+            foreach (var member in members)
+            {
+                ret.Add(member.Copy());
+            }
+            return ret;
+        }
+
+        public virtual T Copy()
+        {
+            var type = this.GetType();
+            var constructor = type.GetTypeInfo()
+                .DeclaredConstructors
+                .Where(x => x.GetParameters().Count() == 1
+                && typeof(T).IsAssignableFrom(x.GetParameters().First().ParameterType))
+                .FirstOrDefault();
+            if (constructor == null) throw new InvalidOperationException("Missing constructor for clone");
+            var newItem = constructor.Invoke(new object[] { this });
+            return (T)newItem;
+        }
+
+        public bool SameIntent(T other)
+        {
+            return SameIntent(other, true);
+        }
+
+        /// <summary>
+        /// Derived classes should override this to determine intent
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="includePublicAnnotations"></param>
+        /// <returns></returns>
+        public virtual bool SameIntent(T other, bool includePublicAnnotations)
+        {
+            var otherItem = other as RDomBase;
+            if (! base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
+            return true;
+        }
+
+        protected bool CheckSameIntentChildList<TChild>(IEnumerable<TChild> thisList,
+             IEnumerable<TChild> otherList, Func<TChild, TChild, bool> compareDelegate = null)
+                where TChild : IDom<TChild>
+        {
+            if (thisList == null) return (otherList == null);
+            if (otherList == null) return false;
+            if (thisList.Count() != otherList.Count()) return false;
+            compareDelegate = compareDelegate ?? ((x, y) => x.Name == y.Name);
+            foreach (var item in thisList)
+            {
+                var otherItem = otherList.Where(x => compareDelegate(x, item)).FirstOrDefault();
+                if (otherItem == null) return false;
+                if (!item.SameIntent(otherItem)) return false;
+            }
+            return true;
+        }
+
+    }
+
+    public abstract class RDomBase<T, TSyntax, TSymbol> : RDomBase<T>, IRoslynDom<T, TSyntax, TSymbol>
+            where TSyntax : SyntaxNode
+            where TSymbol : ISymbol
+            where T : IDom<T>
+    {
+        private TSyntax _originalRawSyntax;
+        private TSyntax _rawSyntax;
         private TSymbol _symbol;
         private IEnumerable<IAttribute> _attributes;
 
-        protected RDomBase(T rawItem, params PublicAnnotation[] publicAnnotations)
+        protected RDomBase(TSyntax rawItem, params PublicAnnotation[] publicAnnotations)
             : base(publicAnnotations)
         {
             _rawSyntax = rawItem;
-
+            _originalRawSyntax = rawItem;
         }
 
-        public T TypedSyntax
+        protected RDomBase(T oldIDom)
+             : base(oldIDom)
         {
-            get
-            { return _rawSyntax; }
+            var oldRDom = oldIDom as RDomBase<T, TSyntax, TSymbol>;
+            _rawSyntax = oldRDom._rawSyntax;
+            _originalRawSyntax = oldRDom._originalRawSyntax;
+            _attributes = RDomBase<IAttribute>.CopyMembers(oldRDom._attributes.Cast<RDomAttribute>());
+            _symbol = default(TSymbol); // this should be reset, this line is to remind us
         }
+
+        public override bool SameIntent(T other, bool includePublicAnnotations)
+        {
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            var rDomOther = other as RDomBase<T, TSyntax, TSymbol>;
+            if (rDomOther == null) return false;
+            if (Name != rDomOther.Name) return false;
+            if (!CheckSameIntentNamespaceNames(rDomOther)) return false;
+            if (!CheckSameIntentAccessModifier(other)) return false;
+            if (!CheckSameIntentAttributes(rDomOther)) return false;
+            if (!CheckSameIntentAccessModifier(other)) return false;
+            if (!CheckSameIntentStaticModfier(other)) return false;
+            if (!CheckSameIntentReturnType(other)) return false;
+            if (!CheckSameIntentPropertyOrMethod(other)) return false;
+
+            return true;
+        }
+
+        private bool CheckSameIntentNamespaceNames(RDomBase<T, TSyntax, TSymbol> rDomOther)
+        {
+            if (this is IHasNamespace)
+            {
+                if (OuterName != rDomOther.OuterName) return false;
+                if (GetNamespace() != rDomOther.GetNamespace()) return false;
+                if (GetQualifiedName() != rDomOther.GetQualifiedName()) return false;
+            }
+            return true;
+        }
+
+        private bool CheckSameIntentAttributes(RDomBase<T, TSyntax, TSymbol> rDomOther)
+        {
+            if (this is IHasAttributes)
+            {
+                var attributes = this.GetAttributes();
+                var otherAttributes = rDomOther.GetAttributes();
+                if (attributes != null || otherAttributes != null)
+                {
+                    if (attributes == null && otherAttributes != null) return false;
+                    if (attributes != null && otherAttributes == null) return false;
+                    if (attributes.Count() != otherAttributes.Count()) return false;
+                    foreach (var attribute in attributes)
+                    {
+                        // TODO: Consider multiple attributes of the same name and values/attribute type
+                        var otherAttribute = otherAttributes.Where(x => x.Name == attribute.Name).FirstOrDefault();
+                        if (otherAttribute == null) return false;
+                        if (!attribute.SameIntent(otherAttribute)) return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private bool CheckSameIntentAccessModifier(T other)
+        {
+            var item = this as IHasAccessModifier;
+            if (item != null)
+            {
+                var otherItem = other as IHasAccessModifier;
+                if (item.AccessModifier != otherItem.AccessModifier) return false;
+            }
+            return true;
+        }
+
+        private bool CheckSameIntentStaticModfier(T other)
+        {
+            var item = this as ICanBeStatic;
+            if (item != null)
+            {
+                var otherItem = other as ICanBeStatic;
+                if (item.IsStatic != otherItem.IsStatic) return false;
+            }
+            return true;
+        }
+
+        private bool CheckSameIntentReturnType(T other)
+        {
+            var item = this as IHasReturnType ;
+            if (item != null)
+            {
+                var otherItem = other as IHasReturnType;
+                if (!item.ReturnType.SameIntent(otherItem.ReturnType)) return false;
+            }
+            return true;
+        }
+
+        private bool CheckSameIntentPropertyOrMethod(T other)
+        {
+            var item = this as IPropertyOrMethod;
+            if (item != null)
+            {
+                var otherItem = other as IPropertyOrMethod;
+                if ( item.IsAbstract != otherItem.IsAbstract) return false;
+                if ( item.IsOverride != otherItem.IsOverride) return false;
+                if ( item.IsSealed   != otherItem.IsSealed  ) return false;
+                if (item.IsVirtual != otherItem.IsVirtual) return false;
+            }
+            return true;
+        }
+
+        public TSyntax TypedSyntax
+        { get { return _rawSyntax; } }
+
+        protected TSyntax OriginalTypedSyntax
+        { get { return _originalRawSyntax; } }
 
         public override object RawItem
-        {
-            get
-            { return _rawSyntax; }
-        }
+        { get { return _rawSyntax; } }
 
         public override ISymbol Symbol
-        {
-            get
-            {
-                return TypedSymbol;
-            }
-        }
+        { get { return TypedSymbol; } }
 
         public virtual TSymbol TypedSymbol
         {
@@ -189,12 +388,7 @@ namespace RoslynDom
         }
 
         public override string Name
-        {
-            get
-            {
-                return Symbol.Name;
-            }
-        }
+        { get { return Symbol.Name; } }
 
         public override string OuterName
         {
@@ -217,16 +411,9 @@ namespace RoslynDom
         }
 
         public virtual string GetNamespace()
-        {
-            return RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
-            //var namespaceName = GetContainingNamespaceName(Symbol.ContainingNamespace);
-            //var typeName = GetContainingTypeName(Symbol.ContainingType);
-            //return (string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".") +
-            //       (string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".") +
-            //       Name;
-        }
+        { return RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace); }
 
-        private string GetContainingTypeName(ITypeSymbol typeSymbol)
+        private static string GetContainingTypeName(ITypeSymbol typeSymbol)
         {
             if (typeSymbol == null) return "";
             var parentName = GetContainingTypeName(typeSymbol.ContainingType);
@@ -301,21 +488,30 @@ namespace RoslynDom
             }
             return null;
         }
+
+
     }
 
-    public abstract class RDomSyntaxNodeBase<T, TSymbol> : RDomBase<T, TSymbol>
-        where T : SyntaxNode
+    public abstract class RDomSyntaxNodeBase<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>
+        where TSyntax : SyntaxNode
         where TSymbol : ISymbol
+        where T : IDom<T>
     {
         // TODO: Consider why this isn't collapsed into the RDomBase<T>
-        private T _rawItem;
+        //private TSyntax _rawItem;
 
-        protected RDomSyntaxNodeBase(T rawItem,
+        internal RDomSyntaxNodeBase(
+            T oldRDom)
+            : base(oldRDom)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected RDomSyntaxNodeBase(TSyntax rawItem,
                        params PublicAnnotation[] publicAnnotations)
                  : base(rawItem, publicAnnotations)
         {
-            _rawItem = rawItem;
+            //_rawItem = rawItem;
         }
-
     }
 }

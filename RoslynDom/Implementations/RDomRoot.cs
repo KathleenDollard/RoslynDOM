@@ -9,7 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomRoot : RDomBaseStemContainer<CompilationUnitSyntax, ISymbol>, IRoot
+    public class RDomRoot : RDomBaseStemContainer<IRoot, CompilationUnitSyntax, ISymbol>, IRoot
     {
 
         internal RDomRoot(CompilationUnitSyntax rawItem,
@@ -18,6 +18,18 @@ namespace RoslynDom
             params PublicAnnotation[] publicAnnotations)
         : base(rawItem, members, usings, publicAnnotations)
         { }
+
+        internal RDomRoot(RDomRoot oldRDom)
+             : base(oldRDom)
+        { }
+
+        public override bool SameIntent(IRoot other, bool includePublicAnnotations)
+        {
+            // Base class checks classes, etc
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!CheckSameIntentChildList(NonEmptyNamespaces, other.NonEmptyNamespaces)) return false;
+            return true;
+        }
 
         public IEnumerable<INamespace> AllChildNamespaces
         {
@@ -48,7 +60,7 @@ namespace RoslynDom
             }
         }
 
-          public IEnumerable<IClass> RootClasses
+        public IEnumerable<IClass> RootClasses
         {
             get
             {

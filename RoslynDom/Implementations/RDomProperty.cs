@@ -9,15 +9,29 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomProperty : RDomSyntaxNodeBase<PropertyDeclarationSyntax, IPropertySymbol>, IProperty
+    public class RDomProperty : RDomSyntaxNodeBase<IProperty, PropertyDeclarationSyntax, IPropertySymbol>, IProperty
     {
         internal RDomProperty(
             PropertyDeclarationSyntax rawItem,
-            params PublicAnnotation[] publicAnnotations) 
-          : base(rawItem, publicAnnotations ) { }
+            params PublicAnnotation[] publicAnnotations)
+          : base(rawItem, publicAnnotations)
+        { }
+
+        internal RDomProperty(RDomProperty oldRDom)
+             : base(oldRDom)
+        { }
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
+
+        public override bool SameIntent(IProperty other, bool includePublicAnnotations)
+        {
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (CanGet != other.CanGet) return false;
+            if (CanSet != other.CanSet) return false;
+            if (!CheckSameIntentChildList(Parameters, other.Parameters)) return false;
+            return true;
+        }
 
         public AccessModifier AccessModifier
         {
@@ -28,7 +42,7 @@ namespace RoslynDom
             }
         }
 
-          public IReferencedType PropertyType
+        public IReferencedType PropertyType
         {
             get
             {
@@ -40,12 +54,7 @@ namespace RoslynDom
         }
 
         public IReferencedType ReturnType
-        {
-            get
-            {
-                return PropertyType;
-            }
-        }
+        { get { return PropertyType; } }
 
         public bool IsAbstract
         { get { return Symbol.IsAbstract; } }
@@ -83,13 +92,11 @@ namespace RoslynDom
         /// Can't test until VB is active
         /// </remarks>
         public IEnumerable<IParameter> Parameters
-        // This is for VB, wihch I have not yet implemented
-        { get { throw new NotImplementedException(); } }
+        // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
+        { get { return new List<IParameter>(); } }
 
         public MemberType MemberType
-        {
-            get { return MemberType.Property; }
-        }
+        { get { return MemberType.Property; } }
 
         public override object RequestValue(string name)
         {

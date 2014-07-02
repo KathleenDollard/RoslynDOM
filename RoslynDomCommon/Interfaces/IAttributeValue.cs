@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-   public interface IAttributeValue : IDom
+   public interface IAttributeValue : IDom<IAttributeValue >
     {
         LiteralType  ValueType { get; }
         object Value { get; }

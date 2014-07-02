@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface IEnum : IType
+    public interface IEnum : IType<IEnum>
     {
         IReferencedType UnderlyingType { get; }
     }

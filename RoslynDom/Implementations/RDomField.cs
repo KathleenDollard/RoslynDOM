@@ -19,7 +19,7 @@ namespace RoslynDom
     /// obviously). At that point, the variable declaration will need to be held in
     /// the class. 
     /// </remarks>
-    public class RDomField : RDomSyntaxNodeBase<FieldDeclarationSyntax, IFieldSymbol>, IField
+    public class RDomField : RDomSyntaxNodeBase<IField,FieldDeclarationSyntax, IFieldSymbol>, IField
     {
         private VariableDeclaratorSyntax _varSyntax;
 
@@ -29,6 +29,15 @@ namespace RoslynDom
                     params PublicAnnotation[] publicAnnotations)
             : base(rawItem, publicAnnotations )
         { _varSyntax = varSyntax; }
+
+        internal RDomField(RDomField oldRDom)
+             : base(oldRDom)
+        { }
+        public override bool SameIntent(IField other, bool includePublicAnnotations)
+        {
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            return true;
+        }
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }

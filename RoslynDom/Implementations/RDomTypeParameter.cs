@@ -16,6 +16,33 @@ namespace RoslynDom
             : base(raw, symbol)
         { }
 
+        internal RDomTypeParameter(RDomTypeParameter oldRDom)
+             : base(oldRDom)
+        { }
+
+        // new here feels wrong. Expect testing issues here
+        public new ITypeParameter Copy()
+        {
+            return new RDomTypeParameter(this);
+        }
+
+        public bool SameIntent(ITypeParameter other)
+        {
+            return SameIntent(other, true);
+        }
+
+       public bool SameIntent(ITypeParameter other, bool includePublicAnnotations)
+        {
+            var otherItem = other as RDomTypeParameter;
+            if (!base.SameIntent(otherItem, includePublicAnnotations)) return false;
+            if (HasConstructorConstraint != other.HasConstructorConstraint) return false;
+            if (HasReferenceConstraint != other.HasReferenceConstraint) return false;
+            if (HasValueTypeConstraint != other.HasValueTypeConstraint) return false;
+            if (Ordinal != other.Ordinal) return false;
+            if (Variance != other.Variance) return false;
+            return true;
+        }
+ 
         public IEnumerable<IReferencedType> ConstraintTypes
         {
             get
@@ -75,5 +102,6 @@ namespace RoslynDom
                 return (Variance)symbol.Variance;
             }
         }
-    }
+
+     }
 }

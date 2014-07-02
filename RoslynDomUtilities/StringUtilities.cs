@@ -8,6 +8,19 @@ namespace RoslynDom.Common
 {
     public static class StringUtilities
     {
+        public static string ReplaceFirst(this string input, string replace, string replaceWith)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+            if (string.IsNullOrEmpty(replace)) throw new InvalidOperationException("Replace string cannot be null or an empty string");
+            if (replaceWith==null) throw new InvalidOperationException("Replace with string cannot be null. To remove first occrrence, use an empty string");
+            if (input.Contains(replace))
+            {
+                var start = input.SubstringBefore(replace);
+                var end = input.SubstringAfter(replace);
+                return start + replaceWith + end;
+            }
+            return input;
+        }
 
         public static string SubstringAfter(this string input, string delimiter)
         {

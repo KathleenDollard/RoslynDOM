@@ -8,7 +8,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomStructure : RDomBaseType<StructDeclarationSyntax>, IStructure
+    public class RDomStructure : RDomBaseType<IStructure,StructDeclarationSyntax>, IStructure
     {
         internal RDomStructure(
             StructDeclarationSyntax rawItem,
@@ -16,11 +16,26 @@ namespace RoslynDom
             params PublicAnnotation[] publicAnnotations)
             : base(rawItem, MemberType.Structure , StemMemberType.Structure, members, publicAnnotations )
         { }
+        internal RDomStructure(RDomStructure oldRDom)
+             : base(oldRDom)
+        { }
 
-        public IEnumerable<IClass> Classes
+            public IEnumerable<IClass> Classes
         {
             get
             { return Members.OfType<IClass>(); }
+        }
+
+        public override bool SameIntent(IStructure other, bool includePublicAnnotations)
+        {
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!CheckSameIntentChildList(Classes, other.Classes)) return false;
+            if (!CheckSameIntentChildList(Structures, other.Structures)) return false;
+            if (!CheckSameIntentChildList(Interfaces, other.Interfaces)) return false;
+            if (!CheckSameIntentChildList(Enums, other.Enums)) return false;
+            if (!CheckSameIntentChildList(TypeParameters, other.TypeParameters)) return false;
+            if (!CheckSameIntentChildList(AllImplementedInterfaces, other.AllImplementedInterfaces)) return false;
+            return true;
         }
 
         public IEnumerable<IStemMember> Types

@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
 
-    public class RDomNamespace : RDomBaseStemContainer<NamespaceDeclarationSyntax, INamespaceSymbol>, INamespace
+    public class RDomNamespace : RDomBaseStemContainer<INamespace, NamespaceDeclarationSyntax, INamespaceSymbol>, INamespace
     {
         internal RDomNamespace(NamespaceDeclarationSyntax rawItem,
             IEnumerable<IStemMember> members,
@@ -18,6 +18,14 @@ namespace RoslynDom
             params PublicAnnotation[] publicAnnotations)
             : base(rawItem, members, usings, publicAnnotations)
         { }
+
+        public override bool SameIntent(INamespace other, bool includePublicAnnotations)
+        {
+            // Base class checks classes, etc
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!CheckSameIntentChildList(NonEmptyNamespaces, other.NonEmptyNamespaces)) return false;
+            return true;
+        }
 
         public IEnumerable<INamespace> AllChildNamespaces
         {

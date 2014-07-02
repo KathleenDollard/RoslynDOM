@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace RoslynDom.Common
 {
     public interface IClass :
-        IType, 
+        IType<IClass>, 
         INestedContainer, 
         ITypeMemberContainer, 
         IHasTypeParameters, 

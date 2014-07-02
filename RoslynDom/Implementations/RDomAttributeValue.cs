@@ -12,7 +12,7 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
     public class RDomAttributeValue 
-        : RDomSyntaxNodeBase<AttributeArgumentSyntax, ISymbol>, IAttributeValue
+        : RDomSyntaxNodeBase<IAttributeValue,AttributeArgumentSyntax, ISymbol>, IAttributeValue
     {
         private string _name;
         private LiteralType _literalType;
@@ -84,6 +84,17 @@ namespace RoslynDom
                 }
               }
             return new Tuple<object, LiteralType >(value, literalType);
+        }
+
+        public override bool SameIntent(IAttributeValue other, bool includePublicAnnotations)
+        {
+            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            var rDomOther = other as RDomAttributeValue;
+            if (rDomOther == null) throw new InvalidOperationException();
+            if (_name != rDomOther._name) return false;
+            if (_literalType  != rDomOther._literalType) return false;
+            if (! (_value.Equals(rDomOther._value))) return false;
+            return true;
         }
 
         private string GetAttributeValueName(
