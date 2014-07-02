@@ -26,6 +26,7 @@ namespace RoslynDom
 
         public override bool SameIntent(IProperty other, bool includePublicAnnotations)
         {
+            if (other == null) return false;
             if (!base.SameIntent(other, includePublicAnnotations)) return false;
             if (CanGet != other.CanGet) return false;
             if (CanSet != other.CanSet) return false;
@@ -46,10 +47,7 @@ namespace RoslynDom
         {
             get
             {
-                //var info = GetTypeInfo(TypedSyntax.Type );
-                var refType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
-                INamedTypeSymbol namedTypeSymbol = refType.Symbol as INamedTypeSymbol;
-                return refType;
+                return  new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
             }
         }
 

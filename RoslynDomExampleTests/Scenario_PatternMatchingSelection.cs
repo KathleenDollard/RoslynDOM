@@ -96,19 +96,19 @@ namespace Namespace1
             var root = RDomFactory.GetRootFromString(csharpCode);
 
             var using1 = root.Usings.First();
-            Assert.AreEqual("Fred",using1.GetPublicAnnotationValue <string>("kad_Test1","val1"));
-            Assert.AreEqual("Fred",using1.GetPublicAnnotationValue("kad_Test1","val1"));
-            Assert.AreEqual(40,    using1.GetPublicAnnotationValue <int>("kad_Test1","val2"));
-            Assert.AreEqual(40,    using1.GetPublicAnnotationValue("kad_Test1","val2"));
+            Assert.AreEqual("Fred",using1.PublicAnnotations.GetValue <string>("kad_Test1","val1"));
+            Assert.AreEqual("Fred",using1.PublicAnnotations.GetValue("kad_Test1","val1"));
+            Assert.AreEqual(40,    using1.PublicAnnotations.GetValue <int>("kad_Test1","val2"));
+            Assert.AreEqual(40,    using1.PublicAnnotations.GetValue("kad_Test1","val2"));
 
             var class1 = root.RootClasses.First();
-            Assert.AreEqual("Bill",  class1.GetPublicAnnotationValue( "kad_Test2"));
-            Assert.AreEqual(41,      class1.GetPublicAnnotationValue("kad_Test2", "val2"));
-            Assert.AreEqual("Percy", class1.GetPublicAnnotationValue("kad_Test3", "val1"));
-            Assert.AreEqual(42,      class1.GetPublicAnnotationValue("kad_Test3", "val2"));
-
-            Assert.AreEqual("George", root.GetPublicAnnotationValue("kad_Test4", "val1"));
-            Assert.AreEqual(43,       root.GetPublicAnnotationValue("kad_Test4", "val2"));
+            Assert.AreEqual("Bill",  class1.PublicAnnotations.GetValue( "kad_Test2"));
+            Assert.AreEqual(41,      class1.PublicAnnotations.GetValue("kad_Test2", "val2"));
+            Assert.AreEqual("Percy", class1.PublicAnnotations.GetValue("kad_Test3", "val1"));
+            Assert.AreEqual(42,      class1.PublicAnnotations.GetValue("kad_Test3", "val2"));
+                                                            
+            Assert.AreEqual("George",  root.PublicAnnotations.GetValue("kad_Test4", "val1"));
+            Assert.AreEqual(43,        root.PublicAnnotations.GetValue("kad_Test4", "val2"));
 
         }
         #endregion

@@ -19,14 +19,15 @@ namespace RoslynDomTests
         [TestMethod,TestCategory(CopyTestCategory)]
         public void Can_clone_attribute()
         {
-            Assert.Inconclusive();
             var csharpCode = @"
-            using System;
+            [Foo(""Fred"", bar:3, bar2:""George"")] 
+            public class Bar{}           
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var newRoot = root.Copy();
-            Assert.IsNotNull(newRoot);
-
+            var attribute = root.RootClasses.First().Attributes.First();
+            var newAttribute = attribute.Copy();
+            Assert.IsNotNull(newAttribute);
+            Assert.IsTrue(newAttribute.SameIntent(attribute));
         }
 
         [TestMethod,TestCategory(CopyTestCategory)]

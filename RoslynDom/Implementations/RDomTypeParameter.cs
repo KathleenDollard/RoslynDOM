@@ -33,6 +33,7 @@ namespace RoslynDom
 
        public bool SameIntent(ITypeParameter other, bool includePublicAnnotations)
         {
+            if (other == null) return false;
             var otherItem = other as RDomTypeParameter;
             if (!base.SameIntent(otherItem, includePublicAnnotations)) return false;
             if (HasConstructorConstraint != other.HasConstructorConstraint) return false;

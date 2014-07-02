@@ -30,6 +30,7 @@ namespace RoslynDom
 
         public override bool SameIntent(IMethod other, bool includePublicAnnotations)
         {
+            if (other == null) return false;
             if (!base.SameIntent(other, includePublicAnnotations)) return false;
             if (IsExtensionMethod != other.IsExtensionMethod) return false;
             if (!CheckSameIntentChildList(TypeParameters, other.TypeParameters)) return false;

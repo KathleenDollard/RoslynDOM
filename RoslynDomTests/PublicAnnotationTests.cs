@@ -26,8 +26,8 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual(true, root.HasPublicAnnotation("kad_Test1"));
-            Assert.AreEqual(true, root.HasPublicAnnotation("kad_Test2"));
+            Assert.AreEqual(true, root.PublicAnnotations.HasPublicAnnotation("kad_Test1"));
+            Assert.AreEqual(true, root.PublicAnnotations.HasPublicAnnotation("kad_Test2"));
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root.HasPublicAnnotation("kad_Test1"));
+            Assert.IsTrue(root.PublicAnnotations.HasPublicAnnotation("kad_Test1"));
     }
 
     [TestMethod]
@@ -54,7 +54,7 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root.HasPublicAnnotation("kad_Test2"));
+            Assert.IsTrue(root.PublicAnnotations.HasPublicAnnotation("kad_Test2"));
         }
 
         [TestMethod]
@@ -71,8 +71,8 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root.HasPublicAnnotation("kad_Test1"));
-            Assert.IsTrue(root.HasPublicAnnotation("kad_Test2"));
+            Assert.IsTrue(root.PublicAnnotations.HasPublicAnnotation("kad_Test1"));
+            Assert.IsTrue(root.PublicAnnotations.HasPublicAnnotation("kad_Test2"));
         }
 
         [TestMethod]
@@ -111,9 +111,9 @@ namespace RoslynDomTests
             var root = RDomFactory.GetRootFromString(csharpCode);
             var using1 = root.Usings.First();
             var using2 = root.Usings.Last();
-            Assert.IsTrue(using1.HasPublicAnnotation("kad_Test3"));
-            Assert.IsTrue(using2.HasPublicAnnotation("kad_Test4"));
-            Assert.IsTrue(using2.HasPublicAnnotation("kad_Test5"));
+            Assert.IsTrue(using1.PublicAnnotations.HasPublicAnnotation("kad_Test3"));
+            Assert.IsTrue(using2.PublicAnnotations.HasPublicAnnotation("kad_Test4"));
+            Assert.IsTrue(using2.PublicAnnotations.HasPublicAnnotation("kad_Test5"));
         }
 
         [TestMethod]
@@ -137,8 +137,8 @@ namespace RoslynDomTests
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             var namespace1 = root.Namespaces.First();
-            Assert.IsTrue(namespace1.HasPublicAnnotation("kad_Test4"));
-            Assert.IsTrue(namespace1.HasPublicAnnotation("kad_Test5"));
+            Assert.IsTrue(namespace1.PublicAnnotations.HasPublicAnnotation("kad_Test4"));
+            Assert.IsTrue(namespace1.PublicAnnotations.HasPublicAnnotation("kad_Test5"));
 
         }
 
@@ -181,13 +181,13 @@ namespace RoslynDomTests
             var structure1 = root.RootStructures.First();
             var interface1 = root.RootInterfaces.First();
             var enum1 = root.RootEnums.First();
-            Assert.IsTrue(class1.HasPublicAnnotation("kad_Test6"));
-            Assert.IsTrue(structure1.HasPublicAnnotation("kad_Test7"));
-            Assert.IsTrue(structure1.HasPublicAnnotation("kad_Test8"));
-            Assert.IsTrue(interface1.HasPublicAnnotation("kad_Test9"));
-            Assert.IsTrue(interface1.HasPublicAnnotation("kad_TestA"));
-            Assert.IsTrue(enum1.HasPublicAnnotation("kad_TestB"));
-            Assert.IsTrue(enum1.HasPublicAnnotation("kad_TestC"));
+            Assert.IsTrue(class1.PublicAnnotations.HasPublicAnnotation("kad_Test6"));
+            Assert.IsTrue(structure1.PublicAnnotations.HasPublicAnnotation("kad_Test7"));
+            Assert.IsTrue(structure1.PublicAnnotations.HasPublicAnnotation("kad_Test8"));
+            Assert.IsTrue(interface1.PublicAnnotations.HasPublicAnnotation("kad_Test9"));
+            Assert.IsTrue(interface1.PublicAnnotations.HasPublicAnnotation("kad_TestA"));
+            Assert.IsTrue(enum1.PublicAnnotations.HasPublicAnnotation("kad_TestB"));
+            Assert.IsTrue(enum1.PublicAnnotations.HasPublicAnnotation("kad_TestC"));
         }
 
         [TestMethod]
@@ -226,10 +226,10 @@ namespace RoslynDomTests
             var field = root.RootClasses.First().Fields.First();
             var property = root.RootClasses.First().Properties.First();
             var method = root.RootClasses.First().Methods.First();
-            Assert.IsTrue(field.HasPublicAnnotation("kad_Test7"));
-            Assert.IsTrue(property.HasPublicAnnotation("kad_Test8"));
-            Assert.IsTrue(property.HasPublicAnnotation("kad_Test9"));
-            Assert.IsTrue(method.HasPublicAnnotation("kad_TestA"));
+            Assert.IsTrue(field.PublicAnnotations.HasPublicAnnotation("kad_Test7"));
+            Assert.IsTrue(property.PublicAnnotations.HasPublicAnnotation("kad_Test8"));
+            Assert.IsTrue(property.PublicAnnotations.HasPublicAnnotation("kad_Test9"));
+            Assert.IsTrue(method.PublicAnnotations.HasPublicAnnotation("kad_TestA"));
         }
         #endregion
 
@@ -246,8 +246,8 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual(false, root.RootClasses.First().HasPublicAnnotation("xxxx"));
-            Assert.IsNull(root.RootClasses.First().GetPublicAnnotationValue("xxxx", "yyy"));
+            Assert.AreEqual(false, root.RootClasses.First().PublicAnnotations.HasPublicAnnotation("xxxx"));
+            Assert.IsNull(root.RootClasses.First().PublicAnnotations.GetValue("xxxx", "yyy"));
         }
 
         [TestMethod]
@@ -262,7 +262,7 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.IsNull(root.RootClasses.First().GetPublicAnnotationValue("kad_Test3", "yyy"));
+            Assert.IsNull(root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "yyy"));
         }
 
         [TestMethod]
@@ -277,8 +277,8 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Fred", root.RootClasses.First().GetPublicAnnotationValue("kad_Test3", "val1"));
-            Assert.AreEqual(42, root.RootClasses.First().GetPublicAnnotationValue("kad_Test3", "val2"));
+            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val1"));
+            Assert.AreEqual(42, root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val2"));
         }
 
         [TestMethod]
@@ -293,8 +293,8 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Fred", root.RootClasses.First().GetPublicAnnotationValue("kad_Test3", "val1"));
-            Assert.AreEqual(42, root.RootClasses.First().GetPublicAnnotationValue("kad_Test3", "val2"));
+            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val1"));
+            Assert.AreEqual(42, root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val2"));
         }
 
         [TestMethod]
@@ -309,8 +309,8 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Fred", root.RootClasses.First().GetPublicAnnotationValue("kad_Test3"));
-            Assert.AreEqual(42, root.RootClasses.First().GetPublicAnnotationValue("kad_Test3", "val2"));
+            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3"));
+            Assert.AreEqual(42, root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val2"));
         }
         #endregion
 

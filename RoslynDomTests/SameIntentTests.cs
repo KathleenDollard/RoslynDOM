@@ -1217,8 +1217,8 @@ namespace RoslynDomTests
             ";
             var root1 = RDomFactory.GetRootFromString(csharpCode1);
             var root2 = RDomFactory.GetRootFromString(csharpCode2);
-            var namespace1 = root1.NonEmptyNamespaces.First();
-            var namespace2 = root2.NonEmptyNamespaces.First();
+            var namespace1 = root1.NonemptyNamespaces.First();
+            var namespace2 = root2.NonemptyNamespaces.First();
             Assert.IsTrue(namespace1.SameIntent(namespace2));
         }
 
@@ -1236,12 +1236,12 @@ namespace RoslynDomTests
             ";
             var root1 = RDomFactory.GetRootFromString(csharpCode);
             var root2 = RDomFactory.GetRootFromString(csharpCode);
-            var namespace1 = root1.NonEmptyNamespaces .First();
-            var namespace2 = root2.NonEmptyNamespaces.First();
+            var namespace1 = root1.NonemptyNamespaces .First();
+            var namespace2 = root2.NonemptyNamespaces.First();
             Assert.IsTrue(namespace1.SameIntent(namespace2));
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "private");
             root2 = RDomFactory.GetRootFromString(csharpCodeChanged);
-            namespace2 = root2.NonEmptyNamespaces.First();
+            namespace2 = root2.NonemptyNamespaces.First();
             Assert.IsFalse(namespace1.SameIntent(namespace2));
         }
 
@@ -1259,12 +1259,12 @@ namespace RoslynDomTests
             ";
             var root1 = RDomFactory.GetRootFromString(csharpCode);
             var root2 = RDomFactory.GetRootFromString(csharpCode);
-            var namespace1 = root1.NonEmptyNamespaces.First();
-            var namespace2 = root2.NonEmptyNamespaces.First();
+            var namespace1 = root1.NonemptyNamespaces.First();
+            var namespace2 = root2.NonemptyNamespaces.First();
             Assert.IsTrue(namespace1.SameIntent(namespace2));
             var csharpCodeChanged = csharpCode.ReplaceFirst("void", "int");
             root2 = RDomFactory.GetRootFromString(csharpCodeChanged);
-            namespace2 = root2.NonEmptyNamespaces.First();
+            namespace2 = root2.NonemptyNamespaces.First();
             Assert.IsFalse(namespace1.SameIntent(namespace2));
         }
 

@@ -1020,7 +1020,7 @@ namespace Foo
             var root = RDomFactory.GetRootFromString(csharpCode);
             var namespaces = root.Namespaces;
             var allNamespaces = root.AllChildNamespaces;
-            var nonEmptyNamespaces = root.NonEmptyNamespaces;
+            var nonEmptyNamespaces = root.NonemptyNamespaces;
             Assert.AreEqual(1, namespaces.Count());
             Assert.AreEqual(4, allNamespaces.Count());
             Assert.AreEqual(3, allNamespaces.First().AllChildNamespaces.Count());
@@ -1047,7 +1047,7 @@ namespace Foo
             var root = RDomFactory.GetRootFromString(csharpCode);
             var namespaces = root.Namespaces;
             var allNamespaces = root.AllChildNamespaces;
-            var nonEmptyNamespaces = root.NonEmptyNamespaces;
+            var nonEmptyNamespaces = root.NonemptyNamespaces;
             Assert.AreEqual(1, namespaces.Count());
             Assert.AreEqual(4, allNamespaces.Count());
             Assert.AreEqual(3, allNamespaces.First().AllChildNamespaces.Count());
@@ -1064,7 +1064,7 @@ public enum Foo1 : byte {}
             var root = RDomFactory.GetRootFromString(csharpCode);
             var namespaces = root.Namespaces;
             var allNamespaces = root.AllChildNamespaces;
-            var nonEmptyNamespaces = root.NonEmptyNamespaces;
+            var nonEmptyNamespaces = root.NonemptyNamespaces;
             Assert.AreEqual(0, namespaces.Count());
             Assert.AreEqual(0, allNamespaces.Count());
             Assert.AreEqual(0, nonEmptyNamespaces.Count());
@@ -1089,7 +1089,7 @@ namespace Foo
             var topNamespace = root.Namespaces.First();
             var namespaces = topNamespace.Namespaces;
             var allNamespaces = topNamespace.AllChildNamespaces;
-            var nonEmptyNamespaces = topNamespace.NonEmptyNamespaces;
+            var nonEmptyNamespaces = topNamespace.NonemptyNamespaces;
             Assert.AreEqual(2, namespaces.Count());
             Assert.AreEqual(3, allNamespaces.Count());
             Assert.AreEqual(1, allNamespaces.First().AllChildNamespaces.Count());
@@ -1117,7 +1117,7 @@ namespace Foo
             var topNamespace = root.Namespaces.First();
             var namespaces = topNamespace.Namespaces;
             var allNamespaces = topNamespace.AllChildNamespaces;
-            var nonEmptyNamespaces = topNamespace.NonEmptyNamespaces;
+            var nonEmptyNamespaces = topNamespace.NonemptyNamespaces;
             Assert.AreEqual(2, namespaces.Count());
             Assert.AreEqual(3, allNamespaces.Count());
             Assert.AreEqual(1, allNamespaces.First().AllChildNamespaces.Count());
@@ -1138,7 +1138,7 @@ namespace Namespace1
             var topNamespace = root.Namespaces.First();
             var namespaces = topNamespace.Namespaces;
             var allNamespaces = topNamespace.AllChildNamespaces;
-            var nonEmptyNamespaces = topNamespace.NonEmptyNamespaces;
+            var nonEmptyNamespaces = topNamespace.NonemptyNamespaces;
             Assert.AreEqual(0, namespaces.Count());
             Assert.AreEqual(0, allNamespaces.Count());
             Assert.AreEqual(0, nonEmptyNamespaces.Count());

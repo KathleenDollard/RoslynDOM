@@ -10,11 +10,15 @@ namespace RoslynDom.Common
     public static class FileSupport
     {
         public static IEnumerable<String> GetMatchingFiles(
+               string pattern,
+               string startDirectory)
+        { return GetMatchingFiles(pattern, startDirectory, false); }
+
+        public static IEnumerable<String> GetMatchingFiles(
                 string pattern,
                 string startDirectory,
-                bool includeSubdirectories = false)
+                bool includeSubdirectories )
         {
-
             var options = includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
             return Directory.GetFiles(startDirectory, pattern, options);
         }

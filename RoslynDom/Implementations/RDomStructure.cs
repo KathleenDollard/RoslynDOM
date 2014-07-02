@@ -28,6 +28,7 @@ namespace RoslynDom
 
         public override bool SameIntent(IStructure other, bool includePublicAnnotations)
         {
+            if (other == null) return false;
             if (!base.SameIntent(other, includePublicAnnotations)) return false;
             if (!CheckSameIntentChildList(Classes, other.Classes)) return false;
             if (!CheckSameIntentChildList(Structures, other.Structures)) return false;

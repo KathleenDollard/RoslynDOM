@@ -74,14 +74,14 @@ namespace RoslynDom.Common
             return str.GetHashCode();
         }
 
-        public static bool operator ==(PublicAnnotation  x, PublicAnnotation y)
+        public static bool operator ==(PublicAnnotation  left, PublicAnnotation right)
         {
-            return x.Equals(y);
+            return left.Equals(right);
         }
 
-        public static bool operator !=(PublicAnnotation x, PublicAnnotation y)
+        public static bool operator !=(PublicAnnotation left, PublicAnnotation right)
         {
-            return !(x == y);
+            return !(left == right);
         }
         #endregion
 

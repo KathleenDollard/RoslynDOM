@@ -27,10 +27,8 @@ namespace RoslynDom
             : base(oldRDom)
         {
             var newAttributeValues = RDomBase<IAttributeValue>
-                        .CopyMembers(_attributeValues.Cast<RDomAttributeValue>());
-            var item = new RDomAttribute(this);
-            item._attributeValues = newAttributeValues;
-            throw new NotImplementedException();
+                        .CopyMembers(oldRDom._attributeValues.Cast<RDomAttributeValue>());
+            _attributeValues = newAttributeValues;
         }
 
         public override bool SameIntent(IAttribute other, bool includePublicAnnotations)

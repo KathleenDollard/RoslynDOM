@@ -25,9 +25,10 @@ namespace RoslynDom
 
         public override bool SameIntent(IRoot other, bool includePublicAnnotations)
         {
+            if (other == null) return false;
             // Base class checks classes, etc
             if (!base.SameIntent(other, includePublicAnnotations)) return false;
-            if (!CheckSameIntentChildList(NonEmptyNamespaces, other.NonEmptyNamespaces)) return false;
+            if (!CheckSameIntentChildList(NonemptyNamespaces, other.NonemptyNamespaces)) return false;
             return true;
         }
 
@@ -52,7 +53,7 @@ namespace RoslynDom
             get { return "Root"; }
         }
 
-        public IEnumerable<INamespace> NonEmptyNamespaces
+        public IEnumerable<INamespace> NonemptyNamespaces
         {
             get
             {
@@ -65,7 +66,7 @@ namespace RoslynDom
             get
             {
                 var classes = Classes;
-                var rootclasses = from x in NonEmptyNamespaces
+                var rootclasses = from x in NonemptyNamespaces
                                   from y in x.Classes
                                   select y;
                 return classes.Union(rootclasses);
@@ -76,8 +77,7 @@ namespace RoslynDom
         {
             get
             {
-                var enums = Enums;
-                var rootenums = from x in NonEmptyNamespaces
+                var rootenums = from x in NonemptyNamespaces
                                   from y in x.Enums
                                   select y;
                 return rootenums.Union(rootenums);
@@ -89,7 +89,7 @@ namespace RoslynDom
             get
             {
                 var interfaces = Interfaces;
-                var rootinterfaces = from x in NonEmptyNamespaces
+                var rootinterfaces = from x in NonemptyNamespaces
                                   from y in x.Interfaces 
                                   select y;
                 return interfaces.Union(rootinterfaces);
@@ -101,7 +101,7 @@ namespace RoslynDom
             get
             {
                 var structures = Structures;
-                var rootstructures= from x in NonEmptyNamespaces
+                var rootstructures= from x in NonemptyNamespaces
                                   from y in x.Structures
                                   select y;
                 return structures.Union(rootstructures);

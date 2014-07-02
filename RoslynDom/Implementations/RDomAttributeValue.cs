@@ -11,8 +11,8 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomAttributeValue 
-        : RDomBase<IAttributeValue,AttributeArgumentSyntax, ISymbol>, IAttributeValue
+    public class RDomAttributeValue
+        : RDomBase<IAttributeValue, AttributeArgumentSyntax, ISymbol>, IAttributeValue
     {
         private string _name;
         private LiteralType _literalType;
@@ -24,66 +24,83 @@ namespace RoslynDom
             RDomBase attributedItem)
             : base(rawItem)
         {
-            _name = GetAttributeValueName(rawItem, attributeSyntax, attributedItem);
-            var tuple = GetAttributeValueValue(rawItem, attributeSyntax, attributedItem);
+            _name = GetAttributeValueName(rawItem, attributeSyntax);
+            var tuple = GetAttributeValueValue(rawItem);
             _value = tuple.Item1;
             _literalType = tuple.Item2;
         }
+        internal RDomAttributeValue(
+             RDomAttributeValue oldRDom)
+            : base(oldRDom)
+        { }
 
         private Tuple<object, LiteralType> GetAttributeValueValue(
-                    AttributeArgumentSyntax arg, 
-                    AttributeSyntax attributeSyntax,
-                    RDomBase attributedItem)
+                    AttributeArgumentSyntax arg)
         {
             // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
             var expr = arg.Expression;
-            var literalExpression = expr as LiteralExpressionSyntax;
+            var literalType = LiteralType.Unknown;
             object value = null;
-            var literalType = LiteralType.Unknown ;
+            var literalExpression = expr as LiteralExpressionSyntax;
             if (literalExpression != null)
             {
-                switch (literalExpression.Token.CSharpKind())
-                {
-                    case SyntaxKind.StringLiteralToken:
-                        literalType = LiteralType.String;
-                        break;
-                    case SyntaxKind.NumericLiteralToken:
-                        literalType = LiteralType.Numeric ;
-                        break;
-                    case SyntaxKind.TrueKeyword:
-                    case SyntaxKind.FalseKeyword:
-                        literalType = LiteralType.Boolean;
-                        break;
-                    default:
-                        // I don't know how to get here, but if I get here, I want to know it :)
-                        throw new NotImplementedException();
-                }
-                value = literalExpression.Token.Value;
+                value = GetLiteralValue(literalExpression, ref literalType);
             }
-            var typeExpression = expr as TypeOfExpressionSyntax;
-            if (typeExpression != null)
+            else
             {
-                var typeSyntax = typeExpression.Type;
-                literalType = LiteralType.Type;
-                var predefinedTypeSyntax = typeSyntax as PredefinedTypeSyntax;
-                var identifierNameSyntax = typeSyntax as IdentifierNameSyntax;
-                if (predefinedTypeSyntax != null)
+                var typeExpression = expr as TypeOfExpressionSyntax;
+                if (typeExpression != null)
                 {
-                    var typeInfo = GetTypeInfo(predefinedTypeSyntax);
-                    value = new RDomReferencedType(typeInfo, null);
+                    literalType = LiteralType.Type;
+                    value = GetTypeExpressionValue(typeExpression);
                 }
-                else if (identifierNameSyntax != null)
-                {
-                    var typeInfo = GetTypeInfo(identifierNameSyntax);
-                    value = new RDomReferencedType(typeInfo, null);
-                }
-                else
-                {
+            }
+            return new Tuple<object, LiteralType>(value, literalType);
+        }
+
+        private object GetTypeExpressionValue(TypeOfExpressionSyntax typeExpression)
+        {
+            object value = null;
+            var typeSyntax = typeExpression.Type;
+            var predefinedTypeSyntax = typeSyntax as PredefinedTypeSyntax;
+            var identifierNameSyntax = typeSyntax as IdentifierNameSyntax;
+            if (predefinedTypeSyntax != null)
+            {
+                var typeInfo = GetTypeInfo(predefinedTypeSyntax);
+                value = new RDomReferencedType(typeInfo, null);
+            }
+            else if (identifierNameSyntax != null)
+            {
+                var typeInfo = GetTypeInfo(identifierNameSyntax);
+                value = new RDomReferencedType(typeInfo, null);
+            }
+            else
+            {
+                // I don't know how to get here, but if I get here, I want to know it :)
+                throw new NotImplementedException();
+            }
+            return value;
+        }
+
+        private object GetLiteralValue(LiteralExpressionSyntax literalExpression, ref LiteralType literalType)
+        {
+            switch (literalExpression.Token.CSharpKind())
+            {
+                case SyntaxKind.StringLiteralToken:
+                    literalType = LiteralType.String;
+                    break;
+                case SyntaxKind.NumericLiteralToken:
+                    literalType = LiteralType.Numeric;
+                    break;
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
+                    literalType = LiteralType.Boolean;
+                    break;
+                default:
                     // I don't know how to get here, but if I get here, I want to know it :)
                     throw new NotImplementedException();
-                }
-              }
-            return new Tuple<object, LiteralType >(value, literalType);
+            }
+            return literalExpression.Token.Value;
         }
 
         public override bool SameIntent(IAttributeValue other, bool includePublicAnnotations)
@@ -92,17 +109,17 @@ namespace RoslynDom
             var rDomOther = other as RDomAttributeValue;
             if (rDomOther == null) throw new InvalidOperationException();
             if (_name != rDomOther._name) return false;
-            if (_literalType  != rDomOther._literalType) return false;
-            if (! (_value.Equals(rDomOther._value))) return false;
+            if (_literalType != rDomOther._literalType) return false;
+            if (!(_value.Equals(rDomOther._value))) return false;
             return true;
         }
 
         private static string GetAttributeValueName(
-            AttributeArgumentSyntax arg, AttributeSyntax attributeSyntax, RDomBase attributedItem)
+            AttributeArgumentSyntax arg, AttributeSyntax attributeSyntax)
         {
             if (arg.NameColon != null)
             {
-                return arg.NameColon.Name.ToString().Replace(":","").Trim();
+                return arg.NameColon.Name.ToString().Replace(":", "").Trim();
             }
             else if (arg.NameEquals != null)
             {
@@ -132,7 +149,7 @@ namespace RoslynDom
         {
             get
             {
-                return _literalType ;
+                return _literalType;
             }
         }
 

@@ -21,9 +21,10 @@ namespace RoslynDom
 
         public override bool SameIntent(INamespace other, bool includePublicAnnotations)
         {
+            if (other == null) return false;
             // Base class checks classes, etc
             if (!base.SameIntent(other, includePublicAnnotations)) return false;
-            if (!CheckSameIntentChildList(NonEmptyNamespaces, other.NonEmptyNamespaces)) return false;
+            if (!CheckSameIntentChildList(NonemptyNamespaces, other.NonemptyNamespaces)) return false;
             return true;
         }
 
@@ -32,7 +33,7 @@ namespace RoslynDom
             get { return RoslynDomUtilities.GetAllChildNamespaces(this); }
         }
 
-         public IEnumerable<INamespace> NonEmptyNamespaces
+         public IEnumerable<INamespace> NonemptyNamespaces
         {
             get { return RoslynDomUtilities.GetNonEmptyNamespaces(this); }
         }

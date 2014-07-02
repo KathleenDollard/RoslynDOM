@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ImplementationHierarchy.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

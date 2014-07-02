@@ -8,6 +8,7 @@ namespace RoslynDom.Common
 {
     public static class GeneralUtilities
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         /// <summary>
         /// Returns all unique combos of items in the list, along with the empty set
         /// </summary>
@@ -26,8 +27,12 @@ namespace RoslynDom.Common
         /// you can decode an integer into the string arrays you are looking for, and then just 
         /// have to loop over 1,...,(2^N)-1 (or 0,...,(2^N)-1, if you want to include the empty 
         /// set of strings)
+        /// <br/>
+        /// This method is not currently in use, but I strongly anticipate it's use in analyzing
+        /// #ifdef in template resolution, and it's of sufficient complexity I am leaving it in 
+        /// place
         /// </remarks>
-        public static IEnumerable<IEnumerable<T>> GetAllCombos<T>(this List<T> initialList)
+        public static IEnumerable<IEnumerable<T>> GetAllCombos<T>(this IList <T> initialList)
         {
             var ret = new List<List<T>>();
             if (initialList == null) { return ret; }

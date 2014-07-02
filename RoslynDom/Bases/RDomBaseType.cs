@@ -14,7 +14,6 @@ namespace RoslynDom
         where T : IType<T>
     {
         private IEnumerable<ITypeMember> _members;
-        private IEnumerable<IAttribute> _attributes;
         private MemberType _memberType;
         private StemMemberType _stemMemberType;
 

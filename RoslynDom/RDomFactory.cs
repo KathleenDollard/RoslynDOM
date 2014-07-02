@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 using RoslynDom;
-using RoslynDomUtilities;
 
 namespace RoslynDom
 {
@@ -35,6 +34,7 @@ namespace RoslynDom
 
         public static IRoot GetRootFromDocument(Document document)
         {
+            if (document == null) { throw new InvalidOperationException(); }
             SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
             return GetRootFromSyntaxTree(tree);
         }
@@ -70,8 +70,8 @@ namespace RoslynDom
             return new RDomUsingDirective(x, publicAnnotations);
         }
 
-        private static bool DoMember<T>(MemberDeclarationSyntax val, Func<T,
-                IMember> doAction, out IMember retValue)
+        private static bool DoMember<T>(MemberDeclarationSyntax val,
+                Func<T, IMember> doAction, out IMember retValue)
             where T : class
         {
             var item = val as T;
@@ -97,7 +97,6 @@ namespace RoslynDom
         /// <returns></returns>
         private static IStemMember MakeStemMember(MemberDeclarationSyntax rawMember)
         {
-            var type = rawMember.GetType();
             IMember ret;
             // The action happens in DoMember. I felt it read better with else than negation and it made copying new lines easier
             if (DoMember<NamespaceDeclarationSyntax>(rawMember, MakeNamespace, out ret)) { }
@@ -115,7 +114,6 @@ namespace RoslynDom
         /// <returns></returns>
         private static IEnumerable<ITypeMember> MakeTypeMembers(MemberDeclarationSyntax rawMember)
         {
-            var type = rawMember.GetType();
             IMember item;
             var retList = new List<IMember>();
             // The action happens in DoMember. I felt it read better with else than negation and it made copying new lines easier
@@ -137,7 +135,7 @@ namespace RoslynDom
             var members = ListUtilities.MakeList(rawNamespace, x => x.Members, x => MakeStemMember(x));
             var usings = ListUtilities.MakeList(rawNamespace, x => x.Usings, x => MakeUsingDirective(x));
             var publicAnnotations = GetPublicAnnotations(rawNamespace).ToArray();
-            return new RDomNamespace(rawNamespace, members, usings, publicAnnotations );
+            return new RDomNamespace(rawNamespace, members, usings, publicAnnotations);
         }
 
         private static IMember MakeClass(ClassDeclarationSyntax rawClass)
@@ -197,7 +195,7 @@ namespace RoslynDom
             foreach (var decl in declarators)
             {
                 var publicAnnotations = GetPublicAnnotations(rawField).ToArray();
-                list.Add(new RDomField(rawField, decl, publicAnnotations ));
+                list.Add(new RDomField(rawField, decl, publicAnnotations));
             }
         }
 
@@ -262,6 +260,7 @@ namespace RoslynDom
             return ret;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(System.String,System.String,Microsoft.CodeAnalysis.CSharp.CSharpParseOptions,System.Threading.CancellationToken)")]
         private static AttributeSyntax GetAnnotationStringAsAttribute(string str)
         {
             // Trick Roslyn into thinking it's an attribute
@@ -276,17 +275,19 @@ namespace RoslynDom
         private static string GetPublicAnnotationAsString(SyntaxTrivia trivia)
         {
             var str = trivia.ToString().Trim();
-            if (!str.StartsWith("//")) throw new InvalidOperationException("Unexpected commment format");
+            if (!str.StartsWith("//", StringComparison.Ordinal)) throw new InvalidOperationException("Unexpected comment format");
             str = str.SubstringAfter("//").SubstringAfter("[[").SubstringBefore("]]").Trim();
             return str;
         }
 
         private static string GetSpecialRootAnnotation(string str)
         {
-            str  = str.Trim();
+            str = str.Trim();
 
-            if (str.StartsWith("file:")) return str.SubstringAfter("file:");
-            if (str.StartsWith("root:")) return str.SubstringAfter("root:");
+            if (str.StartsWith("file:", StringComparison.Ordinal))
+            { return str.SubstringAfter("file:"); }
+            if (str.StartsWith("root:", StringComparison.Ordinal))
+            { return str.SubstringAfter("root:"); }
             return null;
         }
         #endregion

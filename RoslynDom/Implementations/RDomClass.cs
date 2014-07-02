@@ -29,6 +29,7 @@ namespace RoslynDom
 
         public override bool SameIntent(IClass other, bool includePublicAnnotations)
         {
+            if (other == null) return false;
             if (!base.SameIntent(other, includePublicAnnotations)) return false;
             if (IsAbstract != other.IsAbstract) return false;
             if (IsSealed != other.IsSealed) return false;

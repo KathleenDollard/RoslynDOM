@@ -58,7 +58,7 @@ namespace RoslynDomExampleTests
         {
             IRoot root = RDomFactory.GetRootFromFile(@"..\..\TestFile.cs");
             // Nonempty namespaces are anticipated to be the primary namespace access mechanism. 
-            var nspaces = root.NonEmptyNamespaces.ToArray();
+            var nspaces = root.NonemptyNamespaces.ToArray();
             Assert.AreEqual(2, nspaces.Count());
             Assert.AreEqual("Namespace3", nspaces[0].Name);
             Assert.AreEqual("testing.Namespace3", nspaces[0].QualifiedName);

@@ -9,27 +9,30 @@ namespace RoslynDom.Common
 {
     public static class ReflectionUtilities
     {
-        public static bool CanGetProperty(object ret, string propertyName)
+        public static bool CanGetProperty(object instance, string propertyName)
         {
-            var type = ret.GetType().GetTypeInfo();
+            if (instance == null) return false;
+            var type = instance.GetType().GetTypeInfo();
             var propInfo = type.GetProperty(propertyName);
             if (propInfo == null) return false;
             return (propInfo.CanRead);
         }
 
-        public static bool CanSetProperty(object ret, string propertyName)
+        public static bool CanSetProperty(object instance, string propertyName)
         {
-            var type = ret.GetType().GetTypeInfo();
+            if (instance == null) return false;
+            var type = instance.GetType().GetTypeInfo();
             var propInfo = type.GetProperty(propertyName);
             if (propInfo == null) return false;
             return (propInfo.CanWrite);
         }
 
-        public static object GetPropertyValue(object ret, string propertyName)
+        public static object GetPropertyValue(object instance, string propertyName)
         {
-            var type = ret.GetType().GetTypeInfo();
+            if (instance == null) return false;
+            var type = instance.GetType().GetTypeInfo();
             var propInfo = type.GetProperty(propertyName);
-            return propInfo.GetValue(ret);
+            return propInfo.GetValue(instance);
         }
 
     }

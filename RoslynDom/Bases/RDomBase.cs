@@ -16,30 +16,18 @@ namespace RoslynDom
     /// </summary>
     public abstract class RDomBase : IRoslynDom
     {
-        private List<PublicAnnotation> _publicAnnotations = new List<PublicAnnotation>();
+        private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase(params PublicAnnotation[] publicAnnotations)
         {
-            AddPublicAnnotations(publicAnnotations);
+            _publicAnnotations.AddPublicAnnotations(publicAnnotations);
         }
 
         protected RDomBase(IDom oldIDom)
         {
             // PublicAnnotation is a structure, so this copies
             var oldRDom = (RDomBase)oldIDom;
-            AddPublicAnnotations(oldRDom._publicAnnotations);
-        }
-
-        private void AddPublicAnnotations(IEnumerable<PublicAnnotation> publicAnnotations)
-        {
-            if (publicAnnotations == null) return;
-            foreach (var publicAnnotation in publicAnnotations)
-            { this._publicAnnotations.Add(publicAnnotation); }
-        }
-
-        private IEnumerable<PublicAnnotation> PublicAnnotations
-        {
-            get { return _publicAnnotations; }
+            _publicAnnotations.AddPublicAnnotations(oldRDom._publicAnnotations);
         }
 
         /// <summary>
@@ -52,12 +40,7 @@ namespace RoslynDom
         public abstract object RawItem { get; }
 
         /// <summary>
-        /// For a discussion of names <see cref="OuterName"/>
-        /// </summary>
-        /// <returns>The string name, same as Roslyn symbol's name</returns>
-        public abstract string Name { get; }
-
-        /// <summary>
+        /// NOTE: This documentation has not been updated to reflect changes due to @beefarino's input
         /// <para>
         /// The name is the local name. The best name 
         /// is the name you are most likely to use inside the assembly and 
@@ -99,79 +82,28 @@ namespace RoslynDom
 
         public abstract ISymbol Symbol { get; }
 
-        public abstract object RequestValue(string name);
+        public abstract object RequestValue(string propertyName);
 
         internal abstract ISymbol GetSymbol(SyntaxNode node);
 
-        public object GetPublicAnnotationValue(string name, string key)
-        {
-            var annotation = GetAnnotation(name);
-            if (annotation == default(PublicAnnotation)) return null;
-            return annotation[key];
-        }
+        /// <summary>
+        /// For a discussion of names <see cref="OuterName"/>
+        /// </summary>
+        /// <returns>The string name, same as Roslyn symbol's name</returns>
+        public virtual string Name { get; set; }
 
-        public T GetPublicAnnotationValue<T>(string name, string key)
-        {
-            var annotation = GetAnnotation(name);
-            if (annotation == default(PublicAnnotation)) return default(T);
-            return annotation.GetValue<T>(key);
-        }
-
-        public void AddPublicAnnotationValue(string name, string key, object value)
-        {
-            var publicAnnotation = GetAnnotation(name);
-            if (publicAnnotation == default(PublicAnnotation))
-            {
-                publicAnnotation = new PublicAnnotation(name);
-                _publicAnnotations.Add(publicAnnotation);
-            }
-            publicAnnotation.AddItem(key, value);
-        }
-
-        public void AddPublicAnnotationValue(string name, object value)
-        {
-            AddPublicAnnotationValue(name, name, value);
-        }
-
-        private PublicAnnotation GetAnnotation(string name)
-        {
-            return _publicAnnotations
-                                .Where(x => x.Name == name)
-                                .FirstOrDefault();
-        }
-
-        public bool HasPublicAnnotation(string name)
-        {
-            return (GetAnnotation(name) != default(PublicAnnotation));
-        }
-
-        public object GetPublicAnnotationValue(string name)
-        {
-            return GetPublicAnnotationValue(name, name);
-        }
-
-        public T GetPublicAnnotationValue<T>(string name)
-        {
-            return GetPublicAnnotationValue<T>(name, name);
-        }
+        public PublicAnnotationList PublicAnnotations
+        {            get            {                return _publicAnnotations ;            }        }
 
         protected bool CheckSameIntent(IDom other, bool includePublicAnnotations)
         {
             if (other == null) return false;
             if (includePublicAnnotations)
-            { if (!this.AnnotationsMatch(other)) return false; }
+            { if (!this.PublicAnnotations.SameIntent(other.PublicAnnotations)) return false; }
             return true;
         }
-        internal bool AnnotationsMatch(IDom other)
-        {
-            var rDomOther = other as RDomBase;
-            foreach (var annotation in _publicAnnotations)
-            {
-                var otherAnnotation = rDomOther.GetAnnotation(annotation.Name);
-                if (otherAnnotation != annotation) return false;
-            }
-            return true;
-        }
+
+ 
     }
 
     public abstract class RDomBase<T> : RDomBase, IDom<T>
@@ -225,7 +157,7 @@ namespace RoslynDom
         public virtual bool SameIntent(T other, bool includePublicAnnotations)
         {
             var otherItem = other as RDomBase;
-            if (! base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
             return true;
         }
 
@@ -243,6 +175,7 @@ namespace RoslynDom
             if (otherList == null) return false;
             if (thisList.Count() != otherList.Count()) return false;
             compareDelegate = compareDelegate ?? ((x, y) => x.Name == y.Name);
+            if (thisList == null) return false; // can't happen, suppresse FxCop error
             foreach (var item in thisList)
             {
                 var otherItem = otherList.Where(x => compareDelegate(x, item)).FirstOrDefault();
@@ -278,7 +211,8 @@ namespace RoslynDom
             var oldRDom = oldIDom as RDomBase<T, TSyntax, TSymbol>;
             _rawSyntax = oldRDom._rawSyntax;
             _originalRawSyntax = oldRDom._originalRawSyntax;
-            _attributes = RDomBase<IAttribute>.CopyMembers(oldRDom._attributes.Cast<RDomAttribute>());
+            if (oldRDom._attributes != null)
+            { _attributes = RDomBase<IAttribute>.CopyMembers(oldRDom._attributes.Cast<RDomAttribute>()); }
             _symbol = default(TSymbol); // this should be reset, this line is to remind us
         }
 
@@ -357,7 +291,7 @@ namespace RoslynDom
 
         private bool CheckSameIntentReturnType(T other)
         {
-            var item = this as IHasReturnType ;
+            var item = this as IHasReturnType;
             if (item != null)
             {
                 var otherItem = other as IHasReturnType;
@@ -372,9 +306,9 @@ namespace RoslynDom
             if (item != null)
             {
                 var otherItem = other as IPropertyOrMethod;
-                if ( item.IsAbstract != otherItem.IsAbstract) return false;
-                if ( item.IsOverride != otherItem.IsOverride) return false;
-                if ( item.IsSealed   != otherItem.IsSealed  ) return false;
+                if (item.IsAbstract != otherItem.IsAbstract) return false;
+                if (item.IsOverride != otherItem.IsOverride) return false;
+                if (item.IsSealed != otherItem.IsSealed) return false;
                 if (item.IsVirtual != otherItem.IsVirtual) return false;
             }
             return true;
@@ -470,6 +404,7 @@ namespace RoslynDom
             return symbol;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         protected IEnumerable<IAttribute> GetAttributes()
         {
             if (_attributes == null)
@@ -492,13 +427,13 @@ namespace RoslynDom
         /// For special values (those that don't just return a property) override
         /// this method, return the approparite value, and olny call this base method when needed
         /// </summary>
-        /// <param name="name"></param>
+        /// <param name="propertyName"></param>
         /// <returns></returns>
-        public override object RequestValue(string name)
+        public override object RequestValue(string propertyName)
         {
-            if (ReflectionUtilities.CanGetProperty(this, name))
+            if (ReflectionUtilities.CanGetProperty(this, propertyName))
             {
-                var value = ReflectionUtilities.GetPropertyValue(this, name);
+                var value = ReflectionUtilities.GetPropertyValue(this, propertyName);
                 return value;
             }
             return null;

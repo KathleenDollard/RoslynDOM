@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="RoslynDom.RDomAttribute" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.25" Y="9.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAJAAAAAAAAAQAAAEAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Implementations\RDomAttribute.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomAttributeValue" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.5" Y="3.25" Width="4" />
+    <TypeIdentifier>
+      <HashCode>ABBAIAAAAAAAAAAAAAAABAQAAAQAAAAAKAAgAAABEAQ=</HashCode>
+      <FileName>Implementations\RDomAttributeValue.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomClass" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="9.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AgQgAAAAADGAAAAAAAACACgIAAAAAAAIIAAAAAAAAAA=</HashCode>
+      <FileName>Implementations\RDomClass.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomEnum" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10" Y="10.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AQAABgAAAAAAAAAAAAAAAAAYAAAAIAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Implementations\RDomEnum.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomField" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10" Y="7.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABgAAAAABAAAAAgAAQAAYAAEAAAAAIAAAAAAECAA=</HashCode>
+      <FileName>Implementations\RDomField.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomInterface" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="1.25" Y="10.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAACAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Implementations\RDomInterface.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomInvalidTypeMember" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10" Y="5.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABgAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Implementations\RDomInvalidTypeMember.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomMethod" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="11.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAgBgAAADAEAAAAAAAAAAAYQAEAAAAAIIICAAAEAAA=</HashCode>
+      <FileName>Implementations\RDomMethod.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomNamespace" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="1.25" Y="6.75" Width="5.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAACACIAAAgAAAAAA=</HashCode>
+      <FileName>Implementations\RDomNamespace.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomParameter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.75" Y="4.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAQBAAAAAQAAEAAAAgIQAAAAAAAAA=</HashCode>
+      <FileName>Implementations\RDomParameter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomProperty" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9" Y="8.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>QAAgBgAAABAAAAAAAAAAAAAYAAEAAAAAIIICAAAEAAA=</HashCode>
+      <FileName>Implementations\RDomProperty.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomReferencedType" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAkAAIAAAAAAAAAAAAQIAoGAMAACIAAAQAAACAA=</HashCode>
+      <FileName>Implementations\RDomReferencedType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RoslynDom.RDomRoot" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="5.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>ABCAAAAAAAAAQAAAAAAAAAUAAAAAACAAIAEAAAAAEAA=</HashCode>
+      <FileName>Implementations\RDomRoot.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomStructure" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="3.75" Y="11.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AgQAAAAAACEAAAAAAAACACgAAAAAAAAIIAAAAAAAAAA=</HashCode>
+      <FileName>Implementations\RDomStructure.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomTypeParameter" Collapsed="true">
+    <Position X="0.5" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAIBAAEAAAAgAAAACAoAAAAAAAAAA=</HashCode>
+      <FileName>Implementations\RDomTypeParameter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RoslynDom.RDomUsingDirective" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.25" Y="6.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Implementations\RDomUsing.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="RoslynDom.RDomBase" Collapsed="true">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAIAAIAAAAAAgAAwAABEAAACSAAAAAAAACEA=</HashCode>
+      <FileName>Bases\RDomBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RoslynDom.RDomBase&lt;T&gt;" Collapsed="true">
+    <Position X="6.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAABAAgAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Bases\RDomBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RoslynDom.RDomBase&lt;T, TSyntax, TSymbol&gt;" Collapsed="true">
+    <Position X="6.25" Y="3" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>DAIgAAgAAICAAAACAiAABAQAM5EAEBQCIAAAAAGACAA=</HashCode>
+      <FileName>Bases\RDomBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RoslynDom.RDomBaseStemContainer&lt;T, TSyntax, TSymbol&gt;" Collapsed="true">
+    <Position X="2.25" Y="4.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAEAAAEAAABAAAAAACgIAAAAIEgIIAAEAAAAAAA=</HashCode>
+      <FileName>Bases\RDomBaseStemContainer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RoslynDom.RDomBaseType&lt;T, TSyntax&gt;" Collapsed="true">
+    <Position X="2.75" Y="8.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAABgAAABAAAABAAAAAAAAYQAAAIAAAIAAEgAACgEA=</HashCode>
+      <FileName>Bases\RDomBaseType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9.75" />
+</ClassDiagram>
