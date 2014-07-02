@@ -507,27 +507,27 @@ namespace RoslynDom
 
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
-    public abstract class RDomSyntaxNodeBase<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>
-        where TSyntax : SyntaxNode
-        where TSymbol : ISymbol
-        where T : IDom<T>
-    {
-        // TODO: Consider why this isn't collapsed into the RDomBase<T>
-        //private TSyntax _rawItem;
+    //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
+    //public abstract class RDomSyntaxNodeBase<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>
+    //    where TSyntax : SyntaxNode
+    //    where TSymbol : ISymbol
+    //    where T : IDom<T>
+    //{
+    //    // TODO: Consider why this isn't collapsed into the RDomBase<T>
+    //    //private TSyntax _rawItem;
 
-        internal RDomSyntaxNodeBase(
-            T oldRDom)
-            : base(oldRDom)
-        {
-            throw new NotImplementedException();
-        }
+    //    internal RDomSyntaxNodeBase(
+    //        T oldRDom)
+    //        : base(oldRDom)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        protected RDomSyntaxNodeBase(TSyntax rawItem,
-                       params PublicAnnotation[] publicAnnotations)
-                 : base(rawItem, publicAnnotations)
-        {
-            //_rawItem = rawItem;
-        }
-    }
+    //    protected RDomSyntaxNodeBase(TSyntax rawItem,
+    //                   params PublicAnnotation[] publicAnnotations)
+    //             : base(rawItem, publicAnnotations)
+    //    {
+    //        //_rawItem = rawItem;
+    //    }
+    //}
 }

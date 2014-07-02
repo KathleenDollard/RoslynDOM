@@ -9,7 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomParameter : RDomSyntaxNodeBase<IParameter,ParameterSyntax, IParameterSymbol>, IParameter
+    public class RDomParameter : RDomBase<IParameter,ParameterSyntax, IParameterSymbol>, IParameter
     {
         internal RDomParameter(
             ParameterSyntax rawItem,

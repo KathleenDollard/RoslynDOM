@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
-    public abstract class RDomBaseStemContainer<T, TSyntax, TSymbol> : RDomSyntaxNodeBase<T, TSyntax, TSymbol>
+    public abstract class RDomBaseStemContainer<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>
         where TSyntax : SyntaxNode
         where TSymbol : ISymbol
         where T : IDom<T>

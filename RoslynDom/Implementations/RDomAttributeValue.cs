@@ -12,7 +12,7 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
     public class RDomAttributeValue 
-        : RDomSyntaxNodeBase<IAttributeValue,AttributeArgumentSyntax, ISymbol>, IAttributeValue
+        : RDomBase<IAttributeValue,AttributeArgumentSyntax, ISymbol>, IAttributeValue
     {
         private string _name;
         private LiteralType _literalType;

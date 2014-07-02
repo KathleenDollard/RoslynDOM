@@ -9,7 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseType<T, TSyntax> : RDomSyntaxNodeBase<T, TSyntax, INamedTypeSymbol>, IType<T>
+    public abstract class RDomBaseType<T, TSyntax> : RDomBase<T, TSyntax, INamedTypeSymbol>, IType<T>
         where TSyntax : SyntaxNode
         where T : IType<T>
     {

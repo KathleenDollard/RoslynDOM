@@ -9,7 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomUsingDirective : RDomSyntaxNodeBase<IUsing, UsingDirectiveSyntax, ISymbol>, IUsing
+    public class RDomUsingDirective : RDomBase<IUsing, UsingDirectiveSyntax, ISymbol>, IUsing
     {
         internal RDomUsingDirective(
             UsingDirectiveSyntax rawItem,

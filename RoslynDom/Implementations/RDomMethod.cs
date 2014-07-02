@@ -9,7 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomMethod : RDomSyntaxNodeBase<IMethod, MethodDeclarationSyntax, IMethodSymbol>, IMethod
+    public class RDomMethod : RDomBase<IMethod, MethodDeclarationSyntax, IMethodSymbol>, IMethod
     {
         private IEnumerable<IParameter> _parameters;
         internal RDomMethod(

@@ -10,7 +10,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomEnum : RDomSyntaxNodeBase<IEnum,EnumDeclarationSyntax, ISymbol>, IEnum
+    public class RDomEnum : RDomBase<IEnum,EnumDeclarationSyntax, ISymbol>, IEnum
     {
         internal RDomEnum(
             EnumDeclarationSyntax rawItem,

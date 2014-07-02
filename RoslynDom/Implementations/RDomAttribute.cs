@@ -10,7 +10,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomAttribute : RDomSyntaxNodeBase<IAttribute, AttributeSyntax, ISymbol>, IAttribute
+    public class RDomAttribute : RDomBase<IAttribute, AttributeSyntax, ISymbol>, IAttribute
     {
         private IEnumerable<IAttributeValue> _attributeValues;
 

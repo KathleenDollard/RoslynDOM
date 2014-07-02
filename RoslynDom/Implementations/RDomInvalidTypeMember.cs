@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis;
 
 namespace RoslynDom
 {
-    public class RDomInvalidTypeMember : RDomSyntaxNodeBase<IInvalidTypeMember, SyntaxNode, ISymbol>, IInvalidTypeMember
+    public class RDomInvalidTypeMember : RDomBase<IInvalidTypeMember, SyntaxNode, ISymbol>, IInvalidTypeMember
     {
         internal RDomInvalidTypeMember(
                      SyntaxNode rawItem,
