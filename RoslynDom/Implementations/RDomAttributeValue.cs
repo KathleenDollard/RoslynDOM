@@ -97,7 +97,7 @@ namespace RoslynDom
             return true;
         }
 
-        private string GetAttributeValueName(
+        private static string GetAttributeValueName(
             AttributeArgumentSyntax arg, AttributeSyntax attributeSyntax, RDomBase attributedItem)
         {
             if (arg.NameColon != null)

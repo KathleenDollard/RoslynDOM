@@ -10,13 +10,13 @@ using RoslynDom.Common;
 namespace RoslynDomTests
 {
     [TestClass]
-    public class CloneTests
+    public class CopyTests
     {
         private const string SameIntentTestCategory = "SameIntent";
-        private const string CloneTestCategory = "CloneTests";
+        private const string CopyTestCategory = "CopyTests";
 
         #region clone tests
-        [TestMethod,TestCategory(CloneTestCategory)]
+        [TestMethod,TestCategory(CopyTestCategory)]
         public void Can_clone_attribute()
         {
             Assert.Inconclusive();
@@ -29,7 +29,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod,TestCategory(CloneTestCategory)]
+        [TestMethod,TestCategory(CopyTestCategory)]
         public void Can_clone_root()
         {
             var csharpCode = @"
@@ -42,13 +42,13 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod, TestCategory(CloneTestCategory)]
+        [TestMethod, TestCategory(CopyTestCategory)]
         public void Can_clone_namespace()
         {
             Assert.Inconclusive();
         }
 
-        [TestMethod, TestCategory(CloneTestCategory)]
+        [TestMethod, TestCategory(CopyTestCategory)]
         public void Can_clone_class()
         {
             Assert.Inconclusive();

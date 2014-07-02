@@ -9,6 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
     public abstract class RDomBaseStemContainer<T, TSyntax, TSymbol> : RDomSyntaxNodeBase<T, TSyntax, TSymbol>
         where TSyntax : SyntaxNode
         where TSymbol : ISymbol
@@ -30,18 +31,31 @@ namespace RoslynDom
         internal RDomBaseStemContainer(T oldRDom)
              : base(oldRDom)
         {
-            // ick. but I want to keep members in order
+            // ick. but I it avoids an FxCop error, not sure which is worse
             var newMembers = new List<IStemMember>();
             foreach (var member in Members)
             {
-                if (member is RDomClass)
-                { newMembers.Add(new RDomClass((RDomClass)member)); }
-                if (member is RDomStructure)
-                { newMembers.Add(new RDomStructure((RDomStructure)member)); }
-                if (member is RDomInterface)
-                { newMembers.Add(new RDomInterface((RDomInterface)member)); }
-                if (member is RDomEnum)
-                { newMembers.Add(new RDomEnum((RDomEnum)member)); }
+                var rDomClass = member as RDomClass;
+                if (rDomClass != null) { newMembers.Add(new RDomClass(rDomClass)); }
+                else
+                {
+                    var rDomStructure = member as RDomStructure;
+                    if (rDomStructure != null) { newMembers.Add(new RDomStructure(rDomStructure)); }
+                    else
+                    {
+                        var rDomInterface = member as RDomInterface;
+                        if (rDomInterface != null) { newMembers.Add(new RDomInterface(rDomInterface)); }
+                        else
+                        {
+                            var rDomEnum = member as RDomEnum;
+                            if (rDomEnum != null) { newMembers.Add(new RDomEnum(rDomEnum)); }
+                            else
+                            {
+                                throw new InvalidOperationException();
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -98,6 +112,7 @@ namespace RoslynDom
             get { return Members.OfType<IEnum>(); }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Usings")]
         public IEnumerable<IUsing> Usings
         {
             get

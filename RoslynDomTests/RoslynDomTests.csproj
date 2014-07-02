@@ -74,7 +74,7 @@
   <ItemGroup>
     <Compile Include="BugResponseTests.cs" />
     <Compile Include="SameIntentTests.cs" />
-    <Compile Include="CloneTests.cs" />
+    <Compile Include="CopyTests.cs" />
     <Compile Include="DiagnosticsTests.cs" />
     <Compile Include="PublicAnnotationTests.cs" />
     <Compile Include="AttributeTests.cs" />

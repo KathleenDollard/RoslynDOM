@@ -13,6 +13,7 @@ namespace RoslynDom
         ISymbol Symbol { get; }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
     public interface IRoslynDom<T, TSyntax, TSymbol> : IDom<T>
         where TSyntax : SyntaxNode
         where TSymbol : ISymbol

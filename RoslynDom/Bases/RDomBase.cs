@@ -18,18 +18,23 @@ namespace RoslynDom
     {
         private List<PublicAnnotation> _publicAnnotations = new List<PublicAnnotation>();
 
-        public RDomBase(params PublicAnnotation[] publicAnnotations)
+        protected RDomBase(params PublicAnnotation[] publicAnnotations)
         {
-            foreach (var publicAnnotation in publicAnnotations)
-            { this._publicAnnotations.Add(publicAnnotation); }
+            AddPublicAnnotations(publicAnnotations);
         }
 
         protected RDomBase(IDom oldIDom)
         {
             // PublicAnnotation is a structure, so this copies
             var oldRDom = (RDomBase)oldIDom;
-            foreach (var item in oldRDom._publicAnnotations)
-            { this._publicAnnotations.Add(item); }
+            AddPublicAnnotations(oldRDom._publicAnnotations);
+        }
+
+        private void AddPublicAnnotations(IEnumerable<PublicAnnotation> publicAnnotations)
+        {
+            if (publicAnnotations == null) return;
+            foreach (var publicAnnotation in publicAnnotations)
+            { this._publicAnnotations.Add(publicAnnotation); }
         }
 
         private IEnumerable<PublicAnnotation> PublicAnnotations
@@ -150,7 +155,7 @@ namespace RoslynDom
             return GetPublicAnnotationValue<T>(name, name);
         }
 
-        protected bool CheckSameIntent(RDomBase other, bool includePublicAnnotations)
+        protected bool CheckSameIntent(IDom other, bool includePublicAnnotations)
         {
             if (other == null) return false;
             if (includePublicAnnotations)
@@ -183,9 +188,12 @@ namespace RoslynDom
         protected static IEnumerable<T> CopyMembers(IEnumerable<T> members)
         {
             var ret = new List<T>();
-            foreach (var member in members)
+            if (members != null)
             {
-                ret.Add(member.Copy());
+                foreach (var member in members)
+                {
+                    ret.Add(member.Copy());
+                }
             }
             return ret;
         }
@@ -222,7 +230,13 @@ namespace RoslynDom
         }
 
         protected bool CheckSameIntentChildList<TChild>(IEnumerable<TChild> thisList,
-             IEnumerable<TChild> otherList, Func<TChild, TChild, bool> compareDelegate = null)
+                IEnumerable<TChild> otherList)
+             where TChild : IDom<TChild>
+        {
+            return CheckSameIntentChildList(thisList, otherList, null);
+        }
+        protected bool CheckSameIntentChildList<TChild>(IEnumerable<TChild> thisList,
+             IEnumerable<TChild> otherList, Func<TChild, TChild, bool> compareDelegate)
                 where TChild : IDom<TChild>
         {
             if (thisList == null) return (otherList == null);
@@ -240,6 +254,7 @@ namespace RoslynDom
 
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
     public abstract class RDomBase<T, TSyntax, TSymbol> : RDomBase<T>, IRoslynDom<T, TSyntax, TSymbol>
             where TSyntax : SyntaxNode
             where TSymbol : ISymbol
@@ -401,7 +416,7 @@ namespace RoslynDom
             }
         }
 
-        public virtual string GetQualifiedName()
+        internal virtual string GetQualifiedName()
         {
             var namespaceName = RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
             var typeName = GetContainingTypeName(Symbol.ContainingType);
@@ -410,7 +425,7 @@ namespace RoslynDom
             return namespaceName + typeName + Name;
         }
 
-        public virtual string GetNamespace()
+        internal virtual string GetNamespace()
         { return RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace); }
 
         private static string GetContainingTypeName(ITypeSymbol typeSymbol)
@@ -492,6 +507,7 @@ namespace RoslynDom
 
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
     public abstract class RDomSyntaxNodeBase<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>
         where TSyntax : SyntaxNode
         where TSymbol : ISymbol
