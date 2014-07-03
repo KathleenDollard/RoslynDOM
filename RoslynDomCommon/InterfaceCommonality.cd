@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Interface is not a NestedContainer">
+    <Position X="4.632" Y="7.101" Height="0.305" Width="2.665" />
+  </Comment>
+  <Comment CommentText="StemContainer can have usings">
+    <Position X="1.157" Y="1.924" Height="0.35" Width="2.194" />
+  </Comment>
+  <Interface Name="RoslynDom.Common.IAttribute" Collapsed="true">
+    <Position X="9.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IAttributeValue" Collapsed="true">
+    <Position X="11.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAEAA=</HashCode>
+      <FileName>Interfaces\IAttributeValue.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IClass" Collapsed="true">
+    <Position X="3.25" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAABAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IClass.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IEnum" Collapsed="true">
+    <Position X="8" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IEnum.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IField" Collapsed="true">
+    <Position X="10" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IField.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IInterface" Collapsed="true">
+    <Position X="5.25" Y="6" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IInterface.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IMethod" Collapsed="true">
+    <Position X="11.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IMethod.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.INamespace" Collapsed="true">
+    <Position X="4" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\INamespace.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IParameter" Collapsed="true">
+    <Position X="13.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAQBAAAAAAAAAAAAAgIQAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IParameter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IProperty" Collapsed="true">
+    <Position X="13.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IProperty.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IReferencedType" Collapsed="true">
+    <Position X="9.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IReferecedType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IRoot" Collapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IRoot.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IStructure" Collapsed="true">
+    <Position X="5.75" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IStructure.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.ITypeParameter" Collapsed="true">
+    <Position X="11.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAIBAAEAAAAAAAAACAgAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\ITypeParameter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IUsing" Collapsed="true">
+    <Position X="13.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IUsing.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.INestedContainer" Collapsed="true">
+    <Position X="1" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAEAAAAAAAAAACgAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>BaseInterfaces\INestedContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IPropertyOrMethod" Collapsed="true">
+    <Position X="12.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAABAAAAAAAAAAAAAAAAAAAAAAAIICAAAAAAA=</HashCode>
+      <FileName>BaseInterfaces\IPropertyOrMethod.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IStemContainer" Collapsed="true">
+    <Position X="2" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAgAAAAEAAAAAAA=</HashCode>
+      <FileName>BaseInterfaces\IStemContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IStemMember" Collapsed="true">
+    <Position X="5.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseInterfaces\IStemMember.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IType" Collapsed="true">
+    <Position X="6.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseInterfaces\IType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.ITypeMember" Collapsed="true">
+    <Position X="10.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseInterfaces\ITypeMember.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.ITypeMemberContainer" Collapsed="true">
+    <Position X="2.75" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAACgEA=</HashCode>
+      <FileName>BaseInterfaces\ITypeMemberContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9.75" />
+</ClassDiagram>

@@ -1,0 +1,12 @@
+﻿using KadGen.KadMan;
+
+namespace KadGen.ETWPreMan
+{
+    [EventSource(Name = "KadGen-EtwSamples2-NormalEventSource")]
+    public class NormalEventSource1
+    {
+        [EventId(3)]
+        public void foo() { }
+        public void Bar(int First, string Second) { }
+    }
+}
