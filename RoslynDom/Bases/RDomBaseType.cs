@@ -11,7 +11,7 @@ namespace RoslynDom
 {
     public abstract class RDomBaseType<T, TSyntax> : RDomBase<T, TSyntax, INamedTypeSymbol>, IType<T>
         where TSyntax : SyntaxNode
-        where T : IType<T>
+        where T : class, IType<T>
     {
         private IEnumerable<ITypeMember> _members;
         private MemberType _memberType;
@@ -56,9 +56,9 @@ namespace RoslynDom
             AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility;
         }
 
-        public override bool SameIntent(T other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(T other, bool includePublicAnnotations)
         {
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             var otherItem = other as RDomBaseType<T, TSyntax>;
             if (!CheckSameIntentChildList(Fields, otherItem.Fields)) return false;
             if (!CheckSameIntentChildList(Properties, otherItem.Properties)) return false;
@@ -83,6 +83,11 @@ namespace RoslynDom
 
         public IEnumerable<IField> Fields
         { get { return Members.OfType<IField>(); } }
+
+        public void AddMember(ITypeMember newMember)
+        {
+            _members = _members.Concat(new ITypeMember[] { newMember });
+        }
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }

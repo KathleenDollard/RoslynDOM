@@ -59,10 +59,10 @@ namespace RoslynDom
             IsExtensionMethod = TypedSymbol.IsExtensionMethod;
         }
 
-        public override bool SameIntent(IMethod other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IMethod other, bool includePublicAnnotations)
         {
             if (other == null) return false;
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (ReturnType.QualifiedName  != other.ReturnType.QualifiedName ) return false;
             if (IsAbstract != other.IsAbstract) return false;
             if (IsSealed != other.IsSealed) return false;

@@ -73,6 +73,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BugResponseTests.cs" />
+    <Compile Include="MutabilityTests.cs" />
     <Compile Include="SameIntentTests.cs" />
     <Compile Include="CopyTests.cs" />
     <Compile Include="DiagnosticsTests.cs" />

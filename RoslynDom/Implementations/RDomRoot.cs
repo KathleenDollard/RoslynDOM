@@ -31,11 +31,11 @@ namespace RoslynDom
             Name = "Root";
         }
 
-        public override bool SameIntent(IRoot other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IRoot other, bool includePublicAnnotations)
         {
             if (other == null) return false;
             // Base class checks classes, etc
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (!CheckSameIntentChildList(NonemptyNamespaces, other.NonemptyNamespaces)) return false;
             return true;
         }

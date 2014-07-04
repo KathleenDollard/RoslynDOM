@@ -23,22 +23,21 @@ namespace RoslynDom
 
         protected RDomBase(params PublicAnnotation[] publicAnnotations)
         {
-            _publicAnnotations.AddPublicAnnotations(publicAnnotations);
+            _publicAnnotations.Add(publicAnnotations);
         }
 
         protected RDomBase(IDom oldIDom)
         {
-            // PublicAnnotation is a structure, so this copies
             var oldRDom = (RDomBase)oldIDom;
             Name = oldIDom.Name;
-            _publicAnnotations.AddPublicAnnotations(oldRDom._publicAnnotations);
+            _publicAnnotations.AddCopy(oldRDom._publicAnnotations);
         }
 
         /// <summary>
         /// Must at least set the Name property
         /// </summary>
         protected virtual void Initialize() { }
-       
+
 
         /// <summary>
         /// 
@@ -102,12 +101,26 @@ namespace RoslynDom
         /// <returns>The string name, same as Roslyn symbol's name</returns>
         public string Name { get; set; }
 
+        public bool SameIntent<TLocal>(TLocal other)
+               where TLocal : class
+        {
+            return SameIntent(other, true);
+        }
+
+           public bool SameIntent<TLocal>(TLocal other, bool includePublicAnnotations)
+            where TLocal : class
+        {
+            return SameIntentInternal(other, includePublicAnnotations);
+        }
+
+       internal abstract bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+                        where TLocal : class;
+
         public PublicAnnotationList PublicAnnotations
         { get { return _publicAnnotations; } }
 
-        protected bool CheckSameIntent(IDom other, bool includePublicAnnotations)
+        protected bool CheckPublicAnnotations(IDom other, bool includePublicAnnotations)
         {
-            if (other == null) return false;
             if (includePublicAnnotations)
             { if (!this.PublicAnnotations.SameIntent(other.PublicAnnotations)) return false; }
             return true;
@@ -117,7 +130,7 @@ namespace RoslynDom
     }
 
     public abstract class RDomBase<T> : RDomBase, IDom<T>
-            where T : IDom<T>
+            where T : class, IDom<T>
     {
         protected RDomBase(params PublicAnnotation[] publicAnnotations)
            : base(publicAnnotations)
@@ -127,7 +140,7 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
-         protected static IEnumerable<T> CopyMembers(IEnumerable<T> members)
+        protected static IEnumerable<T> CopyMembers(IEnumerable<T> members)
         {
             var ret = new List<T>();
             if (members != null)
@@ -153,9 +166,13 @@ namespace RoslynDom
             return (T)newItem;
         }
 
-        public bool SameIntent(T other)
+        internal override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
-            return SameIntent(other, true);
+            if (other == null) { return false; }
+            if (!typeof(T).IsAssignableFrom(typeof(TLocal))) { return false; }
+            var otherAsT = other as T;
+            if (!CheckSameIntent(otherAsT, includePublicAnnotations)) { return false; }
+            return true;
         }
 
         /// <summary>
@@ -164,22 +181,35 @@ namespace RoslynDom
         /// <param name="other"></param>
         /// <param name="includePublicAnnotations"></param>
         /// <returns></returns>
-        public virtual bool SameIntent(T other, bool includePublicAnnotations)
+        protected virtual bool CheckSameIntent(T other, bool includePublicAnnotations)
         {
             var otherItem = other as RDomBase;
-            if (!base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
+            if (!base.CheckPublicAnnotations(otherItem, includePublicAnnotations)) return false;
             return true;
         }
 
+
+        //public bool SameIntent(T other)
+        //{
+        //    return SameIntent(other, true);
+        //}
+
+        // public virtual bool SameIntent(T other, bool includePublicAnnotations)
+        //{
+        //    var otherItem = other as RDomBase;
+        //    if (!base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
+        //    return true;
+        //}
+
         protected bool CheckSameIntentChildList<TChild>(IEnumerable<TChild> thisList,
                 IEnumerable<TChild> otherList)
-             where TChild : IDom<TChild>
+             where TChild : class, IDom<TChild>
         {
             return CheckSameIntentChildList(thisList, otherList, null);
         }
         protected bool CheckSameIntentChildList<TChild>(IEnumerable<TChild> thisList,
              IEnumerable<TChild> otherList, Func<TChild, TChild, bool> compareDelegate)
-                where TChild : IDom<TChild>
+                where TChild : class, IDom<TChild>
         {
             if (thisList == null) return (otherList == null);
             if (otherList == null) return false;
@@ -201,7 +231,7 @@ namespace RoslynDom
     public abstract class RDomBase<T, TSyntax, TSymbol> : RDomBase<T>, IRoslynDom<T, TSyntax, TSymbol>
             where TSyntax : SyntaxNode
             where TSymbol : ISymbol
-            where T : IDom<T>
+            where T : class, IDom<T>
     {
         private TSyntax _originalRawSyntax;
         private TSyntax _rawSyntax;
@@ -233,7 +263,7 @@ namespace RoslynDom
             {
                 Name = TypedSymbol.Name;
             }
-            if (this is IHasAttributes )
+            if (this is IHasAttributes)
             {
 
             }
@@ -246,9 +276,9 @@ namespace RoslynDom
         //    return newVal;
         //}
 
-        public override bool SameIntent(T other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(T other, bool includePublicAnnotations)
         {
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             var rDomOther = other as RDomBase<T, TSyntax, TSymbol>;
             if (rDomOther == null) return false;
             if (Name != rDomOther.Name) return false;

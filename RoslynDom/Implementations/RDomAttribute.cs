@@ -37,9 +37,9 @@ namespace RoslynDom
             Name = TypedSyntax.Name.ToString();
         }
 
-        public override bool SameIntent(IAttribute other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IAttribute other, bool includePublicAnnotations)
         {
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             var rDomOther = other as RDomAttribute;
             if (rDomOther == null) throw new InvalidOperationException();
             return CheckSameIntentChildList(_attributeValues, rDomOther._attributeValues);

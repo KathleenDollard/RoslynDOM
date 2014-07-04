@@ -49,9 +49,9 @@ namespace RoslynDom
             IsStatic = Symbol.IsStatic;
         }
 
-        public override bool SameIntent(IField other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IField other, bool includePublicAnnotations)
         {
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (AccessModifier != other.AccessModifier) return false;
             if (ReturnType.QualifiedName  != other.ReturnType.QualifiedName ) return false;
             if (IsStatic != other.IsStatic) return false;

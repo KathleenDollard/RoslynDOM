@@ -51,9 +51,9 @@ namespace RoslynDom
         //    return newVal;
         //}
 
-       public override bool SameIntent(IAttributeValue other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IAttributeValue other, bool includePublicAnnotations)
         {
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             var rDomOther = other as RDomAttributeValue;
             if (rDomOther == null) throw new InvalidOperationException();
             if (Name != rDomOther.Name) return false;

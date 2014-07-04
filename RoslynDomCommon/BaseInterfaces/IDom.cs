@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
-    public interface IDom
+    public interface IDom : IHasSameIntentMethod
     {
         object RawItem { get; }
         string Name { get; }
@@ -17,7 +17,5 @@ namespace RoslynDom.Common
         where T : IDom<T>
     {
         T Copy();
-        bool SameIntent(T other, bool includePublicAnnotations);
-        bool SameIntent(T other);
     }
 }

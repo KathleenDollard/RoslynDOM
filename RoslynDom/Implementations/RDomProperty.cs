@@ -53,10 +53,10 @@ namespace RoslynDom
             CanSet = (!((IPropertySymbol)Symbol).IsReadOnly); ;
         }
 
-        public override bool SameIntent(IProperty other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IProperty other, bool includePublicAnnotations)
         {
             if (other == null) return false;
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (AccessModifier != other.AccessModifier) return false;
             if (PropertyType.QualifiedName  != other.PropertyType.QualifiedName ) return false;
             if (IsAbstract != other.IsAbstract) return false;

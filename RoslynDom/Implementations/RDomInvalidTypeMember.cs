@@ -31,10 +31,10 @@ namespace RoslynDom
             { AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility; }
         }
 
-        public override bool SameIntent(IInvalidTypeMember other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IInvalidTypeMember other, bool includePublicAnnotations)
         {
             if (other == null) return false;
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (AccessModifier != other.AccessModifier) return false;
             return true;
         }

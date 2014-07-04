@@ -28,10 +28,10 @@ namespace RoslynDom
             { return Members.OfType<IClass>(); }
         }
 
-        public override bool SameIntent(IStructure other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IStructure other, bool includePublicAnnotations)
         {
             if (other == null) return false;
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (!CheckSameIntentChildList(Classes, other.Classes)) return false;
             if (!CheckSameIntentChildList(Structures, other.Structures)) return false;
             if (!CheckSameIntentChildList(Interfaces, other.Interfaces)) return false;

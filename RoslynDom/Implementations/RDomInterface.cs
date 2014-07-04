@@ -23,10 +23,10 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
-        public override bool SameIntent(IInterface  other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(IInterface  other, bool includePublicAnnotations)
         {
             if (other == null) return false;
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (!CheckSameIntentChildList(TypeParameters, other.TypeParameters)) return false;
             if (!CheckSameIntentChildList(AllImplementedInterfaces, other.AllImplementedInterfaces)) return false;
             return true;

@@ -28,21 +28,16 @@ namespace RoslynDom
             return new RDomTypeParameter(this);
         }
 
-        public bool SameIntent(ITypeParameter other)
-        {
-            return SameIntent(other, true);
-        }
-
-       public bool SameIntent(ITypeParameter other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(RDomReferencedType  other, bool includePublicAnnotations)
         {
             if (other == null) return false;
             var otherItem = other as RDomTypeParameter;
-            if (!base.SameIntent(otherItem, includePublicAnnotations)) return false;
-            if (HasConstructorConstraint != other.HasConstructorConstraint) return false;
-            if (HasReferenceConstraint != other.HasReferenceConstraint) return false;
-            if (HasValueTypeConstraint != other.HasValueTypeConstraint) return false;
-            if (Ordinal != other.Ordinal) return false;
-            if (Variance != other.Variance) return false;
+            if (!base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
+            if (HasConstructorConstraint != otherItem.HasConstructorConstraint) return false;
+            if (HasReferenceConstraint != otherItem.HasReferenceConstraint) return false;
+            if (HasValueTypeConstraint != otherItem.HasValueTypeConstraint) return false;
+            if (Ordinal != otherItem.Ordinal) return false;
+            if (Variance != otherItem.Variance) return false;
             return true;
         }
  

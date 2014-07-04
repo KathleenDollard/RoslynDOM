@@ -38,11 +38,11 @@ namespace RoslynDom
             //_outerName = namespaceName + Name;
         }
 
-        public override bool SameIntent(INamespace other, bool includePublicAnnotations)
+        protected override bool CheckSameIntent(INamespace other, bool includePublicAnnotations)
         {
             if (other == null) return false;
             // Base class checks classes, etc
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (!CheckSameIntentChildList(NonemptyNamespaces, other.NonemptyNamespaces)) return false;
             if (!CheckSameIntentChildList(AllChildNamespaces, other.AllChildNamespaces)) return false;
             return true;

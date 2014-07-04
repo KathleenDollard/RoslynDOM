@@ -13,7 +13,7 @@ namespace RoslynDom
     public abstract class RDomBaseStemContainer<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>
         where TSyntax : SyntaxNode
         where TSymbol : ISymbol
-        where T : IDom<T>
+        where T : class, IDom<T>
     {
         private IEnumerable<IStemMember> _members;
         private IEnumerable<IUsing> _usings;
@@ -67,10 +67,10 @@ namespace RoslynDom
             _members = newMembers;
         }
 
-        public override bool SameIntent(T other, bool includePublicAnnotations)
+        protected  override bool CheckSameIntent(T other, bool includePublicAnnotations)
         {
             var rDomOther = other as RDomBaseStemContainer<T, TSyntax, TSymbol>;
-            if (!base.SameIntent(other, includePublicAnnotations)) return false;
+            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (!CheckSameIntentChildList(Classes, rDomOther.Classes)) return false;
             if (!CheckSameIntentChildList(Interfaces, rDomOther.Interfaces)) return false;
             if (!CheckSameIntentChildList(Structures, rDomOther.Structures)) return false;
@@ -99,11 +99,6 @@ namespace RoslynDom
         public IEnumerable<IStructure> Structures
         { get { return StemMembers.OfType<IStructure>(); } }
 
-        public void AddMember(IType newMember)
-        {
-            _members = _members.Concat(new IType[] { newMember });
-        }
-
         public IEnumerable<IEnum> Enums
         { get { return StemMembers.OfType<IEnum>(); } }
 
@@ -113,5 +108,10 @@ namespace RoslynDom
 
         public IEnumerable<IStemMember> Types
         { get { return StemMembers.OfType<IType>(); } }
+
+        public void AddMember(IType newMember)
+        {
+            _members = _members.Concat(new IType[] { newMember });
+        }
     }
 }

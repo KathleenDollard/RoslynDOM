@@ -86,20 +86,22 @@ namespace RoslynDom
             return new RDomReferencedType(this);
         }
 
-        public bool SameIntent(IReferencedType other)
-        {
-            return SameIntent(other, true);
-        }
-
-        public bool SameIntent(IReferencedType other, bool includePublicAnnotations)
+         internal override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
             var otherItem = other as RDomReferencedType;
-            if (!base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
+            if (otherItem == null) return false;
+            if (!CheckSameIntent(otherItem, includePublicAnnotations)) return false;
+            return true;
+        }
+
+        protected virtual bool CheckSameIntent(RDomReferencedType other, bool includePublicAnnotations)
+        {
+            var otherItem = other as RDomReferencedType;
+            if (!base.CheckPublicAnnotations(otherItem, includePublicAnnotations)) return false;
             // The following is probably inadequate, but we need to find the edge cases
             if (this.QualifiedName != otherItem.QualifiedName) return false;
             return true;
         }
-
         public override object RawItem
         {
             // I want to understand how people are using this before exposing it
@@ -123,7 +125,7 @@ namespace RoslynDom
         {
             get
             {
-                return (string.IsNullOrWhiteSpace(Namespace ) ? "" : Namespace + ".")
+                return (string.IsNullOrWhiteSpace(Namespace) ? "" : Namespace + ".")
                     + (string.IsNullOrWhiteSpace(_outerTypeName) ? "" : _outerTypeName + ".")
                     + Name;
             }

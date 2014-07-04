@@ -42,6 +42,7 @@
     <Compile Include="CharacteristicInterfaces\IHasImplementedInterfaces.cs" />
     <Compile Include="CharacteristicInterfaces\IHasNamespace.cs" />
     <Compile Include="CharacteristicInterfaces\IHasTypeParameters.cs" />
+    <Compile Include="CharacteristicInterfaces\ISupportsSameIntent.cs" />
     <Compile Include="Enums\LiteralType.cs" />
     <Compile Include="Enums\MemberType.cs" />
     <Compile Include="Enums\StemMemberType.cs" />
