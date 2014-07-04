@@ -96,9 +96,13 @@ namespace RoslynDom
         public IEnumerable<IStemMember> StemMembers
         { get { return _members; } }
 
-
         public IEnumerable<IStructure> Structures
         { get { return StemMembers.OfType<IStructure>(); } }
+
+        public void AddMember(IType newMember)
+        {
+            _members = _members.Concat(new IType[] { newMember });
+        }
 
         public IEnumerable<IEnum> Enums
         { get { return StemMembers.OfType<IEnum>(); } }
