@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ITypeParameter : IDom<ITypeParameter>
+    public interface ITypeParameter : IDom<ITypeParameter>, IReferencedType 
     {
         Variance Variance { get; }
         bool HasConstructorConstraint { get; }

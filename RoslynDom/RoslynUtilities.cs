@@ -18,18 +18,18 @@ namespace RoslynDom
                                       .OfType<QualifiedNameSyntax>()
                                       .SingleOrDefault();
             var identifierNameNodes = node.ChildNodes()
-                               .OfType<IdentifierNameSyntax >();
+                               .OfType<IdentifierNameSyntax>();
             var name = "";
             if (qualifiedNameNode != null)
             {
                 name = name + qualifiedNameNode.ToString();
             }
-            foreach (var identifierNameNode in identifierNameNodes )
+            foreach (var identifierNameNode in identifierNameNodes)
             {
                 var identifierName = identifierNameNode.ToString();
                 if (!(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(identifierName)))
-                    { name += "."; }
-                name = name += identifierName ;
+                { name += "."; }
+                name = name += identifierName;
             }
             if (!string.IsNullOrWhiteSpace(name)) return name;
             var nameToken = node.ChildTokens()
@@ -38,6 +38,16 @@ namespace RoslynDom
             return nameToken.ValueText;
         }
 
- 
+        public static string MakeOuterName(string outerTypeName, string name)
+        {
+            return (string.IsNullOrWhiteSpace(outerTypeName) ? "" : outerTypeName + ".")
+                      + name;
+        }
+
+        public static string MakeQualifiedName(string nspace, string outerTypeName, string name)
+        {
+            return (string.IsNullOrWhiteSpace(nspace) ? "" : nspace + ".")
+                      + MakeOuterName(outerTypeName, name);
+        }
     }
 }

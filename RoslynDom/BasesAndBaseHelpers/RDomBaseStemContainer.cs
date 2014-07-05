@@ -26,6 +26,7 @@ namespace RoslynDom
         {
             _members = members;
             _usings = usings;
+            Initialize();
         }
 
         internal RDomBaseStemContainer(T oldIDom)
@@ -33,6 +34,7 @@ namespace RoslynDom
         {
             // ick. but I it avoids an FxCop error, not sure which is worse
             var oldRDom = oldIDom as RDomBaseStemContainer<T, TSyntax, TSymbol>;
+            Namespace = oldRDom.Namespace;
             var newMembers = new List<IStemMember>();
             foreach (var member in oldRDom.StemMembers)
             {
@@ -53,7 +55,7 @@ namespace RoslynDom
                             if (rDomEnum != null) { newMembers.Add(new RDomEnum(rDomEnum)); }
                             else
                             {
-                                var rDomNamespace = member as RDomNamespace ;
+                                var rDomNamespace = member as RDomNamespace;
                                 if (rDomNamespace != null) { newMembers.Add(new RDomNamespace(rDomNamespace)); }
                                 else
                                 {
@@ -67,7 +69,13 @@ namespace RoslynDom
             _members = newMembers;
         }
 
-        protected  override bool CheckSameIntent(T other, bool includePublicAnnotations)
+        protected override void Initialize()
+        {
+            base.Initialize();
+            Namespace = GetNamespace();
+        }
+
+        protected override bool CheckSameIntent(T other, bool includePublicAnnotations)
         {
             var rDomOther = other as RDomBaseStemContainer<T, TSyntax, TSymbol>;
             if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
@@ -79,10 +87,13 @@ namespace RoslynDom
         }
 
         public string Namespace
-        {            get { return GetNamespace(); }        }
+        { get; set; }
 
         public string QualifiedName
-        {            get { return GetQualifiedName(); }        }
+        { get { return GetQualifiedName(); } }
+
+        public IEnumerable<IStemMember> StemMembers
+        { get { return _members; } }
 
         public IEnumerable<INamespace> Namespaces
         { get { return StemMembers.OfType<INamespace>(); } }
@@ -92,9 +103,6 @@ namespace RoslynDom
 
         public IEnumerable<IInterface> Interfaces
         { get { return StemMembers.OfType<IInterface>(); } }
-
-        public IEnumerable<IStemMember> StemMembers
-        { get { return _members; } }
 
         public IEnumerable<IStructure> Structures
         { get { return StemMembers.OfType<IStructure>(); } }

@@ -48,40 +48,10 @@ namespace RoslynDom
             _outerTypeName = GetContainingTypeName();
         }
 
+        public virtual bool Matches(IReferencedType  other)
+        { return this.Name == other.Name; }
 
-        private string GetName()
-        {
-            if (Symbol == null && (_typeInfo.Type != null)) { return _typeInfo.Type.ToString(); }
-            var arraySymbol = Symbol as IArrayTypeSymbol;
-            if (arraySymbol == null) { return Symbol.Name; }
-            // CSharp specific
-            return arraySymbol.ElementType.Name + "[]";
-        }
-
-        private string GetNamespace()
-        { return GetNamespace(Symbol.ContainingNamespace); }
-
-        private string GetNamespace(INamespaceSymbol nspaceSymbol)
-        {
-            if (nspaceSymbol == null) return "";
-            var parentName = GetNamespace(nspaceSymbol.ContainingNamespace);
-            if (!string.IsNullOrWhiteSpace(parentName))
-            { parentName = parentName + "."; }
-            return parentName + nspaceSymbol.Name;
-        }
-
-        private string GetContainingTypeName()
-        { return GetContainingTypeName(Symbol.ContainingType); }
-
-        private string GetContainingTypeName(INamedTypeSymbol typeSymbol)
-        {
-            if (typeSymbol == null) return "";
-            var parentName = GetContainingTypeName(typeSymbol.ContainingType);
-            return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
-                typeSymbol.Name;
-        }
-
-        public IReferencedType Copy()
+          public IReferencedType Copy()
         {
             return new RDomReferencedType(this);
         }
@@ -97,12 +67,19 @@ namespace RoslynDom
         protected virtual bool CheckSameIntent(RDomReferencedType other, bool includePublicAnnotations)
         {
             var otherItem = other as RDomReferencedType;
-            if (!base.CheckPublicAnnotations(otherItem, includePublicAnnotations)) return false;
+            if (!PublicAnnotations.SameIntent(other.PublicAnnotations, includePublicAnnotations)) { return false; }
             // The following is probably inadequate, but we need to find the edge cases
             if (this.QualifiedName != otherItem.QualifiedName) return false;
             return true;
         }
+
         public override object RawItem
+        {
+            // I want to understand how people are using this before exposing it
+            get
+            { throw new NotImplementedException(); }
+        }
+        public override object OriginalRawItem
         {
             // I want to understand how people are using this before exposing it
             get
@@ -143,6 +120,37 @@ namespace RoslynDom
             throw new NotImplementedException();
         }
 
+        private string GetName()
+        {
+            if (Symbol == null && (_typeInfo.Type != null)) { return _typeInfo.Type.ToString(); }
+            var arraySymbol = Symbol as IArrayTypeSymbol;
+            if (arraySymbol == null) { return Symbol.Name; }
+            // CSharp specific
+            return arraySymbol.ElementType.Name + "[]";
+        }
+
+        private string GetNamespace()
+        { return GetNamespace(Symbol.ContainingNamespace); }
+
+        private string GetNamespace(INamespaceSymbol nspaceSymbol)
+        {
+            if (nspaceSymbol == null) return "";
+            var parentName = GetNamespace(nspaceSymbol.ContainingNamespace);
+            if (!string.IsNullOrWhiteSpace(parentName))
+            { parentName = parentName + "."; }
+            return parentName + nspaceSymbol.Name;
+        }
+
+        private string GetContainingTypeName()
+        { return GetContainingTypeName(Symbol.ContainingType); }
+
+        private string GetContainingTypeName(INamedTypeSymbol typeSymbol)
+        {
+            if (typeSymbol == null) return "";
+            var parentName = GetContainingTypeName(typeSymbol.ContainingType);
+            return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
+                typeSymbol.Name;
+        }
 
     }
 }

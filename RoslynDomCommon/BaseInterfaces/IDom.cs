@@ -5,6 +5,7 @@ namespace RoslynDom.Common
     public interface IDom : IHasSameIntentMethod
     {
         object RawItem { get; }
+        object OriginalRawItem { get; }
         string Name { get; }
         string OuterName { get; }
 
@@ -17,5 +18,6 @@ namespace RoslynDom.Common
         where T : IDom<T>
     {
         T Copy();
+        bool Matches(T other);
     }
 }

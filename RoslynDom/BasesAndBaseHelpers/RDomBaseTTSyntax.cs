@@ -29,6 +29,7 @@ namespace RoslynDom
             _members = members;
             _memberType = memberType;
             _stemMemberType = stemMemberType;
+            Initialize();
         }
 
         internal RDomBaseType(T oldIDom)

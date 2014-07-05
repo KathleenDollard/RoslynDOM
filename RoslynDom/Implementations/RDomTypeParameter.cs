@@ -22,8 +22,11 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
+        public virtual bool Matches(ITypeParameter other)
+        { return base.Matches(other); }
+        
         // new here feels wrong. Expect testing issues here
-        public new ITypeParameter Copy()
+        public ITypeParameter Copy()
         {
             return new RDomTypeParameter(this);
         }
