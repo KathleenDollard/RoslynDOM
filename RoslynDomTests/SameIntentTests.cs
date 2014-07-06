@@ -1184,11 +1184,10 @@ namespace RoslynDomTests
        #region same intent namespace
 
         [TestMethod, TestCategory(SameIntentNamespaceCategory)]
-        public void Same_intent_true_with_same_namespace_declaration_in_different_contexts()
+        public void Same_intent_false_with_same_namespace_declaration_in_different_contexts()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
+            // THis test clarifies behavior. While context is not important in determining
+            // same intent, the namespace itself differs here beuase it is named differently
             var csharpCode1 = @"
                 namespace Namespace0
                 {
@@ -1215,7 +1214,7 @@ namespace RoslynDomTests
             var root2 = RDomFactory.GetRootFromString(csharpCode2);
             var namespace1 = root1.NonemptyNamespaces.First();
             var namespace2 = root2.NonemptyNamespaces.First();
-            Assert.IsTrue(namespace1.SameIntent(namespace2));
+            Assert.IsFalse(namespace1.SameIntent(namespace2));
         }
 
         [TestMethod, TestCategory(SameIntentNamespaceCategory)]

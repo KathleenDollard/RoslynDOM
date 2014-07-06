@@ -35,7 +35,6 @@ namespace RoslynDom
         {
             // ick. but I it avoids an FxCop error, not sure which is worse
             var oldRDom = oldIDom as RDomBaseStemContainer<T, TSyntax, TSymbol>;
-            Namespace = oldRDom.Namespace;
             var newMembers = new List<IStemMember>();
             foreach (var member in oldRDom.StemMembers)
             {
@@ -73,32 +72,22 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            Namespace = GetNamespace();
-        }
-
-        protected override bool CheckSameIntent(T other, bool includePublicAnnotations)
-        {
-            var rDomOther = other as RDomBaseStemContainer<T, TSyntax, TSymbol>;
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            if (!CheckSameIntentChildList(Classes, rDomOther.Classes)) return false;
-            if (!CheckSameIntentChildList(Interfaces, rDomOther.Interfaces)) return false;
-            if (!CheckSameIntentChildList(Structures, rDomOther.Structures)) return false;
-            if (!CheckSameIntentChildList(Enums, rDomOther.Enums)) return false;
-            return true;
         }
 
         public string Namespace
-        { get; set; }
+            // Parent always works here - if its a namespace, we deliberately skip the current, otherwise, the current is never a namespace
+        { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
+
 
         public string QualifiedName
         { get { return GetQualifiedName(); } }
 
         public void RemoveMember(IStemMember member)
-        { RoslynUtilities.RemoveMemberFromParent(this, member); }
+        { RoslynDomUtilities.RemoveMemberFromParent(this, member); }
 
         public void AddOrMoveMember(IStemMember member)
         {
-            RoslynUtilities.PrepMemberForAdd(this, member);
+            RoslynDomUtilities.PrepMemberForAdd(this, member);
             _members.Add(member);
         }
 

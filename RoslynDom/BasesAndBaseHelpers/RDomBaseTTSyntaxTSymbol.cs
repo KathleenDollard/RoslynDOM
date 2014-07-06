@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using RoslynDom.BasesAndBaseHelpers;
 using RoslynDom.Common;
 
 namespace RoslynDom
@@ -35,7 +34,7 @@ namespace RoslynDom
             _rawSyntax = oldRDom._rawSyntax;
             _originalRawSyntax = oldRDom._originalRawSyntax;
             if (oldRDom._attributes != null)
-            { _attributes = RoslynUtilities.CopyMembers(oldRDom._attributes); }
+            { _attributes = RoslynDomUtilities.CopyMembers(oldRDom._attributes); }
             Name = oldRDom.Name;
             //_symbol = default(TSymbol); // this should be reset, this line is to remind us
         }
@@ -49,14 +48,7 @@ namespace RoslynDom
             }
         }
 
-        protected override bool CheckSameIntent(T other, bool includePublicAnnotations)
-        {
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) { return false; }
-            if (!SameIntentHelpers<T, TSyntax, TSymbol>.CheckSameIntent(this as T, other, includePublicAnnotations)) { return false; };
-            return true;
-        }
-
-        // public and virtual instead of abstract during development only
+         // public and virtual instead of abstract during development only
         public virtual TSyntax BuildSyntax()
         {
             return null;
@@ -136,12 +128,7 @@ namespace RoslynDom
             throw new InvalidOperationException();
         }
 
-        protected virtual string GetNamespace()
-        {
-            if (Symbol == null) { return ""; }
-            return RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
-        }
-
+    
         protected virtual AccessModifier GetAccessibility()
         {
             if (Symbol == null) { return AccessModifier.NotApplicable; }

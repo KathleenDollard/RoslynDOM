@@ -13,6 +13,7 @@ namespace RoslynDom
         private TypeInfo _typeInfo;
         private ISymbol _symbol;
         private string _outerTypeName;
+        private ISameIntent<IReferencedType> sameIntent = SameIntent_Factory.SameIntent<IReferencedType>();
 
         internal RDomReferencedType(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
         {
@@ -55,18 +56,12 @@ namespace RoslynDom
 
          internal override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
-            var otherItem = other as RDomReferencedType;
-            if (otherItem == null) return false;
-            if (!CheckSameIntent(otherItem, includePublicAnnotations)) return false;
-            return true;
+            if (!CheckSameIntent(other as IReferencedType, includePublicAnnotations)) { return false; }
+            return sameIntent.SameIntent(this as IReferencedType, other as IReferencedType, includePublicAnnotations);
         }
 
-        protected virtual bool CheckSameIntent(RDomReferencedType other, bool includePublicAnnotations)
+        protected virtual bool CheckSameIntent(IReferencedType other, bool includePublicAnnotations)
         {
-            var otherItem = other as RDomReferencedType;
-            if (!PublicAnnotations.SameIntent(other.PublicAnnotations, includePublicAnnotations)) { return false; }
-            // The following is probably inadequate, but we need to find the edge cases
-            if (this.QualifiedName != otherItem.QualifiedName) return false;
             return true;
         }
 
@@ -76,7 +71,7 @@ namespace RoslynDom
             return identifier;
         }
 
-        public override object RawItem
+         public override object RawItem
         {
             // I want to understand how people are using this before exposing it
             get
@@ -112,7 +107,7 @@ namespace RoslynDom
         }
 
         public string Namespace { get; set; }
-
+     
         public override object RequestValue(string name)
         {  // This is temporary so I know how this is used. Probably can just be removed and fallback to base
             throw new NotImplementedException();
@@ -123,13 +118,25 @@ namespace RoslynDom
             throw new NotImplementedException();
         }
 
-        private string GetName()
+          private string GetName()
         {
             if (Symbol == null && (_typeInfo.Type != null)) { return _typeInfo.Type.ToString(); }
             var arraySymbol = Symbol as IArrayTypeSymbol;
             if (arraySymbol == null) { return Symbol.Name; }
             // CSharp specific
             return arraySymbol.ElementType.Name + "[]";
+        }
+
+
+        private string GetContainingTypeName()
+        { return GetContainingTypeName(Symbol.ContainingType); }
+
+        private string GetContainingTypeName(INamedTypeSymbol typeSymbol)
+        {
+            if (typeSymbol == null) return "";
+            var parentName = GetContainingTypeName(typeSymbol.ContainingType);
+            return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
+                typeSymbol.Name;
         }
 
         private string GetNamespace()
@@ -143,17 +150,5 @@ namespace RoslynDom
             { parentName = parentName + "."; }
             return parentName + nspaceSymbol.Name;
         }
-
-        private string GetContainingTypeName()
-        { return GetContainingTypeName(Symbol.ContainingType); }
-
-        private string GetContainingTypeName(INamedTypeSymbol typeSymbol)
-        {
-            if (typeSymbol == null) return "";
-            var parentName = GetContainingTypeName(typeSymbol.ContainingType);
-            return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
-                typeSymbol.Name;
-        }
-
     }
 }

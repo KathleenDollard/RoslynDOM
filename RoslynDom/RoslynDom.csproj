@@ -59,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeValueStyle.cs" />
-    <Compile Include="BasesAndBaseHelpers\SameIntentHelpers.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBase.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseOfT.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseTTSyntaxTSymbol.cs" />

@@ -41,20 +41,7 @@ namespace RoslynDom
             { AddConstraintType(constraint); }
         }
 
-        protected override bool CheckSameIntent(RDomReferencedType other, bool includePublicAnnotations)
-        {
-            if (other == null) return false;
-            var otherItem = other as RDomTypeParameter;
-            if (!base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
-            if (HasConstructorConstraint != otherItem.HasConstructorConstraint) return false;
-            if (HasReferenceTypeConstraint != otherItem.HasReferenceTypeConstraint) return false;
-            if (HasValueTypeConstraint != otherItem.HasValueTypeConstraint) return false;
-            if (Ordinal != otherItem.Ordinal) return false;
-            if (Variance != otherItem.Variance) return false;
-            return true;
-        }
-
-        public IEnumerable<IReferencedType> ConstraintTypes
+         public IEnumerable<IReferencedType> ConstraintTypes
         { get { return _constraintTypes; } }
      
         public void AddConstraintType(ITypeSymbol symbol )

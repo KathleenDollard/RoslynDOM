@@ -25,9 +25,9 @@ namespace RoslynDom
         internal RDomMethod(RDomMethod oldRDom)
              : base(oldRDom)
         {
-            var newParameters = RoslynUtilities.CopyMembers(oldRDom._parameters);
+            var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             _parameters = newParameters;
-            var newTypeParameters = RoslynUtilities.CopyMembers(oldRDom._typeParameters);
+            var newTypeParameters = RoslynDomUtilities.CopyMembers(oldRDom._typeParameters);
             _typeParameters = newTypeParameters;
 
             AccessModifier = oldRDom.AccessModifier;
@@ -55,22 +55,7 @@ namespace RoslynDom
             IsExtensionMethod = TypedSymbol.IsExtensionMethod;
         }
 
-        protected override bool CheckSameIntent(IMethod other, bool includePublicAnnotations)
-        {
-            if (other == null) return false;
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            if (ReturnType.QualifiedName != other.ReturnType.QualifiedName) return false;
-            if (IsAbstract != other.IsAbstract) return false;
-            if (IsSealed != other.IsSealed) return false;
-            if (IsStatic != other.IsStatic) return false;
-            if (IsVirtual != other.IsVirtual) return false;
-            if (IsExtensionMethod != other.IsExtensionMethod) return false;
-            if (!CheckSameIntentChildList(TypeParameters, other.TypeParameters)) return false;
-            if (!CheckSameIntentChildList(Parameters, other.Parameters)) return false;
-            return true;
-        }
-
-        public override MethodDeclarationSyntax BuildSyntax()
+          public override MethodDeclarationSyntax BuildSyntax()
         {
             var nameSyntax = SyntaxFactory.Identifier(Name);
             var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();

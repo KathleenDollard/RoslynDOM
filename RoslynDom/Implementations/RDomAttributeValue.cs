@@ -46,18 +46,6 @@ namespace RoslynDom
             _type = _value.GetType();
         }
 
-
-        protected override bool CheckSameIntent(IAttributeValue other, bool includePublicAnnotations)
-        {
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            var rDomOther = other as RDomAttributeValue;
-            if (rDomOther == null) throw new InvalidOperationException();
-            if (Name != rDomOther.Name) return false;
-            if (_literalType != rDomOther._literalType) return false;
-            if (!(_value.Equals(rDomOther._value))) return false;
-            return true;
-        }
-
         private Tuple<object, LiteralType> GetAttributeValueValue(
                     AttributeArgumentSyntax arg)
         {

@@ -25,19 +25,6 @@ namespace RoslynDom
             { return Members.OfType<IClass>(); }
         }
 
-        protected override bool CheckSameIntent(IStructure other, bool includePublicAnnotations)
-        {
-            if (other == null) return false;
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            if (!CheckSameIntentChildList(Classes, other.Classes)) return false;
-            if (!CheckSameIntentChildList(Structures, other.Structures)) return false;
-            if (!CheckSameIntentChildList(Interfaces, other.Interfaces)) return false;
-            if (!CheckSameIntentChildList(Enums, other.Enums)) return false;
-            if (!CheckSameIntentChildList(TypeParameters, other.TypeParameters)) return false;
-            if (!CheckSameIntentChildList(AllImplementedInterfaces, other.AllImplementedInterfaces)) return false;
-            return true;
-        }
-
         public IEnumerable<IType> Types
         {
             get

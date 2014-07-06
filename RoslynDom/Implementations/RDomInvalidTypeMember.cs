@@ -25,13 +25,6 @@ namespace RoslynDom
             AccessModifier = GetAccessibility();
         }
 
-        protected override bool CheckSameIntent(IInvalidTypeMember other, bool includePublicAnnotations)
-        {
-            if (other == null) return false;
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            if (AccessModifier != other.AccessModifier) return false;
-            return true;
-        }
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 

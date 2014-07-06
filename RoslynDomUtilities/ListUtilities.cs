@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.Common
 {
@@ -15,10 +16,11 @@ namespace RoslynDom.Common
             if (input == null) return ret;
             if (getItemsDelegate == null) throw new InvalidOperationException();
             if (makeNewItems == null) throw new InvalidOperationException();
-            foreach (var rawItem in getItemsDelegate(input))
+            var newItems = getItemsDelegate(input);
+            foreach (var rawItem in newItems)
             {
                 var items = makeNewItems(rawItem);
-                ret.AddRange(items);
+                ret.AddRange(items.Where(x=>x!=null));
             }
             return ret;
         }
@@ -34,10 +36,11 @@ namespace RoslynDom.Common
             if (input == null) return ret;
             if (getItemsDelegate == null) throw new InvalidOperationException();
             if (makeNewItem == null) throw new InvalidOperationException();
-            foreach (var rawItem in getItemsDelegate(input))
+            var newItems = getItemsDelegate(input);
+            foreach (var rawItem in newItems)
             {
                 var item = makeNewItem(rawItem);
-                ret.Add(item);
+                if (item != null) { ret.Add(item); }
             }
             return ret;
         }

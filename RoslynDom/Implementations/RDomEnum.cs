@@ -27,7 +27,6 @@ namespace RoslynDom
         {
             base.Initialize();
             AccessModifier = GetAccessibility();
-            Namespace = GetNamespace();
             var symbol = Symbol as INamedTypeSymbol;
             if (symbol != null)
             {
@@ -39,7 +38,9 @@ namespace RoslynDom
          public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 
-        public string Namespace { get; set; }
+        public string Namespace
+        { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
+
 
         public string QualifiedName
         {

@@ -30,7 +30,7 @@ namespace RoslynDomExampleTests
             Assert.AreEqual(3, nspaces.Count());
             // TODO: Rework namespaces to reflect nesting, not current syntax. Below illustrate problem
             Assert.AreEqual("testing", nspaces[0].Name);
-            Assert.AreEqual("Namespace1", nspaces[1].Name);
+            Assert.AreEqual("testing.Namespace1", nspaces[1].Name);
             Assert.AreEqual("testing.Namespace1", nspaces[1].QualifiedName);
             Assert.AreEqual("Namespace2", nspaces[2].Name);
         }

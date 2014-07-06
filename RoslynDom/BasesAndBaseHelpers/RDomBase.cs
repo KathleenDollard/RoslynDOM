@@ -145,14 +145,5 @@ namespace RoslynDom
         public PublicAnnotationList PublicAnnotations
         { get { return _publicAnnotations; } }
 
-        //protected bool CheckPublicAnnotations(IDom other, bool includePublicAnnotations)
-        //{
-        //    if (includePublicAnnotations)
-        //    { if (!this.PublicAnnotations.SameIntent(other.PublicAnnotations)) return false; }
-        //    return true;
-        //}
-
-
     }
-
 }

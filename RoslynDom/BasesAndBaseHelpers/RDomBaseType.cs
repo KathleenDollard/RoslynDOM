@@ -37,10 +37,10 @@ namespace RoslynDom
             _memberType = oldRDom._memberType;
             _stemMemberType = oldRDom._stemMemberType;
             AccessModifier = oldRDom.AccessModifier;
-            var newMembers = RoslynUtilities.CopyMembers(oldRDom._members);
+            var newMembers = RoslynDomUtilities.CopyMembers(oldRDom._members);
             foreach (var member in newMembers)
             { AddOrMoveMember(member); }
-            var newTypeParameters  = RoslynUtilities.CopyMembers(oldRDom._typeParameters);
+            var newTypeParameters  = RoslynDomUtilities.CopyMembers(oldRDom._typeParameters);
             foreach (var typeParameter in newTypeParameters)
             { AddTypeParameter(typeParameter); }
         }
@@ -49,28 +49,17 @@ namespace RoslynDom
         {
             base.Initialize();
             AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility;
-            Namespace = GetNamespace();
             var newTypeParameters = this.TypedSymbol.TypeParametersFrom();
             foreach (var typeParameter in newTypeParameters)
             { AddTypeParameter(typeParameter); }
         }
 
-        protected override bool CheckSameIntent(T other, bool includePublicAnnotations)
-        {
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            var otherItem = other as RDomBaseType<T, TSyntax>;
-            if (!CheckSameIntentChildList(Fields, otherItem.Fields)) return false;
-            if (!CheckSameIntentChildList(Properties, otherItem.Properties)) return false;
-            if (!CheckSameIntentChildList(Methods, otherItem.Methods)) return false;
-            return true;
-        }
-  
-        public void RemoveMember(ITypeMember member)
-        { RoslynUtilities.RemoveMemberFromParent(this, member); }
+         public void RemoveMember(ITypeMember member)
+        { RoslynDomUtilities.RemoveMemberFromParent(this, member); }
 
         public void AddOrMoveMember(ITypeMember member)
         {
-            RoslynUtilities.PrepMemberForAdd(this, member);
+            RoslynDomUtilities.PrepMemberForAdd(this, member);
             _members.Add(member);
         }
 
@@ -81,7 +70,7 @@ namespace RoslynDom
         {            _typeParameters.Add(typeParameter);        }
 
         public string Namespace
-        { get ; set; }
+        { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 
         public string QualifiedName
         { get { return GetQualifiedName(); } }

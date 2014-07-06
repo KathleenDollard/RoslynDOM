@@ -29,18 +29,10 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            //var namespaceName = RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
-            //namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
-        }
-
-        protected override bool CheckSameIntent(INamespace other, bool includePublicAnnotations)
-        {
-            if (other == null) return false;
-            // Base class checks classes, etc
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            if (!CheckSameIntentChildList(NonemptyNamespaces, other.NonemptyNamespaces)) return false;
-            if (!CheckSameIntentChildList(AllChildNamespaces, other.AllChildNamespaces)) return false;
-            return true;
+            // Qualified name unbundles namespaces, and if it's defined together, we want it together here. 
+            // Thus, this replaces hte base Initialize name with the correct one
+            Name = TypedSyntax.NameFrom();
+            if (Name.StartsWith("@")) { Name = Name.Substring(1); }
         }
 
         public IEnumerable<INamespace> AllChildNamespaces
@@ -55,21 +47,6 @@ namespace RoslynDom
 
         public override string OuterName
         { get { return QualifiedName; } }
-
-        //private string GetNamespace()
-        //{ return GetNamespace(Symbol.ContainingNamespace); }
-
-        //private string GetNamespace(INamespaceSymbol nspaceSymbol)
-        //{
-        //    if (nspaceSymbol == null) return "";
-        //    var parentName = GetNamespace(nspaceSymbol.ContainingNamespace);
-        //    if (!string.IsNullOrWhiteSpace(parentName))
-        //    { parentName = parentName + "."; }
-        //    return parentName + nspaceSymbol.Name;
-        //}
-
-        //public override string OuterName
-        //{ get { return _outerName; } }
 
         public StemMemberType StemMemberType
         { get { return StemMemberType.Namespace; } }

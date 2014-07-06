@@ -24,7 +24,7 @@ namespace RoslynDom
         internal RDomProperty(RDomProperty oldRDom)
              : base(oldRDom)
         {
-            var newParameters = RoslynUtilities                         .CopyMembers(oldRDom._parameters);
+            var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             _parameters = newParameters;
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
@@ -50,22 +50,6 @@ namespace RoslynDom
             if (propSymbol == null) throw new InvalidOperationException();
             CanGet = (!propSymbol.IsWriteOnly); ;
             CanSet = (!propSymbol.IsReadOnly); ;
-        }
-
-        protected override bool CheckSameIntent(IProperty other, bool includePublicAnnotations)
-        {
-            if (other == null) return false;
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            if (AccessModifier != other.AccessModifier) return false;
-            if (PropertyType.QualifiedName  != other.PropertyType.QualifiedName ) return false;
-            if (IsAbstract != other.IsAbstract) return false;
-            if (IsSealed != other.IsSealed) return false;
-            if (IsStatic != other.IsStatic) return false;
-            if (IsVirtual != other.IsVirtual) return false;
-            if (CanGet != other.CanGet) return false;
-            if (CanSet != other.CanSet) return false;
-            if (!CheckSameIntentChildList(Parameters, other.Parameters)) return false;
-            return true;
         }
 
         public IEnumerable<IAttribute> Attributes

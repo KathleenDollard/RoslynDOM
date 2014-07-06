@@ -1,20 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Reflection;
 
 namespace RoslynDom
 {
     internal static class RoslynDomUtilities
     {
-        internal static string GetContainingNamespaceName(INamespaceSymbol nspaceSymbol)
-        {
-            if (nspaceSymbol == null) return "";
-            var parentName = GetContainingNamespaceName(nspaceSymbol.ContainingNamespace);
-            return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
-                nspaceSymbol.Name;
-        }
-
+      
         internal static IEnumerable<INamespace> GetAllChildNamespaces(
             IStemContainer stemContainer,
             bool includeSelf = false)
@@ -73,6 +68,76 @@ namespace RoslynDom
             }
             return retList;
 
+        }
+
+        internal static void RemoveMemberFromParent(IDom parent, IDom member)
+        {
+            if (member.Parent != parent) { throw new InvalidOperationException(); }
+            var memberAsRDom = member as RDomBase;
+            if (memberAsRDom == null) { throw new InvalidOperationException(); }
+            memberAsRDom.RemoveFromParent();
+        }
+
+        internal static void PrepMemberForAdd(IDom parent, IDom member)
+        {
+            var memberAsRDom = member as RDomBase;
+            if (memberAsRDom == null) throw new InvalidOperationException();
+            if (member.Parent != null)
+            {
+                memberAsRDom.RemoveFromParent();
+            }
+            memberAsRDom.Parent = parent;
+        }
+
+        internal static IEnumerable<T> CopyMembers<T>(IEnumerable<T> members)
+        {
+            var ret = new List<T>();
+            if (members != null)
+            {
+                foreach (var member in members)
+                {
+                    ret.Add(Copy(member));
+                }
+            }
+            return ret;
+        }
+
+        internal static T Copy<T>(T oldItem)
+        {
+            var type = oldItem.GetType();
+            var constructor = type.GetTypeInfo()
+                .DeclaredConstructors
+                .Where(x => x.GetParameters().Count() == 1
+                && typeof(T).IsAssignableFrom(x.GetParameters().First().ParameterType))
+                .FirstOrDefault();
+            if (constructor == null) throw new InvalidOperationException("Missing constructor for clone");
+            var newItem = constructor.Invoke(new object[] { oldItem });
+            return (T)newItem;
+        }
+
+        public static string MakeOuterName(string outerTypeName, string name)
+        {
+            return (string.IsNullOrWhiteSpace(outerTypeName) ? "" : outerTypeName + ".")
+                      + name;
+        }
+
+        public static string MakeQualifiedName(string nspace, string outerTypeName, string name)
+        {
+            return (string.IsNullOrWhiteSpace(nspace) ? "" : nspace + ".")
+                      + MakeOuterName(outerTypeName, name);
+        }
+
+        public static string GetNamespace(IDom item)
+        {
+            var ret = "";
+            if (item == null) { return ret; }
+            var itemAsNamespace = item as INamespace;
+            if (itemAsNamespace != null) { ret += itemAsNamespace.Name; }
+            if (item.Parent == null || item.Parent is IRoot) { return ret; }
+            var parentNamespace = GetNamespace(item.Parent);
+            if (!string.IsNullOrEmpty(parentNamespace))
+            { ret = parentNamespace + (string.IsNullOrEmpty(ret) ? "" : "." + ret); }
+            return ret;
         }
     }
 }

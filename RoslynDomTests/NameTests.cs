@@ -67,7 +67,7 @@ namespace RoslynDomTests
             var root = RDomFactory.GetRootFromString(csharpCode);
             var ns = root.Namespaces.First();
             var symbol = ((IRoslynDom)ns).Symbol;
-            Assert.AreEqual("Namespace1", ns.Name);
+            Assert.AreEqual("testing.Namespace1", ns.Name);
             Assert.AreEqual("Namespace1", symbol.MetadataName, "meta");
             Assert.AreEqual("Namespace1", symbol.Name);
         }
@@ -250,7 +250,7 @@ namespace RoslynDomTests
             var root = RDomFactory.GetRootFromString(csharpCode);
             var ns = root.Namespaces.First().Namespaces.First();
             var symbol = ((IRoslynDom)ns).Symbol;
-            Assert.AreEqual("Namespace1", root.Namespaces.First().Namespaces.First().Name);
+            Assert.AreEqual("testing.Namespace1", root.Namespaces.First().Namespaces.First().Name);
         }
 
         [TestMethod]

@@ -28,15 +28,6 @@ namespace RoslynDom
             Name = "Root";
         }
 
-        protected override bool CheckSameIntent(IRoot other, bool includePublicAnnotations)
-        {
-            if (other == null) return false;
-            // Base class checks classes, etc
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            if (!CheckSameIntentChildList(NonemptyNamespaces, other.NonemptyNamespaces)) return false;
-            return true;
-        }
-
         public IEnumerable<INamespace> AllChildNamespaces
         {
             get

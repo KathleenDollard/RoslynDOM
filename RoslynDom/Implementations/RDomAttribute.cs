@@ -25,21 +25,13 @@ namespace RoslynDom
             RDomAttribute oldRDom)
             : base(oldRDom)
         {
-            var newAttributeValues = RoslynUtilities.CopyMembers(oldRDom._attributeValues);
+            var newAttributeValues = RoslynDomUtilities.CopyMembers(oldRDom._attributeValues);
             _attributeValues = newAttributeValues;
         }
 
         protected override void Initialize()
         {
             Name = TypedSyntax.Name.ToString();
-        }
-
-        protected override bool CheckSameIntent(IAttribute other, bool includePublicAnnotations)
-        {
-            if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            var rDomOther = other as RDomAttribute;
-            if (rDomOther == null) throw new InvalidOperationException();
-            return CheckSameIntentChildList(_attributeValues, rDomOther._attributeValues);
         }
 
         public override AttributeSyntax BuildSyntax()
