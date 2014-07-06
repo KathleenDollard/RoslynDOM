@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.BasesAndBaseHelpers;
 using RoslynDom.Common;
 
@@ -18,6 +19,7 @@ namespace RoslynDom
         private TSyntax _rawSyntax;
         private TSymbol _symbol;
         private IEnumerable<IAttribute> _attributes;
+        private string _containingTypeName;
 
         protected RDomBase(TSyntax rawItem, params PublicAnnotation[] publicAnnotations)
             : base(publicAnnotations)
@@ -33,7 +35,7 @@ namespace RoslynDom
             _rawSyntax = oldRDom._rawSyntax;
             _originalRawSyntax = oldRDom._originalRawSyntax;
             if (oldRDom._attributes != null)
-            { _attributes = RDomBase<IAttribute>.CopyMembers(oldRDom._attributes.Cast<RDomAttribute>()); }
+            { _attributes = RoslynUtilities.CopyMembers(oldRDom._attributes); }
             Name = oldRDom.Name;
             //_symbol = default(TSymbol); // this should be reset, this line is to remind us
         }
@@ -43,10 +45,7 @@ namespace RoslynDom
             if (TypedSymbol != null)
             {
                 Name = TypedSymbol.Name;
-            }
-            if (this is IHasAttributes)
-            {
-
+                _containingTypeName = GetContainingTypeName(Symbol.ContainingType);
             }
         }
 
@@ -56,6 +55,37 @@ namespace RoslynDom
             if (!SameIntentHelpers<T, TSyntax, TSymbol>.CheckSameIntent(this as T, other, includePublicAnnotations)) { return false; };
             return true;
         }
+
+        // public and virtual instead of abstract during development only
+        public virtual TSyntax BuildSyntax()
+        {
+            return null;
+        }
+
+        protected SyntaxList<AttributeListSyntax> BuildAttributeListSyntax()
+        {
+            var list = SyntaxFactory.List<AttributeListSyntax>();
+            if (_attributes.Any())
+            {
+                var attribList = SyntaxFactory.AttributeList();
+                var attributes = _attributes.Select(x => ((RDomAttribute)x).BuildSyntax());
+                attribList = attribList.AddAttributes(attributes.ToArray());
+                list = list.Add(attribList);
+            }
+            return list;
+        }
+
+
+        protected SyntaxTokenList BuildModfierSyntax()
+        {
+            var list = SyntaxFactory.TokenList();
+            var thisHasAccessModifier = this as IHasAccessModifier;
+            if (thisHasAccessModifier != null)
+            { list = list.AddRange(RoslynUtilities.SyntaxTokensForAccessModifier(thisHasAccessModifier.AccessModifier)); }
+            // TODO: Static and other modifiers
+            return list;
+        }
+
 
         public TSyntax TypedSyntax
         { get { return _rawSyntax; } }
@@ -86,20 +116,17 @@ namespace RoslynDom
         {
             get
             {
-                if (Symbol == null) { return Name; }
-                var typeName = GetContainingTypeName(Symbol.ContainingType);
-                return (string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".") +
+                return (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
                        Name;
             }
         }
 
-        internal virtual string GetQualifiedName()
+        protected virtual string GetQualifiedName()
         {
             var item = this as IHasNamespace;
             if (item != null)
             {
-                var typeName = GetContainingTypeName(Symbol.ContainingType);
-                var outerName = (string.IsNullOrWhiteSpace(typeName) ? "" : typeName + ".") +
+                var outerName = (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
                        Name;
                 // There are probably slightly cleaner ways to do this, but with some override scenarios
                 // directly calling OuterName will result in a StackOverflowException
@@ -109,10 +136,16 @@ namespace RoslynDom
             throw new InvalidOperationException();
         }
 
-        internal virtual string GetNamespace()
+        protected virtual string GetNamespace()
         {
             if (Symbol == null) { return ""; }
             return RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
+        }
+
+        protected virtual AccessModifier GetAccessibility()
+        {
+            if (Symbol == null) { return AccessModifier.NotApplicable; }
+            return (AccessModifier)Symbol.DeclaredAccessibility;
         }
 
         private static string GetContainingTypeName(ITypeSymbol typeSymbol)

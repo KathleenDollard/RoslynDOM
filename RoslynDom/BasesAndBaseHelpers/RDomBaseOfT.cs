@@ -11,6 +11,8 @@ namespace RoslynDom
     public abstract class RDomBase<T> : RDomBase, IDom<T>
           where T : class, IDom<T>
     {
+        private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
+
         protected RDomBase(params PublicAnnotation[] publicAnnotations)
            : base(publicAnnotations)
         { }
@@ -19,19 +21,7 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
-        protected static IEnumerable<T> CopyMembers(IEnumerable<T> members)
-        {
-            var ret = new List<T>();
-            if (members != null)
-            {
-                foreach (var member in members)
-                {
-                    ret.Add(member.Copy());
-                }
-            }
-            return ret;
-        }
-
+    
         public virtual T Copy()
         {
             var type = this.GetType();
@@ -47,11 +37,12 @@ namespace RoslynDom
 
         internal override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
-            if (other == null) { return false; }
-            if (!typeof(T).IsAssignableFrom(typeof(TLocal))) { return false; }
-            var otherAsT = other as T;
-            if (!CheckSameIntent(otherAsT, includePublicAnnotations)) { return false; }
-            return true;
+            return sameIntent.SameIntent(this as T, other as T, includePublicAnnotations);
+            //if (other == null) { return false; }
+            //if (!typeof(T).IsAssignableFrom(typeof(TLocal))) { return false; }
+            //var otherAsT = other as T;
+            //if (!CheckSameIntent(otherAsT, includePublicAnnotations)) { return false; }
+            //return true;
         }
 
         /// <summary>
@@ -67,12 +58,9 @@ namespace RoslynDom
             return true;
         }
 
-        public virtual bool Matches(T other)
-        { return this.Name == other.Name; }
-
-          protected bool CheckSameIntentChildList<TChild>(IEnumerable<TChild> thisList,
-             IEnumerable<TChild> otherList)
-                where TChild : class, IDom<TChild>
+         protected bool CheckSameIntentChildList<TChild>(IEnumerable<TChild> thisList,
+           IEnumerable<TChild> otherList)
+              where TChild : class, IDom<TChild>
         {
             if (thisList == null) return (otherList == null);
             if (otherList == null) return false;

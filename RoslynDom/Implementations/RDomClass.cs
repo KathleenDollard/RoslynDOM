@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -51,10 +54,37 @@ namespace RoslynDom
             return true;
         }
 
+        public override ClassDeclarationSyntax BuildSyntax()
+        {
+            var modifiers = BuildModfierSyntax();
+            //var typeParameters = BuildTypeParameterList();
+            //var constraintClauses = BuildConstraintClauses();
+            var members = BuildMembers();
+
+            var node = SyntaxFactory.ClassDeclaration(Name)
+                            .WithModifiers(modifiers)
+                            .WithMembers(members);
+            var attributesLists = BuildAttributeListSyntax();
+            if (attributesLists.Any()) { node = node.WithAttributeLists(attributesLists); }
+            return (ClassDeclarationSyntax)RoslynUtilities.Format(node);
+        }
+
+        private SyntaxList<MemberDeclarationSyntax> BuildMembers()
+        {
+            var list = SyntaxFactory.List<MemberDeclarationSyntax>();
+            foreach (var member in Members)
+            {
+                var memberAsRDomMethod = member as RDomMethod;
+                if (memberAsRDomMethod != null)
+                { list = list.Add(memberAsRDomMethod.BuildSyntax()); }
+            }
+            return list;
+        }
+
         public IEnumerable<IClass> Classes
         { get { return Members.OfType<IClass>(); } }
 
-        public IEnumerable<IStemMember> Types
+        public IEnumerable<IType> Types
         //{ get { return Classes.Concat<IStemMember>(Structures).Concat(Interfaces).Concat(Enums); } }
         { get { return Members.OfType<IType>(); } }
 

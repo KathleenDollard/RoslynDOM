@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
@@ -35,5 +32,20 @@ namespace RoslynDom.Common
             return propInfo.GetValue(instance);
         }
 
+        public static MethodInfo MakeGenericMethod(Type type, string methodName, params Type[] genericTypes)
+        {
+            var method = type
+                .GetTypeInfo()
+                .DeclaredMethods
+                .Where(x => x.Name == methodName)
+                .First();
+            return method.MakeGenericMethod(genericTypes);
+        }
+
+        public static MethodInfo FindMethod(Type type, string methodName, params Type[] parameterTypes)
+        {
+            var methodInfo = type.GetMethod(methodName, parameterTypes);
+            return methodInfo;
+        }
     }
 }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RoslynDom.Common;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using RoslynDom.Common;
 
 namespace RoslynDom
 {
@@ -27,8 +22,7 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            if (Symbol != null)
-            { AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility; }
+            AccessModifier = GetAccessibility();
         }
 
         protected override bool CheckSameIntent(IInvalidTypeMember other, bool includePublicAnnotations)

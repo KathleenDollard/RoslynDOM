@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -13,7 +11,7 @@ namespace RoslynDom
     {
         private IEnumerable<IParameter> _parameters;
         private IEnumerable<ITypeParameter> _typeParameters;
- 
+
         internal RDomMethod(
             MethodDeclarationSyntax rawItem,
             IEnumerable<IParameter> parameters,
@@ -27,11 +25,9 @@ namespace RoslynDom
         internal RDomMethod(RDomMethod oldRDom)
              : base(oldRDom)
         {
-            var newParameters = RDomBase<IParameter>
-                                 .CopyMembers(oldRDom._parameters.Cast<RDomParameter>());
+            var newParameters = RoslynUtilities.CopyMembers(oldRDom._parameters);
             _parameters = newParameters;
-            var newTypeParameters = RDomBase<ITypeParameter>
-                                 .CopyMembers(oldRDom._typeParameters.Cast<RDomTypeParameter>());
+            var newTypeParameters = RoslynUtilities.CopyMembers(oldRDom._typeParameters);
             _typeParameters = newTypeParameters;
 
             AccessModifier = oldRDom.AccessModifier;
@@ -49,7 +45,7 @@ namespace RoslynDom
         {
             base.Initialize();
             _typeParameters = this.TypedSymbol.TypeParametersFrom();
-            AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility;
+            AccessModifier = GetAccessibility();
             ReturnType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.ReturnType);
             IsAbstract = Symbol.IsAbstract;
             IsVirtual = Symbol.IsVirtual;
@@ -63,7 +59,7 @@ namespace RoslynDom
         {
             if (other == null) return false;
             if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
-            if (ReturnType.QualifiedName  != other.ReturnType.QualifiedName ) return false;
+            if (ReturnType.QualifiedName != other.ReturnType.QualifiedName) return false;
             if (IsAbstract != other.IsAbstract) return false;
             if (IsSealed != other.IsSealed) return false;
             if (IsStatic != other.IsStatic) return false;
@@ -72,6 +68,22 @@ namespace RoslynDom
             if (!CheckSameIntentChildList(TypeParameters, other.TypeParameters)) return false;
             if (!CheckSameIntentChildList(Parameters, other.Parameters)) return false;
             return true;
+        }
+
+        public override MethodDeclarationSyntax BuildSyntax()
+        {
+            var nameSyntax = SyntaxFactory.Identifier(Name);
+            var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
+            var modifiers = BuildModfierSyntax();
+            //var typeParameters = BuildTypeParameterList();
+            //var constraintClauses = BuildConstraintClauses();
+            //var members = BuildMembers();
+
+            var node = SyntaxFactory.MethodDeclaration(returnType, nameSyntax)
+                            .WithModifiers(modifiers);
+            var attributesLists = BuildAttributeListSyntax();
+            if (attributesLists.Any()) { node = node.WithAttributeLists(attributesLists); }
+            return (MethodDeclarationSyntax)RoslynUtilities.Format(node);
         }
 
         public IEnumerable<IAttribute> Attributes

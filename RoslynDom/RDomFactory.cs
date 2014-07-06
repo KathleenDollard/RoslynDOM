@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
-using RoslynDom;
 
 namespace RoslynDom
 {
@@ -125,7 +122,7 @@ namespace RoslynDom
             else if (DoMember<EnumDeclarationSyntax>(rawMember, MakeEnum, out item)) { }
             else if (DoMembers<FieldDeclarationSyntax>(rawMember, MakeFields, retList)) { }
             else if (DoMember<SyntaxNode>(rawMember, MakeInvalidMember, out item)) { }
-            else throw new NotImplementedException();
+            else throw new InvalidOperationException ();
             if (item != null) retList.Add(item);
             return retList.OfType<ITypeMember>();
         }

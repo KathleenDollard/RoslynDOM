@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
@@ -30,12 +26,11 @@ namespace RoslynDom
 
         }
 
-         protected override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
-            var namespaceName = RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
-            namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
-            //_outerName = namespaceName + Name;
+            //var namespaceName = RoslynDomUtilities.GetContainingNamespaceName(Symbol.ContainingNamespace);
+            //namespaceName = string.IsNullOrWhiteSpace(namespaceName) ? "" : namespaceName + ".";
         }
 
         protected override bool CheckSameIntent(INamespace other, bool includePublicAnnotations)
@@ -53,13 +48,13 @@ namespace RoslynDom
             get { return RoslynDomUtilities.GetAllChildNamespaces(this); }
         }
 
-         public IEnumerable<INamespace> NonemptyNamespaces
+        public IEnumerable<INamespace> NonemptyNamespaces
         {
             get { return RoslynDomUtilities.GetNonEmptyNamespaces(this); }
         }
 
         public override string OuterName
-        {            get            {                return QualifiedName ;            }        }
+        { get { return QualifiedName; } }
 
         //private string GetNamespace()
         //{ return GetNamespace(Symbol.ContainingNamespace); }
@@ -77,9 +72,6 @@ namespace RoslynDom
         //{ get { return _outerName; } }
 
         public StemMemberType StemMemberType
-        {
-            get
-            { return StemMemberType.Namespace; }
-        }
+        { get { return StemMemberType.Namespace; } }
     }
 }

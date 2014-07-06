@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
-    public interface INestedContainer
+    public interface INestedContainer : IDom
     {
-        IEnumerable<IStemMember> Types { get; }
+        IEnumerable<IType> Types { get; }
         IEnumerable<IClass> Classes { get; }
         IEnumerable<IStructure> Structures { get; }
         IEnumerable<IInterface> Interfaces { get; }

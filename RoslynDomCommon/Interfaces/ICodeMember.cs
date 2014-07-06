@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoslynDom.BasesAndBaseHelpers
+namespace RoslynDom.Common
 {
-    class InitializeHelpers
+    public interface ICodeMember
     {
     }
 }

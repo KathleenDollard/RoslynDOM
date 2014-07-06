@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
@@ -26,8 +24,7 @@ namespace RoslynDom
         internal RDomProperty(RDomProperty oldRDom)
              : base(oldRDom)
         {
-            var newParameters = RDomBase<IParameter>
-                         .CopyMembers(oldRDom._parameters.Cast<RDomParameter>());
+            var newParameters = RoslynUtilities                         .CopyMembers(oldRDom._parameters);
             _parameters = newParameters;
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
@@ -42,15 +39,17 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility;
+            AccessModifier = GetAccessibility();
             PropertyType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
             IsAbstract = Symbol.IsAbstract;
             IsVirtual = Symbol.IsVirtual;
             IsOverride = Symbol.IsOverride;
             IsSealed = Symbol.IsSealed;
             IsStatic = Symbol.IsStatic;
-            CanGet = (!((IPropertySymbol)Symbol).IsWriteOnly); ;
-            CanSet = (!((IPropertySymbol)Symbol).IsReadOnly); ;
+            var propSymbol = Symbol as IPropertySymbol;
+            if (propSymbol == null) throw new InvalidOperationException();
+            CanGet = (!propSymbol.IsWriteOnly); ;
+            CanSet = (!propSymbol.IsReadOnly); ;
         }
 
         protected override bool CheckSameIntent(IProperty other, bool includePublicAnnotations)

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RoslynDom.Common;
 using RoslynDom;
-using System.Linq;
+using RoslynDom.Common;
 
 namespace RoslynDomExampleTests
 {

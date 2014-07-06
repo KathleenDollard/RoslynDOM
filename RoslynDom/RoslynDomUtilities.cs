@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
@@ -60,7 +56,6 @@ namespace RoslynDom
             {
                 retList.Add(new RDomTypeParameter(param.DeclaringSyntaxReferences, param));
             }
-            //throw new NotImplementedException();
             return retList;
         }
 

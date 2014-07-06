@@ -8,6 +8,8 @@ namespace RoslynDom.Common
         object OriginalRawItem { get; }
         string Name { get; }
         string OuterName { get; }
+        bool Matches(IDom other);
+        IDom Parent { get; }
 
         object RequestValue(string propertyName);
 
@@ -18,6 +20,5 @@ namespace RoslynDom.Common
         where T : IDom<T>
     {
         T Copy();
-        bool Matches(T other);
     }
 }

@@ -51,6 +51,8 @@
     <Compile Include="Interfaces\IAttributeValue.cs" />
     <Compile Include="Interfaces\IAttribute.cs" />
     <Compile Include="Interfaces\IClass.cs" />
+    <Compile Include="Interfaces\ICodeContainer.cs" />
+    <Compile Include="Interfaces\ICodeMember.cs" />
     <Compile Include="Interfaces\IInvalidMember.cs" />
     <Compile Include="Interfaces\IParameter.cs" />
     <Compile Include="Interfaces\IReferencedType.cs" />
@@ -74,12 +76,50 @@
     <Compile Include="BaseInterfaces\ITypeMemberContainer.cs" />
     <Compile Include="Interfaces\ITypeParameter.cs" />
     <Compile Include="Interfaces\IUsing.cs" />
+    <Compile Include="ISameIntent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublicAnnotation.cs" />
     <Compile Include="PublicAnnotationList.cs" />
+    <Compile Include="SameIntentBases\SameIntentHelpers.cs" />
+    <Compile Include="SameIntentCharacteristics\SameIntent_ICanBeStatic.cs" />
+    <Compile Include="SameIntentCharacteristics\SameIntent_IHasAccessModifier.cs" />
+    <Compile Include="SameIntentCharacteristics\SameIntent_IHasAttributes.cs" />
+    <Compile Include="SameIntentCharacteristics\SameIntent_IHasImplementedInterfaces.cs" />
+    <Compile Include="SameIntentCharacteristics\SameIntent_IHasNamespace.cs" />
+    <Compile Include="SameIntentCharacteristics\SameIntent_IHasReturnType.cs" />
+    <Compile Include="SameIntentCharacteristics\SameIntent_IHasTypeParameters.cs" />
+    <Compile Include="SameIntent\SameIntent_Factory.cs" />
+    <Compile Include="SameIntent\SameIntent_IAttribute.cs" />
+    <Compile Include="SameIntent\SameIntent_IAttributeValue.cs" />
+    <Compile Include="SameIntent\SameIntent_IClass.cs" />
+    <Compile Include="SameIntentBases\SameIntent_IDom.cs" />
+    <Compile Include="SameIntentBases\SameIntent_IMember.cs" />
+    <Compile Include="SameIntentBases\SameIntent_INestedContainer.cs" />
+    <Compile Include="SameIntentBases\SameIntent_IPropertyOrMethod.cs" />
+    <Compile Include="SameIntentBases\SameIntent_IStemContainer.cs" />
+    <Compile Include="SameIntentBases\SameIntent_IStemMember.cs" />
+    <Compile Include="SameIntentBases\SameIntent_IType.cs" />
+    <Compile Include="SameIntentBases\SameIntent_ITypeMember.cs" />
+    <Compile Include="SameIntentBases\SameIntent_ITypeMemberContainer.cs" />
+    <Compile Include="SameIntent\SameIntent_IEnum.cs" />
+    <Compile Include="SameIntent\SameIntent_IField.cs" />
+    <Compile Include="SameIntent\SameIntent_IInterface.cs" />
+    <Compile Include="SameIntent\SameIntent_IInvalidMember.cs" />
+    <Compile Include="SameIntent\SameIntent_IMethod.cs" />
+    <Compile Include="SameIntent\SameIntent_INamespace.cs" />
+    <Compile Include="SameIntent\SameIntent_IParameter.cs" />
+    <Compile Include="SameIntent\SameIntent_IProperty.cs" />
+    <Compile Include="SameIntent\SameIntent_IReferencedType.cs" />
+    <Compile Include="SameIntent\SameIntent_IRoot.cs" />
+    <Compile Include="SameIntent\SameIntent_IStructure.cs" />
+    <Compile Include="SameIntent\SameIntent_ITypeParameter.cs" />
+    <Compile Include="SameIntent\SameIntent_IUsing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfaceCommonality.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SameIntentInitial\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

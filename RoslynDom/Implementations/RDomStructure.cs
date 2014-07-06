@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -12,7 +9,7 @@ namespace RoslynDom
     {
         internal RDomStructure(
             StructDeclarationSyntax rawItem,
-           IEnumerable<ITypeMember> members,
+            IEnumerable<ITypeMember> members,
             params PublicAnnotation[] publicAnnotations)
             : base(rawItem, MemberType.Structure, StemMemberType.Structure, members, publicAnnotations)
         {
@@ -41,11 +38,11 @@ namespace RoslynDom
             return true;
         }
 
-        public IEnumerable<IStemMember> Types
+        public IEnumerable<IType> Types
         {
             get
             {
-                IEnumerable<IStemMember> ret = Classes.Concat<IStemMember>(Structures).Concat(Interfaces).Concat(Enums);
+                IEnumerable<IType> ret = Classes.Concat<IType>(Structures).Concat(Interfaces).Concat(Enums);
                 return ret;
             }
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
 using RoslynDom.Common;
@@ -383,7 +378,7 @@ public class Foo3<T, T1, T2, T3>
                 bool hasConstructorConstraint = false,
                 int constraintCount = 0)
         {
-            Assert.AreEqual(hasReferenceConstraint, typeParam.HasReferenceConstraint);
+            Assert.AreEqual(hasReferenceConstraint, typeParam.HasReferenceTypeConstraint);
             Assert.AreEqual(hasValueTypeConstraint, typeParam.HasValueTypeConstraint);
             Assert.AreEqual(hasConstructorConstraint, typeParam.HasConstructorConstraint);
             Assert.AreEqual(ordinal, typeParam.Ordinal);

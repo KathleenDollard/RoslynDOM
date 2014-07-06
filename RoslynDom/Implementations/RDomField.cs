@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
@@ -44,7 +40,7 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility;
+            AccessModifier = GetAccessibility();
             ReturnType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
             IsStatic = Symbol.IsStatic;
         }
@@ -66,8 +62,8 @@ namespace RoslynDom
         private VariableDeclaratorSyntax variableDeclaration
         { get { return _varSyntax; } }
 
-        public override ISymbol Symbol
-        { get { return TypedSymbol; } }
+        //public override ISymbol Symbol
+        //{ get { return TypedSymbol; } }
 
         public override IFieldSymbol TypedSymbol
         { get { return (IFieldSymbol)base.GetSymbol(variableDeclaration); } }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
@@ -24,30 +20,26 @@ namespace RoslynDom
              : base(oldRDom)
         {
             AccessModifier = oldRDom.AccessModifier;
+            UnderlyingType = oldRDom.UnderlyingType;
         }
 
         protected override void Initialize()
         {
             base.Initialize();
-            AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility;
+            AccessModifier = GetAccessibility();
+            Namespace = GetNamespace();
             var symbol = Symbol as INamedTypeSymbol;
             if (symbol != null)
             {
                 var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
-                UnderlyingType= new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
+                UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
             }
         }
 
-        public IEnumerable<IAttribute> Attributes
-        {
-            get
-            { return GetAttributes(); }
-        }
+         public IEnumerable<IAttribute> Attributes
+        { get { return GetAttributes(); } }
 
-        public string Namespace
-        {
-            get { return GetNamespace(); }
-        }
+        public string Namespace { get; set; }
 
         public string QualifiedName
         {
@@ -55,9 +47,9 @@ namespace RoslynDom
         }
 
         public AccessModifier AccessModifier { get; set; }
-        
+
         public IReferencedType UnderlyingType { get; set; }
-       
+
         public MemberType MemberType
         {
             get { return MemberType.Enum; }

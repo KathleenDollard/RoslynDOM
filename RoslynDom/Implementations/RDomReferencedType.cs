@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -71,6 +68,12 @@ namespace RoslynDom
             // The following is probably inadequate, but we need to find the edge cases
             if (this.QualifiedName != otherItem.QualifiedName) return false;
             return true;
+        }
+
+        public virtual TypeSyntax BuildSyntax()
+        {
+            var identifier = SyntaxFactory.IdentifierName(Name);
+            return identifier;
         }
 
         public override object RawItem

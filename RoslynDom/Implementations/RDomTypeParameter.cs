@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomTypeParameter : RDomReferencedType , ITypeParameter 
+    public class RDomTypeParameter : RDomReferencedType, ITypeParameter
     {
+        private IList<IReferencedType> _constraintTypes = new List<IReferencedType>();
         internal RDomTypeParameter(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
             : base(raw, symbol)
         {
-            Initialize();
+            // DO NOT call Initialize here. It is being called from the base RDomReferencedType class
         }
 
         internal RDomTypeParameter(RDomTypeParameter oldRDom)
@@ -24,85 +20,62 @@ namespace RoslynDom
 
         public virtual bool Matches(ITypeParameter other)
         { return base.Matches(other); }
-        
-        // new here feels wrong. Expect testing issues here
+
+        // new here feels wrong, so I am currently leaving the warning
         public ITypeParameter Copy()
         {
             return new RDomTypeParameter(this);
         }
 
-        protected override bool CheckSameIntent(RDomReferencedType  other, bool includePublicAnnotations)
+        protected override void Initialize()
+        {
+            base.Initialize();
+            var typeParamSymbol = Symbol as ITypeParameterSymbol;
+            Variance = (Variance)typeParamSymbol.Variance;
+            Ordinal = typeParamSymbol.Ordinal;
+            HasConstructorConstraint = typeParamSymbol.HasConstructorConstraint;
+            HasReferenceTypeConstraint = typeParamSymbol.HasReferenceTypeConstraint;
+            HasValueTypeConstraint = typeParamSymbol.HasValueTypeConstraint;
+            var constraints = typeParamSymbol.ConstraintTypes;
+            foreach (var constraint in constraints)
+            { AddConstraintType(constraint); }
+        }
+
+        protected override bool CheckSameIntent(RDomReferencedType other, bool includePublicAnnotations)
         {
             if (other == null) return false;
             var otherItem = other as RDomTypeParameter;
             if (!base.CheckSameIntent(otherItem, includePublicAnnotations)) return false;
             if (HasConstructorConstraint != otherItem.HasConstructorConstraint) return false;
-            if (HasReferenceConstraint != otherItem.HasReferenceConstraint) return false;
+            if (HasReferenceTypeConstraint != otherItem.HasReferenceTypeConstraint) return false;
             if (HasValueTypeConstraint != otherItem.HasValueTypeConstraint) return false;
             if (Ordinal != otherItem.Ordinal) return false;
             if (Variance != otherItem.Variance) return false;
             return true;
         }
- 
+
         public IEnumerable<IReferencedType> ConstraintTypes
+        { get { return _constraintTypes; } }
+     
+        public void AddConstraintType(ITypeSymbol symbol )
         {
-            get
-            {
-                var symbol = Symbol as ITypeParameterSymbol;
-                var constraints = symbol.ConstraintTypes;
-                var retList = new List<IReferencedType>();
-                foreach (var constraint in constraints)
-                {
-                   retList.Add( new RDomReferencedType(constraint.DeclaringSyntaxReferences, constraint));
-                }
-                return retList;
-            }
+            _constraintTypes .Add(new RDomReferencedType(symbol.DeclaringSyntaxReferences, symbol));
         }
 
-        public bool HasConstructorConstraint
+        public void ClearConstraintTypes()
         {
-            get
-            {
-                var symbol = Symbol as ITypeParameterSymbol;
-                return symbol.HasConstructorConstraint ;
-            }
+            _constraintTypes.Clear();
         }
 
-        public bool HasReferenceConstraint
-        {
-            get
-            {
-                var symbol = Symbol as ITypeParameterSymbol;
-                return symbol.HasReferenceTypeConstraint ;
-            }
-        }
+        public bool HasConstructorConstraint { get; set; }
 
-        public bool HasValueTypeConstraint
-        {
-            get
-            {
-                var symbol = Symbol as ITypeParameterSymbol;
-                return symbol.HasValueTypeConstraint ;
-            }
-        }
+        public bool HasReferenceTypeConstraint { get; set; }
 
-        public int Ordinal
-        {
-            get
-            {
-                var symbol = Symbol as ITypeParameterSymbol;
-                return symbol.Ordinal;
-            }
-        }
+        public bool HasValueTypeConstraint { get; set; }
 
-        public Variance Variance
-        {
-            get
-            {
-                var symbol = Symbol as ITypeParameterSymbol;
-                return (Variance)symbol.Variance;
-            }
-        }
+        public int Ordinal { get; set; }
 
-     }
+        public Variance Variance { get; set; }
+
+    }
 }

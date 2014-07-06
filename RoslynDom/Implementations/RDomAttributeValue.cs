@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,6 +12,8 @@ namespace RoslynDom
     {
         private LiteralType _literalType;
         private object _value;
+        private Type _type;
+        private AttributeValueStyle _style;
 
         internal RDomAttributeValue(
             AttributeArgumentSyntax rawItem,
@@ -23,11 +21,10 @@ namespace RoslynDom
             RDomBase attributedItem)
             : base(rawItem)
         {
-            var tuple = GetAttributeValueValue(rawItem);
-            _value = tuple.Item1;
-            _literalType = tuple.Item2;
             Initialize();
-            Name = GetAttributeValueName(rawItem, attributeSyntax);
+            var tuple = GetAttributeValueName(rawItem, attributeSyntax);
+            Name = tuple.Item1;
+            _style = tuple.Item2;
         }
 
         internal RDomAttributeValue(
@@ -36,20 +33,19 @@ namespace RoslynDom
         {
             _literalType = oldRDom._literalType;
             _value = oldRDom._value;
-
+            _type = oldRDom._type;
+            _style = oldRDom._style;
         }
 
         protected override void Initialize()
-        { base.Initialize(); }
+        {
+            base.Initialize();
+            var tuple = GetAttributeValueValue(TypedSyntax);
+            _value = tuple.Item1;
+            _literalType = tuple.Item2;
+            _type = _value.GetType();
+        }
 
-        //public override IAttributeValue Copy()
-        //{
-        //    var newVal = base.Copy();
-        //    var newRDom = newVal as RDomAttributeValue;
-        //    newRDom._literalType = _literalType;
-        //    newRDom._value = _value;
-        //    return newVal;
-        //}
 
         protected override bool CheckSameIntent(IAttributeValue other, bool includePublicAnnotations)
         {
@@ -71,9 +67,7 @@ namespace RoslynDom
             object value = null;
             var literalExpression = expr as LiteralExpressionSyntax;
             if (literalExpression != null)
-            {
-                value = GetLiteralValue(literalExpression, ref literalType);
-            }
+            { value = GetLiteralValue(literalExpression, ref literalType); }
             else
             {
                 var typeExpression = expr as TypeOfExpressionSyntax;
@@ -105,48 +99,38 @@ namespace RoslynDom
             else
             {
                 // I don't know how to get here, but if I get here, I want to know it :)
-                throw new NotImplementedException();
+                throw new InvalidOperationException();
             }
             return value;
         }
 
         private object GetLiteralValue(LiteralExpressionSyntax literalExpression, ref LiteralType literalType)
         {
-            switch (literalExpression.Token.CSharpKind())
-            {
-                case SyntaxKind.StringLiteralToken:
-                    literalType = LiteralType.String;
-                    break;
-                case SyntaxKind.NumericLiteralToken:
-                    literalType = LiteralType.Numeric;
-                    break;
-                case SyntaxKind.TrueKeyword:
-                case SyntaxKind.FalseKeyword:
-                    literalType = LiteralType.Boolean;
-                    break;
-                default:
-                    // I don't know how to get here, but if I get here, I want to know it :)
-                    throw new NotImplementedException();
-            }
+            literalType = RoslynUtilities.LiteralTypeFromSyntaxKind(literalExpression.Token.CSharpKind());
             return literalExpression.Token.Value;
         }
 
-         private static string GetAttributeValueName(
-            AttributeArgumentSyntax arg, AttributeSyntax attributeSyntax)
+        private static Tuple<string, AttributeValueStyle> GetAttributeValueName(
+           AttributeArgumentSyntax arg, AttributeSyntax attributeSyntax)
         {
+            string name;
+            AttributeValueStyle style;
             if (arg.NameColon != null)
             {
-                return arg.NameColon.Name.ToString().Replace(":", "").Trim();
+                style = AttributeValueStyle.Colon;
+                name = arg.NameColon.Name.ToString().Replace(":", "").Trim();
             }
             else if (arg.NameEquals != null)
             {
-                return arg.NameEquals.Name.ToString();
+                style = AttributeValueStyle.Equals;
+                name = arg.NameEquals.Name.ToString();
             }
             else
             {
-                return attributeSyntax.Name.ToString();
+                style = AttributeValueStyle.Positional;
+                name = attributeSyntax.Name.ToString();
             }
-            // TODO: Handle other naming scenarios
+            return new Tuple<string, AttributeValueStyle>(name, style);
         }
 
         public object Value
@@ -178,6 +162,39 @@ namespace RoslynDom
                 }
             }
             return ret;
+        }
+
+        public override AttributeArgumentSyntax BuildSyntax()
+        {
+            var argNameSyntax = SyntaxFactory.IdentifierName(Name);
+            var kind = RoslynUtilities.SyntaxKindFromLiteralType(_literalType, _value);
+            ExpressionSyntax expr = null;
+            if (_literalType == LiteralType.Boolean) { expr = SyntaxFactory.LiteralExpression(kind); }
+            else
+            {
+                var methodInfo = ReflectionUtilities.FindMethod(typeof(SyntaxFactory), "Literal", _type);
+                if (methodInfo == null) throw new InvalidOperationException();
+                var token = (SyntaxToken)methodInfo.Invoke(null, new object[] { _value });
+                expr = SyntaxFactory.LiteralExpression(kind, token);
+            }
+
+            if (_style == AttributeValueStyle.Colon )
+            {
+                return SyntaxFactory.AttributeArgument(
+                    null,
+                    SyntaxFactory.NameColon(argNameSyntax), 
+                    expr);
+            }
+            else if (_style == AttributeValueStyle.Positional )
+            {
+                return SyntaxFactory.AttributeArgument( expr);
+            }
+            else 
+            {
+                return SyntaxFactory.AttributeArgument(
+                    SyntaxFactory.NameEquals(argNameSyntax),
+                    null, expr);
+            }
         }
     }
 }

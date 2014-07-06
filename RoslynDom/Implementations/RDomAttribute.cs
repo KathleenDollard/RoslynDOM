@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -27,8 +25,7 @@ namespace RoslynDom
             RDomAttribute oldRDom)
             : base(oldRDom)
         {
-            var newAttributeValues = RDomBase<IAttributeValue>
-                        .CopyMembers(oldRDom._attributeValues.Cast<RDomAttributeValue>());
+            var newAttributeValues = RoslynUtilities.CopyMembers(oldRDom._attributeValues);
             _attributeValues = newAttributeValues;
         }
 
@@ -45,6 +42,14 @@ namespace RoslynDom
             return CheckSameIntentChildList(_attributeValues, rDomOther._attributeValues);
         }
 
+        public override AttributeSyntax BuildSyntax()
+        {
+            var arguments = new SeparatedSyntaxList<AttributeArgumentSyntax>();
+            arguments = arguments.AddRange(_attributeValues.Select(x =>((RDomAttributeValue)x).BuildSyntax()));
+            var argumentList = SyntaxFactory.AttributeArgumentList(arguments);
+            var nameSyntax = SyntaxFactory.ParseName(Name);
+            return SyntaxFactory.Attribute(nameSyntax, argumentList);
+        }
 
         internal static IEnumerable<IAttribute> MakeAttributes(
             RDomBase attributedItem, ISymbol symbol, SyntaxNode syntax)

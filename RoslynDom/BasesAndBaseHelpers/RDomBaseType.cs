@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseType<T, TSyntax> : RDomBase<T, TSyntax, INamedTypeSymbol>, IType<T>
+    public abstract class RDomBaseType<T, TSyntax> : RDomBase<T, TSyntax, INamedTypeSymbol>, IType<T>, IRDomTypeContainer
         where TSyntax : SyntaxNode
         where T : class, IType<T>
     {
-        private IEnumerable<ITypeMember> _members;
+        private IList<ITypeMember> _members = new List<ITypeMember>();
         private MemberType _memberType;
         private StemMemberType _stemMemberType;
-        private IEnumerable<ITypeParameter> _typeParameters;
+        private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
 
         internal RDomBaseType(
             TSyntax rawItem,
@@ -26,7 +23,8 @@ namespace RoslynDom
             params PublicAnnotation[] publicAnnotations)
             : base(rawItem, publicAnnotations)
         {
-            _members = members;
+            foreach (var member in members)
+            { AddOrMoveMember(member); }
             _memberType = memberType;
             _stemMemberType = stemMemberType;
             Initialize();
@@ -39,22 +37,22 @@ namespace RoslynDom
             _memberType = oldRDom._memberType;
             _stemMemberType = oldRDom._stemMemberType;
             AccessModifier = oldRDom.AccessModifier;
-            _members = RDomBase<IClass>.CopyMembers(oldRDom._members.OfType<RDomClass>());
-            _members = _members.Union(RDomBase<IStructure>.CopyMembers(oldRDom._members.OfType<RDomStructure>()));
-            _members = _members.Union(RDomBase<IInterface>.CopyMembers(oldRDom._members.OfType<RDomInterface>()));
-            _members = _members.Union(RDomBase<IEnum>.CopyMembers(oldRDom._members.OfType<RDomEnum>()));
-            _members = _members.Union(RDomBase<IProperty>.CopyMembers(oldRDom._members.OfType<RDomProperty>()));
-            _members = _members.Union(RDomBase<IMethod>.CopyMembers(oldRDom._members.OfType<RDomMethod>()));
-            _members = _members.Union(RDomBase<IField>.CopyMembers(oldRDom._members.OfType<RDomField>()));
-            _typeParameters = RDomBase<ITypeParameter>
-                                .CopyMembers(oldRDom._typeParameters.Cast<RDomTypeParameter>());
+            var newMembers = RoslynUtilities.CopyMembers(oldRDom._members);
+            foreach (var member in newMembers)
+            { AddOrMoveMember(member); }
+            var newTypeParameters  = RoslynUtilities.CopyMembers(oldRDom._typeParameters);
+            foreach (var typeParameter in newTypeParameters)
+            { AddTypeParameter(typeParameter); }
         }
 
         protected override void Initialize()
         {
             base.Initialize();
-            _typeParameters = this.TypedSymbol.TypeParametersFrom();
             AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility;
+            Namespace = GetNamespace();
+            var newTypeParameters = this.TypedSymbol.TypeParametersFrom();
+            foreach (var typeParameter in newTypeParameters)
+            { AddTypeParameter(typeParameter); }
         }
 
         protected override bool CheckSameIntent(T other, bool includePublicAnnotations)
@@ -66,9 +64,24 @@ namespace RoslynDom
             if (!CheckSameIntentChildList(Methods, otherItem.Methods)) return false;
             return true;
         }
+  
+        public void RemoveMember(ITypeMember member)
+        { RoslynUtilities.RemoveMemberFromParent(this, member); }
+
+        public void AddOrMoveMember(ITypeMember member)
+        {
+            RoslynUtilities.PrepMemberForAdd(this, member);
+            _members.Add(member);
+        }
+
+        public void RemoveTypeParameter(ITypeParameter typeParameter)
+        { _typeParameters.Remove(typeParameter); }
+
+        public void AddTypeParameter(ITypeParameter typeParameter)
+        {            _typeParameters.Add(typeParameter);        }
 
         public string Namespace
-        { get { return GetNamespace(); } }
+        { get ; set; }
 
         public string QualifiedName
         { get { return GetQualifiedName(); } }
@@ -85,16 +98,10 @@ namespace RoslynDom
         public IEnumerable<IField> Fields
         { get { return Members.OfType<IField>(); } }
 
-        public void AddMember(ITypeMember newMember)
-        {
-            _members = _members.Concat(new ITypeMember[] { newMember });
-        }
-
-        public IEnumerable<IAttribute> Attributes
+         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 
         public AccessModifier AccessModifier { get; set; }
-
 
         public MemberType MemberType
         { get { return _memberType; } }

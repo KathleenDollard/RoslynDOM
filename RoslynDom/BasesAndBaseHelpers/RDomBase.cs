@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
-using RoslynDom.BasesAndBaseHelpers;
 
 namespace RoslynDom
 {
@@ -49,6 +41,34 @@ namespace RoslynDom
         public abstract object RawItem { get; }
 
         public abstract object OriginalRawItem { get; }
+
+        public IDom Parent { get; internal set; }
+
+        public void RemoveFromParent()
+        {
+            var parentAsStemContainer = this.Parent as IRDomStemContainer;
+            if (parentAsStemContainer != null)
+            {
+                var thisAsStemMember = this as IStemMember;
+                if (thisAsStemMember == null) { throw new InvalidOperationException(); }
+                parentAsStemContainer.RemoveMember(thisAsStemMember);
+            }
+            var parentAsTypeContainer = this.Parent as IRDomTypeContainer;
+            if (parentAsTypeContainer != null)
+            {
+                var thisAsTypeMember = this as ITypeMember;
+                if (thisAsTypeMember == null) { throw new InvalidOperationException(); }
+                parentAsTypeContainer.RemoveMember(thisAsTypeMember);
+            }
+            var parentAsCodeContainer = this.Parent as IRDomCodeContainer;
+            if (parentAsCodeContainer != null)
+            {
+                var thisAsCodeMember = this as ICodeMember;
+                if (thisAsCodeMember == null) { throw new InvalidOperationException(); }
+                parentAsCodeContainer.RemoveMember(thisAsCodeMember);
+            }
+            Parent = null;
+        }
 
         /// <summary>
         /// NOTE: This documentation has not been updated to reflect changes due to @beefarino's input
@@ -103,6 +123,9 @@ namespace RoslynDom
         /// <returns>The string name, same as Roslyn symbol's name</returns>
         public string Name { get; set; }
 
+        public virtual bool Matches(IDom other)
+        { return this.Name == other.Name; }
+
         public bool SameIntent<TLocal>(TLocal other)
                where TLocal : class
         {
@@ -118,6 +141,7 @@ namespace RoslynDom
         internal abstract bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
                          where TLocal : class;
 
+
         public PublicAnnotationList PublicAnnotations
         { get { return _publicAnnotations; } }
 
@@ -130,5 +154,5 @@ namespace RoslynDom
 
 
     }
- 
+
 }

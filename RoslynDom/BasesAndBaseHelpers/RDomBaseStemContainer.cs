@@ -10,13 +10,12 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
-    public abstract class RDomBaseStemContainer<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>
+    public abstract class RDomBaseStemContainer<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>, IRDomStemContainer
         where TSyntax : SyntaxNode
         where TSymbol : ISymbol
         where T : class, IDom<T>
     {
-        private IEnumerable<IStemMember> _members;
-        private IEnumerable<IUsing> _usings;
+        private IList<IStemMember> _members = new List<IStemMember>();
 
         internal RDomBaseStemContainer(TSyntax rawItem,
                         IEnumerable<IStemMember> members,
@@ -24,8 +23,10 @@ namespace RoslynDom
                         params PublicAnnotation[] publicAnnotations)
         : base(rawItem, publicAnnotations)
         {
-            _members = members;
-            _usings = usings;
+            foreach (var member in members)
+            { AddOrMoveMember(member); }
+            foreach (var member in usings)
+            { AddOrMoveMember(member); }
             Initialize();
         }
 
@@ -92,6 +93,15 @@ namespace RoslynDom
         public string QualifiedName
         { get { return GetQualifiedName(); } }
 
+        public void RemoveMember(IStemMember member)
+        { RoslynUtilities.RemoveMemberFromParent(this, member); }
+
+        public void AddOrMoveMember(IStemMember member)
+        {
+            RoslynUtilities.PrepMemberForAdd(this, member);
+            _members.Add(member);
+        }
+
         public IEnumerable<IStemMember> StemMembers
         { get { return _members; } }
 
@@ -112,14 +122,11 @@ namespace RoslynDom
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Usings")]
         public IEnumerable<IUsing> Usings
-        { get { return _usings; } }
+        { get { return StemMembers.OfType<IUsing>(); } }
 
-        public IEnumerable<IStemMember> Types
+        public IEnumerable<IType> Types
         { get { return StemMembers.OfType<IType>(); } }
 
-        public void AddMember(IType newMember)
-        {
-            _members = _members.Concat(new IType[] { newMember });
-        }
+
     }
 }

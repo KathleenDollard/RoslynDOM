@@ -58,12 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttributeValueStyle.cs" />
     <Compile Include="BasesAndBaseHelpers\SameIntentHelpers.cs" />
-    <Compile Include="BasesAndBaseHelpers\InitializeHelpers.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBase.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseOfT.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseTTSyntaxTSymbol.cs" />
-    <Compile Include="BasesAndBaseHelpers\RDomBaseTTSyntax.cs" />
+    <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseStemContainer.cs" />
     <Compile Include="Implementations\RDomAttributeValue.cs" />
     <Compile Include="Implementations\RDomAttribute.cs" />
@@ -81,6 +81,7 @@
     <Compile Include="Implementations\RDomStructure.cs" />
     <Compile Include="Implementations\RDomTypeParameter.cs" />
     <Compile Include="Implementations\RDomUsing.cs" />
+    <Compile Include="IRDomContainers.cs" />
     <Compile Include="IRoslynDom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RDomFactory.cs" />

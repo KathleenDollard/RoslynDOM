@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
@@ -10,7 +6,7 @@ namespace RoslynDom.Common
     {
         Variance Variance { get; }
         bool HasConstructorConstraint { get; }
-        bool HasReferenceConstraint { get; }
+        bool HasReferenceTypeConstraint { get; }
         bool HasValueTypeConstraint { get; }
         IEnumerable<IReferencedType > ConstraintTypes { get; }
 
