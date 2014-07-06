@@ -39,35 +39,35 @@ namespace RoslynDom
         }
 
 
-        public static LiteralType LiteralTypeFromSyntaxKind(SyntaxKind kind)
+        public static LiteralKind LiteralKindFromSyntaxKind(SyntaxKind kind)
         {
             switch (kind)
             {
                 case SyntaxKind.StringLiteralToken:
-                    return LiteralType.String;
+                    return LiteralKind.String;
                 case SyntaxKind.NumericLiteralToken:
-                    return LiteralType.Numeric;
+                    return LiteralKind.Numeric;
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
-                    return LiteralType.Boolean;
+                    return LiteralKind.Boolean;
                 default:
                     // I don't know how to get here, but if I get here, I want to know it :)
                     throw new NotImplementedException();
             }
         }
 
-        public static SyntaxKind SyntaxKindFromLiteralType(LiteralType literalType, object value)
+        public static SyntaxKind SyntaxKindFromLiteralKind(LiteralKind literalKind, object value)
         {
-            switch (literalType)
+            switch (literalKind)
             {
-                case LiteralType.String:
+                case LiteralKind.String:
                     return SyntaxKind.StringLiteralExpression;
-                case LiteralType.Numeric:
+                case LiteralKind.Numeric:
                     return SyntaxKind.NumericLiteralExpression;
-                case LiteralType.Boolean:
+                case LiteralKind.Boolean:
                     if ((bool)value) { return SyntaxKind.TrueLiteralExpression; }
                     return SyntaxKind.FalseLiteralExpression;
-                case LiteralType.Type:
+                case LiteralKind.Type:
                     return SyntaxKind.TypeOfExpression;
                 default:
                     // I don't know how to get here, but if I get here, I want to know it :)
@@ -102,5 +102,17 @@ namespace RoslynDom
             node = Formatter.Format(node, new CustomWorkspace());
             return node;
         }
+
+        public static IEnumerable<IStatement> GetStatements(BlockSyntax blockSyntax)
+        {
+            var list = new List<IStatement>();
+            var statements = blockSyntax.Statements;
+            foreach (var statement  in statements)
+            {
+
+            }
+            return list;
+        }
+
     }
 }

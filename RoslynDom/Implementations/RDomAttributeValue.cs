@@ -10,7 +10,7 @@ namespace RoslynDom
     public class RDomAttributeValue
         : RDomBase<IAttributeValue, AttributeArgumentSyntax, ISymbol>, IAttributeValue
     {
-        private LiteralType _literalType;
+        private LiteralKind _literalKind;
         private object _value;
         private Type _type;
         private AttributeValueStyle _style;
@@ -31,7 +31,7 @@ namespace RoslynDom
              RDomAttributeValue oldRDom)
             : base(oldRDom)
         {
-            _literalType = oldRDom._literalType;
+            _literalKind = oldRDom._literalKind;
             _value = oldRDom._value;
             _type = oldRDom._type;
             _style = oldRDom._style;
@@ -42,30 +42,30 @@ namespace RoslynDom
             base.Initialize();
             var tuple = GetAttributeValueValue(TypedSyntax);
             _value = tuple.Item1;
-            _literalType = tuple.Item2;
+            _literalKind = tuple.Item2;
             _type = _value.GetType();
         }
 
-        private Tuple<object, LiteralType> GetAttributeValueValue(
+        private Tuple<object, LiteralKind> GetAttributeValueValue(
                     AttributeArgumentSyntax arg)
         {
             // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
             var expr = arg.Expression;
-            var literalType = LiteralType.Unknown;
+            var literalKind = LiteralKind.Unknown;
             object value = null;
             var literalExpression = expr as LiteralExpressionSyntax;
             if (literalExpression != null)
-            { value = GetLiteralValue(literalExpression, ref literalType); }
+            { value = GetLiteralValue(literalExpression, ref literalKind); }
             else
             {
                 var typeExpression = expr as TypeOfExpressionSyntax;
                 if (typeExpression != null)
                 {
-                    literalType = LiteralType.Type;
+                    literalKind = LiteralKind.Type;
                     value = GetTypeExpressionValue(typeExpression);
                 }
             }
-            return new Tuple<object, LiteralType>(value, literalType);
+            return new Tuple<object, LiteralKind>(value, literalKind);
         }
 
         private object GetTypeExpressionValue(TypeOfExpressionSyntax typeExpression)
@@ -92,9 +92,9 @@ namespace RoslynDom
             return value;
         }
 
-        private object GetLiteralValue(LiteralExpressionSyntax literalExpression, ref LiteralType literalType)
+        private object GetLiteralValue(LiteralExpressionSyntax literalExpression, ref LiteralKind literalKind)
         {
-            literalType = RoslynUtilities.LiteralTypeFromSyntaxKind(literalExpression.Token.CSharpKind());
+            literalKind = RoslynUtilities.LiteralKindFromSyntaxKind(literalExpression.Token.CSharpKind());
             return literalExpression.Token.Value;
         }
 
@@ -129,11 +129,11 @@ namespace RoslynDom
             }
         }
 
-        public LiteralType ValueType
+        public LiteralKind ValueType
         {
             get
             {
-                return _literalType;
+                return _literalKind;
             }
         }
 
@@ -155,9 +155,9 @@ namespace RoslynDom
         public override AttributeArgumentSyntax BuildSyntax()
         {
             var argNameSyntax = SyntaxFactory.IdentifierName(Name);
-            var kind = RoslynUtilities.SyntaxKindFromLiteralType(_literalType, _value);
+            var kind = RoslynUtilities.SyntaxKindFromLiteralKind(_literalKind, _value);
             ExpressionSyntax expr = null;
-            if (_literalType == LiteralType.Boolean) { expr = SyntaxFactory.LiteralExpression(kind); }
+            if (_literalKind == LiteralKind.Boolean) { expr = SyntaxFactory.LiteralExpression(kind); }
             else
             {
                 var methodInfo = ReflectionUtilities.FindMethod(typeof(SyntaxFactory), "Literal", _type);

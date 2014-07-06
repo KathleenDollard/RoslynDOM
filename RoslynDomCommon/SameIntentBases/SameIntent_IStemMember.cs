@@ -4,7 +4,7 @@
     {
       public bool SameIntent(IStemMember one, IStemMember other, bool includePublicAnnotations)
         {
-            if (one.StemMemberType != other.StemMemberType) { return false; }
+            if (one.StemMemberKind != other.StemMemberKind) { return false; }
             return true;
         }
     }

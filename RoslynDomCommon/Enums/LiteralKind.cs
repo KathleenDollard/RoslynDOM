@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public enum LiteralType
+    public enum LiteralKind
     {
         Unknown = 0,
         Numeric,

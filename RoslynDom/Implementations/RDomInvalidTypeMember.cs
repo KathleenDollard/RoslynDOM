@@ -30,9 +30,9 @@ namespace RoslynDom
 
         public AccessModifier AccessModifier { get; set; }
 
-        public MemberType MemberType
+        public MemberKind MemberKind
         {
-            get { return MemberType.InvalidMember; }
+            get { return MemberKind.InvalidMember; }
         }
     }
 }

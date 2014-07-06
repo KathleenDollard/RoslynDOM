@@ -78,6 +78,15 @@ namespace RoslynDom
             return list;
         }
 
+        protected BlockSyntax BuildStatementBlock()
+        {
+            var statements = new List<StatementSyntax>();
+            var thisAsStatementContainer = this as  IStatementContainer;
+
+            //f (thisAsStatementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
+            var ret = SyntaxFactory.Block(statements);
+            return ret;
+        }
 
         public TSyntax TypedSyntax
         { get { return _rawSyntax; } }

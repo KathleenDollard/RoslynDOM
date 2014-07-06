@@ -2,7 +2,7 @@
 {
     public interface IAttributeValue : IDom<IAttributeValue >
     {
-        LiteralType  ValueType { get; }
+        LiteralKind  ValueType { get; }
         object Value { get; }
     }
 }

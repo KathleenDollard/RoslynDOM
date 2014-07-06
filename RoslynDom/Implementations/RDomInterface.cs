@@ -10,7 +10,7 @@ namespace RoslynDom
             InterfaceDeclarationSyntax rawItem,
             IEnumerable<ITypeMember> members,
             params PublicAnnotation[] publicAnnotations) 
-            : base(rawItem, MemberType.Interface,StemMemberType.Interface,  members, publicAnnotations )
+            : base(rawItem, MemberKind.Interface,StemMemberKind.Interface,  members, publicAnnotations )
         {
             Initialize();
         }

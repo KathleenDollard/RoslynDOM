@@ -71,6 +71,7 @@
     <Compile Include="Implementations\RDomField.cs" />
     <Compile Include="Implementations\RDomInterface.cs" />
     <Compile Include="Implementations\RDomInvalidTypeMember.cs" />
+    <Compile Include="Implementations\RDomStatement.cs" />
     <Compile Include="Implementations\RDomMethod.cs" />
     <Compile Include="Implementations\RDomNamespace.cs" />
     <Compile Include="Implementations\RDomParameter.cs" />

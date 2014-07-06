@@ -2,7 +2,7 @@
 {
     public interface ITypeMember : IDom,IMember, IHasAttributes ,  IHasAccessModifier  
     {
-        MemberType MemberType { get; }
+        MemberKind MemberKind { get; }
     }
     public interface ITypeMember<T> : ITypeMember, IDom<T>
         where T : ITypeMember<T>

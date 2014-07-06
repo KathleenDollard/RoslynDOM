@@ -51,15 +51,15 @@ namespace RoslynDom
 
         public IReferencedType UnderlyingType { get; set; }
 
-        public MemberType MemberType
+        public MemberKind MemberKind
         {
-            get { return MemberType.Enum; }
+            get { return MemberKind.Enum; }
 
         }
 
-        public StemMemberType StemMemberType
+        public StemMemberKind StemMemberKind
         {
-            get { return StemMemberType.Enum; }
+            get { return StemMemberKind.Enum; }
 
         }
     }

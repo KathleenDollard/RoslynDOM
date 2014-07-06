@@ -93,8 +93,8 @@ namespace RoslynDom
         // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
         { get { return new List<IParameter>(); } }
 
-        public MemberType MemberType
-        { get { return MemberType.Property; } }
+        public MemberKind MemberKind
+        { get { return MemberKind.Property; } }
 
         public override object RequestValue(string name)
         {

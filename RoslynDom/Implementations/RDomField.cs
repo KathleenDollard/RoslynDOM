@@ -72,9 +72,9 @@ namespace RoslynDom
 
         public bool IsStatic { get; set; }
 
-        public MemberType MemberType
+        public MemberKind MemberKind
         {
-            get { return MemberType.Field; }
+            get { return MemberKind.Field; }
         }
 
         public override object RequestValue(string name)

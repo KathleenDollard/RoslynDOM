@@ -31,7 +31,7 @@ namespace RoslynDom
             IStemContainer stemContainer)
         {
             return GetAllChildNamespaces(stemContainer)
-                .Where(x => x.StemMembers.Where(y=>y.StemMemberType!=StemMemberType.Namespace).Count() != 0);
+                .Where(x => x.StemMembers.Where(y=>y.StemMemberKind!=StemMemberKind.Namespace).Count() != 0);
         }
 
         internal static IEnumerable<ITypeParameter> TypeParametersFrom(this INamedTypeSymbol rDomType)
@@ -139,5 +139,6 @@ namespace RoslynDom
             { ret = parentNamespace + (string.IsNullOrEmpty(ret) ? "" : "." + ret); }
             return ret;
         }
+
     }
 }

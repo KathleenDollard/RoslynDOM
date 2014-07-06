@@ -2,6 +2,6 @@
 {
     public interface IStemMember : IMember,  IDom
     {
-        StemMemberType StemMemberType { get; }
+        StemMemberKind StemMemberKind { get; }
     }
 }

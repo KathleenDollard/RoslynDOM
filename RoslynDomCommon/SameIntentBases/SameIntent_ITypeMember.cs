@@ -11,7 +11,7 @@ namespace RoslynDom.Common
 
         public bool SameIntent(ITypeMember one, ITypeMember other, bool includePublicAnnotations)
         {
-            if (one.MemberType != other.MemberType) { return false; }
+            if (one.MemberKind != other.MemberKind) { return false; }
             if (!sameIntent_IHasAttributes.SameIntent(one, other, includePublicAnnotations)) { return false; }
             if (!sameIntent_IHasAccessModifier.SameIntent(one, other, includePublicAnnotations)) { return false; }
             if (!sameIntent_IMember.SameIntent(one, other, includePublicAnnotations)) { return false; }

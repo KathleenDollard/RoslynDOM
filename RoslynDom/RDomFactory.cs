@@ -122,7 +122,7 @@ namespace RoslynDom
             else if (DoMember<EnumDeclarationSyntax>(rawMember, MakeEnum, out item)) { }
             else if (DoMembers<FieldDeclarationSyntax>(rawMember, MakeFields, retList)) { }
             else if (DoMember<SyntaxNode>(rawMember, MakeInvalidMember, out item)) { }
-            else throw new InvalidOperationException ();
+            else throw new InvalidOperationException();
             if (item != null) retList.Add(item);
             return retList.OfType<ITypeMember>();
         }
@@ -164,14 +164,85 @@ namespace RoslynDom
         private static IMember MakeMethod(MethodDeclarationSyntax rawMethod)
         {
             var parms = ListUtilities.MakeList(rawMethod, x => x.ParameterList.Parameters, x => MakeParameter(x));
+            var statements = ListUtilities.MakeList(rawMethod, x => GetStatements(x), x => MakeStatement(x));
             var publicAnnotations = GetPublicAnnotations(rawMethod).ToArray();
-            return new RDomMethod(rawMethod, parms, publicAnnotations);
+            return new RDomMethod(rawMethod, parms, statements, publicAnnotations);
         }
 
         private static IParameter MakeParameter(ParameterSyntax rawParm)
         {
             var publicAnnotations = GetPublicAnnotations(rawParm).ToArray();
             return new RDomParameter(rawParm, publicAnnotations);
+        }
+
+        private static IStatement MakeStatement(StatementSyntax rawStatement)
+        {
+            var statements = ListUtilities.MakeList(rawStatement, x => GetStatements(x), x => MakeStatement(x));
+            var publicAnnotations = GetPublicAnnotations(rawStatement).ToArray();
+            return new RDomStatement(rawStatement, statements, publicAnnotations);
+        }
+
+        private static IEnumerable<StatementSyntax> GetStatements(MethodDeclarationSyntax rawMethod)
+        {
+            if (rawMethod.Body == null) return new List<StatementSyntax>();
+            return rawMethod.Body.Statements;
+        }
+
+        private static IEnumerable<StatementSyntax> GetStatements(StatementSyntax rawStatement)
+        {
+            var list = new List<StatementSyntax>();
+
+            // These have nested block syntax 
+            if (LoadStatementListFromList<BlockSyntax>(rawStatement, x => x.Statements, list)) { return list; }
+            if (LoadStatementListFromList<UnsafeStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
+            if (LoadStatementListFromList<CheckedStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
+
+            // These have a statement which often, but not always, holds a nested block
+            if (LoadStatementListFromItem<DoStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            if (LoadStatementListFromItem<ForEachStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            if (LoadStatementListFromItem<ForStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            if (LoadStatementListFromItem<LockStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            if (LoadStatementListFromItem<WhileStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            if (LoadStatementListFromItem<UsingStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            if (LoadStatementListFromItem<IfStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; } // if has a second block for else
+
+            // These do not have nested blocksyntax or statements
+            // BreakStatementSyntax     
+            // ContinueStatementSyntax  
+            // EmptyStatementSyntax     
+            // ExpressionStatementSyntax
+            // LocalDeclarationStatement
+            // ReturnStatementSyntax    
+            // ThrowStatementSyntax     
+            // YieldStatementSyntax
+
+            // This is a very weird special case
+            // SwitchStatementSyntax
+
+            // These are items I currently do not plan to support - although need to confirm that switch doesn't use labeled statements
+            // FixedStatementSyntax     
+            // GotoStatementSyntax      
+            // LabeledStatementSyntax   
+
+            return list;
+        }
+
+        private static bool LoadStatementListFromList<T>(StatementSyntax rawStatement, Func<T, IEnumerable<StatementSyntax>> getList, List<StatementSyntax> list)
+            where T : StatementSyntax
+        {
+            var typed = rawStatement as T;
+            if (typed == null) return false;
+            list.AddRange(getList(typed));
+            return true;
+        }
+
+        private static bool LoadStatementListFromItem<T>(StatementSyntax rawStatement, Func<T, StatementSyntax> getItem, List<StatementSyntax> list)
+             where T : StatementSyntax
+        {
+            var typed = rawStatement as T;
+            if (typed == null) return false;
+            list.Add(getItem(typed));
+            return true;
         }
 
         private static IMember MakeProperty(PropertyDeclarationSyntax rawProperty)

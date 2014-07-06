@@ -11,7 +11,7 @@ namespace RoslynDom
             StructDeclarationSyntax rawItem,
             IEnumerable<ITypeMember> members,
             params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, MemberType.Structure, StemMemberType.Structure, members, publicAnnotations)
+            : base(rawItem, MemberKind.Structure, StemMemberKind.Structure, members, publicAnnotations)
         {
             Initialize();
         }

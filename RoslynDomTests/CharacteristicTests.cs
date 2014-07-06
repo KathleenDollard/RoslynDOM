@@ -22,7 +22,7 @@ namespace RoslynDomTests
         private const string ParameterAndMethodCategory = "ParameterAndMethod";
         private const string ReturnTypeNameCategory = "ReturnTypeName";
         private const string NamespaceCategory = "Namespace";
-        private const string MemberTypeCategory = "MemberType";
+        private const string MemberKindCategory = "MemberKind";
         private const string PropertyAccessCategory = "PropertyAccess";
         private const string MiscellaneousCategory = "Miscellaneous";
 
@@ -1143,7 +1143,7 @@ namespace Namespace1
 
         #region member type
         [TestMethod]
-        [TestCategory(MemberTypeCategory)]
+        [TestCategory(MemberKindCategory)]
         public void Can_get_member_type_for_members()
         {
             var csharpCode = @"
@@ -1161,17 +1161,17 @@ public class Foo
 ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             var members = root.Classes.First().Members.ToArray();
-            Assert.AreEqual(MemberType.Property, members[0].MemberType);
-            Assert.AreEqual(MemberType.Method,   members[1].MemberType);
-            Assert.AreEqual(MemberType.Field,    members[2].MemberType);
-            Assert.AreEqual(MemberType.Class,    members[3].MemberType);
-            Assert.AreEqual(MemberType.Structure,members[4].MemberType);
-            Assert.AreEqual(MemberType.Interface,members[5].MemberType);
-            Assert.AreEqual(MemberType.Enum,     members[6].MemberType);
+            Assert.AreEqual(MemberKind.Property, members[0].MemberKind);
+            Assert.AreEqual(MemberKind.Method,   members[1].MemberKind);
+            Assert.AreEqual(MemberKind.Field,    members[2].MemberKind);
+            Assert.AreEqual(MemberKind.Class,    members[3].MemberKind);
+            Assert.AreEqual(MemberKind.Structure,members[4].MemberKind);
+            Assert.AreEqual(MemberKind.Interface,members[5].MemberKind);
+            Assert.AreEqual(MemberKind.Enum,     members[6].MemberKind);
         }
 
         [TestMethod]
-        [TestCategory(MemberTypeCategory)]
+        [TestCategory(MemberKindCategory)]
         public void Can_get_member_type_for_members_via_requestValue()
         {
             var csharpCode = @"
@@ -1189,17 +1189,17 @@ public class Foo
 ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             var members = root.Classes.First().Members.ToArray();
-            Assert.AreEqual(MemberType.Property, members[0].RequestValue("MemberType"));
-            Assert.AreEqual(MemberType.Method, members[1].RequestValue("MemberType"));
-            Assert.AreEqual(MemberType.Field, members[2].RequestValue("MemberType"));
-            Assert.AreEqual(MemberType.Class, members[3].RequestValue("MemberType"));
-            Assert.AreEqual(MemberType.Structure, members[4].RequestValue("MemberType"));
-            Assert.AreEqual(MemberType.Interface, members[5].RequestValue("MemberType"));
-            Assert.AreEqual(MemberType.Enum, members[6].RequestValue("MemberType"));
+            Assert.AreEqual(MemberKind.Property, members[0].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Method, members[1].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Field, members[2].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Class, members[3].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Structure, members[4].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Interface, members[5].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Enum, members[6].RequestValue("MemberKind"));
         }
 
         [TestMethod]
-        [TestCategory(MemberTypeCategory)]
+        [TestCategory(MemberKindCategory)]
         public void RequestValue_returns_null_if_property_not_found()
         {
             var csharpCode = @"
@@ -1211,12 +1211,12 @@ public class Foo
 ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             var members = root.Classes.First().Members.ToArray();
-            Assert.IsNull(members[0].RequestValue("MemberTypeX"));
+            Assert.IsNull(members[0].RequestValue("MemberKindX"));
         }
 
 
         [TestMethod]
-        [TestCategory(MemberTypeCategory)]
+        [TestCategory(MemberKindCategory)]
         public void Can_get_value_from_parameter_via_RequestValue()
         {
             var csharpCode = @"

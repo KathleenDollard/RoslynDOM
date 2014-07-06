@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public enum MemberType
+    public enum MemberKind
     {
         Unknown = 0,
         Class,

@@ -9,16 +9,21 @@ namespace RoslynDom
 {
     public class RDomMethod : RDomBase<IMethod, MethodDeclarationSyntax, IMethodSymbol>, IMethod
     {
-        private IEnumerable<IParameter> _parameters;
-        private IEnumerable<ITypeParameter> _typeParameters;
+        private IList<IParameter> _parameters = new List<IParameter>();
+        private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
+        private IList<IStatement> _statements = new List<IStatement>();
 
         internal RDomMethod(
             MethodDeclarationSyntax rawItem,
             IEnumerable<IParameter> parameters,
+            IEnumerable<IStatement> statements,
             params PublicAnnotation[] publicAnnotations)
           : base(rawItem, publicAnnotations)
         {
-            _parameters = parameters;
+            foreach (var parameter in parameters)
+            { AddParameter(parameter); }
+            foreach (var statement in statements)
+            { AddStatement(statement); }
             Initialize();
         }
 
@@ -26,9 +31,14 @@ namespace RoslynDom
              : base(oldRDom)
         {
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
-            _parameters = newParameters;
+            foreach (var parameter in newParameters)
+            { AddParameter(parameter); }
             var newTypeParameters = RoslynDomUtilities.CopyMembers(oldRDom._typeParameters);
-            _typeParameters = newTypeParameters;
+            foreach (var typeParameter in newTypeParameters)
+            { AddTypeParameter(typeParameter); }
+            var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
+            foreach (var statement in newStatements)
+            { AddStatement(statement); }
 
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
@@ -44,7 +54,11 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            _typeParameters = this.TypedSymbol.TypeParametersFrom();
+
+            var typeParameters = this.TypedSymbol.TypeParametersFrom();
+            foreach (var typeParameter in typeParameters)
+            { AddTypeParameter(typeParameter); }
+
             AccessModifier = GetAccessibility();
             ReturnType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.ReturnType);
             IsAbstract = Symbol.IsAbstract;
@@ -55,21 +69,40 @@ namespace RoslynDom
             IsExtensionMethod = TypedSymbol.IsExtensionMethod;
         }
 
-          public override MethodDeclarationSyntax BuildSyntax()
+        public override MethodDeclarationSyntax BuildSyntax()
         {
             var nameSyntax = SyntaxFactory.Identifier(Name);
             var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
             var modifiers = BuildModfierSyntax();
             //var typeParameters = BuildTypeParameterList();
             //var constraintClauses = BuildConstraintClauses();
-            //var members = BuildMembers();
+            var block = BuildStatementBlock();
 
             var node = SyntaxFactory.MethodDeclaration(returnType, nameSyntax)
-                            .WithModifiers(modifiers);
+                            .WithModifiers(modifiers)
+                            .WithBody(block);
             var attributesLists = BuildAttributeListSyntax();
             if (attributesLists.Any()) { node = node.WithAttributeLists(attributesLists); }
             return (MethodDeclarationSyntax)RoslynUtilities.Format(node);
         }
+
+        public void RemoveParameter(IParameter parameter)
+        { _parameters.Remove(parameter); }
+
+        public void AddParameter(IParameter parameter)
+        { _parameters.Add (parameter); }
+
+        public void RemoveTypeParameter(ITypeParameter typeParameter)
+        { _typeParameters.Remove(typeParameter); }
+
+        public void RemoveStatement(IStatement  statement)
+        { _statements .Remove(statement); }
+
+        public void AddStatement(IStatement statement)
+        { _statements.Add(statement); }
+
+        public void AddTypeParameter(ITypeParameter typeParameter)
+        { _typeParameters.Add(typeParameter); }
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
@@ -90,8 +123,11 @@ namespace RoslynDom
         public IEnumerable<IParameter> Parameters
         { get { return _parameters; } }
 
-        public MemberType MemberType
-        { get { return MemberType.Method; } }
+        public IEnumerable<IStatement> Statements
+        { get { return _statements ; } }
+
+        public MemberKind MemberKind
+        { get { return MemberKind.Method; } }
 
         public override object RequestValue(string name)
         {

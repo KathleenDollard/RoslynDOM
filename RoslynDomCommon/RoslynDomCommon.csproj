@@ -37,15 +37,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseInterfaces\IPropertyOrMethod.cs" />
+    <Compile Include="BaseInterfaces\IStatementContainer.cs" />
     <Compile Include="CharacteristicInterfaces\ICanBeStatic.cs" />
     <Compile Include="CharacteristicInterfaces\IHasAccessModifier.cs" />
     <Compile Include="CharacteristicInterfaces\IHasImplementedInterfaces.cs" />
     <Compile Include="CharacteristicInterfaces\IHasNamespace.cs" />
     <Compile Include="CharacteristicInterfaces\IHasTypeParameters.cs" />
     <Compile Include="CharacteristicInterfaces\ISupportsSameIntent.cs" />
-    <Compile Include="Enums\LiteralType.cs" />
-    <Compile Include="Enums\MemberType.cs" />
-    <Compile Include="Enums\StemMemberType.cs" />
+    <Compile Include="Enums\LiteralKind.cs" />
+    <Compile Include="Enums\StatementKind.cs" />
+    <Compile Include="Enums\MemberKind.cs" />
+    <Compile Include="Enums\StemMemberKind.cs" />
     <Compile Include="Enums\Variance.cs" />
     <Compile Include="Enums\AccessModifier.cs" />
     <Compile Include="Interfaces\IAttributeValue.cs" />
@@ -71,6 +73,7 @@
     <Compile Include="BaseInterfaces\IDom.cs" />
     <Compile Include="BaseInterfaces\IStemContainer.cs" />
     <Compile Include="BaseInterfaces\IStemMember.cs" />
+    <Compile Include="Interfaces\IStatement.cs" />
     <Compile Include="Interfaces\IStructure.cs" />
     <Compile Include="BaseInterfaces\ITypeMember.cs" />
     <Compile Include="BaseInterfaces\ITypeMemberContainer.cs" />

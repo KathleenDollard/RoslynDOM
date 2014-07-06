@@ -519,15 +519,15 @@ namespace RoslynDomTests
             var current = first.AttributeValues.First();
             Assert.AreEqual("LocalizationResources", current.Name);
             Assert.AreEqual("Fred", current.Value);
-            Assert.AreEqual(LiteralType.String, current.ValueType );
+            Assert.AreEqual(LiteralKind.String, current.ValueType );
              current = first.AttributeValues.Skip(1).First();
             Assert.AreEqual("LocalizationResources", current.Name);
             Assert.AreEqual("Joe", current.Value);
-            Assert.AreEqual(LiteralType.String, current.ValueType);
+            Assert.AreEqual(LiteralKind.String, current.ValueType);
              current = first.AttributeValues.Last();
             Assert.AreEqual("Cats", current.Name);
             Assert.AreEqual(42, current.Value);
-            Assert.AreEqual(LiteralType.Numeric, current.ValueType);
+            Assert.AreEqual(LiteralKind.Numeric, current.ValueType);
 
             Assert.AreEqual("Name", attributes.Skip(1).First().Name);
             Assert.AreEqual("SemanticLog", attributes.Last().Name);
@@ -549,22 +549,22 @@ namespace RoslynDomTests
             var current = attributeValues[0];
             Assert.AreEqual("Int", current.Name);
             Assert.AreEqual(42, current.Value);
-            Assert.AreEqual(LiteralType.Numeric, current.ValueType);
+            Assert.AreEqual(LiteralKind.Numeric, current.ValueType);
 
             current = attributeValues[1];
             Assert.AreEqual("Bool", current.Name);
             Assert.AreEqual(true, current.Value);
-            Assert.AreEqual(LiteralType.Boolean, current.ValueType);
+            Assert.AreEqual(LiteralKind.Boolean, current.ValueType);
 
             current = attributeValues[2];
             Assert.AreEqual("Double", current.Name);
             Assert.AreEqual(3.14, current.Value);
-            Assert.AreEqual(LiteralType.Numeric, current.ValueType);
+            Assert.AreEqual(LiteralKind.Numeric, current.ValueType);
 
             current = attributeValues[3];
             Assert.AreEqual("StringTest", current.Name);
             Assert.AreEqual("Foo", current.Value);
-            Assert.AreEqual(LiteralType.String, current.ValueType);
+            Assert.AreEqual(LiteralKind.String, current.ValueType);
 
             //current = attributeValues[4];
             //Assert.AreEqual("TypeTest", current.Name);
@@ -589,22 +589,22 @@ namespace RoslynDomTests
             var current = attributeValues[0];
             Assert.AreEqual("Int", current.Name);
             Assert.AreEqual(42, current.Value);
-            Assert.AreEqual(LiteralType.Numeric, current.ValueType);
+            Assert.AreEqual(LiteralKind.Numeric, current.ValueType);
 
             current = attributeValues[1];
             Assert.AreEqual("Bool", current.Name);
             Assert.AreEqual(true, current.Value);
-            Assert.AreEqual(LiteralType.Boolean, current.ValueType);
+            Assert.AreEqual(LiteralKind.Boolean, current.ValueType);
 
             current = attributeValues[2];
             Assert.AreEqual("Double", current.Name);
             Assert.AreEqual(3.14, current.Value);
-            Assert.AreEqual(LiteralType.Numeric, current.ValueType);
+            Assert.AreEqual(LiteralKind.Numeric, current.ValueType);
 
             current = attributeValues[3];
             Assert.AreEqual("StringTest", current.Name);
             Assert.AreEqual("Foo", current.Value);
-            Assert.AreEqual(LiteralType.String, current.ValueType);
+            Assert.AreEqual(LiteralKind.String, current.ValueType);
 
             //current = attributeValues[4];
             //Assert.AreEqual("TypeTest", current.Name);
@@ -629,7 +629,7 @@ namespace RoslynDomTests
 
             var current = attributeValues[0];
             Assert.AreEqual("TypeTest", current.Name);
-            Assert.AreEqual(LiteralType.Type, current.ValueType);
+            Assert.AreEqual(LiteralKind.Type, current.ValueType);
             var refType = current.Value as RDomReferencedType;
             Assert.IsNotNull(refType);
             Assert.AreEqual("String", refType.Name);
@@ -652,7 +652,7 @@ namespace RoslynDomTests
 
             var current = attributeValues[0];
             Assert.AreEqual("TypeTest", current.Name);
-            Assert.AreEqual(LiteralType.Type, current.ValueType);
+            Assert.AreEqual(LiteralKind.Type, current.ValueType);
             var refType = current.Value as RDomReferencedType;
             Assert.IsNotNull(refType);
             Assert.AreEqual("Foo", refType.Name);
@@ -674,7 +674,7 @@ namespace RoslynDomTests
 
             var current = attributeValues[0];
             Assert.AreEqual("TypeTest", current.Name);
-            Assert.AreEqual(LiteralType.Type, current.ValueType);
+            Assert.AreEqual(LiteralKind.Type, current.ValueType);
             var refType = current.Value as RDomReferencedType;
             Assert.IsNotNull(refType);
             Assert.AreEqual("DateTime", refType.Name);

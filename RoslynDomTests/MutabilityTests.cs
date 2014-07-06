@@ -87,7 +87,7 @@ namespace RoslynDomTests
             Assert.IsFalse(class1.SameIntent(class2));
             Assert.AreEqual("Bar2", class2.Name);
             var newCode = class2.BuildSyntax().ToString();
-            Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n}", newCode );
+            Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode );
         }
 
         #endregion

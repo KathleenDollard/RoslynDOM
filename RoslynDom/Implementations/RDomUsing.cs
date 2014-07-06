@@ -24,7 +24,7 @@ namespace RoslynDom
            Name = TypedSyntax.Name.NameFrom(); 
         }
 
-        public StemMemberType StemMemberType
-        { get { return StemMemberType.Using; } }
+        public StemMemberKind StemMemberKind
+        { get { return StemMemberKind.Using; } }
     }
 }

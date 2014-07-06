@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public enum StemMemberType
+    public enum StemMemberKind
     {
         Unknown = 0,
         Using,

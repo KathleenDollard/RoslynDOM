@@ -11,22 +11,22 @@ namespace RoslynDom
         where T : class, IType<T>
     {
         private IList<ITypeMember> _members = new List<ITypeMember>();
-        private MemberType _memberType;
-        private StemMemberType _stemMemberType;
+        private MemberKind _memberKind;
+        private StemMemberKind _stemMemberKind;
         private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
 
         internal RDomBaseType(
             TSyntax rawItem,
-            MemberType memberType,
-            StemMemberType stemMemberType,
+            MemberKind memberKind,
+            StemMemberKind stemMemberKind,
             IEnumerable<ITypeMember> members,
             params PublicAnnotation[] publicAnnotations)
             : base(rawItem, publicAnnotations)
         {
             foreach (var member in members)
             { AddOrMoveMember(member); }
-            _memberType = memberType;
-            _stemMemberType = stemMemberType;
+            _memberKind = memberKind;
+            _stemMemberKind = stemMemberKind;
             Initialize();
         }
 
@@ -34,8 +34,8 @@ namespace RoslynDom
              : base(oldIDom)
         {
             var oldRDom = oldIDom as RDomBaseType<T, TSyntax>;
-            _memberType = oldRDom._memberType;
-            _stemMemberType = oldRDom._stemMemberType;
+            _memberKind = oldRDom._memberKind;
+            _stemMemberKind = oldRDom._stemMemberKind;
             AccessModifier = oldRDom.AccessModifier;
             var newMembers = RoslynDomUtilities.CopyMembers(oldRDom._members);
             foreach (var member in newMembers)
@@ -92,11 +92,11 @@ namespace RoslynDom
 
         public AccessModifier AccessModifier { get; set; }
 
-        public MemberType MemberType
-        { get { return _memberType; } }
+        public MemberKind MemberKind
+        { get { return _memberKind; } }
 
-        public StemMemberType StemMemberType
-        { get { return _stemMemberType; } }
+        public StemMemberKind StemMemberKind
+        { get { return _stemMemberKind; } }
     }
 }
 

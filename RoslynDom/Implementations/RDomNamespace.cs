@@ -48,7 +48,7 @@ namespace RoslynDom
         public override string OuterName
         { get { return QualifiedName; } }
 
-        public StemMemberType StemMemberType
-        { get { return StemMemberType.Namespace; } }
+        public StemMemberKind StemMemberKind
+        { get { return StemMemberKind.Namespace; } }
     }
 }
