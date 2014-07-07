@@ -41,7 +41,7 @@ namespace RoslynDom
 
         public override StatementSyntax BuildSyntax()
         {
-            return null;
+            return TypedSyntax;
         }
     
         public void RemoveStatement(IStatement statement)

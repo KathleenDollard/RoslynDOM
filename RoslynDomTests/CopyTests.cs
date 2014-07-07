@@ -73,9 +73,26 @@ namespace RoslynDomTests
         }
 
         [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_method_body()
+        public void Can_clone_method_with_body()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+            public class Bar
+            {
+               public string Foo(int id, string firstName, string lastName)
+                {
+                  var x = "", "";
+                  var ret = lastName + x + firstName;
+                  return ret;
+                }
+            }           
+            ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var method = root.RootClasses.First().Methods.First();
+            var newMethod = method.Copy();
+            Assert.IsNotNull(newMethod);
+            Assert.IsTrue(newMethod.SameIntent(newMethod));
+            var rDomStatement = newMethod.Statements.First() as RDomStatement;
+            Assert.AreEqual(@"var x = "", "";", rDomStatement.BuildSyntax().ToString());
         }
 
         [TestMethod, TestCategory(CopyCategory)]
@@ -95,15 +112,61 @@ namespace RoslynDomTests
         }
 
         [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_property_get_body()
+        public void Can_clone_property_get_with_body()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+            public class Bar
+            {
+               private string firstName;
+               private string firstName;
+               public string Foo
+               { get {
+                  var x = "", "";
+                  var ret = lastName + x + firstName;
+                  return ret;
+               } }
+            }           
+            ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var property = root.RootClasses.First().Properties.First();
+            var newProperty = property.Copy();
+            Assert.IsNotNull(newProperty);
+            Assert.IsTrue(newProperty.SameIntent(newProperty));
+            var rDomStatement = newProperty.GetAccessor.Statements.First() as RDomStatement;
+            Assert.AreEqual(@"var x = "", "";", rDomStatement.BuildSyntax().ToString());
         }
 
         [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_property_set_body()
+        public void Can_clone_property_set_with_body()
         {
-            Assert.Inconclusive();
+            var csharpCode = @"
+            public class Bar
+            {
+               private string firstName;
+               private string firstName;
+               public string Foo
+               { 
+                 get 
+                 {
+                   var x = "", "";
+                   var ret = lastName + x + firstName;
+                   return ret;
+                 } 
+                 set 
+                 {
+                   var x = "", "";
+                   lastName = x + firstName;
+                 } 
+               }
+            }           
+            ";
+            var root = RDomFactory.GetRootFromString(csharpCode);
+            var property = root.RootClasses.First().Properties.First();
+            var newProperty = property.Copy();
+            Assert.IsNotNull(newProperty);
+            Assert.IsTrue(newProperty.SameIntent(newProperty));
+            var rDomStatement = newProperty.SetAccessor.Statements.First() as RDomStatement;
+            Assert.AreEqual(@"var x = "", "";", rDomStatement.BuildSyntax().ToString());
         }
 
         [TestMethod, TestCategory(CopyCategory)]

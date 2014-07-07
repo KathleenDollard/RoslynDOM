@@ -95,16 +95,16 @@ namespace RoslynDom
         public void RemoveTypeParameter(ITypeParameter typeParameter)
         { _typeParameters.Remove(typeParameter); }
 
-        public void RemoveStatement(IStatement  statement)
+        public void AddTypeParameter(ITypeParameter typeParameter)
+        { _typeParameters.Add(typeParameter); }
+
+       public void RemoveStatement(IStatement  statement)
         { _statements .Remove(statement); }
 
         public void AddStatement(IStatement statement)
         { _statements.Add(statement); }
 
-        public void AddTypeParameter(ITypeParameter typeParameter)
-        { _typeParameters.Add(typeParameter); }
-
-        public IEnumerable<IAttribute> Attributes
+         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 
         public AccessModifier AccessModifier { get; set; }

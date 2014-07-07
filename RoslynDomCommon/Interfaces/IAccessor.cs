@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IStatement : IDom<IStatement>, IStatementContainer
+    public interface IAccessor : IStatementContainer , IHasAttributes, IHasAccessModifier, IDom<IAccessor >
     {
-        bool IsBlock { get; }
-        StatementKind StatementKind { get; }
     }
 }

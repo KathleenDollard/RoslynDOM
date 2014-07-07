@@ -9,15 +9,20 @@ namespace RoslynDom
 {
     public class RDomProperty : RDomBase<IProperty, PropertyDeclarationSyntax, IPropertySymbol>, IProperty
     {
-        private IEnumerable<IParameter> _parameters;
+        private IList<IParameter> _parameters = new List<IParameter>();
 
         internal RDomProperty(
              PropertyDeclarationSyntax rawItem,
              IEnumerable<IParameter> parameters,
+             IAccessor getAccessor,
+             IAccessor setAccessor,
              params PublicAnnotation[] publicAnnotations)
            : base(rawItem, publicAnnotations)
         {
-            _parameters = parameters;
+            foreach (var parameter in parameters)
+            { AddParameter(parameter); }
+            GetAccessor = getAccessor;
+            SetAccessor = setAccessor;
             Initialize();
         }
 
@@ -25,8 +30,11 @@ namespace RoslynDom
              : base(oldRDom)
         {
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
-            _parameters = newParameters;
+            foreach (var parameter in newParameters)
+            { AddParameter(parameter); }
             AccessModifier = oldRDom.AccessModifier;
+            GetAccessor = oldRDom.GetAccessor == null ? null : oldRDom.GetAccessor.Copy();
+            SetAccessor = oldRDom.SetAccessor == null ? null : oldRDom.SetAccessor.Copy();
             ReturnType = oldRDom.ReturnType;
             IsAbstract = oldRDom.IsAbstract;
             IsVirtual = oldRDom.IsVirtual;
@@ -40,6 +48,7 @@ namespace RoslynDom
         {
             base.Initialize();
             AccessModifier = GetAccessibility();
+            // TODO: Get and set accessibility
             PropertyType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
             IsAbstract = Symbol.IsAbstract;
             IsVirtual = Symbol.IsVirtual;
@@ -48,9 +57,15 @@ namespace RoslynDom
             IsStatic = Symbol.IsStatic;
             var propSymbol = Symbol as IPropertySymbol;
             if (propSymbol == null) throw new InvalidOperationException();
-            CanGet = (!propSymbol.IsWriteOnly); ;
-            CanSet = (!propSymbol.IsReadOnly); ;
+            CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
+            CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
         }
+
+        public void RemoveParameter(IParameter parameter)
+        { _parameters.Remove(parameter); }
+
+        public void AddParameter(IParameter parameter)
+        { _parameters.Add(parameter); }
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
@@ -58,6 +73,8 @@ namespace RoslynDom
         public IReferencedType PropertyType { get; set; }
 
         public AccessModifier AccessModifier { get; set; }
+        public IAccessor GetAccessor { get; set; }
+        public IAccessor SetAccessor { get; set; }
 
         public IReferencedType ReturnType
         {
@@ -91,7 +108,7 @@ namespace RoslynDom
         /// </remarks>
         public IEnumerable<IParameter> Parameters
         // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
-        { get { return new List<IParameter>(); } }
+        { get { return _parameters; } }
 
         public MemberKind MemberKind
         { get { return MemberKind.Property; } }

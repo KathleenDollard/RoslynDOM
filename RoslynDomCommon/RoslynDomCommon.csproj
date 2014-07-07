@@ -36,6 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseInterfaces\ILoop.cs" />
     <Compile Include="BaseInterfaces\IPropertyOrMethod.cs" />
     <Compile Include="BaseInterfaces\IStatementContainer.cs" />
     <Compile Include="CharacteristicInterfaces\ICanBeStatic.cs" />
@@ -50,6 +51,27 @@
     <Compile Include="Enums\StemMemberKind.cs" />
     <Compile Include="Enums\Variance.cs" />
     <Compile Include="Enums\AccessModifier.cs" />
+    <Compile Include="InterfacesForStatements\IAssignmentStatement.cs" />
+    <Compile Include="InterfacesForStatements\IBlockStatement.cs" />
+    <Compile Include="InterfacesForStatements\IArgument.cs" />
+    <Compile Include="InterfacesForStatements\IContinue.cs" />
+    <Compile Include="InterfacesForStatements\IBreakStatement.cs" />
+    <Compile Include="InterfacesForStatements\ICondition.cs" />
+    <Compile Include="InterfacesForStatements\IDeclarationStatement.cs" />
+    <Compile Include="InterfacesForStatements\IDoStatement.cs" />
+    <Compile Include="InterfacesForStatements\IExpression.cs" />
+    <Compile Include="InterfacesForStatements\ICatch.cs" />
+    <Compile Include="InterfacesForStatements\IForEachStatement.cs" />
+    <Compile Include="InterfacesForStatements\IForStatement.cs" />
+    <Compile Include="InterfacesForStatements\IInvocationStatement.cs" />
+    <Compile Include="InterfacesForStatements\ICastExpression.cs" />
+    <Compile Include="InterfacesForStatements\IObjectCreationExpression.cs" />
+    <Compile Include="InterfacesForStatements\IReturnStatement.cs" />
+    <Compile Include="InterfacesForStatements\IThrowStatement.cs" />
+    <Compile Include="InterfacesForStatements\ITryStatement.cs" />
+    <Compile Include="InterfacesForStatements\ISpecialStatement.cs" />
+    <Compile Include="InterfacesForStatements\IIfStatement.cs" />
+    <Compile Include="Interfaces\IAccessor.cs" />
     <Compile Include="Interfaces\IAttributeValue.cs" />
     <Compile Include="Interfaces\IAttribute.cs" />
     <Compile Include="Interfaces\IClass.cs" />
@@ -73,7 +95,7 @@
     <Compile Include="BaseInterfaces\IDom.cs" />
     <Compile Include="BaseInterfaces\IStemContainer.cs" />
     <Compile Include="BaseInterfaces\IStemMember.cs" />
-    <Compile Include="Interfaces\IStatement.cs" />
+    <Compile Include="BaseInterfaces\IStatement.cs" />
     <Compile Include="Interfaces\IStructure.cs" />
     <Compile Include="BaseInterfaces\ITypeMember.cs" />
     <Compile Include="BaseInterfaces\ITypeMemberContainer.cs" />

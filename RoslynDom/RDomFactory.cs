@@ -196,6 +196,7 @@ namespace RoslynDom
             if (LoadStatementListFromList<BlockSyntax>(rawStatement, x => x.Statements, list)) { return list; }
             if (LoadStatementListFromList<UnsafeStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
             if (LoadStatementListFromList<CheckedStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
+            if (LoadStatementListFromList<TryStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
 
             // These have a statement which often, but not always, holds a nested block
             if (LoadStatementListFromItem<DoStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
@@ -249,8 +250,18 @@ namespace RoslynDom
         {
             // VB will have property parameters
             var parms = new List<IParameter>();
+            var getAccessor = MakeAccessor(rawProperty.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault());
+            var setAccessor = MakeAccessor(rawProperty.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault());
             var publicAnnotations = GetPublicAnnotations(rawProperty).ToArray();
-            return new RDomProperty(rawProperty, parms, publicAnnotations);
+            return new RDomProperty(rawProperty, parms, getAccessor, setAccessor, publicAnnotations);
+        }
+
+        private static IAccessor MakeAccessor(AccessorDeclarationSyntax  rawAccessor)
+        {
+            if (rawAccessor == null) return null;
+            var statements = ListUtilities.MakeList(rawAccessor, x => GetStatements(rawAccessor.Body), x => MakeStatement(x));
+            var publicAnnotations = GetPublicAnnotations(rawAccessor).ToArray();
+            return new RDomPropertyAccessor(rawAccessor, statements, publicAnnotations);
         }
 
         private static IMember MakeInvalidMember(SyntaxNode rawItem)
