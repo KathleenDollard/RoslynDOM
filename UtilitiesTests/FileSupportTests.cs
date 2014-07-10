@@ -52,9 +52,10 @@ namespace TestRoslyn
             var pattern = Path.Combine("..\\..", "*.kadcs");
             Assert.AreEqual(3, FileSupport.GetMatchingFiles("*.kadcs", FileSupport.ProjectPath(path), true).Count());
             Assert.AreEqual(1, FileSupport.GetMatchingFiles("*.kadcs", FileSupport.ProjectPath(path), false).Count());
+            Assert.AreEqual(1, FileSupport.GetMatchingFiles("*.kadcs", FileSupport.ProjectPath(path)).Count());
         }
 
-         [TestMethod]
+        [TestMethod]
         public void GetMatchingFiles_doesnt_crash_on_no_files()
         {
             var path = AppDomain.CurrentDomain.BaseDirectory;

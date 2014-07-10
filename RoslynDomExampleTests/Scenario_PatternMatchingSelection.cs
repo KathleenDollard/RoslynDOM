@@ -101,7 +101,7 @@ namespace Namespace1
             Assert.AreEqual(40,    using1.PublicAnnotations.GetValue("kad_Test1","val2"));
 
             var class1 = root.RootClasses.First();
-            Assert.AreEqual("Bill",  class1.PublicAnnotations.GetValue( "kad_Test2"));
+            Assert.AreEqual("Bill",  class1.PublicAnnotations.GetValue( "kad_Test2", "kad_Test2"));
             Assert.AreEqual(41,      class1.PublicAnnotations.GetValue("kad_Test2", "val2"));
             Assert.AreEqual("Percy", class1.PublicAnnotations.GetValue("kad_Test3", "val1"));
             Assert.AreEqual(42, class1.PublicAnnotations.GetValue("kad_Test3", "val2"));

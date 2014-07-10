@@ -1295,6 +1295,8 @@ namespace Namespace1
             Assert.AreEqual("Foo1", ((RDomClass)cl[1]).ClassName);
             Assert.AreEqual("Foo2", ((RDomClass)cl[2]).ClassName);
         }
+
+  
         #endregion
     }
 }

@@ -23,7 +23,8 @@ namespace RoslynDom
         {
             var oldRDom = (RDomBase)oldIDom;
             Name = oldIDom.Name;
-            _publicAnnotations.AddCopy(oldRDom._publicAnnotations);
+            var newAnnotations = oldRDom._publicAnnotations.Copy();
+            _publicAnnotations.Add(newAnnotations);
         }
 
         /// <summary>
@@ -51,21 +52,24 @@ namespace RoslynDom
             {
                 var thisAsStemMember = this as IStemMember;
                 if (thisAsStemMember == null) { throw new InvalidOperationException(); }
-                parentAsStemContainer.RemoveMember(thisAsStemMember);
+                Parent = null;
+                parentAsStemContainer.RemoveStemMember(thisAsStemMember);
             }
-            var parentAsTypeContainer = this.Parent as IRDomTypeContainer;
+            var parentAsTypeContainer = this.Parent as IRDomTypeMemberContainer;
             if (parentAsTypeContainer != null)
             {
                 var thisAsTypeMember = this as ITypeMember;
                 if (thisAsTypeMember == null) { throw new InvalidOperationException(); }
+                Parent = null;
                 parentAsTypeContainer.RemoveMember(thisAsTypeMember);
             }
             var parentAsCodeContainer = this.Parent as IRDomCodeContainer;
             if (parentAsCodeContainer != null)
             {
-                var thisAsCodeMember = this as ICodeMember;
-                if (thisAsCodeMember == null) { throw new InvalidOperationException(); }
-                parentAsCodeContainer.RemoveMember(thisAsCodeMember);
+                var thisAsStatement = this as IStatement;
+                if (thisAsStatement == null) { throw new InvalidOperationException(); }
+                Parent = null;
+                parentAsCodeContainer.RemoveStatement(thisAsStatement);
             }
             Parent = null;
         }

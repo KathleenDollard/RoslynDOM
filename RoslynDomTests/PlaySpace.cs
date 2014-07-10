@@ -9,8 +9,15 @@ namespace RoslynDomTests
 {
     public class SomeAttr : Attribute { }
 
+    struct Foo<T> 
+    { }
+
+
     class PlaySpace
     {
+        [SomeAttr()]
+        private string Foo2;
+
         public void Foo()
         {
         }

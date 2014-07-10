@@ -134,6 +134,7 @@ namespace RoslynDom
                 return (string.IsNullOrWhiteSpace(item.Namespace) ? "" : item.Namespace + ".")
                           + outerName;
             }
+            // The following line should not be reachable, so is not tested
             throw new InvalidOperationException();
         }
 

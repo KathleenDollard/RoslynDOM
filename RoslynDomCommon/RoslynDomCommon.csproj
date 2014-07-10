@@ -51,6 +51,7 @@
     <Compile Include="Enums\StemMemberKind.cs" />
     <Compile Include="Enums\Variance.cs" />
     <Compile Include="Enums\AccessModifier.cs" />
+    <Compile Include="IHasLookupValue.cs" />
     <Compile Include="InterfacesForStatements\IAssignmentStatement.cs" />
     <Compile Include="InterfacesForStatements\IBlockStatement.cs" />
     <Compile Include="InterfacesForStatements\IArgument.cs" />
@@ -75,8 +76,7 @@
     <Compile Include="Interfaces\IAttributeValue.cs" />
     <Compile Include="Interfaces\IAttribute.cs" />
     <Compile Include="Interfaces\IClass.cs" />
-    <Compile Include="Interfaces\ICodeContainer.cs" />
-    <Compile Include="Interfaces\ICodeMember.cs" />
+    <Compile Include="BaseInterfaces\ICodeContainer.cs" />
     <Compile Include="Interfaces\IInvalidMember.cs" />
     <Compile Include="Interfaces\IParameter.cs" />
     <Compile Include="Interfaces\IReferencedType.cs" />

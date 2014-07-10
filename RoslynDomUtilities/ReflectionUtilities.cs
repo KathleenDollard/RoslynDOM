@@ -8,7 +8,7 @@ namespace RoslynDom.Common
     {
         public static bool CanGetProperty(object instance, string propertyName)
         {
-            if (instance == null) return false;
+            if (instance == null) throw new InvalidOperationException();
             var type = instance.GetType().GetTypeInfo();
             var propInfo = type.GetProperty(propertyName);
             if (propInfo == null) return false;
@@ -17,7 +17,7 @@ namespace RoslynDom.Common
 
         public static bool CanSetProperty(object instance, string propertyName)
         {
-            if (instance == null) return false;
+            if (instance == null) throw new InvalidOperationException();
             var type = instance.GetType().GetTypeInfo();
             var propInfo = type.GetProperty(propertyName);
             if (propInfo == null) return false;
@@ -26,13 +26,13 @@ namespace RoslynDom.Common
 
         public static object GetPropertyValue(object instance, string propertyName)
         {
-            if (instance == null) return false;
+            if (instance == null) throw new InvalidOperationException();
             var type = instance.GetType().GetTypeInfo();
             var propInfo = type.GetProperty(propertyName);
             return propInfo.GetValue(instance);
         }
 
-        public static MethodInfo MakeGenericMethod(Type type, string methodName, params Type[] genericTypes)
+         public static MethodInfo MakeGenericMethod(Type type, string methodName, params Type[] genericTypes)
         {
             var method = type
                 .GetTypeInfo()

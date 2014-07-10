@@ -33,7 +33,6 @@ namespace RoslynDom.Common
         {
             var ret = new List<T>();
             if (input == null) return ret;
-            if (input == null) return ret;
             if (getItemsDelegate == null) throw new InvalidOperationException();
             if (makeNewItem == null) throw new InvalidOperationException();
             var newItems = getItemsDelegate(input);

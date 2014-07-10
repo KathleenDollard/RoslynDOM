@@ -1,24 +1,29 @@
-﻿using RoslynDom.Common;
+﻿using System.Collections.Generic;
+using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public interface IRDomStemContainer
+    public interface IRDomStemContainer :IStemContainer 
     {
-        void AddOrMoveMember(IStemMember member);
-        void RemoveMember(IStemMember member);
+        void AddOrMoveStemMember(IStemMember member);
+        void RemoveStemMember(IStemMember member);
+        void ClearStemMembers();
     }
 
-    public interface IRDomTypeContainer
+    public interface IRDomTypeMemberContainer :ITypeMemberContainer 
     {
         void AddOrMoveMember(ITypeMember member);
         void RemoveMember(ITypeMember member);
-        void AddTypeParameter(ITypeParameter typeParameter);
+        void ClearMembers();
+        void AddOrMoveTypeParameter(ITypeParameter typeParameter);
         void RemoveTypeParameter(ITypeParameter typeParameter);
+        void ClearTypeParameters();
     }
 
-    public interface IRDomCodeContainer
+    public interface IRDomCodeContainer : ICodeContainer 
     {
-        void AddOrMoveMember(ICodeMember member);
-        void RemoveMember(ICodeMember member);
+        void AddOrMoveStatement(IStatement member);
+        void RemoveStatement(IStatement member);
+        void ClearStatements();
     }
 }

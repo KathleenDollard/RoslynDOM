@@ -7,7 +7,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomPropertyAccessor : RDomBase<IAccessor , AccessorDeclarationSyntax, ISymbol>, IAccessor 
+    public class RDomPropertyAccessor : RDomBase<IAccessor, AccessorDeclarationSyntax, ISymbol>, IAccessor
     {
         private IList<IStatement> _statements = new List<IStatement>();
 
@@ -44,13 +44,13 @@ namespace RoslynDom
             return null;
         }
 
-          public void RemoveStatement(IStatement  statement)
-        { _statements .Remove(statement); }
+        public void RemoveStatement(IStatement statement)
+        { _statements.Remove(statement); }
 
         public void AddStatement(IStatement statement)
         { _statements.Add(statement); }
 
-         public IEnumerable<IAttribute> Attributes
+        public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 
         public AccessModifier AccessModifier { get; set; }
@@ -60,11 +60,10 @@ namespace RoslynDom
         public bool IsOverride { get; set; }
         public bool IsSealed { get; set; }
         public bool IsStatic { get; set; }
-
         public bool IsExtensionMethod { get; set; }
 
-         public IEnumerable<IStatement> Statements
-        { get { return _statements ; } }
+        public IEnumerable<IStatement> Statements
+        { get { return _statements; } }
 
         public MemberKind MemberKind
         { get { return MemberKind.Method; } }

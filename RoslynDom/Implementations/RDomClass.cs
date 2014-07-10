@@ -27,11 +27,16 @@ namespace RoslynDom
         internal RDomClass(RDomClass oldRDom)
              : base(oldRDom)
         {
+            BaseType = oldRDom.BaseType.Copy();
+            IsAbstract = oldRDom.IsAbstract;
+            IsSealed = oldRDom.IsSealed;
+            IsStatic = oldRDom.IsStatic;
         }
 
         protected override void Initialize()
         {
             base.Initialize();
+            BaseType =new  RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType);
             IsAbstract = Symbol.IsAbstract;
             IsSealed = Symbol.IsSealed;
             IsStatic = Symbol.IsStatic;
@@ -96,23 +101,9 @@ namespace RoslynDom
 
         public bool IsStatic { get; set; }
 
-
-        public IEnumerable<ITypeParameter> TypeParameters
-        {
-            get
-            {
-                return this.TypedSymbol.TypeParametersFrom();
-            }
-        }
-
-        public IReferencedType BaseType
-        {
-            get
-            {
-                return new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType);
-            }
-        }
-
+          
+        public IReferencedType BaseType { get;set; }
+    
         public IEnumerable<IReferencedType> ImplementedInterfaces
         {
             get

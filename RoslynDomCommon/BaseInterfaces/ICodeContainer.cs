@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ICodeMember
+    public interface ICodeContainer
     {
+        IEnumerable<IStatement > Statements { get; }
     }
 }

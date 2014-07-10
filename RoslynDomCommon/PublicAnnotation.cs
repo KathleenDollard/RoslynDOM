@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RoslynDom.Common
 {
-    public class PublicAnnotation(string name)
+    public class PublicAnnotation(string name) :IHasLookupValue
     {
         // Design note: I chose between this property bag style implementation and an attribute
         // style implementation with specific annotation classes derived from a root. I decided
@@ -31,12 +32,6 @@ namespace RoslynDom.Common
             get { return items.Select(x => x.Key); }
         }
 
-        public T GetValue<T>(string key)
-        { return (T)this[key]; }
-
-        public object GetValue(string key)
-        { return this[key]; }
-
         public bool SameIntent(PublicAnnotation otherAnnotation)
         {
             foreach (var item in items)
@@ -51,55 +46,32 @@ namespace RoslynDom.Common
             return true;
         }
 
-        //#region Equality
-        //// This is a bit hacked together and could probably use review
+        public T GetValue<T>(string key)
+        { return (T)this[key]; }
 
-        //public override bool Equals(object obj)
-        //{
-        //    if (obj is PublicAnnotation)
-        //    {
-        //        var p = (PublicAnnotation)obj;
-        //        return this.Equals(p);
-        //    }
-        //    return false;
-        //}
+        public object GetValue(string key)
+        { return this[key]; }
 
-        //public bool Equals(PublicAnnotation other)
-        //{
-        //    // Return true if the names and values match:
-        //    if (this.Name != other.Name) return false;
-        //    if (this.items == null )return (other.items == null);
-        //    foreach (var itemX in this.items)
-        //    {
-        //        var hasItem = other.items
-        //                        .Where(z => z.Key == itemX.Key && z.Value == itemX.Value)
-        //                        .Any();
-        //        if (!hasItem) return false;
-        //    }
-        //    return true;
-        //}
+        public bool TryGetValue(string key, out object value)
+        {
+            value = null;
+            if (!HasValue(key)) { return false; }
+            value  = GetValue(key);
+            return true;
+        }
 
-        //public override int GetHashCode()
-        //{
-        //    var str = this.Name + "+_+";
-        //    // Don't care about order, but need to sort so two equal annotations have same hash code
-        //    foreach (var itemX in this.items.OrderBy(x=>x.Key).ThenBy(x=>x.Value))
-        //    {
-        //        str += itemX.Key + "%$" + itemX.Value + "*|";
-        //    }
-        //    return str.GetHashCode();
-        //}
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            value = default(T);
+            if (!HasValue(key)) { return false; }
+            value = GetValue<T>(key);
+            return true;
+        }
 
-        //public static bool operator ==(PublicAnnotation  left, PublicAnnotation right)
-        //{
-        //    return left.Equals(right);
-        //}
-
-        //public static bool operator !=(PublicAnnotation left, PublicAnnotation right)
-        //{
-        //    return !(left == right);
-        //}
-        //#endregion
+        public bool HasValue(string key)
+        {
+            return items.Any(x => x.Key == key);
+        }
 
     }
 }

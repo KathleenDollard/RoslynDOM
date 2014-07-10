@@ -28,27 +28,11 @@ namespace RoslynDom
             Name = "Root";
         }
 
-        public IEnumerable<INamespace> AllChildNamespaces
-        {
-            get
-            {
-                return RoslynDomUtilities.GetAllChildNamespaces(this);
-            }
-        }
-
-        public bool HasSyntaxErrors
+         public bool HasSyntaxErrors
         {
             get
             {
                 return TypedSyntax.GetDiagnostics().Count() > 0;
-            }
-        }
-
-         public IEnumerable<INamespace> NonemptyNamespaces
-        {
-            get
-            {
-                return RoslynDomUtilities.GetNonEmptyNamespaces(this);
             }
         }
 

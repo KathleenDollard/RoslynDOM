@@ -82,6 +82,14 @@ namespace TestRoslyn
 
         [TestMethod]
         [TestCategory(SubstringBeforeAferCateogory)]
+        [ExpectedException(typeof(InvalidOperationException ))]
+        public void SubstringAfter_throws_on_null_delimiter()
+        {
+            var x = StringUtilities.SubstringAfter("", null);
+        }
+
+        [TestMethod]
+        [TestCategory(SubstringBeforeAferCateogory)]
         public void SubstringAfterLast_finds_part_after_delimiter()
         {
             Assert.AreEqual("56", singleIndex.SubstringAfterLast("."));
@@ -145,6 +153,14 @@ namespace TestRoslyn
 
         [TestMethod]
         [TestCategory(SubstringBeforeAferCateogory)]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SubstringAfterLast_throws_on_null_delimiter()
+        {
+            var x = StringUtilities.SubstringAfterLast("", null);
+        }
+
+        [TestMethod]
+        [TestCategory(SubstringBeforeAferCateogory)]
         public void SubstringBefore_finds_part_before_delimiter()
         {
             Assert.AreEqual("1234", singleIndex.SubstringBefore("."));
@@ -176,6 +192,14 @@ namespace TestRoslyn
         public void SubstringBefore_returns_null_for_null()
         {
             Assert.IsNull(StringUtilities.SubstringBefore(null, "."));
+        }
+
+        [TestMethod]
+        [TestCategory(SubstringBeforeAferCateogory)]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SubstringBefore_throws_on_null_delimiter()
+        {
+            var x = StringUtilities.SubstringBefore("", null);
         }
 
         [TestMethod]
@@ -212,6 +236,15 @@ namespace TestRoslyn
         {
             Assert.IsNull(StringUtilities.SubstringBeforeLast(null, "."));
         }
+
+        [TestMethod]
+        [TestCategory(SubstringBeforeAferCateogory)]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SubstringBeforeLast_throws_on_null_delimiter()
+        {
+            var x = StringUtilities.SubstringBeforeLast("", null);
+        }
+
         #endregion
 
         #region 

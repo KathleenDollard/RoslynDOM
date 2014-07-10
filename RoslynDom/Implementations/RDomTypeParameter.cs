@@ -16,10 +16,19 @@ namespace RoslynDom
 
         internal RDomTypeParameter(RDomTypeParameter oldRDom)
              : base(oldRDom)
-        { }
+        {
+            Variance = oldRDom.Variance;
+            Ordinal = oldRDom.Ordinal;
+            HasConstructorConstraint = oldRDom.HasConstructorConstraint;
+            HasReferenceTypeConstraint = oldRDom.HasReferenceTypeConstraint;
+            HasValueTypeConstraint = oldRDom.HasValueTypeConstraint;
+            var newConstraints = RoslynDomUtilities.CopyMembers(oldRDom._constraintTypes);
+            foreach (var constraint in newConstraints)
+            { AddConstraintType(constraint); }
+        }
 
-        public virtual bool Matches(ITypeParameter other)
-        { return base.Matches(other); }
+        //public virtual bool Matches(ITypeParameter other)
+        //{ return base.Matches(other); }
 
         // new here feels wrong, so I am currently leaving the warning
         public ITypeParameter Copy()
@@ -41,12 +50,22 @@ namespace RoslynDom
             { AddConstraintType(constraint); }
         }
 
-         public IEnumerable<IReferencedType> ConstraintTypes
+        public IEnumerable<IReferencedType> ConstraintTypes
         { get { return _constraintTypes; } }
-     
-        public void AddConstraintType(ITypeSymbol symbol )
+
+        public void AddConstraintType(ITypeSymbol symbol)
         {
-            _constraintTypes .Add(new RDomReferencedType(symbol.DeclaringSyntaxReferences, symbol));
+            _constraintTypes.Add(new RDomReferencedType(symbol.DeclaringSyntaxReferences, symbol));
+        }
+
+        public void AddConstraintType(IReferencedType refType)
+        {
+            _constraintTypes.Add(refType);
+        }
+
+        public void RemoveConstraintType(IReferencedType refType)
+        {
+            _constraintTypes.Remove(refType);
         }
 
         public void ClearConstraintTypes()

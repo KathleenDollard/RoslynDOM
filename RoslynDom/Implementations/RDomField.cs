@@ -32,6 +32,7 @@ namespace RoslynDom
         internal RDomField(RDomField oldRDom)
              : base(oldRDom)
         {
+            _varSyntax = oldRDom._varSyntax;
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
             IsStatic = oldRDom.IsStatic;
@@ -59,14 +60,8 @@ namespace RoslynDom
 
         public AccessModifier AccessModifier { get; set; }
 
-        private VariableDeclaratorSyntax variableDeclaration
-        { get { return _varSyntax; } }
-
-        //public override ISymbol Symbol
-        //{ get { return TypedSymbol; } }
-
-        public override IFieldSymbol TypedSymbol
-        { get { return (IFieldSymbol)base.GetSymbol(variableDeclaration); } }
+           public override IFieldSymbol TypedSymbol
+        { get { return (IFieldSymbol)base.GetSymbol(_varSyntax); } }
 
         public IReferencedType ReturnType { get; set; }
 
