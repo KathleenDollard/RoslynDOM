@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -35,14 +36,14 @@ namespace RoslynDom
             if (Name.StartsWith("@")) { Name = Name.Substring(1); }
         }
 
-        public IEnumerable<INamespace> AllChildNamespaces
+        public override NamespaceDeclarationSyntax BuildSyntax()
         {
-            get { return RoslynDomUtilities.GetAllChildNamespaces(this); }
-        }
+            var node = SyntaxFactory.NamespaceDeclaration (SyntaxFactory.IdentifierName(Name));
 
-        public IEnumerable<INamespace> NonemptyNamespaces
-        {
-            get { return RoslynDomUtilities.GetNonEmptyNamespaces(this); }
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildUsings(), node, (n, l) => n.WithUsings(l));
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildStemMembers(), node, (n, l) => n.WithMembers(l));
+
+            return (NamespaceDeclarationSyntax)RoslynUtilities.Format(node);
         }
 
         public override string OuterName

@@ -74,36 +74,18 @@ namespace RoslynDom
             var nameSyntax = SyntaxFactory.Identifier(Name);
             var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
             var modifiers = BuildModfierSyntax();
+            var node = SyntaxFactory.MethodDeclaration(returnType, nameSyntax)
+                            .WithModifiers(modifiers);
+
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
+            node = RoslynUtilities.UpdateNodeIfItemNotNull (BuildStatementBlock(Statements), node, (n, item) => n.WithBody(item));
+            //var parameters = BuildParameterList();
             //var typeParameters = BuildTypeParameterList();
             //var constraintClauses = BuildConstraintClauses();
-            var block = BuildStatementBlock();
 
-            var node = SyntaxFactory.MethodDeclaration(returnType, nameSyntax)
-                            .WithModifiers(modifiers)
-                            .WithBody(block);
-            var attributesLists = BuildAttributeListSyntax();
-            if (attributesLists.Any()) { node = node.WithAttributeLists(attributesLists); }
             return (MethodDeclarationSyntax)RoslynUtilities.Format(node);
         }
-
-        public void RemoveParameter(IParameter parameter)
-        { _parameters.Remove(parameter); }
-
-        public void AddParameter(IParameter parameter)
-        { _parameters.Add (parameter); }
-
-        public void RemoveTypeParameter(ITypeParameter typeParameter)
-        { _typeParameters.Remove(typeParameter); }
-
-        public void AddTypeParameter(ITypeParameter typeParameter)
-        { _typeParameters.Add(typeParameter); }
-
-       public void RemoveStatement(IStatement  statement)
-        { _statements .Remove(statement); }
-
-        public void AddStatement(IStatement statement)
-        { _statements.Add(statement); }
-
+  
          public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 
@@ -117,11 +99,29 @@ namespace RoslynDom
 
         public bool IsExtensionMethod { get; set; }
 
+        public void RemoveTypeParameter(ITypeParameter typeParameter)
+        { _typeParameters.Remove(typeParameter); }
+
+        public void AddTypeParameter(ITypeParameter typeParameter)
+        { _typeParameters.Add(typeParameter); }
+
         public IEnumerable<ITypeParameter> TypeParameters
         { get { return _typeParameters; } }
 
+        public void RemoveParameter(IParameter parameter)
+        { _parameters.Remove(parameter); }
+
+        public void AddParameter(IParameter parameter)
+        { _parameters.Add(parameter); }
+
         public IEnumerable<IParameter> Parameters
         { get { return _parameters; } }
+
+        public void RemoveStatement(IStatement statement)
+        { _statements.Remove(statement); }
+
+        public void AddStatement(IStatement statement)
+        { _statements.Add(statement); }
 
         public IEnumerable<IStatement> Statements
         { get { return _statements ; } }

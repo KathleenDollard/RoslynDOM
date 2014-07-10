@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
@@ -54,6 +56,38 @@ namespace RoslynDom
             { AddOrMoveTypeParameter(typeParameter); }
         }
 
+        protected SyntaxList<MemberDeclarationSyntax> BuildMembers(bool nestedTypesAllowed)
+        {
+            var list = new List<MemberDeclarationSyntax>();
+            foreach (var member in Members)
+            {
+                if (!BuildMember(list, member, nestedTypesAllowed)) { throw new InvalidOperationException(); }
+            }
+            return SyntaxFactory.List<MemberDeclarationSyntax>(list);
+        }
+
+        protected virtual bool BuildMember(IList<MemberDeclarationSyntax> list, ITypeMember member, bool nestedTypesAllowed)
+        {
+            if (TryAddMemberSyntaxNode<RDomMethod>(list, member, x => x.BuildSyntax())) { return true; }
+            if (TryAddMemberSyntaxNode<RDomProperty>(list, member, x => x.BuildSyntax())) { return true; }
+            if (TryAddMemberSyntaxNode<RDomField>(list, member, x => x.BuildSyntax())) { return true; }
+            if (nestedTypesAllowed)
+            {
+                if (TryAddMemberSyntaxNode<RDomClass>(list, member, x => x.BuildSyntax())) { return true; }
+                if (TryAddMemberSyntaxNode<RDomStructure>(list, member, x => x.BuildSyntax())) { return true; }
+                if (TryAddMemberSyntaxNode<RDomInterface>(list, member, x => x.BuildSyntax())) { return true; }
+                if (TryAddMemberSyntaxNode<RDomEnum>(list, member, x => x.BuildSyntax())) { return true; }
+            }
+            return false;
+        }
+
+        protected bool TryAddMemberSyntaxNode<TRDom>(IList<MemberDeclarationSyntax> list, ITypeMember member, Func<TRDom, MemberDeclarationSyntax> makeDelegate)
+             where TRDom : class
+        {
+            return RoslynUtilities.TryAddSyntaxNode<ITypeMember, MemberDeclarationSyntax, TRDom>(list, member, makeDelegate);
+        }
+
+
         public void RemoveMember(ITypeMember member)
         {
             if (member.Parent == null)
@@ -62,7 +96,7 @@ namespace RoslynDom
             { RoslynDomUtilities.RemoveMemberFromParent(this, member); }
         }
 
-         public void AddOrMoveMember(ITypeMember member)
+        public void AddOrMoveMember(ITypeMember member)
         {
             RoslynDomUtilities.PrepMemberForAdd(this, member);
             _members.Add(member);

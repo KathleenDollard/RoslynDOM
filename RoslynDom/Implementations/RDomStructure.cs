@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -19,6 +20,21 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
+        public override StructDeclarationSyntax BuildSyntax()
+        {
+            var modifiers = BuildModfierSyntax();
+            var node = SyntaxFactory.StructDeclaration(Name)
+                            .WithModifiers(modifiers);
+
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(true), node, (n, l) => n.WithMembers(l));
+            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
+            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
+
+            return (StructDeclarationSyntax)RoslynUtilities.Format(node);
+        }
+
+ 
         public IEnumerable<IClass> Classes
         {
             get

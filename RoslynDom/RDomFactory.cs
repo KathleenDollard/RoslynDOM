@@ -64,7 +64,7 @@ namespace RoslynDom
         private static IUsing MakeUsingDirective(UsingDirectiveSyntax x)
         {
             var publicAnnotations = GetPublicAnnotations(x).ToArray();
-            return new RDomUsingDirective(x, publicAnnotations);
+            return new RDomUsing(x, publicAnnotations);
         }
 
         private static bool DoMember<T>(MemberDeclarationSyntax val,

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -19,7 +20,21 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
-         public IEnumerable<IReferencedType> AllImplementedInterfaces
+        public override InterfaceDeclarationSyntax BuildSyntax()
+        {
+            var modifiers = BuildModfierSyntax();
+            var node = SyntaxFactory.InterfaceDeclaration(Name)
+                            .WithModifiers(modifiers);
+
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(false), node, (n, l) => n.WithMembers(l));
+            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
+            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
+
+            return (InterfaceDeclarationSyntax)RoslynUtilities.Format(node);
+        }
+
+        public IEnumerable<IReferencedType> AllImplementedInterfaces
         {
             get
             {

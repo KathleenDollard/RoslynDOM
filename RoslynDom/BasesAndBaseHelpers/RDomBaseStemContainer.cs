@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -42,7 +43,7 @@ namespace RoslynDom
             {
                 //ordered in approx expectation of frequency
                 var rDomClass = member as RDomClass;
-                if (rDomClass != null) { AddOrMoveStemMember (new RDomClass(rDomClass)); }
+                if (rDomClass != null) { AddOrMoveStemMember(new RDomClass(rDomClass)); }
                 else
                 {
                     var rDomStructure = member as RDomStructure;
@@ -61,8 +62,8 @@ namespace RoslynDom
                                 if (rDomNamespace != null) { AddOrMoveStemMember(new RDomNamespace(rDomNamespace)); }
                                 else
                                 {
-                                    var rDomUsing = member as RDomUsingDirective;
-                                    if (rDomUsing != null) { AddOrMoveStemMember(new RDomUsingDirective(rDomUsing)); }
+                                    var rDomUsing = member as RDomUsing;
+                                    if (rDomUsing != null) { AddOrMoveStemMember(new RDomUsing(rDomUsing)); }
                                     else
                                     {
                                         throw new InvalidOperationException();
@@ -79,6 +80,49 @@ namespace RoslynDom
         {
             base.Initialize();
         }
+
+        protected SyntaxList<MemberDeclarationSyntax> BuildStemMembers()
+        {
+            var list = new List<MemberDeclarationSyntax>();
+            foreach (var member in StemMembers)
+            {
+                if (BuildStemMember(list, member)) { continue; }
+                if (member is RDomUsing) continue;
+                throw new InvalidOperationException();
+            }
+            return SyntaxFactory.List<SyntaxNode>(list);
+        }
+
+        protected virtual bool BuildStemMember(IList<MemberDeclarationSyntax> list, IStemMember member)
+        {
+            if (TryAddMemberSyntaxNode<RDomNamespace>(list, member, x => x.BuildSyntax())) { return true; }
+            if (TryAddMemberSyntaxNode<RDomClass>(list, member, x => x.BuildSyntax())) { return true; }
+            if (TryAddMemberSyntaxNode<RDomStructure>(list, member, x => x.BuildSyntax())) { return true; }
+            if (TryAddMemberSyntaxNode<RDomInterface>(list, member, x => x.BuildSyntax())) { return true; }
+            if (TryAddMemberSyntaxNode<RDomEnum>(list, member, x => x.BuildSyntax())) { return true; }
+            return false;
+        }
+
+        protected SyntaxList<UsingDirectiveSyntax> BuildUsings()
+        {
+            var list = new List<UsingDirectiveSyntax>();
+            if (Usings != null)
+            {
+                foreach (var member in Usings)
+                {
+                    if (RoslynUtilities.TryAddSyntaxNode<IStemMember, UsingDirectiveSyntax, RDomUsing>(list, member, x => x.BuildSyntax())) { continue; };
+                    throw new InvalidOperationException();
+                }
+            }
+            return SyntaxFactory.List<UsingDirectiveSyntax>(list);
+        }
+
+        protected bool TryAddMemberSyntaxNode<TRDom>(IList<MemberDeclarationSyntax> list, IStemMember member, Func<TRDom, MemberDeclarationSyntax> makeDelegate)
+             where TRDom : class
+        {
+            return RoslynUtilities.TryAddSyntaxNode<IStemMember, MemberDeclarationSyntax, TRDom>(list, member, makeDelegate);
+        }
+
 
         public string Namespace
         // Parent always works here - if its a namespace, we deliberately skip the current, otherwise, the current is never a namespace
@@ -103,23 +147,13 @@ namespace RoslynDom
         }
 
         public void ClearStemMembers()
-        { _members.Clear();  }
+        { _members.Clear(); }
 
         public IEnumerable<INamespace> AllChildNamespaces
-        {
-            get
-            {
-                return RoslynDomUtilities.GetAllChildNamespaces(this);
-            }
-        }
+        { get { return RoslynDomUtilities.GetAllChildNamespaces(this); } }
 
         public IEnumerable<INamespace> NonemptyNamespaces
-        {
-            get
-            {
-                return RoslynDomUtilities.GetNonEmptyNamespaces(this);
-            }
-        }
+        { get { return RoslynDomUtilities.GetNonEmptyNamespaces(this); } }
 
         public IEnumerable<IStemMember> StemMembers
         { get { return _members; } }
@@ -141,7 +175,7 @@ namespace RoslynDom
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Usings")]
         public IEnumerable<IUsing> Usings
-        { get { return StemMembers.OfType<IUsing>(); } }
+        { get { return StemMembers.OfType<IUsing>().ToList(); } }
 
         public IEnumerable<IType> Types
         { get { return StemMembers.OfType<IType>(); } }

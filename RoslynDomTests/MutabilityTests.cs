@@ -112,7 +112,7 @@ namespace RoslynDomTests
             Assert.IsFalse(class1.SameIntent(class2));
             Assert.AreEqual("Bar2", class2.Name);
             var newCode = class2.BuildSyntax().ToString();
-            Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode);
+            Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    private Int32 fooish;\r\n\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode);
         }
 
         [TestMethod, TestCategory(MutabilityCategory)]
@@ -213,7 +213,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod, TestCategory(MutabilityCategory)]
-        public void Can_copy_complex_root()
+        public void Can_copy_multi_member_root()
         {
             var csharpCode = @"
             using System;
@@ -228,7 +228,21 @@ namespace RoslynDomTests
             Assert.IsTrue(rDomRoot.SameIntent(rDomRoot2));
         }
 
-
+        [TestMethod, TestCategory(MutabilityCategory)]
+        public void Can_build_syntax_for_multi_member_root()
+        {
+            var csharpCode = @"
+            using System;
+            public class Bar{}           
+            public struct Bar2{}           
+            public enum Bar3{}           
+            public interface Bar4{}           
+            ";
+            var rDomRoot = RDomFactory.GetRootFromString(csharpCode) as RDomRoot;
+            var output = rDomRoot.BuildSyntax();
+            var expectedCode = "using System;\r\n\r\npublic class Bar\r\n{\r\n}\r\n\r\npublic struct Bar2\r\n{\r\n}\r\n\r\npublic enum Bar3\r\n{\r\n}\r\n\r\npublic interface Bar4\r\n{\r\n}";
+            Assert.AreEqual(expectedCode,output.ToString() );
+        }
         #endregion
     }
 }

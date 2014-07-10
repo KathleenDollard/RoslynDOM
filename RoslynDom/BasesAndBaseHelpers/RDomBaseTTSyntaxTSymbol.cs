@@ -57,7 +57,7 @@ namespace RoslynDom
         protected SyntaxList<AttributeListSyntax> BuildAttributeListSyntax()
         {
             var list = SyntaxFactory.List<AttributeListSyntax>();
-            if (_attributes.Any())
+            if (GetAttributes().Any())
             {
                 var attribList = SyntaxFactory.AttributeList();
                 var attributes = _attributes.Select(x => ((RDomAttribute)x).BuildSyntax());
@@ -78,13 +78,12 @@ namespace RoslynDom
             return list;
         }
 
-        protected BlockSyntax BuildStatementBlock()
+        protected BlockSyntax BuildStatementBlock(IEnumerable<IStatement> statements)
         {
-            var statements = new List<StatementSyntax>();
-            var thisAsStatementContainer = this as  IStatementContainer;
+            var statementSyntaxList = new List<StatementSyntax>();
 
-            //f (thisAsStatementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
-            var ret = SyntaxFactory.Block(statements);
+            //f (statementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
+            var ret = SyntaxFactory.Block(statementSyntaxList);
             return ret;
         }
 

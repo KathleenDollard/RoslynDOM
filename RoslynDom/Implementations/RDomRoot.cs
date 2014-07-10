@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -28,7 +29,17 @@ namespace RoslynDom
             Name = "Root";
         }
 
-         public bool HasSyntaxErrors
+        public override CompilationUnitSyntax BuildSyntax()
+        {
+            var node = SyntaxFactory.CompilationUnit();
+
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildUsings(), node, (n, l) => n.WithUsings(l));
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildStemMembers(), node, (n, l) => n.WithMembers (l));
+
+            return (CompilationUnitSyntax)RoslynUtilities.Format(node);
+        }
+
+        public bool HasSyntaxErrors
         {
             get
             {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -46,11 +47,29 @@ namespace RoslynDom
             IsStatic = Symbol.IsStatic;
         }
 
+        public override FieldDeclarationSyntax BuildSyntax()
+        {
+            var nameSyntax = SyntaxFactory.Identifier(Name);
+            var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
+            var modifiers = BuildModfierSyntax();
+            var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
+            var variableNode = SyntaxFactory.VariableDeclaration(returnType)
+               .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(nameSyntax)));
+            var node = SyntaxFactory.FieldDeclaration(variableNode )
+               .WithModifiers(modifiers);
+
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
+
+            return (FieldDeclarationSyntax)RoslynUtilities.Format(node);
+        }
+
         protected override bool CheckSameIntent(IField other, bool includePublicAnnotations)
         {
             if (!base.CheckSameIntent(other, includePublicAnnotations)) return false;
             if (AccessModifier != other.AccessModifier) return false;
-            if (ReturnType.QualifiedName  != other.ReturnType.QualifiedName ) return false;
+            if (ReturnType.QualifiedName != other.ReturnType.QualifiedName) return false;
             if (IsStatic != other.IsStatic) return false;
             return true;
         }
@@ -60,7 +79,7 @@ namespace RoslynDom
 
         public AccessModifier AccessModifier { get; set; }
 
-           public override IFieldSymbol TypedSymbol
+        public override IFieldSymbol TypedSymbol
         { get { return (IFieldSymbol)base.GetSymbol(_varSyntax); } }
 
         public IReferencedType ReturnType { get; set; }

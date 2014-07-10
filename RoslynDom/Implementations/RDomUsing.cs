@@ -1,12 +1,13 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomUsingDirective : RDomBase<IUsing, UsingDirectiveSyntax, ISymbol>, IUsing
+    public class RDomUsing : RDomBase<IUsing, UsingDirectiveSyntax, ISymbol>, IUsing
     {
-        internal RDomUsingDirective(
+        internal RDomUsing(
             UsingDirectiveSyntax rawItem,
             params PublicAnnotation[] publicAnnotations)
           : base(rawItem, publicAnnotations)
@@ -14,14 +15,22 @@ namespace RoslynDom
             Initialize();
         }
 
-        internal RDomUsingDirective(RDomUsingDirective oldRDom)
+        internal RDomUsing(RDomUsing oldRDom)
              : base(oldRDom)
         { }
 
         protected override void Initialize()
         {
             base.Initialize();
-           Name = TypedSyntax.Name.NameFrom(); 
+            Name = TypedSyntax.Name.NameFrom();
+        }
+
+        public override UsingDirectiveSyntax BuildSyntax()
+        {
+            var nameSyntax = SyntaxFactory.IdentifierName(Name);
+            var node = SyntaxFactory.UsingDirective(nameSyntax);
+
+            return (UsingDirectiveSyntax)RoslynUtilities.Format(node);
         }
 
         public StemMemberKind StemMemberKind

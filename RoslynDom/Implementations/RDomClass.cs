@@ -36,39 +36,27 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            BaseType =new  RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType);
+            BaseType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType);
             IsAbstract = Symbol.IsAbstract;
             IsSealed = Symbol.IsSealed;
             IsStatic = Symbol.IsStatic;
         }
 
-          public override ClassDeclarationSyntax BuildSyntax()
+        public override ClassDeclarationSyntax BuildSyntax()
         {
             var modifiers = BuildModfierSyntax();
-            //var typeParameters = BuildTypeParameterList();
-            //var constraintClauses = BuildConstraintClauses();
-            var members = BuildMembers();
-
             var node = SyntaxFactory.ClassDeclaration(Name)
-                            .WithModifiers(modifiers)
-                            .WithMembers(members);
-            var attributesLists = BuildAttributeListSyntax();
-            if (attributesLists.Any()) { node = node.WithAttributeLists(attributesLists); }
+                            .WithModifiers(modifiers);
+
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(true), node, (n, l) => n.WithMembers(l));
+            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
+            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
+
             return (ClassDeclarationSyntax)RoslynUtilities.Format(node);
         }
 
-        private SyntaxList<MemberDeclarationSyntax> BuildMembers()
-        {
-            var list = SyntaxFactory.List<MemberDeclarationSyntax>();
-            foreach (var member in Members)
-            {
-                var memberAsRDomMethod = member as RDomMethod;
-                if (memberAsRDomMethod != null)
-                { list = list.Add(memberAsRDomMethod.BuildSyntax()); }
-            }
-            return list;
-        }
-
+   
         public IEnumerable<IClass> Classes
         { get { return Members.OfType<IClass>(); } }
 
@@ -101,9 +89,9 @@ namespace RoslynDom
 
         public bool IsStatic { get; set; }
 
-          
-        public IReferencedType BaseType { get;set; }
-    
+
+        public IReferencedType BaseType { get; set; }
+
         public IEnumerable<IReferencedType> ImplementedInterfaces
         {
             get

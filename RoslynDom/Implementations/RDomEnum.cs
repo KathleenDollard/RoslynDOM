@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -35,7 +36,18 @@ namespace RoslynDom
             }
         }
 
-         public IEnumerable<IAttribute> Attributes
+        public override EnumDeclarationSyntax BuildSyntax()
+        {
+            var modifiers = BuildModfierSyntax();
+            var node = SyntaxFactory.EnumDeclaration(Name)
+                            .WithModifiers(modifiers);
+            // TODO: Support enum members
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
+
+            return (EnumDeclarationSyntax)RoslynUtilities.Format(node);
+        }
+
+        public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 
         public string Namespace

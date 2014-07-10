@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -10,6 +11,8 @@ namespace RoslynDom
     public class RDomProperty : RDomBase<IProperty, PropertyDeclarationSyntax, IPropertySymbol>, IProperty
     {
         private IList<IParameter> _parameters = new List<IParameter>();
+        private IList<IStatement> _getStatements = new List<IStatement>();
+        private IList<IStatement> _setStatements = new List<IStatement>();
 
         internal RDomProperty(
              PropertyDeclarationSyntax rawItem,
@@ -61,11 +64,40 @@ namespace RoslynDom
             CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
         }
 
-        public void RemoveParameter(IParameter parameter)
-        { _parameters.Remove(parameter); }
+        public override PropertyDeclarationSyntax BuildSyntax()
+        {
+            var nameSyntax = SyntaxFactory.Identifier(Name);
+            var returnType = ((RDomReferencedType)PropertyType).BuildSyntax();
+            var modifiers = BuildModfierSyntax();
+            var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
+                            .WithModifiers(modifiers);
 
-        public void AddParameter(IParameter parameter)
-        { _parameters.Add(parameter); }
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
+            node = RoslynUtilities.UpdateNodeIfItemNotNull (BuildAccessorList(), node, (n, item) => n.WithAccessorList (item));
+            //var parameters = BuildTypeParameterList();
+            //var typeParameters = BuildTypeParameterList();
+            //var constraintClauses = BuildConstraintClauses();
+
+            return (PropertyDeclarationSyntax)RoslynUtilities.Format(node);
+        }
+
+        private AccessorListSyntax  BuildAccessorList( )
+        {
+            var list = new List<AccessorDeclarationSyntax>();
+            if (CanGet)
+            {
+                var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration);
+                node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildStatementBlock(GetStatements), node, (n, item) => n.WithBody(item));
+                list.Add(node);
+            }
+            if (CanSet)
+            {
+                var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration);
+                node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildStatementBlock(SetStatements), node, (n, item) => n.WithBody(item));
+                list.Add(node);
+            }
+            return SyntaxFactory.AccessorList(SyntaxFactory.List<AccessorDeclarationSyntax>(list));
+        }
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
@@ -96,6 +128,12 @@ namespace RoslynDom
 
         public bool CanSet { get; set; }
 
+        public void RemoveParameter(IParameter parameter)
+        { _parameters.Remove(parameter); }
+
+        public void AddParameter(IParameter parameter)
+        { _parameters.Add(parameter); }
+
         /// <summary>
         /// 
         /// </summary>
@@ -109,6 +147,24 @@ namespace RoslynDom
         public IEnumerable<IParameter> Parameters
         // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
         { get { return _parameters; } }
+
+        public void RemoveGetStatement(IStatement statement)
+        { _getStatements.Remove(statement); }
+
+        public void AddGetStatement(IStatement statement)
+        { _getStatements.Add(statement); }
+
+        public IEnumerable<IStatement> GetStatements
+        { get { return _getStatements; } }
+
+        public void RemoveSetStatement(IStatement statement)
+        { _setStatements.Remove(statement); }
+
+        public void AddSetStatement(IStatement statement)
+        { _setStatements.Add(statement); }
+
+        public IEnumerable<IStatement> SetStatements
+        { get { return _setStatements; } }
 
         public MemberKind MemberKind
         { get { return MemberKind.Property; } }
