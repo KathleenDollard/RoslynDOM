@@ -26,7 +26,8 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var attributes = root.Classes.First().Attributes;
+            var class1 = root.Classes.First();
+            var attributes = class1.Attributes;
             Assert.AreEqual(1, attributes.Count());
             Assert.AreEqual("Serializable", attributes.First().Name);
         }

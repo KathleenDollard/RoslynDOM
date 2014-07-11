@@ -72,7 +72,10 @@
     <Compile Include="Implementations\RDomInterface.cs" />
     <Compile Include="Implementations\RDomInvalidTypeMember.cs" />
     <Compile Include="Implementations\RDomAccessor.cs" />
-    <Compile Include="Implementations\RDomStatement.cs" />
+    <Compile Include="StatementImplementations\RDomAssignmentStatement.cs" />
+    <Compile Include="StatementImplementations\RDomReturnStatemen.cs" />
+    <Compile Include="StatementImplementations\RDomDeclarationStatement.cs" />
+    <Compile Include="StatementImplementations\RDomStatement.cs" />
     <Compile Include="Implementations\RDomMethod.cs" />
     <Compile Include="Implementations\RDomNamespace.cs" />
     <Compile Include="Implementations\RDomParameter.cs" />
@@ -88,6 +91,9 @@
     <Compile Include="RDomFactory.cs" />
     <Compile Include="RoslynUtilities.cs" />
     <Compile Include="RoslynDomUtilities.cs" />
+    <Compile Include="StatementImplementations\RDomBaseBlock.cs" />
+    <Compile Include="StatementImplementations\RDomIfStatement.cs" />
+    <Compile Include="StatementImplementations\RDomBlockStatement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

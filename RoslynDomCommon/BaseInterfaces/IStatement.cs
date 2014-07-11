@@ -8,7 +8,6 @@ namespace RoslynDom.Common
 {
     public interface IStatement : IDom<IStatement>
     {
-        bool IsBlock { get; }
         StatementKind StatementKind { get; }
     }
 }

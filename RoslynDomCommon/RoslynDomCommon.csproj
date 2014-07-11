@@ -55,7 +55,8 @@
     <Compile Include="InterfacesForStatements\IAssignmentStatement.cs" />
     <Compile Include="InterfacesForStatements\IBlockStatement.cs" />
     <Compile Include="InterfacesForStatements\IArgument.cs" />
-    <Compile Include="InterfacesForStatements\IContinue.cs" />
+    <Compile Include="InterfacesForStatements\IEmptyStatement.cs" />
+    <Compile Include="InterfacesForStatements\IContinueStatement.cs" />
     <Compile Include="InterfacesForStatements\IBreakStatement.cs" />
     <Compile Include="InterfacesForStatements\ICondition.cs" />
     <Compile Include="InterfacesForStatements\IDeclarationStatement.cs" />
@@ -143,9 +144,7 @@
   <ItemGroup>
     <None Include="InterfaceCommonality.cd" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SameIntentInitial\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

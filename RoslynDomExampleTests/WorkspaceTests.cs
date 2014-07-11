@@ -14,7 +14,7 @@ namespace RoslynDomExampleTests
     public class WorkspaceTests
     {
         [TestMethod]
-        public void Open_solution()
+        public void Workspace_open_solution()
         {
             // Find the solution directory in this root. 
             // this test will break if there are multiple solutions
@@ -28,7 +28,7 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-        public void Open_project()
+        public void Workspace_open_project()
         {
             var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
 
@@ -41,7 +41,7 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-        public void Open_document()
+        public void Workspace_open_document()
         {
             var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
 

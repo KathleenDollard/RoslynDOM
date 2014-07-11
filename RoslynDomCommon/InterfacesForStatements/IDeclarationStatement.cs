@@ -2,11 +2,11 @@
 
 namespace RoslynDom.Common
 {
-    public interface IDeclarationStatement 
+    public interface IDeclarationStatement : IStatement
     {
-        string VarName { get; }
-        IExpression Expression { get; }
+        IExpression Initializer { get; }
         IReferencedType Type { get; }
-        bool ImplicitlyTyped { get; }
+        bool IsImplicitlyTyped { get; }
+        bool IsConst { get; }
     }
 }

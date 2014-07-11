@@ -13,7 +13,7 @@ namespace RoslynDomExampleTests
     public class RoslynDomLoad
     {
         [TestMethod]
-        public void Get_root_from_file_example()
+        public void Load_root_from_file_example()
         {
             IRoot root = RDomFactory.GetRootFromFile(@"..\..\TestFile.cs");
             Assert.IsNotNull(root);
@@ -21,7 +21,7 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-        public void Get_root_from_string_example()
+        public void Load_root_from_string_example()
         {
             var csharpCode = File.ReadAllText(@"..\..\TestFile.cs");
             IRoot root = RDomFactory.GetRootFromString(csharpCode);
@@ -30,7 +30,7 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-        public void Get_root_from_syntaxtree_example()
+        public void Load_root_from_syntaxtree_example()
         {
             var csharpCode = File.ReadAllText(@"..\..\TestFile.cs");
             var tree = CSharpSyntaxTree.ParseText(csharpCode);
@@ -40,7 +40,7 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-        public void Get_root_from_document_example()
+        public void Load_root_from_document_example()
         {
             var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
             var ws = MSBuildWorkspace.Create();

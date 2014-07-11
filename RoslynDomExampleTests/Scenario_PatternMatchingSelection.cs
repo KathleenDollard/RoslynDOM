@@ -66,9 +66,9 @@ namespace Namespace1
         {
                 // This method may go away in favor of public annotations as soon as I work that out
                 // I don't see this being used except as design time annotations
-                var classAttributeNames = from x in root.RootClasses
-                                          from a in x.Attributes
-                                          select a.Name;
+var classAttributeNames = from x in root.RootClasses
+                            from a in x.Attributes
+                            select a.Name;
                 return classAttributeNames;
         }
 

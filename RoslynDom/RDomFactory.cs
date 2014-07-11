@@ -87,6 +87,26 @@ namespace RoslynDom
             return (list.Count() > startCount);
         }
 
+        private static bool DoStatement<T>(StatementSyntax val,
+                Func<T, IStatement> doAction, out IStatement retValue)
+            where T : class
+        {
+            var item = val as T;
+            retValue = item != null ? doAction(item) : null;
+            return (retValue != null);
+        }
+
+        private static bool DoStatements<T>(StatementSyntax val,
+                Action<T, List<IStatement>> doAction, List<IStatement> list)
+            where T : class
+        {
+            var item = val as T;
+            if (item == null) return false;
+            var startCount = list.Count();
+            doAction(item, list);
+            return (list.Count() > startCount);
+        }
+
         /// <summary>
         /// Creates namespace and class
         /// </summary>
@@ -177,9 +197,109 @@ namespace RoslynDom
 
         private static IStatement MakeStatement(StatementSyntax rawStatement)
         {
-            var statements = ListUtilities.MakeList(rawStatement, x => GetStatements(x), x => MakeStatement(x));
-            var publicAnnotations = GetPublicAnnotations(rawStatement).ToArray();
-            return new RDomStatement(rawStatement, statements, publicAnnotations);
+            IStatement ret;
+            // The action happens in DoMember. I felt it read better with else than negation and it made copying new lines easier
+            if (DoStatement<BlockSyntax>(rawStatement, MakeBlockStatement, out ret)) { }
+            else if (DoStatement<IfStatementSyntax>(rawStatement, MakeIfStatement, out ret)) { }
+            return ret as IStatement;
+
+            //ForEach,
+            //For,
+            //Empty,
+            //Return,
+            //Declaration,
+            //Try,
+
+            ////While,   variation of Do
+            ////Else,    characteristic of If
+            ////Using,   characteristic of Block
+            ////Catch,   characteristic of Try
+            ////Switch,   // can this be handled as a special case of if?
+            //Break,    // probably have to support
+            //Continue, // probably have to support
+            //Throw,    // probably have to support
+
+            ////Expression statements, // break this appart into two kinds
+            //Invocation,
+            //Assignment,
+
+            //Special // (platform or lanuguage specific)
+            ////Checked (block)
+            ////Lock,
+            ////Yield, Split into YieldBreak and YieldReturn (expression)
+
+            // Planning to avoid unless someone has a scenario
+            //Unsafe,
+            //Fixed,
+            //Goto,
+            //Labeled,
+        }
+
+        private static IBlockStatement MakeBlockStatement(BlockSyntax rawBlock)
+        {
+            var publicAnnotations = GetPublicAnnotations(rawBlock).ToArray();
+            var statements = ListUtilities.MakeList(rawBlock, x => x.Statements, x => MakeStatement(x));
+            return new RDomBlockStatement(rawBlock, statements, publicAnnotations);
+        }
+
+        private static IIfStatement MakeIfStatement(IfStatementSyntax rawIf)
+        {
+            var publicAnnotations = GetPublicAnnotations(rawIf).ToArray();
+            var hasBlock = false;
+            var statements = new List<IStatement>();
+            var block = rawIf.Statement as BlockSyntax;
+            if (block != null)
+            {
+                hasBlock = true;
+                statements.AddRange(ListUtilities.MakeList(rawIf, x => block.Statements, x => MakeStatement(x)));
+            }
+            else
+            { statements.Add(MakeStatement(rawIf.Statement)); }
+            IEnumerable<IIfStatement> elses = null;
+            if (rawIf.Else != null)
+            { elses = MakeElses(rawIf.Else.Statement); }
+            return new RDomIfStatement(rawIf, hasBlock, statements, elses, publicAnnotations);
+        }
+
+        private static IEnumerable<IIfStatement> MakeElses(StatementSyntax rawElseStatement)
+        {
+            var publicAnnotations = GetPublicAnnotations(rawElseStatement).ToArray();
+            var elses = new List<IIfStatement>();
+            var elseStatement = rawElseStatement as IfStatementSyntax;
+            if (elseStatement != null)
+            {
+                elses.Add(MakeIfStatement(elseStatement));
+                elses.AddRange(MakeElses(elseStatement.Else.Statement));
+            }
+            else
+            {
+                var statements = new List<IStatement>();
+                bool hasBlock = false;
+                var blockElseStatement = rawElseStatement as BlockSyntax;
+                if (blockElseStatement != null)
+                {
+                    hasBlock = true;
+                    statements.AddRange(ListUtilities.MakeList(rawElseStatement, x => blockElseStatement.Statements, x => MakeStatement(x)));
+                }
+                else
+                { statements.Add(MakeStatement(rawElseStatement)); }
+                elses.Add(new RDomIfStatement(null, hasBlock, statements, null, publicAnnotations));
+
+            }
+            return elses;
+        }
+
+        private static IEnumerable<IDeclarationStatement> MakeDeclarationStatement(LocalDeclarationStatementSyntax  rawDeclaration)
+        {
+            var list = new List<IDeclarationStatement>();
+            var declaration = rawDeclaration.Declaration;
+            var variables = declaration.Variables.OfType<VariableDeclaratorSyntax>();
+            foreach (var variable in variables)
+            {
+                var publicAnnotations = GetPublicAnnotations(rawDeclaration).ToArray();
+                list.Add(new RDomDeclarationStatement(rawDeclaration, declaration, variable, publicAnnotations));
+            }
+            return list;
         }
 
         private static IEnumerable<StatementSyntax> GetStatements(MethodDeclarationSyntax rawMethod)
@@ -188,47 +308,55 @@ namespace RoslynDom
             return rawMethod.Body.Statements;
         }
 
+
         private static IEnumerable<StatementSyntax> GetStatements(StatementSyntax rawStatement)
         {
             var list = new List<StatementSyntax>();
-
-            // These have nested block syntax 
+            // This handles method and property
             if (LoadStatementListFromList<BlockSyntax>(rawStatement, x => x.Statements, list)) { return list; }
-            if (LoadStatementListFromList<UnsafeStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
-            if (LoadStatementListFromList<CheckedStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
-            if (LoadStatementListFromList<TryStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
 
-            // These have a statement which often, but not always, holds a nested block
-            if (LoadStatementListFromItem<DoStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
-            if (LoadStatementListFromItem<ForEachStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
-            if (LoadStatementListFromItem<ForStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
-            if (LoadStatementListFromItem<LockStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
-            if (LoadStatementListFromItem<WhileStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
-            if (LoadStatementListFromItem<UsingStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
-            if (LoadStatementListFromItem<IfStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; } // if has a second block for else
+            //// These have nested block syntax 
+            //if (LoadStatementListFromList<BlockSyntax>(rawStatement, x => x.Statements, list)) { return list; }
+            //if (LoadStatementListFromList<CheckedStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
 
-            // These do not have nested blocksyntax or statements
-            // BreakStatementSyntax     
-            // ContinueStatementSyntax  
-            // EmptyStatementSyntax     
-            // ExpressionStatementSyntax
-            // LocalDeclarationStatement
-            // ReturnStatementSyntax    
-            // ThrowStatementSyntax     
-            // YieldStatementSyntax
+            //// These have a statement which often, but not always, holds a nested block
+            //if (LoadStatementListFromItem<DoStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            //if (LoadStatementListFromItem<ForEachStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            //if (LoadStatementListFromItem<ForStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            //if (LoadStatementListFromItem<LockStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            //if (LoadStatementListFromItem<WhileStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
+            //if (LoadStatementListFromItem<UsingStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; }
 
-            // This is a very weird special case
-            // SwitchStatementSyntax
+            //// These have more than one statement block
+            //if (LoadStatementListFromItem<IfStatementSyntax>(rawStatement, x => x.Statement, list)) { return list; } // if has a second block for else
+            //if (LoadStatementListFromList<TryStatementSyntax>(rawStatement, x => x.Block.Statements, list)) { return list; }
 
-            // These are items I currently do not plan to support - although need to confirm that switch doesn't use labeled statements
-            // FixedStatementSyntax     
-            // GotoStatementSyntax      
-            // LabeledStatementSyntax   
+            //// These do not have nested blocksyntax or statements
+            //// BreakStatementSyntax     
+            //// ContinueStatementSyntax  
+            //// EmptyStatementSyntax     
+            //// ExpressionStatementSyntax
+            //// LocalDeclarationStatement
+            //// ReturnStatementSyntax    
+            //// ThrowStatementSyntax     
+            //// YieldStatementSyntax
+
+            //// This is a very weird special case
+            //// SwitchStatementSyntax
+
+            //// These are items I currently do not plan to support - although need to confirm that switch doesn't use labeled statements
+            //// FixedStatementSyntax     
+            //// GotoStatementSyntax      
+            //// LabeledStatementSyntax   
+            //// UnsafeStatementSyntax
 
             return list;
         }
 
-        private static bool LoadStatementListFromList<T>(StatementSyntax rawStatement, Func<T, IEnumerable<StatementSyntax>> getList, List<StatementSyntax> list)
+        private static bool LoadStatementListFromList<T>(
+                StatementSyntax rawStatement,
+                Func<T, IEnumerable<StatementSyntax>> getList,
+                List<StatementSyntax> list)
             where T : StatementSyntax
         {
             var typed = rawStatement as T;
@@ -256,7 +384,7 @@ namespace RoslynDom
             return new RDomProperty(rawProperty, parms, getAccessor, setAccessor, publicAnnotations);
         }
 
-        private static IAccessor MakeAccessor(AccessorDeclarationSyntax  rawAccessor)
+        private static IAccessor MakeAccessor(AccessorDeclarationSyntax rawAccessor)
         {
             if (rawAccessor == null) return null;
             var statements = ListUtilities.MakeList(rawAccessor, x => GetStatements(rawAccessor.Body), x => MakeStatement(x));

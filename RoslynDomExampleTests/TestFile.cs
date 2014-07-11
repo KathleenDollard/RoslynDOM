@@ -1,12 +1,13 @@
-using System.Diagnostics.Tracing;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Tracing;
 using System.Linq;
 
 namespace testing
 {
-    namespace Namespace3
+    namespace Namespace3.testing
     {
-        public class FooClass
+        public class FooClass1
         { }
     }
 }
@@ -17,6 +18,9 @@ namespace testing.Namespace1
 
 namespace Namespace2
 {
+    // Yes these attributes are a bit dumb on this class, but I didn't want extra dependencies
+    [ExcludeFromCodeCoverage]
+    [EventSource(Name ="George")]
     public class FooClass
     {
         public string FooField = "Bar";

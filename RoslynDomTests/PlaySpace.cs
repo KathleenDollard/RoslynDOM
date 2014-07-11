@@ -5,13 +5,45 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 
+namespace RoslynDom
+{
+    namespace Common.Test
+    {
+                public class Foo { }
+    }
+}
+
+
+namespace RoslynDom
+{
+    namespace Common
+    {
+        namespace Test
+        {
+          //  public class Foo { }
+        }
+    }
+}
+
+namespace RoslynDom.Common.Test
+{
+    //public class Foo { }
+}
+
 namespace RoslynDomTests
 {
+
     public class SomeAttr : Attribute { }
 
-    struct Foo<T> 
-    { }
+    public class SomeAttr2 : Attribute { }
 
+    [SomeAttr, SomeAttr2]
+    struct Foo<T>
+    {
+        public void FooBar()
+        {
+        }
+    }
 
     class PlaySpace
     {
@@ -24,7 +56,7 @@ namespace RoslynDomTests
 
         public string Bar
         {
-            [SomeAttr() ]
+            [SomeAttr()]
             get
             {
                 return "";
@@ -58,14 +90,14 @@ namespace RoslynDomTests
     {
         public static void Foo()
         {
-#region
+            #region 
             try
             { }
             catch (Exception ex)
             { }
             finally
             { }
-#endregion
+            #endregion
         }
     }
 }
