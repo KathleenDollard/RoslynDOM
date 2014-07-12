@@ -8,13 +8,24 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public interface IRDomFactory<TKind>
+    public interface IRDomFactory<T, TSyntax>
+    {
+        bool CanCreateFrom(SyntaxNode syntaxNode);
+        T CreateFrom(SyntaxNode syntaxNode);
+        FactoryPriority Priority { get; }
+    }
+
+    public interface IRDomFactory<TKind> :IRDomFactory 
     {
         bool CanCreateFrom(SyntaxNode syntaxNode);
         TKind CreateFrom(SyntaxNode syntaxNode);
         FactoryPriority Priority { get; }
     }
 
+    public interface IRDomFactory
+    {
+ 
+    }
     //public class RDomFactory<TSyntax, TCreate, TFactory>
     //    (CandidatePriority candidatePriority, CandidateKind candidateKind)
     //    where TFactory : IRDomStatementFactory< TCreate >

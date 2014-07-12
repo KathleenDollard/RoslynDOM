@@ -8,12 +8,33 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomReturnStatementFactory : IRDomFactory<IStatement>
+    {
+        private PublicAnnotationFactory _publicAnnotationFactory;
+
+        public RDomReturnStatementFactory(PublicAnnotationFactory publicAnnotationFactory)
+        {
+            _publicAnnotationFactory = publicAnnotationFactory;
+        }
+
+        public FactoryPriority Priority
+        { get { return FactoryPriority.Normal; } }
+
+        public bool CanCreateFrom(SyntaxNode syntaxNode)
+        {
+            return (syntaxNode is LocalDeclarationStatementSyntax);
+        }
+
+        public IStatement CreateFrom(SyntaxNode syntaxNode)
+        {
+            var publicAnnotations = _publicAnnotationFactory.CreateFrom(syntaxNode);
+            return new RDomDeclarationStatement((LocalDeclarationStatementSyntax)syntaxNode, publicAnnotations);
+        }
+    }
+
     public class RDomReturnStatement : RDomStatement, IReturnStatement
     {
-        private VariableDeclarationSyntax _variableSyntax;
-        private VariableDeclaratorSyntax _declaratorSyntax;
-
-  
+ 
         internal RDomReturnStatement(
               ReturnStatementSyntax  rawReturn,
               params PublicAnnotation[] publicAnnotations)
