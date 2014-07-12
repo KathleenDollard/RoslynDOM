@@ -20,7 +20,8 @@ namespace RoslynDom.Common
             foreach (var rawItem in newItems)
             {
                 var items = makeNewItems(rawItem);
-                ret.AddRange(items.Where(x=>x!=null));
+                if (items != null)
+                { ret.AddRange(items.Where(x => x != null)); }
             }
             return ret;
         }

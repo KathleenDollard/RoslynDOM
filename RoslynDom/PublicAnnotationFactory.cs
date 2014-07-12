@@ -6,12 +6,22 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Practices.Unity;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class PublicAnnotationFactory : IRDomFactory<IEnumerable<PublicAnnotation>>
+    public class RDomPublicAnnotationFactoryHelper : RDomFactoryHelper<PublicAnnotation>
     {
+        public RDomPublicAnnotationFactoryHelper(IUnityContainer container) : base(container)
+        { }
+    }
+
+    public class PublicAnnotationFactory :  IPublicAnnotationFactory
+    {
+        public PublicAnnotationFactory(RDomFactoryHelper helper)
+        { }
+
         public FactoryPriority Priority
         { get { return FactoryPriority.Normal; } }
 

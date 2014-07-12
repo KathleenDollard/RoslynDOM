@@ -37,11 +37,38 @@ namespace RoslynDom
         public static IRoot GetRootFromSyntaxTree(SyntaxTree tree)
         {
             var container = (new RDomFactoryBootstrapper()).ConfigureContainer();
-            var statementFactories = container.ResolveAll<IRDomFactory>();
-            var root = RDomFactory2.MakeRoot(tree);
+            var publicAnnotationFactory = container.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
+            //var stemMemberFactories = container.ResolveAll<IRDomFactory<IStemMember>>();
+            //var memberFactories = container.ResolveAll<IRDomFactory<IMember>>();
+            var statementFactories = container.ResolveAll<IRDomFactory<IStatement>>();
+            var statementHelper = container.Resolve<RDomStatementFactoryHelper>();
+            var root = RDomFactory2.MakeRoot(tree, container);
             return root;
         }
 
+    }
+
+    public class RDomFactoryHelper
+    { }
+        public class RDomFactoryHelper<T> : RDomFactoryHelper 
+    {
+        private IEnumerable<IRDomFactory<T>> factories;
+        private IPublicAnnotationFactory publicAnnotationFactory;
+
+        public RDomFactoryHelper(IUnityContainer container)
+        {
+            publicAnnotationFactory = container.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
+            factories = container
+                .ResolveAll<IRDomFactory<T>>();
+        }
+
+        public IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode)
+        {
+            return publicAnnotationFactory.CreateFrom(syntaxNode);
+        }
+
+        protected IEnumerable<IRDomFactory<T>> Factories
+        {  get { return factories; } }
     }
 
 }

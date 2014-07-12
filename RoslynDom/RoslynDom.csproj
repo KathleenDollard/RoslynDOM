@@ -88,7 +88,7 @@
     <Compile Include="RDomFactoryFactory.cs" />
     <Compile Include="StatementImplementations\RDomAssignmentStatement.cs" />
     <Compile Include="IRDomFactory.cs" />
-    <Compile Include="StatementImplementations\RDomReturnStatemen.cs" />
+    <Compile Include="StatementImplementations\RDomReturnStatement.cs" />
     <Compile Include="StatementImplementations\RDomDeclarationStatement.cs" />
     <Compile Include="StatementImplementations\RDomStatement.cs" />
     <Compile Include="Implementations\RDomMethod.cs" />

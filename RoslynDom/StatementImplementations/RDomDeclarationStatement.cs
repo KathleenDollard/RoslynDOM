@@ -4,32 +4,17 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Practices.Unity;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomDeclarationStatementFactory : IRDomFactory<IStatement>
+    public class RDomDeclarationStatementFactory
+        : RDomStatementFactory<RDomDeclarationStatement, LocalDeclarationStatementSyntax>
     {
-        private PublicAnnotationFactory _publicAnnotationFactory;
-
-        public RDomDeclarationStatementFactory(PublicAnnotationFactory publicAnnotationFactory)
-        {
-            _publicAnnotationFactory = publicAnnotationFactory;
-        }
-
-        public FactoryPriority Priority
-        { get { return FactoryPriority.Normal; } }
-
-        public bool CanCreateFrom(SyntaxNode syntaxNode)
-        {
-            return (syntaxNode is LocalDeclarationStatementSyntax);
-        }
-
-        public IStatement CreateFrom(SyntaxNode syntaxNode)
-        {
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(syntaxNode); 
-            return new RDomDeclarationStatement((LocalDeclarationStatementSyntax)syntaxNode, publicAnnotations );
-        }
+        public RDomDeclarationStatementFactory(RDomFactoryHelper helper)
+            : base( helper)
+        { }
     }
 
     public class RDomDeclarationStatement : RDomStatement, IDeclarationStatement

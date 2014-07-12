@@ -1,35 +1,21 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Practices.Unity;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomReturnStatementFactory : IRDomFactory<IStatement>
+    public class RDomReturnStatementFactory
+                : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>
     {
-        private PublicAnnotationFactory _publicAnnotationFactory;
-
-        public RDomReturnStatementFactory(PublicAnnotationFactory publicAnnotationFactory)
-        {
-            _publicAnnotationFactory = publicAnnotationFactory;
-        }
-
-        public FactoryPriority Priority
-        { get { return FactoryPriority.Normal; } }
-
-        public bool CanCreateFrom(SyntaxNode syntaxNode)
-        {
-            return (syntaxNode is LocalDeclarationStatementSyntax);
-        }
-
-        public IStatement CreateFrom(SyntaxNode syntaxNode)
-        {
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(syntaxNode);
-            return new RDomDeclarationStatement((LocalDeclarationStatementSyntax)syntaxNode, publicAnnotations);
-        }
+        public RDomReturnStatementFactory( RDomFactoryHelper  helper)
+            : base( helper)
+        { }
     }
 
     public class RDomReturnStatement : RDomStatement, IReturnStatement
@@ -37,7 +23,7 @@ namespace RoslynDom
  
         internal RDomReturnStatement(
               ReturnStatementSyntax  rawReturn,
-              params PublicAnnotation[] publicAnnotations)
+              IEnumerable<PublicAnnotation> publicAnnotations)
             : base(rawReturn, StatementKind.Return, publicAnnotations)
         {
             Initialize();

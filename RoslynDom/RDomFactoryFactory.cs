@@ -30,14 +30,14 @@ namespace RoslynDom
         //    _factories = factories;
         //}
 
-        public TKind GetStatement(SyntaxNode syntax)
-        {
-            var candidates = _factories
-                                .Where(x => x.CanCreateFrom(syntax))
-                                .OrderBy(x => x.Priority);
-            if (!candidates.Any()) return null;
-            return candidates.First().CreateFrom(syntax);
-        }
+        //public TKind GetStatement(SyntaxNode syntax)
+        //{
+        //    var candidates = _factories
+        //                        .Where(x => x.CanCreateFrom(syntax))
+        //                        .OrderBy(x => x.Priority);
+        //    if (!candidates.Any()) return null;
+        //    return candidates.First().CreateFrom(syntax);
+        //}
     }
 
 }
