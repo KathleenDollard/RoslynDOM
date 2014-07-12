@@ -7,42 +7,50 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseBlock : RDomStatement 
-    {
-        private IList<IStatement> _statements = new List<IStatement>();
+    //public abstract class RDomBaseBlock : RDomBase<IStatement, ReturnStatementSyntax, ISymbol>
+    //{
+    //    private IList<IStatement> _statements = new List<IStatement>();
 
-        internal RDomBaseBlock(
-            StatementSyntax rawItem,
-            IEnumerable<IStatement> statements,
-            StatementKind statementKind,
-            params PublicAnnotation[] publicAnnotations)
-          : base(rawItem, statementKind, publicAnnotations)
-        {
-            foreach (var statement in statements)
-            { AddOrMoveStatement(statement); }
-        }
+    //    internal RDomBaseBlock(
+    //          StatementSyntax rawItem,
+    //          StatementKind statementKind,
+    //          IEnumerable<PublicAnnotation> publicAnnotations)
+    //        : base(rawItem, statementKind, publicAnnotations)
+    //    {
+           
+    //    }
+    //    internal RDomBaseBlock(
+    //        StatementSyntax rawItem,
+    //        IEnumerable<IStatement> statements,
+    //        StatementKind statementKind,
+    //          IEnumerable<PublicAnnotation> publicAnnotations)
+    //      : base(rawItem, statementKind, publicAnnotations)
+    //    {
+    //        foreach (var statement in statements)
+    //        { AddOrMoveStatement(statement); }
+    //    }
 
-        internal RDomBaseBlock(RDomBaseBlock oldRDom)
-             : base(oldRDom)
-        {
-            var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-            foreach (var statement in newStatements)
-            { AddOrMoveStatement(statement); }
-        }
+    //    internal RDomBaseBlock(RDomBaseBlock oldRDom)
+    //         : base(oldRDom)
+    //    {
+    //        var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
+    //        foreach (var statement in newStatements)
+    //        { AddOrMoveStatement(statement); }
+    //    }
 
-        public override StatementSyntax BuildSyntax()
-        {
-            return null;
-        }
+    //    public override StatementSyntax BuildSyntax()
+    //    {
+    //        return null;
+    //    }
 
-        public void RemoveStatement(IStatement statement)
-        { _statements.Remove(statement); }
+    //    public void RemoveStatement(IStatement statement)
+    //    { _statements.Remove(statement); }
 
-        public void AddOrMoveStatement(IStatement statement)
-        { _statements.Add(statement); }
+    //    public void AddOrMoveStatement(IStatement statement)
+    //    { _statements.Add(statement); }
 
-        public IEnumerable<IStatement> Statements
-        { get { return _statements; } }
+    //    public IEnumerable<IStatement> Statements
+    //    { get { return _statements; } }
 
-    }
+    //}
 }

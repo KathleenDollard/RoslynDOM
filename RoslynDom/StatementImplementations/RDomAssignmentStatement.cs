@@ -8,7 +8,15 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomAssignmentStatement : RDomStatement, IAssignmentStatement
+    public class RDomAssignmentStatementFactory
+         : RDomStatementFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
+    {
+        public RDomAssignmentStatementFactory(RDomFactoryHelper helper)
+            : base(helper)
+        { }
+    }
+
+    public class RDomAssignmentStatement : RDomBase<IAssignmentStatement, ExpressionStatementSyntax, ISymbol>, IAssignmentStatement
     {
         private VariableDeclarationSyntax _variableSyntax;
         private VariableDeclaratorSyntax _declaratorSyntax;
@@ -16,8 +24,8 @@ namespace RoslynDom
  
         internal RDomAssignmentStatement(
               ExpressionStatementSyntax rawExpression,
-              params PublicAnnotation[] publicAnnotations)
-            : base(rawExpression, StatementKind.Assignment, publicAnnotations)
+              IEnumerable<PublicAnnotation> publicAnnotations)
+            : base(rawExpression,  publicAnnotations)
         {
             Initialize();
         }
@@ -31,7 +39,7 @@ namespace RoslynDom
             base.Initialize();
         }
 
-        public override StatementSyntax BuildSyntax()
+        public override ExpressionStatementSyntax BuildSyntax()
         {
             return null;
         }

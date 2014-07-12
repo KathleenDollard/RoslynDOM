@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IExpression
+    public interface IExpression : IDom<IExpression>
     {
         string Expression { get; } // at present this would be a rathole, particularly between languages
     }

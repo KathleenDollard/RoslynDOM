@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IStatement : IDom<IStatement>
+    public interface IStatement 
     {
-        StatementKind StatementKind { get; }
     }
 }

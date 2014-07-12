@@ -57,36 +57,29 @@ namespace RoslynDom
         }
     }
 
-    public class RDomStatement : RDomBase<IStatement, StatementSyntax, ISymbol>, IStatement
-    {
+    //public class RDomStatement : RDomBase<IStatement, StatementSyntax, ISymbol>, IStatement
+    //{
 
-        internal RDomStatement(
-            StatementSyntax rawItem,
-            StatementKind statementKind,
-            params PublicAnnotation[] publicAnnotations)
-          : base(rawItem, publicAnnotations)
-        { StatementKind = statementKind; }
+    //       internal RDomStatement(
+    //         StatementSyntax rawItem,
+    //         StatementKind statementKind,
+    //         IEnumerable<PublicAnnotation> publicAnnotations)
+    //       : base(rawItem, publicAnnotations)
+    //    { StatementKind = statementKind; }
 
-        internal RDomStatement(
-             StatementSyntax rawItem,
-             StatementKind statementKind,
-             IEnumerable<PublicAnnotation> publicAnnotations)
-           : base(rawItem, publicAnnotations)
-        { StatementKind = statementKind; }
+    //    internal RDomStatement(RDomStatement oldRDom)
+    //         : base(oldRDom)
+    //    {
+    //        StatementKind = oldRDom.StatementKind;
+    //    }
 
-        internal RDomStatement(RDomStatement oldRDom)
-             : base(oldRDom)
-        {
-            StatementKind = oldRDom.StatementKind;
-        }
+    //    public override StatementSyntax BuildSyntax()
+    //    {
+    //        return TypedSyntax;
+    //    }
 
-        public override StatementSyntax BuildSyntax()
-        {
-            return TypedSyntax;
-        }
-
-        public StatementKind StatementKind { get; set; }
+    //    public StatementKind StatementKind { get; set; }
 
 
-    }
+    //}
 }

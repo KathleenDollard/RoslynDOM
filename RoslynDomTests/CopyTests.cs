@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
+using RoslynDom.Common;
 
 namespace RoslynDomTests
 {
@@ -92,9 +93,10 @@ namespace RoslynDomTests
             var newMethod = method.Copy();
             Assert.IsNotNull(newMethod);
             Assert.IsTrue(newMethod.SameIntent(newMethod));
-            var rDomStatement = newMethod.Statements.First() as RDomStatement;
+            var rDomStatement = newMethod.Statements.First() as IStatement;
             // TODO: Include BuildSyntax in test
             Assert.IsNotNull( rDomStatement);
+            Assert.Inconclusive();
            // Assert.AreEqual(@"var x = "", "";", rDomStatement.BuildSyntax().ToString());
         }
 

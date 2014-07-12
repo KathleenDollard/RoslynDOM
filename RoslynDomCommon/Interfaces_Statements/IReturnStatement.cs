@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface IReturnStatement : IStatement
+    public interface IReturnStatement : IStatement, IDom<IReturnStatement>
     {
         IExpression Return { get; }
     }

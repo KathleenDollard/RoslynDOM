@@ -88,7 +88,10 @@ namespace RoslynDom
         protected BlockSyntax BuildStatementBlock(IEnumerable<IStatement> statements)
         {
             var statementSyntaxList = new List<StatementSyntax>();
-
+            foreach(var statement in statements)
+            {
+                //statementSyntaxList.Add(statement.BuildSyntax());
+            }
             //f (statementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
             var ret = SyntaxFactory.Block(statementSyntaxList);
             return ret;

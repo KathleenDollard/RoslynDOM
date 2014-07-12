@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IBlockStatement : IStatement
+    public interface IBlockStatement : IStatement,  IDom<IBlockStatement>
     {
         IEnumerable<IStatement> Statements { get; }
     }

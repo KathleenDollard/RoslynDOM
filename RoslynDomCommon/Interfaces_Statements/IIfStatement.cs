@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IIfStatement : IStatement
+    public interface IIfStatement : IStatement, IDom<IIfStatement >
     {
         ICondition Condition { get; }
         IEnumerable<IStatement> Statements { get; }

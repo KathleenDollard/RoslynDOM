@@ -15,12 +15,10 @@ namespace RoslynDom
     {
         private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
-        protected RDomBase(params PublicAnnotation[] publicAnnotations)
-        {
-            _publicAnnotations.Add(publicAnnotations);
-        }
+        protected RDomBase()
+        { }
 
-        protected RDomBase(IEnumerable< PublicAnnotation> publicAnnotations)
+        protected RDomBase(IEnumerable<PublicAnnotation> publicAnnotations)
         {
             _publicAnnotations.Add(publicAnnotations);
         }

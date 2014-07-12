@@ -8,28 +8,28 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomIfStatement : RDomBaseBlock, IIfStatement
+   public class RDomIfStatementFactory
+        : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
+    {
+        public RDomIfStatementFactory(RDomFactoryHelper helper)
+            : base( helper)
+        { }
+    }
+
+    public class RDomIfStatement : RDomBase<IIfStatement, IfStatementSyntax, ISymbol>, IIfStatement
     {
         private IList<IIfStatement> _elses = new List<IIfStatement>();
+            private IList<IStatement> _statements = new List<IStatement>();
 
         internal RDomIfStatement(
-            IfStatementSyntax rawItem,
-            bool hasBlock,
-            IEnumerable<IStatement> statements,
-            IEnumerable<IIfStatement> elses,
-            params PublicAnnotation[] publicAnnotations)
-          : base(rawItem, statements, StatementKind.If, publicAnnotations)
+             IfStatementSyntax rawItem,
+               IEnumerable<PublicAnnotation> publicAnnotations)
+           : base(rawItem,  publicAnnotations)
         {
-            HasBlock = hasBlock;
-            if (elses != null)
-            {
-                foreach (var elseItem in elses)
-                { AddOrMoveElse(elseItem); }
-            }
-            Initialize();
+           
         }
 
-        internal RDomIfStatement(RDomIfStatement oldRDom)
+          internal RDomIfStatement(RDomIfStatement oldRDom)
              : base(oldRDom)
         {
             var newElses = RoslynDomUtilities.CopyMembers(oldRDom._elses);
@@ -40,9 +40,15 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
+            //HasBlock = hasBlock;
+            //if (elses != null)
+            //{
+            //    foreach (var elseItem in elses)
+            //    { AddOrMoveElse(elseItem); }
+            //}
         }
 
-        public override StatementSyntax BuildSyntax()
+        public override IfStatementSyntax BuildSyntax()
         {
             // TODO: Current work KAD
             //var nameSyntax = SyntaxFactory.Identifier(Name);
@@ -78,5 +84,14 @@ namespace RoslynDom
         public IEnumerable<IIfStatement> Elses
         { get { return _elses; } }
 
+
+        public void RemoveStatement(IStatement statement)
+        { _statements.Remove(statement); }
+
+        public void AddOrMoveStatement(IStatement statement)
+        { _statements.Add(statement); }
+
+        public IEnumerable<IStatement> Statements
+        { get { return _statements; } }
     }
 }

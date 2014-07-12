@@ -7,18 +7,27 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomBlockStatement : RDomBaseBlock, IBlockStatement
+   public class RDomBlockStatementFactory
+        : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
     {
+        public RDomBlockStatementFactory(RDomFactoryHelper helper)
+            : base( helper)
+        { }
+    }
+
+    public class RDomBlockStatement : RDomBase<IBlockStatement, BlockSyntax, ISymbol>, IBlockStatement
+    {
+        private IList<IStatement> _statements = new List<IStatement>();
 
         internal RDomBlockStatement(
             BlockSyntax rawItem,
-            IEnumerable<IStatement> statements,
-            params PublicAnnotation[] publicAnnotations)
-          : base(rawItem, statements, StatementKind.Block, publicAnnotations)
+              IEnumerable<PublicAnnotation> publicAnnotations)
+          : base(rawItem,   publicAnnotations)
         {
             Initialize();
         }
 
+     
         internal RDomBlockStatement(RDomBlockStatement oldRDom)
              : base(oldRDom)
         { }
@@ -28,10 +37,19 @@ namespace RoslynDom
             base.Initialize();
         }
 
-        public override StatementSyntax BuildSyntax()
+        public override BlockSyntax BuildSyntax()
         {
             return null;
         }
 
+
+        public void RemoveStatement(IStatement statement)
+        { _statements.Remove(statement); }
+
+        public void AddOrMoveStatement(IStatement statement)
+        { _statements.Add(statement); }
+
+        public IEnumerable<IStatement> Statements
+        { get { return _statements; } }
     }
 }
