@@ -17,6 +17,10 @@ namespace RoslynDom
            : base(publicAnnotations)
         { }
 
+        protected RDomBase(IEnumerable<PublicAnnotation> publicAnnotations)
+            : base(publicAnnotations)
+        { }
+
         protected RDomBase(T oldRDom)
              : base(oldRDom)
         { }

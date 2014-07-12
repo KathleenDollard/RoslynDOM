@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Use expressions">
+    <Position X="7.323" Y="1.802" Height="0.354" Width="1.388" />
+  </Comment>
+  <Comment CommentText="Use blocks and may use expressions">
+    <Position X="9.74" Y="1.729" Height="0.438" Width="1.71" />
+  </Comment>
+  <Interface Name="RoslynDom.Common.IArgument" Collapsed="true">
+    <Position X="0.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAQAAAAAAAAgAAAAAAAgAAA=</HashCode>
+      <FileName>Interfaces_Statements\IArgument.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IAssignmentStatement" Collapsed="true">
+    <Position X="7.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IAssignmentStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IBlockStatement" Collapsed="true">
+    <Position X="9.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IBlockStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.ICastExpression" Collapsed="true">
+    <Position X="2.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\ICastExpression.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.ICatch" Collapsed="true">
+    <Position X="9.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAEAAAAAAABEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\ICatch.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.ICondition" Collapsed="true">
+    <Position X="0.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\ICondition.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IDeclarationStatement" Collapsed="true">
+    <Position X="7.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAABAA=</HashCode>
+      <FileName>Interfaces_Statements\IDeclarationStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IDoStatement" Collapsed="true">
+    <Position X="13.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Interfaces_Statements\IDoStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IExpression" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>BaseInterfaces\IExpression.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IIfStatement" Collapsed="true">
+    <Position X="9.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAABAACAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IIfStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IInvocationStatement" Collapsed="true">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IInvocationStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IObjectCreationExpression" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIQAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IObjectCreationExpression.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IReturnStatement" Collapsed="true">
+    <Position X="4.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IReturnStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.ITryStatement" Collapsed="true">
+    <Position X="9.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAABAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\ITryStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDomCommon.InterfacesForStatements.IBreakStatement" Collapsed="true">
+    <Position X="4.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IBreakStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDomCommon.InterfacesForStatements.IContinueStatement" Collapsed="true">
+    <Position X="4.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IContinueStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDomCommon.InterfacesForStatements.IEmptyStatement" Collapsed="true">
+    <Position X="4.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IEmptyStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDomCommon.InterfacesForStatements.IForEachStatement" Collapsed="true">
+    <Position X="15.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAAAAAIAAAACAAAAAAAAAAQAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IForEachStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDomCommon.InterfacesForStatements.IForStatement" Collapsed="true">
+    <Position X="12" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQBAAACAAAAAAAACAAAAQAAQAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IForStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDomCommon.InterfacesForStatements.ISpecialStatement" Collapsed="true">
+    <Position X="4.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\ISpecialStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDomCommon.InterfacesForStatements.IThrowStatement" Collapsed="true">
+    <Position X="7.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAgAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces_Statements\IThrowStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.IStatement" Collapsed="true">
+    <Position X="7.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>BaseInterfaces\IStatement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="RoslynDom.Common.ILoop" Collapsed="true">
+    <Position X="12" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BaseInterfaces\ILoop.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9.75" />
+</ClassDiagram>

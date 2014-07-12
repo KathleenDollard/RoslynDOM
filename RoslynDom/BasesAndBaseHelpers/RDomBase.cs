@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
@@ -15,6 +16,11 @@ namespace RoslynDom
         private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase(params PublicAnnotation[] publicAnnotations)
+        {
+            _publicAnnotations.Add(publicAnnotations);
+        }
+
+        protected RDomBase(IEnumerable< PublicAnnotation> publicAnnotations)
         {
             _publicAnnotations.Add(publicAnnotations);
         }

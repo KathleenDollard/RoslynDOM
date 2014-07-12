@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoslynDom.Common
+namespace RoslynDom
 {
-    public interface ICondition
+    internal interface IRDomCanLoad
     {
+
     }
 }

@@ -17,13 +17,20 @@ namespace RoslynDom
           : base(rawItem, publicAnnotations)
         { StatementKind = statementKind;    }
 
+        internal RDomStatement(
+             StatementSyntax rawItem,
+             StatementKind statementKind,
+             IEnumerable< PublicAnnotation> publicAnnotations)
+           : base(rawItem, publicAnnotations)
+        { StatementKind = statementKind; }
+
         internal RDomStatement(RDomStatement oldRDom)
              : base(oldRDom)
         {
             StatementKind = oldRDom.StatementKind;
         }
 
-         public override StatementSyntax BuildSyntax()
+             public override StatementSyntax BuildSyntax()
         {
             return TypedSyntax;
         }

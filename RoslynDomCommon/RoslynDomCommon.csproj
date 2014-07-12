@@ -52,27 +52,27 @@
     <Compile Include="Enums\Variance.cs" />
     <Compile Include="Enums\AccessModifier.cs" />
     <Compile Include="IHasLookupValue.cs" />
-    <Compile Include="InterfacesForStatements\IAssignmentStatement.cs" />
-    <Compile Include="InterfacesForStatements\IBlockStatement.cs" />
-    <Compile Include="InterfacesForStatements\IArgument.cs" />
-    <Compile Include="InterfacesForStatements\IEmptyStatement.cs" />
-    <Compile Include="InterfacesForStatements\IContinueStatement.cs" />
-    <Compile Include="InterfacesForStatements\IBreakStatement.cs" />
-    <Compile Include="InterfacesForStatements\ICondition.cs" />
-    <Compile Include="InterfacesForStatements\IDeclarationStatement.cs" />
-    <Compile Include="InterfacesForStatements\IDoStatement.cs" />
-    <Compile Include="InterfacesForStatements\IExpression.cs" />
-    <Compile Include="InterfacesForStatements\ICatch.cs" />
-    <Compile Include="InterfacesForStatements\IForEachStatement.cs" />
-    <Compile Include="InterfacesForStatements\IForStatement.cs" />
-    <Compile Include="InterfacesForStatements\IInvocationStatement.cs" />
-    <Compile Include="InterfacesForStatements\ICastExpression.cs" />
-    <Compile Include="InterfacesForStatements\IObjectCreationExpression.cs" />
-    <Compile Include="InterfacesForStatements\IReturnStatement.cs" />
-    <Compile Include="InterfacesForStatements\IThrowStatement.cs" />
-    <Compile Include="InterfacesForStatements\ITryStatement.cs" />
-    <Compile Include="InterfacesForStatements\ISpecialStatement.cs" />
-    <Compile Include="InterfacesForStatements\IIfStatement.cs" />
+    <Compile Include="Interfaces_Statements\IAssignmentStatement.cs" />
+    <Compile Include="Interfaces_Statements\IBlockStatement.cs" />
+    <Compile Include="Interfaces_Statements\IArgument.cs" />
+    <Compile Include="Interfaces_Statements\IEmptyStatement.cs" />
+    <Compile Include="Interfaces_Statements\IContinueStatement.cs" />
+    <Compile Include="Interfaces_Statements\IBreakStatement.cs" />
+    <Compile Include="Interfaces_Statements\ICondition.cs" />
+    <Compile Include="Interfaces_Statements\IDeclarationStatement.cs" />
+    <Compile Include="Interfaces_Statements\IDoStatement.cs" />
+    <Compile Include="BaseInterfaces\IExpression.cs" />
+    <Compile Include="Interfaces_Statements\ICatch.cs" />
+    <Compile Include="Interfaces_Statements\IForEachStatement.cs" />
+    <Compile Include="Interfaces_Statements\IForStatement.cs" />
+    <Compile Include="Interfaces_Statements\IInvocationStatement.cs" />
+    <Compile Include="Interfaces_Statements\ICastExpression.cs" />
+    <Compile Include="Interfaces_Statements\IObjectCreationExpression.cs" />
+    <Compile Include="Interfaces_Statements\IReturnStatement.cs" />
+    <Compile Include="Interfaces_Statements\IThrowStatement.cs" />
+    <Compile Include="Interfaces_Statements\ITryStatement.cs" />
+    <Compile Include="Interfaces_Statements\ISpecialStatement.cs" />
+    <Compile Include="Interfaces_Statements\IIfStatement.cs" />
     <Compile Include="Interfaces\IAccessor.cs" />
     <Compile Include="Interfaces\IAttributeValue.cs" />
     <Compile Include="Interfaces\IAttribute.cs" />
@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfaceCommonality.cd" />
+    <None Include="Interface_Statements.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

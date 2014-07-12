@@ -27,6 +27,13 @@ namespace RoslynDom
             _originalRawSyntax = rawItem;
         }
 
+        protected RDomBase(TSyntax rawItem, IEnumerable< PublicAnnotation> publicAnnotations)
+            : base(publicAnnotations)
+        {
+            _rawSyntax = rawItem;
+            _originalRawSyntax = rawItem;
+        }
+
         protected RDomBase(T oldIDom)
              : base(oldIDom)
         {

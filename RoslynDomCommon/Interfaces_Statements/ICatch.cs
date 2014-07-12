@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ICatch
+    public interface ICatch : IStatement
     {
         ICondition Condition { get; }
         string ExceptionName { get; }
