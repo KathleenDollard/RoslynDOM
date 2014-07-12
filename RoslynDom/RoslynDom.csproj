@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="AttributeValueStyle.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBase.cs" />
+    <Compile Include="BasesAndBaseHelpers\RDomBaseFactoryHelper.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseOfT.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseTTSyntaxTSymbol.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="BasesAndBaseHelpers\RDomExpression.cs" />
     <Compile Include="Implementations\RDomAttributeValue.cs" />
     <Compile Include="Implementations\RDomAttribute.cs" />
+    <Compile Include="Implementations\RDomClass2.cs" />
     <Compile Include="Implementations\RDomClass.cs" />
     <Compile Include="Implementations\RDomEnum.cs" />
     <Compile Include="Implementations\RDomField.cs" />
@@ -91,7 +93,7 @@
     <Compile Include="IRDomFactory.cs" />
     <Compile Include="StatementImplementations\RDomReturnStatement.cs" />
     <Compile Include="StatementImplementations\RDomDeclarationStatement.cs" />
-    <Compile Include="BasesAndBaseHelpers\RDomBaseStatement.cs" />
+    <Compile Include="BasesAndBaseHelpers\RDomBaseFactory.cs" />
     <Compile Include="Implementations\RDomMethod.cs" />
     <Compile Include="Implementations\RDomNamespace.cs" />
     <Compile Include="Implementations\RDomParameter.cs" />

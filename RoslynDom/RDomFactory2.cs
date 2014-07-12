@@ -181,7 +181,7 @@ namespace RoslynDom
 
         private static IEnumerable<IStatement> MakeStatement(StatementSyntax rawStatement)
         {
-           return  _statementFactoryHelper.MakeStatement(rawStatement);
+           return  _statementFactoryHelper.MakeItem(rawStatement);
         }
 
          private static IEnumerable<StatementSyntax> GetStatements(MethodDeclarationSyntax rawMethod)

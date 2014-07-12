@@ -48,27 +48,4 @@ namespace RoslynDom
 
     }
 
-    public class RDomFactoryHelper
-    { }
-        public class RDomFactoryHelper<T> : RDomFactoryHelper 
-    {
-        private IEnumerable<IRDomFactory<T>> factories;
-        private IPublicAnnotationFactory publicAnnotationFactory;
-
-        public RDomFactoryHelper(IUnityContainer container)
-        {
-            publicAnnotationFactory = container.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
-            factories = container
-                .ResolveAll<IRDomFactory<T>>();
-        }
-
-        public IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode)
-        {
-            return publicAnnotationFactory.CreateFrom(syntaxNode);
-        }
-
-        protected IEnumerable<IRDomFactory<T>> Factories
-        {  get { return factories; } }
-    }
-
 }
