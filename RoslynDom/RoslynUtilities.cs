@@ -75,28 +75,6 @@ namespace RoslynDom
             }
         }
 
-        public static SyntaxTokenList SyntaxTokensForAccessModifier(AccessModifier accessModifier)
-        {
-            var tokenList = SyntaxFactory.TokenList();
-            switch (accessModifier)
-            {
-                case AccessModifier.NotApplicable:
-                    return tokenList;
-                case AccessModifier.Private:
-                    return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-                case AccessModifier.ProtectedOrInternal:
-                    return tokenList.AddRange(new SyntaxToken[] { SyntaxFactory.Token(SyntaxKind.ProtectedKeyword), SyntaxFactory.Token(SyntaxKind.InternalKeyword) });
-                case AccessModifier.Protected:
-                    return tokenList.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
-                case AccessModifier.Internal:
-                    return tokenList.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-                case AccessModifier.Public:
-                    return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
-
         public static SyntaxNode Format(SyntaxNode node)
         {
             node = Formatter.Format(node, new CustomWorkspace());

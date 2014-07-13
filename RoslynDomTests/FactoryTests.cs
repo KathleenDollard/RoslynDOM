@@ -25,6 +25,7 @@ namespace RoslynDomTests
         #region general factory tests
         [TestMethod]
         [TestCategory(GeneralFactoryCategory)]
+        [TestCategory("_Common")]
         public void Can_get_root_from_file()
         {
             IRoot root = RDomFactory.GetRootFromFile(@"..\..\TestFile.cs");

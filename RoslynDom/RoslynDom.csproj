@@ -75,9 +75,9 @@
     <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseStemContainer.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomExpression.cs" />
+    <Compile Include="BuildSyntaxExtensions.cs" />
     <Compile Include="Implementations\RDomAttributeValue.cs" />
     <Compile Include="Implementations\RDomAttribute.cs" />
-    <Compile Include="Implementations\RDomClass2.cs" />
     <Compile Include="Implementations\RDomClass.cs" />
     <Compile Include="Implementations\RDomEnum.cs" />
     <Compile Include="Implementations\RDomField.cs" />
@@ -87,8 +87,7 @@
     <Compile Include="IRDomCanLoad.cs" />
     <Compile Include="PublicAnnotationFactory.cs" />
     <Compile Include="RDomFactory.cs" />
-    <Compile Include="RDomFactoryBootstrapper.cs" />
-    <Compile Include="RDomFactoryFactory.cs" />
+    <Compile Include="FactoryProvider.cs" />
     <Compile Include="StatementImplementations\RDomAssignmentStatement.cs" />
     <Compile Include="IRDomFactory.cs" />
     <Compile Include="StatementImplementations\RDomReturnStatement.cs" />
@@ -106,7 +105,6 @@
     <Compile Include="IRDomContainers.cs" />
     <Compile Include="IRoslynDom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RDomFactory2.cs" />
     <Compile Include="RoslynUtilities.cs" />
     <Compile Include="RoslynDomUtilities.cs" />
     <Compile Include="StatementImplementations\RDomBaseBlock.cs" />
@@ -127,6 +125,9 @@
       <Project>{278404a0-aa81-402c-9ff0-b183715e2997}</Project>
       <Name>RoslynDomUtilities</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ExpressionImplementations\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

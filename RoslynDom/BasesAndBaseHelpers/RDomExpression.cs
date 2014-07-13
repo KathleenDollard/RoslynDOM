@@ -11,10 +11,10 @@ namespace RoslynDom
 {
     public class RDomExpression : RDomBase<IExpression, ExpressionSyntax, ISymbol>, IExpression
     {
-        internal RDomExpression(ExpressionSyntax expressionSyntax) 
-            : base(expressionSyntax, null)
+        internal RDomExpression(ExpressionSyntax rawItem)
+           : base(rawItem)
         {
-            Expression = expressionSyntax.ToString();
+            Expression = rawItem.ToString();
         }
 
         public string Expression { get; set; }

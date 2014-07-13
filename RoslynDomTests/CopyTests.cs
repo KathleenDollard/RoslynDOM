@@ -13,7 +13,7 @@ namespace RoslynDomTests
         private const string CopyMethodsCategory = "CopyMethods";
 
         #region clone tests
-        [TestMethod,TestCategory(CopyCategory)]
+        [TestMethod, TestCategory(CopyCategory)]
         public void Can_clone_attribute()
         {
             var csharpCode = @"
@@ -67,7 +67,7 @@ namespace RoslynDomTests
             }           
             ";
             var root = RDomFactory.GetRootFromString(csharpCode);
-            var methodParameter = root.RootClasses.First().Methods.First().Parameters .First();
+            var methodParameter = root.RootClasses.First().Methods.First().Parameters.First();
             var newMethodParameter = methodParameter.Copy();
             Assert.IsNotNull(newMethodParameter);
             Assert.IsTrue(newMethodParameter.SameIntent(methodParameter));
@@ -92,12 +92,19 @@ namespace RoslynDomTests
             var method = root.RootClasses.First().Methods.First();
             var newMethod = method.Copy();
             Assert.IsNotNull(newMethod);
-            Assert.IsTrue(newMethod.SameIntent(newMethod));
+            Assert.IsTrue(newMethod.SameIntent(newMethod)); // test identity
+            var statements = newMethod.Statements.ToArray();
             var rDomStatement = newMethod.Statements.First() as IStatement;
             // TODO: Include BuildSyntax in test
-            Assert.IsNotNull( rDomStatement);
+            Assert.IsTrue(statements[0] is RDomIfStatement);
+            Assert.IsTrue(statements[1] is RDomDeclarationStatement);
+            Assert.IsTrue(statements[2] is RDomAssignmentStatement);
+            Assert.IsTrue(statements[3] is RDomReturnStatement);
+            var outputOld = ((RDomMethod)method).BuildSyntax();
+            var outputNew = ((RDomMethod)newMethod).BuildSyntax();
+            Assert.AreEqual(outputOld.ToString(), outputNew.ToString());
             Assert.Inconclusive();
-           // Assert.AreEqual(@"var x = "", "";", rDomStatement.BuildSyntax().ToString());
+            // Assert.AreEqual(@"var x = "", "";", rDomStatement.BuildSyntax().ToString());
         }
 
         [TestMethod, TestCategory(CopyCategory)]
@@ -255,7 +262,7 @@ namespace RoslynDomTests
                     string Foo { get; set; }
                 }  
             }         
-            ";     
+            ";
             var root = RDomFactory.GetRootFromString(csharpCode);
             var namespace1 = root.Namespaces.First();
             var newNamespace = namespace1.Copy();

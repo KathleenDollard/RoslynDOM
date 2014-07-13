@@ -8,6 +8,17 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomClassTypeMemberFactory
+           : RDomTypeMemberFactory<RDomClass, ClassDeclarationSyntax>
+    { }
+
+
+    public class RDomClassStemMemberFactory
+           : RDomStemMemberFactory<RDomClass, ClassDeclarationSyntax>
+    { }
+
+
+
     /// <summary>
     /// 
     /// </summary>
@@ -16,10 +27,16 @@ namespace RoslynDom
     /// </remarks>
     public class RDomClass : RDomBaseType<IClass, ClassDeclarationSyntax>, IClass
     {
+        internal RDomClass(ClassDeclarationSyntax rawItem)
+        : base(rawItem, MemberKind.Class, StemMemberKind.Class)
+        {
+            Initialize2();
+        }
+
         internal RDomClass(ClassDeclarationSyntax rawItem,
-            IEnumerable<ITypeMember> members,
-            params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, MemberKind.Class, StemMemberKind.Class, members, publicAnnotations)
+       IEnumerable<ITypeMember> members,
+       params PublicAnnotation[] publicAnnotations)
+       : base(rawItem, MemberKind.Class, StemMemberKind.Class, members, publicAnnotations)
         {
             Initialize();
         }
@@ -42,9 +59,17 @@ namespace RoslynDom
             IsStatic = Symbol.IsStatic;
         }
 
+        private void Initialize2()
+        {
+            Initialize();
+            var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+            foreach (var member in members)
+            { AddOrMoveMember(member); }
+        }
+
         public override ClassDeclarationSyntax BuildSyntax()
         {
-            var modifiers = BuildModfierSyntax();
+            var modifiers = this.BuildModfierSyntax();
             var node = SyntaxFactory.ClassDeclaration(Name)
                             .WithModifiers(modifiers);
 
@@ -56,7 +81,7 @@ namespace RoslynDom
             return (ClassDeclarationSyntax)RoslynUtilities.Format(node);
         }
 
-   
+
         public IEnumerable<IClass> Classes
         { get { return Members.OfType<IClass>(); } }
 

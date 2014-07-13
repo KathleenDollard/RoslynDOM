@@ -47,5 +47,12 @@ namespace RoslynDom.Common
             var methodInfo = type.GetMethod(methodName, parameterTypes);
             return methodInfo;
         }
+
+        public static Type MakeGenericType(Type openType, params Type[] typeArguments)
+        {
+            var newType = openType.MakeGenericType(typeArguments);
+            return newType;
+        }
+
     }
 }

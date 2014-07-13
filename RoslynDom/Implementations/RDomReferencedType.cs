@@ -46,6 +46,11 @@ namespace RoslynDom
             _outerTypeName = GetContainingTypeName();
         }
 
+        public virtual TypeSyntax  BuildSyntax()
+        {
+            return SyntaxFactory.ParseTypeName(Name);
+        }
+
         public virtual bool Matches(IReferencedType  other)
         { return this.Name == other.Name; }
 
@@ -63,12 +68,6 @@ namespace RoslynDom
         protected virtual bool CheckSameIntent(IReferencedType other, bool includePublicAnnotations)
         {
             return true;
-        }
-
-        public virtual TypeSyntax BuildSyntax()
-        {
-            var identifier = SyntaxFactory.IdentifierName(Name);
-            return identifier;
         }
 
          public override object RawItem

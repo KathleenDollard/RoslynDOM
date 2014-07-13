@@ -12,15 +12,17 @@ namespace RoslynDom
 {
     public class RDomReturnStatementFactory
                 : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>
-    {
-        public RDomReturnStatementFactory( RDomFactoryHelper  helper)
-            : base( helper)
-        { }
-    }
+    { }
 
     public class RDomReturnStatement : RDomBase<IReturnStatement, ReturnStatementSyntax, ISymbol>,  IReturnStatement
     {
- 
+
+        internal RDomReturnStatement(ReturnStatementSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
+
         internal RDomReturnStatement(
               ReturnStatementSyntax  rawReturn,
               IEnumerable<PublicAnnotation> publicAnnotations)
@@ -37,6 +39,11 @@ namespace RoslynDom
         {
             base.Initialize();
             Return = new RDomExpression(TypedSyntax.Expression);
+        }
+
+        protected void Initialize2()
+        {
+            Initialize();
         }
 
         public override ReturnStatementSyntax BuildSyntax()

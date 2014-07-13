@@ -8,11 +8,24 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomPropertyTypeMemberFactory
+          : RDomTypeMemberFactory<RDomProperty, PropertyDeclarationSyntax>
+    { }
+
+
+
     public class RDomProperty : RDomBase<IProperty, PropertyDeclarationSyntax, IPropertySymbol>, IProperty
     {
         private IList<IParameter> _parameters = new List<IParameter>();
         private IList<IStatement> _getStatements = new List<IStatement>();
         private IList<IStatement> _setStatements = new List<IStatement>();
+
+        internal RDomProperty(
+                PropertyDeclarationSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
 
         internal RDomProperty(
              PropertyDeclarationSyntax rawItem,
@@ -64,16 +77,28 @@ namespace RoslynDom
             CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
         }
 
-        public override PropertyDeclarationSyntax BuildSyntax()
+        private void Initialize2()
+        {
+            Initialize();
+            // Parameters are for VB and not supported in C#
+            var getAccessorSyntax = TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
+            var setAccessorSyntax = TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
+            if (getAccessorSyntax != null)
+            { GetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(getAccessorSyntax).FirstOrDefault()); }
+            if (setAccessorSyntax != null)
+            { SetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(setAccessorSyntax).FirstOrDefault()); }
+        }
+
+          public override PropertyDeclarationSyntax BuildSyntax()
         {
             var nameSyntax = SyntaxFactory.Identifier(Name);
             var returnType = ((RDomReferencedType)PropertyType).BuildSyntax();
-            var modifiers = BuildModfierSyntax();
+            var modifiers = this.BuildModfierSyntax();
             var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
                             .WithModifiers(modifiers);
 
             node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
-            node = RoslynUtilities.UpdateNodeIfItemNotNull (BuildAccessorList(), node, (n, item) => n.WithAccessorList (item));
+            node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildAccessorList(), node, (n, item) => n.WithAccessorList(item));
             //var parameters = BuildTypeParameterList();
             //var typeParameters = BuildTypeParameterList();
             //var constraintClauses = BuildConstraintClauses();
@@ -81,19 +106,19 @@ namespace RoslynDom
             return (PropertyDeclarationSyntax)RoslynUtilities.Format(node);
         }
 
-        private AccessorListSyntax  BuildAccessorList( )
+        private AccessorListSyntax BuildAccessorList()
         {
             var list = new List<AccessorDeclarationSyntax>();
             if (CanGet)
             {
                 var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration);
-                node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildStatementBlock(GetStatements), node, (n, item) => n.WithBody(item));
+                node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(GetStatements), node, (n, item) => n.WithBody(item));
                 list.Add(node);
             }
             if (CanSet)
             {
                 var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration);
-                node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildStatementBlock(SetStatements), node, (n, item) => n.WithBody(item));
+                node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(SetStatements), node, (n, item) => n.WithBody(item));
                 list.Add(node);
             }
             return SyntaxFactory.AccessorList(SyntaxFactory.List<AccessorDeclarationSyntax>(list));

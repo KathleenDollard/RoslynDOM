@@ -5,9 +5,27 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomInterfaceTypeMemberFactory
+           : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
+    { }
+
+
+    public class RDomInterfaceStemMemberFactory
+           : RDomStemMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
+    { }
+
+
+
     public class RDomInterface : RDomBaseType<IInterface,InterfaceDeclarationSyntax>, IInterface
     {
         internal RDomInterface(
+               InterfaceDeclarationSyntax rawItem)
+        : base(rawItem, MemberKind.Interface, StemMemberKind.Interface)
+        {
+            Initialize2();
+        }
+
+             internal RDomInterface(
             InterfaceDeclarationSyntax rawItem,
             IEnumerable<ITypeMember> members,
             params PublicAnnotation[] publicAnnotations) 
@@ -20,9 +38,17 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
+        private void Initialize2()
+        {
+            Initialize();
+            var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+            foreach (var member in members)
+            { AddOrMoveMember(member); }
+        }
+
         public override InterfaceDeclarationSyntax BuildSyntax()
         {
-            var modifiers = BuildModfierSyntax();
+            var modifiers = this.BuildModfierSyntax();
             var node = SyntaxFactory.InterfaceDeclaration(Name)
                             .WithModifiers(modifiers);
 

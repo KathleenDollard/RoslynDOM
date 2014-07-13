@@ -4,12 +4,18 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    //public class RDomInvalidTypeMemberFactory
+    //       : RDomTypeMemberFactory<RDomInvalidTypeMember, SyntaxNode>
+    //{
+    //    public override FactoryPriority Priority
+    //    { get { return FactoryPriority.Normal - 1; } }
+    //}
+
     public class RDomInvalidTypeMember : RDomBase<IInvalidTypeMember, SyntaxNode, ISymbol>, IInvalidTypeMember
     {
         internal RDomInvalidTypeMember(
-                     SyntaxNode rawItem,
-                     params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, publicAnnotations )
+                     SyntaxNode rawItem)
+           : base(rawItem)
         {
             Initialize();
         }

@@ -5,6 +5,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+  // Doesn't currently follow pattern, ie. a syntax is not passed
     public class RDomTypeParameter : RDomReferencedType, ITypeParameter
     {
         private IList<IReferencedType> _constraintTypes = new List<IReferencedType>();

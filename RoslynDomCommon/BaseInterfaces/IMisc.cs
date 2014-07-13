@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IAccessor : IMisc, IStatementContainer , IHasAttributes, IHasAccessModifier, IDom<IAccessor >
+    public interface IMisc : IDom
     {
+        // This is for things that don't fall into the pattern, accessors, parameters and type parameters
     }
 }

@@ -7,8 +7,19 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomRootFactory
+          : RDomRootContainerFactory <RDomRoot, CompilationUnitSyntax>
+    { }
+
+
     public class RDomRoot : RDomBaseStemContainer<IRoot, CompilationUnitSyntax, ISymbol>, IRoot
     {
+
+        internal RDomRoot(CompilationUnitSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
 
         internal RDomRoot(CompilationUnitSyntax rawItem,
             IEnumerable<IStemMember> members,
@@ -27,6 +38,17 @@ namespace RoslynDom
         {
             base.Initialize();
             Name = "Root";
+        }
+        protected void Initialize2()
+        {
+            Initialize();
+
+            var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+            var usings = ListUtilities.MakeList(TypedSyntax, x => x.Usings, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+            foreach (var member in members)
+            { AddOrMoveStemMember(member); }
+            foreach (var member in usings)
+            { AddOrMoveStemMember(member); }
         }
 
         public override CompilationUnitSyntax BuildSyntax()

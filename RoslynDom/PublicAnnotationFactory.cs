@@ -13,13 +13,18 @@ namespace RoslynDom
 {
     public class RDomPublicAnnotationFactoryHelper : RDomFactoryHelper<PublicAnnotation>
     {
-        public RDomPublicAnnotationFactoryHelper(IUnityContainer container) : base(container)
+        public RDomPublicAnnotationFactoryHelper() : base()
         { }
+
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class PublicAnnotationFactory :  IPublicAnnotationFactory
     {
-        public PublicAnnotationFactory(RDomFactoryHelper helper)
+        public PublicAnnotationFactory()
         { }
 
         public FactoryPriority Priority

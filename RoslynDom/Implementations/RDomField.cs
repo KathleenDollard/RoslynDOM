@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -6,6 +7,24 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomFieldTypeMemberFactory
+          : RDomTypeMemberFactory<RDomField, FieldDeclarationSyntax>
+    {
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode)
+        {
+            var list = new List<ITypeMember>();
+            // We can't do this in the constructor, because many may be created and we want to flatten
+            var rawField = syntaxNode as FieldDeclarationSyntax;
+            var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
+            foreach (var decl in declarators)
+            {
+                list.Add(new RDomField(rawField, decl));
+            }
+            return list;
+        }
+    }
+
+
     /// <summary>
     /// 
     /// </summary>
@@ -19,6 +38,15 @@ namespace RoslynDom
     public class RDomField : RDomBase<IField, FieldDeclarationSyntax, IFieldSymbol>, IField
     {
         private VariableDeclaratorSyntax _varSyntax;
+
+        internal RDomField(
+                FieldDeclarationSyntax rawItem,
+                VariableDeclaratorSyntax varSyntax)
+           : base(rawItem)
+        {
+            _varSyntax = varSyntax;
+            Initialize2();
+        }
 
         internal RDomField(
                     FieldDeclarationSyntax rawItem,
@@ -47,17 +75,22 @@ namespace RoslynDom
             IsStatic = Symbol.IsStatic;
         }
 
+        private void Initialize2()
+        {
+            Initialize();
+        }
+
         public override FieldDeclarationSyntax BuildSyntax()
         {
             var nameSyntax = SyntaxFactory.Identifier(Name);
             var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
-            var modifiers = BuildModfierSyntax();
+            var modifiers = this.BuildModfierSyntax();
             var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
             var variableNode = SyntaxFactory.VariableDeclaration(returnType)
                .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(nameSyntax)));
-            var node = SyntaxFactory.FieldDeclaration(variableNode )
+            var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
 
             node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));

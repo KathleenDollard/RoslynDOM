@@ -7,9 +7,20 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomPropertyAccessorMiscFactory
+          : RDomMiscFactory<RDomPropertyAccessor, AccessorDeclarationSyntax>
+    { }
+
     public class RDomPropertyAccessor : RDomBase<IAccessor, AccessorDeclarationSyntax, ISymbol>, IAccessor
     {
         private IList<IStatement> _statements = new List<IStatement>();
+
+        internal RDomPropertyAccessor(
+                  AccessorDeclarationSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
 
         internal RDomPropertyAccessor(
             AccessorDeclarationSyntax rawItem,
@@ -37,6 +48,17 @@ namespace RoslynDom
             base.Initialize();
 
             AccessModifier = GetAccessibility();
+        }
+
+        private void Initialize2()
+        {
+            if (TypedSyntax.Body != null)
+            {
+                var statements = ListUtilities.MakeList(TypedSyntax, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
+                foreach (var statement in statements)
+                { AddStatement(statement); }
+            }
+            Initialize();
         }
 
         public override AccessorDeclarationSyntax BuildSyntax()

@@ -36,6 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseInterfaces\IMisc.cs" />
     <Compile Include="BaseInterfaces\ILoop.cs" />
     <Compile Include="BaseInterfaces\IPropertyOrMethod.cs" />
     <Compile Include="BaseInterfaces\IStatementContainer.cs" />

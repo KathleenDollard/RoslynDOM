@@ -6,23 +6,49 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomStructureTypeMemberFactory
+          : RDomTypeMemberFactory<RDomStructure, StructDeclarationSyntax>
+    { }
+
+
+    public class RDomStructureStemMemberFactory
+           : RDomStemMemberFactory<RDomStructure, StructDeclarationSyntax>
+    { }
+
+
     public class RDomStructure : RDomBaseType<IStructure, StructDeclarationSyntax>, IStructure
     {
         internal RDomStructure(
-            StructDeclarationSyntax rawItem,
-            IEnumerable<ITypeMember> members,
-            params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, MemberKind.Structure, StemMemberKind.Structure, members, publicAnnotations)
+                 StructDeclarationSyntax rawItem)
+        : base(rawItem, MemberKind.Structure, StemMemberKind.Structure)
+        {
+            Initialize2();
+        }
+
+        internal RDomStructure(
+          StructDeclarationSyntax rawItem,
+          IEnumerable<ITypeMember> members,
+          params PublicAnnotation[] publicAnnotations)
+          : base(rawItem, MemberKind.Structure, StemMemberKind.Structure, members, publicAnnotations)
         {
             Initialize();
         }
+
         internal RDomStructure(RDomStructure oldRDom)
              : base(oldRDom)
         { }
 
+        private void Initialize2()
+        {
+            Initialize();
+            var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+            foreach (var member in members)
+            { AddOrMoveMember(member); }
+        }
+
         public override StructDeclarationSyntax BuildSyntax()
         {
-            var modifiers = BuildModfierSyntax();
+            var modifiers = this.BuildModfierSyntax();
             var node = SyntaxFactory.StructDeclaration(Name)
                             .WithModifiers(modifiers);
 
@@ -34,7 +60,7 @@ namespace RoslynDom
             return (StructDeclarationSyntax)RoslynUtilities.Format(node);
         }
 
- 
+
         public IEnumerable<IClass> Classes
         {
             get

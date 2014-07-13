@@ -7,15 +7,26 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
 
+    public class RDomNamespaceStemMemberFactory
+           : RDomStemMemberFactory<RDomNamespace, NamespaceDeclarationSyntax>
+    { }
+
+
     public class RDomNamespace : RDomBaseStemContainer<INamespace, NamespaceDeclarationSyntax, INamespaceSymbol>, INamespace
     {
         //private string _outerName;
 
+        internal RDomNamespace(NamespaceDeclarationSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
+
         internal RDomNamespace(NamespaceDeclarationSyntax rawItem,
-            IEnumerable<IStemMember> members,
-            IEnumerable<IUsing> usings,
-            params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, members, usings, publicAnnotations)
+              IEnumerable<IStemMember> members,
+              IEnumerable<IUsing> usings,
+              params PublicAnnotation[] publicAnnotations)
+              : base(rawItem, members, usings, publicAnnotations)
         {
             Initialize();
         }
@@ -34,6 +45,17 @@ namespace RoslynDom
             // Thus, this replaces hte base Initialize name with the correct one
             Name = TypedSyntax.NameFrom();
             if (Name.StartsWith("@")) { Name = Name.Substring(1); }
+        }
+
+        protected void Initialize2()
+        {
+            Initialize();
+            var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+            var usings = ListUtilities.MakeList(TypedSyntax, x => x.Usings, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+            foreach (var member in members)
+            { AddOrMoveStemMember(member); }
+            foreach (var member in usings)
+            { AddOrMoveStemMember(member); }
         }
 
         public override NamespaceDeclarationSyntax BuildSyntax()

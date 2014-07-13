@@ -7,11 +7,23 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomMethodTypeMemberFactory
+          : RDomTypeMemberFactory<RDomMethod, MethodDeclarationSyntax>
+    { }
+
+
     public class RDomMethod : RDomBase<IMethod, MethodDeclarationSyntax, IMethodSymbol>, IMethod
     {
         private IList<IParameter> _parameters = new List<IParameter>();
         private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
         private IList<IStatement> _statements = new List<IStatement>();
+
+        internal RDomMethod(
+                MethodDeclarationSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
 
         internal RDomMethod(
             MethodDeclarationSyntax rawItem,
@@ -69,24 +81,50 @@ namespace RoslynDom
             IsExtensionMethod = TypedSymbol.IsExtensionMethod;
         }
 
+        private void Initialize2()
+        {
+            Initialize();
+            var parameters = ListUtilities.MakeList(TypedSyntax, x => x.ParameterList.Parameters, x => RDomFactoryHelper.MiscFactoryHelper.MakeItem(x));
+            foreach (var parameter in parameters)
+            { AddParameter((IParameter)parameter); }
+            if (TypedSyntax.Body != null)
+            {
+                var statements = ListUtilities.MakeList(TypedSyntax, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
+                foreach (var statement in statements)
+                { AddStatement(statement); }
+            }
+        }
+
         public override MethodDeclarationSyntax BuildSyntax()
         {
             var nameSyntax = SyntaxFactory.Identifier(Name);
             var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
-            var modifiers = BuildModfierSyntax();
+            var modifiers = this.BuildModfierSyntax();
             var node = SyntaxFactory.MethodDeclaration(returnType, nameSyntax)
                             .WithModifiers(modifiers);
 
             node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
-            node = RoslynUtilities.UpdateNodeIfItemNotNull (BuildStatementBlock(Statements), node, (n, item) => n.WithBody(item));
-            //var parameters = BuildParameterList();
+            node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(Statements), node, (n, item) => n.WithBody(item));
+            var parameters = BuildParameterList(this);
+            if (parameters.Any()) { node = node.WithParameterList(SyntaxFactory.ParameterList(parameters)); }
             //var typeParameters = BuildTypeParameterList();
             //var constraintClauses = BuildConstraintClauses();
 
             return (MethodDeclarationSyntax)RoslynUtilities.Format(node);
         }
-  
-         public IEnumerable<IAttribute> Attributes
+
+        public static SeparatedSyntaxList<ParameterSyntax> BuildParameterList(RDomMethod method)
+        {
+            var list = new List<ParameterSyntax>();
+            foreach (var parameter in method.Parameters)
+            {
+                list.Add(((RDomParameter)parameter).BuildSyntax());
+            }
+            return SyntaxFactory.SeparatedList(list);
+        }
+
+
+        public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 
         public AccessModifier AccessModifier { get; set; }
@@ -124,7 +162,7 @@ namespace RoslynDom
         { _statements.Add(statement); }
 
         public IEnumerable<IStatement> Statements
-        { get { return _statements ; } }
+        { get { return _statements; } }
 
         public MemberKind MemberKind
         { get { return MemberKind.Method; } }

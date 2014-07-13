@@ -11,16 +11,19 @@ namespace RoslynDom
 {
     public class RDomDeclarationStatementFactory
         : RDomStatementFactory<RDomDeclarationStatement, LocalDeclarationStatementSyntax>
-    {
-        public RDomDeclarationStatementFactory(RDomFactoryHelper helper)
-            : base( helper)
-        { }
-    }
+    { }
+
 
     public class RDomDeclarationStatement : RDomBase<IDeclarationStatement, LocalDeclarationStatementSyntax, ISymbol>, IDeclarationStatement
     {
         private VariableDeclarationSyntax _variableSyntax;
         private VariableDeclaratorSyntax _declaratorSyntax;
+        internal RDomDeclarationStatement(LocalDeclarationStatementSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
+
         internal RDomDeclarationStatement(
               LocalDeclarationStatementSyntax rawDeclaration,
               IEnumerable<PublicAnnotation> publicAnnotations)
@@ -58,6 +61,11 @@ namespace RoslynDom
         {
             base.Initialize();
 
+        }
+
+        protected void Initialize2()
+        {
+            Initialize();
         }
 
         public override LocalDeclarationStatementSyntax BuildSyntax()

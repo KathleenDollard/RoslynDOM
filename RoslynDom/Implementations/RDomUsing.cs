@@ -5,8 +5,19 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    //public class RDomUsingStemMemberFactory
+    //        : RDomStemMemberFactory<RDomUsing, UsingDirectiveSyntax>
+    //{ }
+    
     public class RDomUsing : RDomBase<IUsing, UsingDirectiveSyntax, ISymbol>, IUsing
     {
+        internal RDomUsing(
+            UsingDirectiveSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
+
         internal RDomUsing(
             UsingDirectiveSyntax rawItem,
             params PublicAnnotation[] publicAnnotations)
@@ -23,6 +34,11 @@ namespace RoslynDom
         {
             base.Initialize();
             Name = TypedSyntax.Name.NameFrom();
+        }
+
+        protected void Initialize2()
+        {
+            Initialize();
         }
 
         public override UsingDirectiveSyntax BuildSyntax()

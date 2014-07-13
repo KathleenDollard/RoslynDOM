@@ -19,6 +19,16 @@ namespace RoslynDom
         private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
 
         internal RDomBaseType(
+              TSyntax rawItem,
+              MemberKind memberKind,
+              StemMemberKind stemMemberKind)
+           : base(rawItem)
+        {
+            _memberKind = memberKind;
+            _stemMemberKind = stemMemberKind;
+        }
+
+        internal RDomBaseType(
             TSyntax rawItem,
             MemberKind memberKind,
             StemMemberKind stemMemberKind,

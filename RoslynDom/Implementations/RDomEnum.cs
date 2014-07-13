@@ -7,12 +7,29 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomEnumTypeMemberFactory
+        : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
+    { }
+
+
+    public class RDomEnumStemMemberFactory
+           : RDomStemMemberFactory<RDomEnum, EnumDeclarationSyntax>
+    { }
+
+
     public class RDomEnum : RDomBase<IEnum, EnumDeclarationSyntax, ISymbol>, IEnum
     {
         internal RDomEnum(
-            EnumDeclarationSyntax rawItem,
-            params PublicAnnotation[] publicAnnotations)
-          : base(rawItem, publicAnnotations)
+             EnumDeclarationSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
+
+        internal RDomEnum(
+          EnumDeclarationSyntax rawItem,
+          params PublicAnnotation[] publicAnnotations)
+        : base(rawItem, publicAnnotations)
         {
             Initialize();
         }
@@ -36,11 +53,17 @@ namespace RoslynDom
             }
         }
 
+        private void Initialize2()
+        {
+            Initialize();
+        }
+
         public override EnumDeclarationSyntax BuildSyntax()
         {
-            var modifiers = BuildModfierSyntax();
+            var modifiers = this.BuildModfierSyntax();
             var node = SyntaxFactory.EnumDeclaration(Name)
                             .WithModifiers(modifiers);
+            //var node = SyntaxFactory.EnumDeclaration(Name);
             // TODO: Support enum members
             node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
 

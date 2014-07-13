@@ -1,10 +1,16 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    public class RDomParameterMiscFactory
+            : RDomMiscFactory<RDomParameter, ParameterSyntax>
+    { }
+
+
     public class RDomParameter : RDomBase<IParameter, ParameterSyntax, IParameterSymbol>, IParameter
     {
         private IReferencedType _type;
@@ -13,6 +19,13 @@ namespace RoslynDom
         private bool _isParamArray;
         private bool _isOptional;
         private int _ordinal;
+
+        internal RDomParameter(
+             ParameterSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
 
         internal RDomParameter(
             ParameterSyntax rawItem,
@@ -44,6 +57,27 @@ namespace RoslynDom
             _ordinal = TypedSymbol.Ordinal;
         }
 
+        private void Initialize2()
+        { Initialize();  }
+
+        public override ParameterSyntax BuildSyntax()
+        {
+            var identifier = SyntaxFactory.Identifier(Name);
+            var syntaxType = ((RDomReferencedType)Type).BuildSyntax();
+            var node = SyntaxFactory.Parameter(identifier)
+                        .WithType(syntaxType);
+            var attributes = BuildAttributeListSyntax();
+            if ( attributes.Any())
+            { node = node.WithAttributeLists(attributes); }
+            var modifiers = SyntaxFactory.TokenList();
+            if (IsOut) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.OutKeyword)); }
+            if (IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
+            if (IsParamArray) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ParamsKeyword )); }
+            if (IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
+            if (modifiers.Any()) { node = node.WithModifiers(modifiers); }
+            return node;
+        }
+
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
 
@@ -64,6 +98,8 @@ namespace RoslynDom
 
         public int Ordinal
         { get { return _ordinal; } }
+
+        // TODO: Default Values for parameters!!!
 
         public override object RequestValue(string name)
         {

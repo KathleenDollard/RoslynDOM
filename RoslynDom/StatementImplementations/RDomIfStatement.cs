@@ -10,23 +10,26 @@ namespace RoslynDom
 {
    public class RDomIfStatementFactory
         : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
-    {
-        public RDomIfStatementFactory(RDomFactoryHelper helper)
-            : base( helper)
-        { }
-    }
+    { }
+
 
     public class RDomIfStatement : RDomBase<IIfStatement, IfStatementSyntax, ISymbol>, IIfStatement
     {
         private IList<IIfStatement> _elses = new List<IIfStatement>();
             private IList<IStatement> _statements = new List<IStatement>();
 
+        internal RDomIfStatement(IfStatementSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
+
         internal RDomIfStatement(
              IfStatementSyntax rawItem,
                IEnumerable<PublicAnnotation> publicAnnotations)
            : base(rawItem,  publicAnnotations)
         {
-           
+            Initialize();
         }
 
           internal RDomIfStatement(RDomIfStatement oldRDom)
@@ -46,6 +49,11 @@ namespace RoslynDom
             //    foreach (var elseItem in elses)
             //    { AddOrMoveElse(elseItem); }
             //}
+        }
+
+        protected void Initialize2()
+        {
+            Initialize();
         }
 
         public override IfStatementSyntax BuildSyntax()

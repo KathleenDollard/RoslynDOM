@@ -20,6 +20,13 @@ namespace RoslynDom
         private IEnumerable<IAttribute> _attributes;
         private string _containingTypeName;
 
+        protected RDomBase(TSyntax rawItem)
+             : base( RDomFactoryHelper.GetPublicAnnotations(rawItem))
+        {
+            _rawSyntax = rawItem;
+            _originalRawSyntax = rawItem;
+        }
+
         protected RDomBase(TSyntax rawItem, params PublicAnnotation[] publicAnnotations)
             : base(publicAnnotations)
         {
@@ -75,27 +82,7 @@ namespace RoslynDom
         }
 
 
-        protected SyntaxTokenList BuildModfierSyntax()
-        {
-            var list = SyntaxFactory.TokenList();
-            var thisHasAccessModifier = this as IHasAccessModifier;
-            if (thisHasAccessModifier != null)
-            { list = list.AddRange(RoslynUtilities.SyntaxTokensForAccessModifier(thisHasAccessModifier.AccessModifier)); }
-            // TODO: Static and other modifiers
-            return list;
-        }
-
-        protected BlockSyntax BuildStatementBlock(IEnumerable<IStatement> statements)
-        {
-            var statementSyntaxList = new List<StatementSyntax>();
-            foreach(var statement in statements)
-            {
-                //statementSyntaxList.Add(statement.BuildSyntax());
-            }
-            //f (statementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
-            var ret = SyntaxFactory.Block(statementSyntaxList);
-            return ret;
-        }
+ 
 
         public TSyntax TypedSyntax
         { get { return _rawSyntax; } }

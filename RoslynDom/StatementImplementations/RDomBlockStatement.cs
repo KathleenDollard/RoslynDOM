@@ -9,15 +9,18 @@ namespace RoslynDom
 {
    public class RDomBlockStatementFactory
         : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
-    {
-        public RDomBlockStatementFactory(RDomFactoryHelper helper)
-            : base( helper)
-        { }
-    }
+    { }
+
 
     public class RDomBlockStatement : RDomBase<IBlockStatement, BlockSyntax, ISymbol>, IBlockStatement
     {
         private IList<IStatement> _statements = new List<IStatement>();
+
+        internal RDomBlockStatement(BlockSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
 
         internal RDomBlockStatement(
             BlockSyntax rawItem,
@@ -32,9 +35,15 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
+ 
         protected override void Initialize()
         {
             base.Initialize();
+        }
+
+       protected void Initialize2()
+        {
+            Initialize();
         }
 
         public override BlockSyntax BuildSyntax()

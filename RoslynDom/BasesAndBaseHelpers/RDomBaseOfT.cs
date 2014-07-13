@@ -13,19 +13,19 @@ namespace RoslynDom
     {
         private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
 
+        protected RDomBase(IEnumerable<PublicAnnotation> publicAnnotations)
+          : base(publicAnnotations)
+        { }
+
         protected RDomBase(params PublicAnnotation[] publicAnnotations)
            : base(publicAnnotations)
         { }
 
-        protected RDomBase(IEnumerable<PublicAnnotation> publicAnnotations)
-            : base(publicAnnotations)
-        { }
-
         protected RDomBase(T oldRDom)
-             : base(oldRDom)
+          : base(oldRDom)
         { }
 
-    
+
         public virtual T Copy()
         {
             var type = this.GetType();
@@ -41,7 +41,7 @@ namespace RoslynDom
 
         internal override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
-            if (!CheckSameIntent(other as T, includePublicAnnotations )) { return false; }
+            if (!CheckSameIntent(other as T, includePublicAnnotations)) { return false; }
             return sameIntent.SameIntent(this as T, other as T, includePublicAnnotations);
         }
 

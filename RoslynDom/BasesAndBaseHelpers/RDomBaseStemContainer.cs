@@ -18,6 +18,12 @@ namespace RoslynDom
     {
         private IList<IStemMember> _members = new List<IStemMember>();
 
+        internal RDomBaseStemContainer(TSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize();
+        }
+
         internal RDomBaseStemContainer(TSyntax rawItem,
                         IEnumerable<IStemMember> members,
                         IEnumerable<IUsing> usings,

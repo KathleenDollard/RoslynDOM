@@ -10,18 +10,21 @@ namespace RoslynDom
 {
     public class RDomAssignmentStatementFactory
          : RDomStatementFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
-    {
-        public RDomAssignmentStatementFactory(RDomFactoryHelper helper)
-            : base(helper)
-        { }
-    }
+    { }
+
 
     public class RDomAssignmentStatement : RDomBase<IAssignmentStatement, ExpressionStatementSyntax, ISymbol>, IAssignmentStatement
     {
         private VariableDeclarationSyntax _variableSyntax;
         private VariableDeclaratorSyntax _declaratorSyntax;
 
- 
+
+        internal RDomAssignmentStatement(ExpressionStatementSyntax rawItem)
+           : base(rawItem)
+        {
+            Initialize2();
+        }
+
         internal RDomAssignmentStatement(
               ExpressionStatementSyntax rawExpression,
               IEnumerable<PublicAnnotation> publicAnnotations)
@@ -37,6 +40,11 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
+        }
+
+        protected void Initialize2()
+        {
+            Initialize();
         }
 
         public override ExpressionStatementSyntax BuildSyntax()

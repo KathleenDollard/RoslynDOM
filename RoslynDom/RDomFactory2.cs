@@ -13,8 +13,8 @@ namespace RoslynDom
     public static class RDomFactory2
     {
         // This is to test PublicAnnotationFactory before DI transition
-        private static IPublicAnnotationFactory _publicAnnotationFactory ;
-        private static RDomStatementFactoryHelper _statementFactoryHelper;
+        //private static IPublicAnnotationFactory _publicAnnotationFactory ;
+        //private static RDomStatementFactoryHelper _statementFactoryHelper;
 
  
         /// <summary>
@@ -29,16 +29,15 @@ namespace RoslynDom
         /// I currnelty think I will NOT support externs. They feel rare to me and something that the
         /// people who understand them can drop to the raw item to work with <br/>
         /// </remarks>
-        internal static RDomRoot MakeRoot(SyntaxTree tree,
-            IUnityContainer  container)
+        internal static RDomRoot MakeRoot(SyntaxTree tree)
         {
-            _publicAnnotationFactory =  container.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
-            _statementFactoryHelper = new RDomStatementFactoryHelper(container);
+            //_publicAnnotationFactory =  container.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
+            //_statementFactoryHelper = RDomFactoryHelper.RDomStatementFactoryHelper ;
             // why are there attributes on a compilatoin unit?
             var kRoot = tree.GetRoot() as CompilationUnitSyntax;
             var members = ListUtilities.MakeList(kRoot, x => x.Members, x => MakeStemMember(x));
             var usings = ListUtilities.MakeList(kRoot, x => x.Usings, x => MakeUsingDirective(x));
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(kRoot).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(kRoot).ToArray();
             return new RDomRoot(kRoot, members, usings, publicAnnotations);
         }
 
@@ -46,7 +45,7 @@ namespace RoslynDom
 
         private static IUsing MakeUsingDirective(UsingDirectiveSyntax x)
         {
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(x).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(x).ToArray();
             return new RDomUsing(x, publicAnnotations);
         }
 
@@ -134,34 +133,34 @@ namespace RoslynDom
         {
             var members = ListUtilities.MakeList(rawNamespace, x => x.Members, x => MakeStemMember(x));
             var usings = ListUtilities.MakeList(rawNamespace, x => x.Usings, x => MakeUsingDirective(x));
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawNamespace).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawNamespace).ToArray();
             return new RDomNamespace(rawNamespace, members, usings, publicAnnotations);
         }
 
         private static IMember MakeClass(ClassDeclarationSyntax rawClass)
         {
             var members = ListUtilities.MakeList(rawClass, x => x.Members, x => MakeTypeMembers(x));
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawClass).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawClass).ToArray();
             return new RDomClass(rawClass, members, publicAnnotations);
         }
 
         private static IMember MakeStructure(StructDeclarationSyntax rawStruct)
         {
             var members = ListUtilities.MakeList(rawStruct, x => x.Members, x => MakeTypeMembers(x));
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawStruct).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawStruct).ToArray();
             return new RDomStructure(rawStruct, members, publicAnnotations);
         }
 
         private static IMember MakeInterface(InterfaceDeclarationSyntax rawInterface)
         {
             var members = ListUtilities.MakeList(rawInterface, x => x.Members, x => MakeTypeMembers(x));
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawInterface).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawInterface).ToArray();
             return new RDomInterface(rawInterface, members, publicAnnotations);
         }
 
         private static IMember MakeEnum(EnumDeclarationSyntax rawEnum)
         {
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawEnum).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawEnum).ToArray();
             return new RDomEnum(rawEnum, publicAnnotations);
         }
 
@@ -169,19 +168,19 @@ namespace RoslynDom
         {
             var parms = ListUtilities.MakeList(rawMethod, x => x.ParameterList.Parameters, x => MakeParameter(x));
             var statements = ListUtilities.MakeList(rawMethod, x => GetStatements(x), x => MakeStatement(x));
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawMethod).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawMethod).ToArray();
             return new RDomMethod(rawMethod, parms, statements, publicAnnotations);
         }
 
         private static IParameter MakeParameter(ParameterSyntax rawParm)
         {
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawParm).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawParm).ToArray();
             return new RDomParameter(rawParm, publicAnnotations);
         }
 
         private static IEnumerable<IStatement> MakeStatement(StatementSyntax rawStatement)
         {
-           return  _statementFactoryHelper.MakeItem(rawStatement);
+           return  RDomFactoryHelper.RDomStatementFactoryHelper.MakeItem(rawStatement);
         }
 
          private static IEnumerable<StatementSyntax> GetStatements(MethodDeclarationSyntax rawMethod)
@@ -202,7 +201,7 @@ namespace RoslynDom
             var parms = new List<IParameter>();
             var getAccessor = MakeAccessor(rawProperty.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault());
             var setAccessor = MakeAccessor(rawProperty.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault());
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawProperty).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawProperty).ToArray();
             return new RDomProperty(rawProperty, parms, getAccessor, setAccessor, publicAnnotations);
         }
 
@@ -210,13 +209,13 @@ namespace RoslynDom
         {
             if (rawAccessor == null) return null;
             var statements = ListUtilities.MakeList(rawAccessor, x => GetStatements(rawAccessor.Body), x => MakeStatement(x));
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawAccessor).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawAccessor).ToArray();
             return new RDomPropertyAccessor(rawAccessor, statements, publicAnnotations);
         }
 
         private static IMember MakeInvalidMember(SyntaxNode rawItem)
         {
-            var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawItem).ToArray();
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawItem).ToArray();
             return new RDomInvalidTypeMember(rawItem, publicAnnotations);
         }
 
@@ -225,7 +224,7 @@ namespace RoslynDom
             var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                var publicAnnotations = _publicAnnotationFactory.CreateFrom(rawField).ToArray();
+                var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(rawField).ToArray();
                 list.Add(new RDomField(rawField, decl, publicAnnotations));
             }
         }
