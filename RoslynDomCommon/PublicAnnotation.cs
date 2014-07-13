@@ -4,8 +4,12 @@ using System.Linq;
 
 namespace RoslynDom.Common
 {
-    public class PublicAnnotation(string name) :IHasLookupValue
+    public class PublicAnnotation :IHasLookupValue
     {
+        public PublicAnnotation (string name)
+        {
+            this.Name = name;
+        }
         // Design note: I chose between this property bag style implementation and an attribute
         // style implementation with specific annotation classes derived from a root. I decided
         // against the class approach becuase of challenges having those classes available at 
@@ -13,7 +17,7 @@ namespace RoslynDom.Common
 
         private List<KeyValuePair<string, object>> items = new List<KeyValuePair<string, object>>();
 
-        public string Name { get; } = name;
+        public string Name { get; private set;} 
 
         public void AddItem(string key, object item)
         { items.Add(new KeyValuePair<string, object>(key, item)); }

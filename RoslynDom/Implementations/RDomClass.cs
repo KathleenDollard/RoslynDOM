@@ -10,12 +10,28 @@ namespace RoslynDom
 {
     public class RDomClassTypeMemberFactory
            : RDomTypeMemberFactory<RDomClass, ClassDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            var identifier = SyntaxFactory.Identifier(item.Name);
+            var node = SyntaxFactory.ClassDeclaration (identifier);
+            var itemAsClass = item as IClass;
+            if (itemAsClass == null) { throw new InvalidOperationException(); }
+            var membersSyntax = itemAsClass.Members
+                        .Select(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x));
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
 
 
     public class RDomClassStemMemberFactory
            : RDomStemMemberFactory<RDomClass, ClassDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+        {
+            return new RDomClassTypeMemberFactory().BuildSyntax((ITypeMember)item);
+        }
+    }
 
 
 
@@ -28,15 +44,15 @@ namespace RoslynDom
     public class RDomClass : RDomBaseType<IClass, ClassDeclarationSyntax>, IClass
     {
         internal RDomClass(ClassDeclarationSyntax rawItem)
-        : base(rawItem, MemberKind.Class, StemMemberKind.Class)
+             : base(rawItem, MemberKind.Class, StemMemberKind.Class)
         {
             Initialize2();
         }
 
         internal RDomClass(ClassDeclarationSyntax rawItem,
-       IEnumerable<ITypeMember> members,
-       params PublicAnnotation[] publicAnnotations)
-       : base(rawItem, MemberKind.Class, StemMemberKind.Class, members, publicAnnotations)
+               IEnumerable<ITypeMember> members,
+               params PublicAnnotation[] publicAnnotations)
+               : base(rawItem, MemberKind.Class, StemMemberKind.Class, members, publicAnnotations)
         {
             Initialize();
         }

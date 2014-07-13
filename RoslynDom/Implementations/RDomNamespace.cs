@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,7 +11,20 @@ namespace RoslynDom
 
     public class RDomNamespaceStemMemberFactory
            : RDomStemMemberFactory<RDomNamespace, NamespaceDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+        {
+            var identifier = SyntaxFactory.IdentifierName(item.Name);
+            var node = SyntaxFactory.NamespaceDeclaration (identifier);
+            var itemAsNamespace = item as INamespace;
+            if (itemAsNamespace == null) { throw new InvalidOperationException(); }
+            var usingsSyntax = itemAsNamespace.Usings
+                        .Select(x => RDomFactoryHelper.StemMemberFactoryHelper.BuildSyntax(x));
+            var membersSyntax = itemAsNamespace.StemMembers
+                        .Select(x => RDomFactoryHelper.StemMemberFactoryHelper.BuildSyntax(x));
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
 
 
     public class RDomNamespace : RDomBaseStemContainer<INamespace, NamespaceDeclarationSyntax, INamespaceSymbol>, INamespace
@@ -60,7 +75,7 @@ namespace RoslynDom
 
         public override NamespaceDeclarationSyntax BuildSyntax()
         {
-            var node = SyntaxFactory.NamespaceDeclaration (SyntaxFactory.IdentifierName(Name));
+            var node = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.IdentifierName(Name));
 
             node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildUsings(), node, (n, l) => n.WithUsings(l));
             node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildStemMembers(), node, (n, l) => n.WithMembers(l));

@@ -8,15 +8,27 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
     public class RDomRootFactory
-          : RDomRootContainerFactory <RDomRoot, CompilationUnitSyntax>
-    { }
+          : RDomRootContainerFactory<RDomRoot, CompilationUnitSyntax>
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IRoot item)
+        {
+            var node = SyntaxFactory.CompilationUnit();
+            var usingsSyntax = item.Usings
+                        .SelectMany(x => RDomFactoryHelper.StemMemberFactoryHelper.BuildSyntax(x));
+            var membersSyntax = item.StemMembers
+                        .SelectMany(x => RDomFactoryHelper.StemMemberFactoryHelper.BuildSyntax(x));
+            node = node.WithUsings(SyntaxFactory.List(usingsSyntax));
+            node = node.WithMembers(SyntaxFactory.List(membersSyntax));
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
 
 
     public class RDomRoot : RDomBaseStemContainer<IRoot, CompilationUnitSyntax, ISymbol>, IRoot
     {
 
         internal RDomRoot(CompilationUnitSyntax rawItem)
-           : base(rawItem)
+            : base(rawItem)
         {
             Initialize2();
         }
@@ -25,13 +37,13 @@ namespace RoslynDom
             IEnumerable<IStemMember> members,
             IEnumerable<IUsing> usings,
             params PublicAnnotation[] publicAnnotations)
-        : base(rawItem, members, usings, publicAnnotations)
+            : base(rawItem, members, usings, publicAnnotations)
         {
             Initialize();
         }
 
         internal RDomRoot(RDomRoot oldRDom)
-             : base(oldRDom)
+            : base(oldRDom)
         { }
 
         protected override void Initialize()
@@ -56,7 +68,7 @@ namespace RoslynDom
             var node = SyntaxFactory.CompilationUnit();
 
             node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildUsings(), node, (n, l) => n.WithUsings(l));
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildStemMembers(), node, (n, l) => n.WithMembers (l));
+            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildStemMembers(), node, (n, l) => n.WithMembers(l));
 
             return (CompilationUnitSyntax)RoslynUtilities.Format(node);
         }
@@ -80,35 +92,35 @@ namespace RoslynDom
             }
         }
 
-        public IEnumerable<IEnum > RootEnums
+        public IEnumerable<IEnum> RootEnums
         {
             get
             {
                 var rootenums = from x in NonemptyNamespaces
-                                  from y in x.Enums
-                                  select y;
+                                from y in x.Enums
+                                select y;
                 return Enums.Union(rootenums);
             }
         }
 
-        public IEnumerable<IInterface > RootInterfaces
+        public IEnumerable<IInterface> RootInterfaces
         {
             get
             {
                 var rootinterfaces = from x in NonemptyNamespaces
-                                  from y in x.Interfaces 
-                                  select y;
+                                     from y in x.Interfaces
+                                     select y;
                 return Interfaces.Union(rootinterfaces);
             }
         }
 
-        public IEnumerable<IStructure > RootStructures
+        public IEnumerable<IStructure> RootStructures
         {
             get
             {
-                var rootstructures= from x in NonemptyNamespaces
-                                  from y in x.Structures
-                                  select y;
+                var rootstructures = from x in NonemptyNamespaces
+                                     from y in x.Structures
+                                     select y;
                 return Structures.Union(rootstructures);
             }
         }

@@ -100,7 +100,7 @@ namespace RoslynDom
                 foreach (var type in typesNotHandled)
                 {
                     var name = type.FullName;
-                    var syntaxType = FindFirstSyntaxNode(type);
+                    var syntaxType = RoslynDomUtilities.FindFirstSyntaxNodeType(type);
                     if (syntaxType == null) { continue; } // this happens with referenced types
                     var newType = ReflectionUtilities.MakeGenericType(rDomFactoryBase, type, syntaxType);
                     RegisterFactory<TKind>(container, newType, name);
@@ -108,14 +108,7 @@ namespace RoslynDom
             }
         }
 
-        private Type FindFirstSyntaxNode(Type type)
-        {
-            if (type == typeof(object)) return null;
-            var syntaxType = type.GenericTypeArguments.Where(x => typeof(SyntaxNode).IsAssignableFrom(x)).FirstOrDefault();
-            if (syntaxType != null) { return syntaxType; }
-            return FindFirstSyntaxNode(type.BaseType);
-        }
-
+ 
         private void RecordAsHandled(List<Type> handledTypes, Type type)
         {
             if (type.BaseType.IsConstructedGenericType)

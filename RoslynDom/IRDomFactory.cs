@@ -13,6 +13,8 @@ namespace RoslynDom
         bool CanCreateFrom(SyntaxNode syntaxNode);
         IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode);
         FactoryPriority Priority { get; }
+
+        IEnumerable<SyntaxNode> BuildSyntax(TKind item);
     }
 
     public interface IRDomFactory

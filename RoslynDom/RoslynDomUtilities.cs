@@ -9,7 +9,7 @@ namespace RoslynDom
 {
     internal static class RoslynDomUtilities
     {
-      
+
         internal static IEnumerable<INamespace> GetAllChildNamespaces(
             IStemContainer stemContainer,
             bool includeSelf = false)
@@ -27,11 +27,11 @@ namespace RoslynDom
             return ret;
         }
 
-        internal static IEnumerable < INamespace > GetNonEmptyNamespaces(
+        internal static IEnumerable<INamespace> GetNonEmptyNamespaces(
             IStemContainer stemContainer)
         {
             return GetAllChildNamespaces(stemContainer)
-                .Where(x => x.StemMembers.Where(y=>y.StemMemberKind!=StemMemberKind.Namespace).Count() != 0);
+                .Where(x => x.StemMembers.Where(y => y.StemMemberKind != StemMemberKind.Namespace).Count() != 0);
         }
 
         internal static IEnumerable<ITypeParameter> TypeParametersFrom(this INamedTypeSymbol rDomType)
@@ -138,6 +138,32 @@ namespace RoslynDom
             if (!string.IsNullOrEmpty(parentNamespace))
             { ret = parentNamespace + (string.IsNullOrEmpty(ret) ? "" : "." + ret); }
             return ret;
+        }
+
+        public static Type FindFirstSyntaxNodeType(Type type)
+        {
+            return FindFirstCastableType<SyntaxNode>(type);
+            //if (type == typeof(object)) return null;
+            //var syntaxType = type.GenericTypeArguments.Where(x => typeof(SyntaxNode).IsAssignableFrom(x)).FirstOrDefault();
+            //if (syntaxType != null) { return syntaxType; }
+            //return FindFirstSyntaxNode(syntaxType.BaseType);
+        }
+
+        public static Type FindFirstIDomType(Type type)
+        {
+            return FindFirstCastableType<IDom>(type);
+            //if (type == typeof(object)) return null;
+            //var syntaxType = type.GenericTypeArguments.Where(x => typeof(SyntaxNode).IsAssignableFrom(x)).FirstOrDefault();
+            //if (syntaxType != null) { return syntaxType; }
+            //return FindFirstSyntaxNode(syntaxType.BaseType);
+        }
+
+        public static Type FindFirstCastableType<T>(Type type)
+        {
+            if (type == typeof(object)) { return null; }
+            var retType = type.GenericTypeArguments.Where(x => typeof(T).IsAssignableFrom(x)).FirstOrDefault();
+            if (retType != null) { return retType; }
+            return FindFirstCastableType<T>(type.BaseType);
         }
 
     }

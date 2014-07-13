@@ -83,7 +83,7 @@ namespace RoslynDom
             if (typeof(TKind) == typeof(IRoot)) { return RootFactoryHelper; }
             if (typeof(TKind) == typeof(IStemMember)) { return StemMemberFactoryHelper; }
             if (typeof(TKind) == typeof(ITypeMember)) { return TypeMemberFactoryHelper; }
-            if (typeof(TKind) == typeof(IStatement)) { return  StatementFactoryHelper; }
+            if (typeof(TKind) == typeof(IStatement)) { return StatementFactoryHelper; }
             if (typeof(TKind) == typeof(IExpression)) { return ExpressionFactoryHelper; }
             if (typeof(TKind) == typeof(IMisc)) { return MiscFactoryHelper; }
             throw new InvalidOperationException();
@@ -101,13 +101,14 @@ namespace RoslynDom
         }
 
         public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
-   
+
     }
 
     public abstract class RDomFactoryHelper<T> : RDomFactoryHelper
     {
         private IEnumerable<IRDomFactory<T>> factories;
         private IRDomFactory<T> genericFactory;
+        private IEnumerable<Tuple<IRDomFactory<T>, Type, Type>> factoryLookup;
 
         protected IEnumerable<IRDomFactory<T>> Factories
         {
@@ -118,14 +119,57 @@ namespace RoslynDom
             }
         }
 
+        private IEnumerable<Tuple<IRDomFactory<T>, Type, Type>> FactoryLookup
+        {
+            get
+            {
+                if (factoryLookup == null)
+                {
+                    var list = new List<Tuple<IRDomFactory<T>, Type, Type>>();
+                    foreach (var factory in Factories)
+                    {
+                        var newTuple = new Tuple<IRDomFactory<T>, Type, Type>
+                                (factory, GetSyntaxType(factory), GetTargetType(factory));
+                        list.Add(newTuple);
+                    }
+                    factoryLookup = list;
+                }
+                return factoryLookup;
+            }
+        }
+
+        private Type GetSyntaxType(IRDomFactory<T> factory)
+        {
+            var factoryType = factory.GetType();
+            var syntaxType = RoslynDomUtilities.FindFirstSyntaxNodeType(factoryType);
+            return syntaxType;
+        }
+
+        private Type GetTargetType(IRDomFactory<T> factory)
+        {
+            var factoryType = factory.GetType();
+            var syntaxType = RoslynDomUtilities.FindFirstIDomType(factoryType);
+            return syntaxType;
+        }
+
+
+        protected IRDomFactory<T> GetFactory(T item)
+        {
+            var type = item.GetType();
+            var found = FactoryLookup.Where(x => x.Item3 == type).FirstOrDefault();
+            return found.Item1;
+        }
+
     }
 
     public abstract class RDomFactoryHelper<T, TSyntax> : RDomFactoryHelper<T>
+        where T : class
         where TSyntax : SyntaxNode
     {
         public IEnumerable<T> MakeItem(TSyntax rawStatement)
         {
-            foreach (var factory in Factories)
+            var factories = Factories.OrderByDescending(x => x.Priority);
+            foreach (var factory in factories)
             {
                 if (factory.CanCreateFrom(rawStatement))
                 {
@@ -137,7 +181,11 @@ namespace RoslynDom
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
-            throw new NotImplementedException();
+            if (item == null) return null;
+            var itemAsT = item as T;
+            if (itemAsT == null) throw new InvalidOperationException();
+            var factory = GetFactory(itemAsT);
+            return factory.BuildSyntax(itemAsT);
         }
     }
 

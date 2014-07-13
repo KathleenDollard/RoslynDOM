@@ -22,6 +22,7 @@ namespace RoslynDom
         }
     }
 
+    // TODO: Figure out why this doesn't use normal factory inheritance tree
     public class PublicAnnotationFactory :  IPublicAnnotationFactory
     {
         public PublicAnnotationFactory()
@@ -137,6 +138,11 @@ namespace RoslynDom
             { return str.SubstringAfter("file:"); }
             if (str.StartsWith("root:", StringComparison.Ordinal))
             { return str.SubstringAfter("root:"); }
+            return null;
+        }
+
+        public IEnumerable<SyntaxNode> BuildSyntax(PublicAnnotation item)
+        {
             return null;
         }
 

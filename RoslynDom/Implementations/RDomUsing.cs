@@ -1,14 +1,25 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    //public class RDomUsingStemMemberFactory
-    //        : RDomStemMemberFactory<RDomUsing, UsingDirectiveSyntax>
-    //{ }
-    
+    public class RDomUsingStemMemberFactory
+            : RDomStemMemberFactory<RDomUsing, UsingDirectiveSyntax>
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+        {
+            // TODO: Handle alias's
+            // TODO: Handle using statements, that's not done
+            var identifier = SyntaxFactory.IdentifierName(item.Name);
+            var node = SyntaxFactory.UsingDirective(identifier);
+            
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
+
     public class RDomUsing : RDomBase<IUsing, UsingDirectiveSyntax, ISymbol>, IUsing
     {
         internal RDomUsing(
