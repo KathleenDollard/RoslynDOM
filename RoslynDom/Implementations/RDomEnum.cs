@@ -1,20 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
-
+using System.Linq;
 
 namespace RoslynDom
 {
     public class RDomEnumTypeMemberFactory
         : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            var modifiers = item.BuildModfierSyntax();
+            var identifier = SyntaxFactory.Identifier(item.Name);
+            var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
+            var node = SyntaxFactory.EnumDeclaration(identifier)
+                .WithModifiers(modifiers);
+            var itemAsEnum = item as IEnum;
+            if (itemAsEnum == null) { throw new InvalidOperationException(); }
+            //var membersSyntax = itemAsEnum.Members
+            //            .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x));
+            //node = node.WithMembers(SyntaxFactory.List(membersSyntax));
+            // TODO: Class type members and type constraints
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
 
 
     public class RDomEnumStemMemberFactory
            : RDomStemMemberFactory<RDomEnum, EnumDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+        {
+            return RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(item);
+        }
+    }
 
 
     public class RDomEnum : RDomBase<IEnum, EnumDeclarationSyntax, ISymbol>, IEnum

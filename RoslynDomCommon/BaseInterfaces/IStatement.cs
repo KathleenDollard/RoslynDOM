@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IStatement 
+    public interface IStatement  :IDom
     {
     }
 }

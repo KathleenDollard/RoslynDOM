@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
@@ -8,12 +10,35 @@ namespace RoslynDom
 {
     public class RDomStructureTypeMemberFactory
           : RDomTypeMemberFactory<RDomStructure, StructDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            // This is identical to Class, but didn't work out reuse here
+            var modifiers = item.BuildModfierSyntax();
+            var identifier = SyntaxFactory.Identifier(item.Name);
+            var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
+            var node = SyntaxFactory.StructDeclaration(identifier)
+                .WithModifiers(modifiers);
+            var itemAsStruct = item as IStructure ;
+            if (itemAsStruct == null) { throw new InvalidOperationException(); }
+            var membersSyntax = itemAsStruct.Members
+                        .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x))
+                        .ToList();
+            node = node.WithMembers(SyntaxFactory.List(membersSyntax));
+            // TODO: Class type members and type constraints
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
 
 
     public class RDomStructureStemMemberFactory
            : RDomStemMemberFactory<RDomStructure, StructDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+        {
+            return RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(item);
+        }
+    }
 
 
     public class RDomStructure : RDomBaseType<IStructure, StructDeclarationSyntax>, IStructure

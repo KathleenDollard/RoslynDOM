@@ -9,7 +9,30 @@ namespace RoslynDom
 {
     public class RDomMethodTypeMemberFactory
           : RDomTypeMemberFactory<RDomMethod, MethodDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            var nameSyntax = SyntaxFactory.Identifier(item.Name);
+            var itemAsMethod = item as IMethod;
+            var returnType = (TypeSyntax)RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsMethod.ReturnType).First();
+            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
+            var node = SyntaxFactory.MethodDeclaration(returnType, nameSyntax)
+                            .WithModifiers(modifiers);
+            var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
+            if (!attributes.Any()) { node = node.WithAttributeLists(attributes); }
+            var parameterSyntaxList = itemAsMethod.Parameters
+                        .SelectMany(x => RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(x))
+                        .OfType<ParameterSyntax>();
+            if (parameterSyntaxList.Any()) {  node = node.WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList (parameterSyntaxList)));}
+            var statementSyntaxList = itemAsMethod.Statements
+                        .SelectMany(x => RDomFactoryHelper.StatementFactoryHelper.BuildSyntax(x));
+            if (statementSyntaxList.Any()) { node = node.WithBody(SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList))); }
+            // TODO: typeParameters  and constraintClauses 
+
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+
+        }
+    }
 
 
     public class RDomMethod : RDomBase<IMethod, MethodDeclarationSyntax, IMethodSymbol>, IMethod

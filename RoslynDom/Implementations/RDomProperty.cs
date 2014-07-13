@@ -10,9 +10,30 @@ namespace RoslynDom
 {
     public class RDomPropertyTypeMemberFactory
           : RDomTypeMemberFactory<RDomProperty, PropertyDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            var nameSyntax = SyntaxFactory.Identifier(item.Name);
+            var itemAsProeprty = item as IProperty;
+            var returnType = (TypeSyntax)RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsProeprty.ReturnType).First();
+            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
+            var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
+                            .WithModifiers(modifiers);
 
+            var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
+            if (!attributes.Any()) { node = node.WithAttributeLists(attributes); }
 
+            var accessors = SyntaxFactory.List<AccessorDeclarationSyntax>();
+            var getAccessorSyntax = RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsProeprty.GetAccessor).FirstOrDefault();
+            if (getAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)getAccessorSyntax); }
+            var setAccessorSyntax = RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsProeprty.SetAccessor).FirstOrDefault();
+            if (setAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)setAccessorSyntax); }
+            if (accessors.Any()) { node = node.WithAccessorList(SyntaxFactory.AccessorList(accessors)); }
+            // TODO: parameters , typeParameters and constraintClauses 
+
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
 
     public class RDomProperty : RDomBase<IProperty, PropertyDeclarationSyntax, IPropertySymbol>, IProperty
     {
@@ -22,7 +43,7 @@ namespace RoslynDom
 
         internal RDomProperty(
                 PropertyDeclarationSyntax rawItem)
-           : base(rawItem)
+            : base(rawItem)
         {
             Initialize2();
         }
@@ -33,7 +54,7 @@ namespace RoslynDom
              IAccessor getAccessor,
              IAccessor setAccessor,
              params PublicAnnotation[] publicAnnotations)
-           : base(rawItem, publicAnnotations)
+            : base(rawItem, publicAnnotations)
         {
             foreach (var parameter in parameters)
             { AddParameter(parameter); }
@@ -43,7 +64,7 @@ namespace RoslynDom
         }
 
         internal RDomProperty(RDomProperty oldRDom)
-             : base(oldRDom)
+            : base(oldRDom)
         {
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             foreach (var parameter in newParameters)
@@ -89,7 +110,7 @@ namespace RoslynDom
             { SetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(setAccessorSyntax).FirstOrDefault()); }
         }
 
-          public override PropertyDeclarationSyntax BuildSyntax()
+        public override PropertyDeclarationSyntax BuildSyntax()
         {
             var nameSyntax = SyntaxFactory.Identifier(Name);
             var returnType = ((RDomReferencedType)PropertyType).BuildSyntax();

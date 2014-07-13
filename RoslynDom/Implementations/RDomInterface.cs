@@ -1,18 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Linq;
 
 namespace RoslynDom
 {
     public class RDomInterfaceTypeMemberFactory
            : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            var modifiers = item.BuildModfierSyntax();
+            var identifier = SyntaxFactory.Identifier(item.Name);
+            var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
+            var node = SyntaxFactory.InterfaceDeclaration(identifier)
+                .WithModifiers(modifiers);
+            var itemAsInterface = item as IInterface ;
+            if (itemAsInterface == null) { throw new InvalidOperationException(); }
+            var membersSyntax = itemAsInterface.Members
+                        .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x))
+                        .ToList();
+            node = node.WithMembers(SyntaxFactory.List(membersSyntax));
+            // TODO: Class type members and type constraints
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
 
 
     public class RDomInterfaceStemMemberFactory
            : RDomStemMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+        {
+            return RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(item);
+        }
+    }
 
 
 

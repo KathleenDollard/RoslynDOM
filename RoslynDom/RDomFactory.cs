@@ -43,26 +43,26 @@ namespace RoslynDom
             return root;
         }
 
-        public static SyntaxNode BuildSyntax(IDom item)
+        public static IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
-            SyntaxNode syntaxNode;
-            if (TryBuildSyntax<IRoot>(item, out syntaxNode)) { return syntaxNode; }
-            if (TryBuildSyntax<IStemMember>(item, out syntaxNode)) { return syntaxNode; }
-            if (TryBuildSyntax<ITypeMember>(item, out syntaxNode)) { return syntaxNode; }
-            if (TryBuildSyntax<IStatement>(item, out syntaxNode)) { return syntaxNode; }
-            if (TryBuildSyntax<IExpression>(item, out syntaxNode)) { return syntaxNode; }
-            if (TryBuildSyntax<IMisc>(item, out syntaxNode)) { return syntaxNode; }
+            IEnumerable<SyntaxNode> syntaxNodes;
+            if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }
+            if (TryBuildSyntax<IStemMember>(item, out syntaxNodes)) { return syntaxNodes; }
+            if (TryBuildSyntax<ITypeMember>(item, out syntaxNodes)) { return syntaxNodes; }
+            if (TryBuildSyntax<IStatement>(item, out syntaxNodes)) { return syntaxNodes; }
+            if (TryBuildSyntax<IExpression>(item, out syntaxNodes)) { return syntaxNodes; }
+            if (TryBuildSyntax<IMisc>(item, out syntaxNodes)) { return syntaxNodes; }
             return null;
         }
 
-        private static bool TryBuildSyntax<TKind>(IDom item, out SyntaxNode syntaxNode)
+        private static bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> syntaxNode)
             where TKind : class
         {
             syntaxNode = null;
             var itemAsKind = item as TKind;
             if (itemAsKind == null){ return false; }
             var helper = RDomFactoryHelper.GetHelper<TKind>();
-            //syntaxNode = helper.BuildSyntax(item);
+            syntaxNode = helper.BuildSyntax(item);
             return true;
         }
 

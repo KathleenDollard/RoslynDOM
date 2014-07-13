@@ -89,7 +89,9 @@ namespace RoslynDomTests
             Assert.IsFalse(class1.SameIntent(class2));
             Assert.AreEqual("Bar2", class2.Name);
             var newCode = class2.BuildSyntax().ToString();
-            Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode );
+            var newCode2 = RDomFactory.BuildSyntax(class2).FirstOrDefault();
+            Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode);
+            Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode2.ToString());
         }
 
         [TestMethod, TestCategory(MutabilityCategory)]

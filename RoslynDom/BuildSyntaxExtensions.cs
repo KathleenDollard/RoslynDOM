@@ -53,7 +53,18 @@ namespace RoslynDom
             var ret = SyntaxFactory.Block(statementSyntaxList);
             return ret;
         }
+        public static SyntaxList<AttributeListSyntax> BuildAttributeListSyntax(IEnumerable<IAttribute> attributes)
+        {
+            var list = SyntaxFactory.List<AttributeListSyntax>();
+            if (attributes.Any())
+            {
+                var attribList = SyntaxFactory.AttributeList();
+                var attributeSyntax = attributes.Select(x => ((RDomAttribute)x).BuildSyntax());
+                attribList = attribList.AddAttributes(attributeSyntax.ToArray());
+                list = list.Add(attribList);
+            }
+            return list;
+        }
 
-   
     }
 }

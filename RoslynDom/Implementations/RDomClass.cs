@@ -13,12 +13,18 @@ namespace RoslynDom
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
         {
+            var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
-            var node = SyntaxFactory.ClassDeclaration (identifier);
+            var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
+            var node = SyntaxFactory.ClassDeclaration (identifier)
+                .WithModifiers(modifiers);
             var itemAsClass = item as IClass;
             if (itemAsClass == null) { throw new InvalidOperationException(); }
             var membersSyntax = itemAsClass.Members
-                        .Select(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x));
+                        .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x))
+                        .ToList();
+            node = node.WithMembers(SyntaxFactory.List(membersSyntax));
+            // TODO: Class type members and type constraints
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
     }
@@ -29,7 +35,7 @@ namespace RoslynDom
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {
-            return new RDomClassTypeMemberFactory().BuildSyntax((ITypeMember)item);
+           return  RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(item);
         }
     }
 
