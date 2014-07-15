@@ -2,6 +2,6 @@
 {
     public interface IHasAccessModifier
     {
-        AccessModifier AccessModifier { get; }
+        AccessModifier AccessModifier { get; set; }
     }
 }

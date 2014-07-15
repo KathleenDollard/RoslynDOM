@@ -34,7 +34,7 @@ namespace RoslynDom
             Name = TypedSyntax.Name.ToString();
         }
 
-        public override AttributeSyntax BuildSyntax()
+        public  AttributeSyntax BuildSyntax()
         {
             var arguments = new SeparatedSyntaxList<AttributeArgumentSyntax>();
             arguments = arguments.AddRange(_attributeValues.Select(x =>((RDomAttributeValue)x).BuildSyntax()));

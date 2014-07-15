@@ -2,12 +2,12 @@
 {
     public interface IParameter : IMisc, IHasAttributes, IDom<IParameter >
     {
-        IReferencedType Type { get; }
-        bool IsOut { get; }
-        bool IsRef { get; }
+        IReferencedType Type { get; set; }
+        bool IsOut { get; set; }
+        bool IsRef { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param")]
-        bool IsParamArray { get; }
-        bool IsOptional { get; }
-        int Ordinal { get; }
+        bool IsParamArray { get; set; }
+        bool IsOptional { get; set; }
+        int Ordinal { get; set; }
     }
 }

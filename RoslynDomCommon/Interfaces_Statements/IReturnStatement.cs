@@ -4,6 +4,6 @@ namespace RoslynDom.Common
 {
     public interface IReturnStatement : IStatement, IDom<IReturnStatement>
     {
-        IExpression Return { get; }
+        IExpression Return { get; set; }
     }
 }

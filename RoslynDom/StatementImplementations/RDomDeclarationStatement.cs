@@ -26,9 +26,27 @@ namespace RoslynDom
             var declarators = rawDeclaration.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                list.Add(new RDomDeclarationStatement(decl));
+                var newItem = new RDomDeclarationStatement( decl);
+                list.Add(newItem);
+                InitializeItem(newItem, decl);
             }
             return list;
+        }
+
+        public override void InitializeItem(RDomDeclarationStatement newItem, VariableDeclaratorSyntax syntax)
+        {
+            newItem.Name = newItem.TypedSymbol.Name;
+            var declaration = syntax.Parent as VariableDeclarationSyntax;
+            if (declaration == null) throw new InvalidOperationException();
+            newItem.IsImplicitlyTyped = (declaration.Type.ToString() == "var");
+            var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type;
+            newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, typeSymbol);
+            if (syntax.Initializer != null)
+            {
+                var equalsClause = syntax.Initializer;
+                newItem.Initializer = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(equalsClause.Value).FirstOrDefault();
+            }
+
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
@@ -60,16 +78,16 @@ namespace RoslynDom
         internal RDomDeclarationStatement(VariableDeclaratorSyntax rawItem)
            : base(rawItem)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomDeclarationStatement(
-              VariableDeclaratorSyntax rawDeclaration,
-              IEnumerable<PublicAnnotation> publicAnnotations)
-            : base(rawDeclaration, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomDeclarationStatement(
+        //      VariableDeclaratorSyntax rawDeclaration,
+        //      IEnumerable<PublicAnnotation> publicAnnotations)
+        //    : base(rawDeclaration, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
         internal RDomDeclarationStatement(RDomDeclarationStatement oldRDom)
              : base(oldRDom)
@@ -80,31 +98,31 @@ namespace RoslynDom
             Initializer = oldRDom.Initializer.Copy();
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            var declaration = TypedSyntax.Parent as VariableDeclarationSyntax;
-            if (declaration == null) throw new InvalidOperationException();
-            IsImplicitlyTyped = (declaration.Type.ToString() == "var");
-            var typeSymbol = ((ILocalSymbol)TypedSymbol).Type;
-            Type = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, typeSymbol);
-            if (TypedSyntax.Initializer != null)
-            {
-                var equalsClause = TypedSyntax.Initializer;
-                Initializer = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(equalsClause.Value).FirstOrDefault();
-            }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    var declaration = TypedSyntax.Parent as VariableDeclarationSyntax;
+        //    if (declaration == null) throw new InvalidOperationException();
+        //    IsImplicitlyTyped = (declaration.Type.ToString() == "var");
+        //    var typeSymbol = ((ILocalSymbol)TypedSymbol).Type;
+        //    Type = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, typeSymbol);
+        //    if (TypedSyntax.Initializer != null)
+        //    {
+        //        var equalsClause = TypedSyntax.Initializer;
+        //        Initializer = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(equalsClause.Value).FirstOrDefault();
+        //    }
 
-        }
+        //}
 
-        protected void Initialize2()
-        {
-            Initialize();
-        }
+        //protected void Initialize2()
+        //{
+        //    Initialize();
+        //}
 
-        public override VariableDeclaratorSyntax BuildSyntax()
-        {
-            return null;
-        }
+        //public override VariableDeclaratorSyntax BuildSyntax()
+        //{
+        //    return null;
+        //}
 
         public IExpression Initializer { get; set; }
 

@@ -2,6 +2,6 @@
 {
     public interface IHasReturnType
     {
-        IReferencedType  ReturnType { get; }
+        IReferencedType  ReturnType { get; set; }
     }
 }

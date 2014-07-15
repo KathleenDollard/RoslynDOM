@@ -112,7 +112,7 @@ namespace RoslynDomTests
             class2.Name = "Bar2";
             Assert.IsFalse(class1.SameIntent(class2));
             Assert.AreEqual("Bar2", class2.Name);
-            var newCode = class2.BuildSyntax().ToString();
+            var newCode = RDomFactory.BuildSyntax(class2).ToString();
             Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    private Int32 fooish;\r\n\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode);
         }
 
@@ -240,7 +240,7 @@ namespace RoslynDomTests
             public interface Bar4{}           
             ";
             var rDomRoot = RDomFactory.GetRootFromString(csharpCode) as RDomRoot;
-            var output = rDomRoot.BuildSyntax();
+            var output = RDomFactory .BuildSyntax(rDomRoot);
             var expectedCode = "using System;\r\n\r\npublic class Bar\r\n{\r\n}\r\n\r\npublic struct Bar2\r\n{\r\n}\r\n\r\npublic enum Bar3\r\n{\r\n}\r\n\r\npublic interface Bar4\r\n{\r\n}";
             Assert.AreEqual(expectedCode,output.ToString() );
         }

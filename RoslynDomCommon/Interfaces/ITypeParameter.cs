@@ -4,12 +4,12 @@ namespace RoslynDom.Common
 {
     public interface ITypeParameter : IMisc, IDom<ITypeParameter>, IReferencedType 
     {
-        Variance Variance { get; }
-        bool HasConstructorConstraint { get; }
-        bool HasReferenceTypeConstraint { get; }
-        bool HasValueTypeConstraint { get; }
+        Variance Variance { get; set; }
+        bool HasConstructorConstraint { get; set; }
+        bool HasReferenceTypeConstraint { get; set; }
+        bool HasValueTypeConstraint { get; set; }
         IEnumerable<IReferencedType > ConstraintTypes { get; }
 
-        int Ordinal { get; }
+        int Ordinal { get; set; }
     }
 }

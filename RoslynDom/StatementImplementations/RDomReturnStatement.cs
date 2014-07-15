@@ -13,6 +13,15 @@ namespace RoslynDom
     public class RDomReturnStatementFactory
                 : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>
     {
+        public override void InitializeItem(RDomReturnStatement newItem, ReturnStatementSyntax syntax)
+        {
+            if (syntax.Expression != null)
+            {
+                newItem.Return = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(syntax.Expression).FirstOrDefault();
+                if (newItem.Return == null) throw new InvalidOperationException();
+            }
+        }
+
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
         {
             var itemAsT = item as IReturnStatement;
@@ -32,16 +41,16 @@ namespace RoslynDom
         internal RDomReturnStatement(ReturnStatementSyntax rawItem)
            : base(rawItem)
         {
-            Initialize2();
+           // Initialize2();
         }
 
-        internal RDomReturnStatement(
-              ReturnStatementSyntax rawReturn,
-              IEnumerable<PublicAnnotation> publicAnnotations)
-            : base(rawReturn, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomReturnStatement(
+        //      ReturnStatementSyntax rawReturn,
+        //      IEnumerable<PublicAnnotation> publicAnnotations)
+        //    : base(rawReturn, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
         internal RDomReturnStatement(RDomReturnStatement oldRDom)
              : base(oldRDom)
@@ -49,27 +58,27 @@ namespace RoslynDom
             Return = oldRDom.Return.Copy();
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            if (TypedSyntax.Expression != null)
-            {
-                Return = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(TypedSyntax.Expression).FirstOrDefault();
-                if (Return == null) throw new InvalidOperationException();
-            }
-        }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    if (TypedSyntax.Expression != null)
+        //    {
+        //        Return = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(TypedSyntax.Expression).FirstOrDefault();
+        //        if (Return == null) throw new InvalidOperationException();
+        //    }
+        //}
 
-        protected void Initialize2()
-        {
-            Initialize();
-        }
+        //protected void Initialize2()
+        //{
+        //    Initialize();
+        //}
 
-        public override ReturnStatementSyntax BuildSyntax()
-        {
-            var expr = ((RDomExpression)Return).BuildSyntax();
-            var node = SyntaxFactory.ReturnStatement(expr);
-            return node;
-        }
+        //public override ReturnStatementSyntax BuildSyntax()
+        //{
+        //    var expr = ((RDomExpression)Return).BuildSyntax();
+        //    var node = SyntaxFactory.ReturnStatement(expr);
+        //    return node;
+        //}
 
         public IExpression Return { get; set; }
     }

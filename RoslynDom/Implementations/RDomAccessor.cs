@@ -9,7 +9,18 @@ namespace RoslynDom
 {
     public class RDomPropertyAccessorMiscFactory
           : RDomMiscFactory<RDomPropertyAccessor, AccessorDeclarationSyntax>
-    { }
+    {
+        public override void InitializeItem(RDomPropertyAccessor newItem, AccessorDeclarationSyntax syntax)
+        {
+            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
+            if (syntax.Body != null)
+            {
+                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
+                foreach (var statement in statements)
+                { newItem.AddStatement(statement); }
+            }
+        }
+    }
 
     public class RDomPropertyAccessor : RDomBase<IAccessor, AccessorDeclarationSyntax, ISymbol>, IAccessor
     {
@@ -19,19 +30,19 @@ namespace RoslynDom
                   AccessorDeclarationSyntax rawItem)
            : base(rawItem)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomPropertyAccessor(
-            AccessorDeclarationSyntax rawItem,
-            IEnumerable<IStatement> statements,
-            params PublicAnnotation[] publicAnnotations)
-          : base(rawItem, publicAnnotations)
-        {
-            foreach (var statement in statements)
-            { AddStatement(statement); }
-            Initialize();
-        }
+        //internal RDomPropertyAccessor(
+        //    AccessorDeclarationSyntax rawItem,
+        //    IEnumerable<IStatement> statements,
+        //    params PublicAnnotation[] publicAnnotations)
+        //  : base(rawItem, publicAnnotations)
+        //{
+        //    foreach (var statement in statements)
+        //    { AddStatement(statement); }
+        //    Initialize();
+        //}
 
         internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
              : base(oldRDom)
@@ -43,28 +54,28 @@ namespace RoslynDom
             AccessModifier = oldRDom.AccessModifier;
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
 
-            AccessModifier = GetAccessibility();
-        }
+        //    AccessModifier = GetAccessibility();
+        //}
 
-        private void Initialize2()
-        {
-            if (TypedSyntax.Body != null)
-            {
-                var statements = ListUtilities.MakeList(TypedSyntax, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
-                foreach (var statement in statements)
-                { AddStatement(statement); }
-            }
-            Initialize();
-        }
+        //private void Initialize2()
+        //{
+        //    if (TypedSyntax.Body != null)
+        //    {
+        //        var statements = ListUtilities.MakeList(TypedSyntax, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
+        //        foreach (var statement in statements)
+        //        { AddStatement(statement); }
+        //    }
+        //    Initialize();
+        //}
 
-        public override AccessorDeclarationSyntax BuildSyntax()
-        {
-            return null;
-        }
+        //public override AccessorDeclarationSyntax BuildSyntax()
+        //{
+        //    return null;
+        //}
 
         public void RemoveStatement(IStatement statement)
         { _statements.Remove(statement); }

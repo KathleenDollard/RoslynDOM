@@ -40,6 +40,7 @@
     <Compile Include="BaseInterfaces\ILoop.cs" />
     <Compile Include="BaseInterfaces\IPropertyOrMethod.cs" />
     <Compile Include="BaseInterfaces\IStatementContainer.cs" />
+    <Compile Include="CharacteristicInterfaces\ICanBeNested.cs" />
     <Compile Include="CharacteristicInterfaces\ICanBeStatic.cs" />
     <Compile Include="CharacteristicInterfaces\IHasAccessModifier.cs" />
     <Compile Include="CharacteristicInterfaces\IHasImplementedInterfaces.cs" />

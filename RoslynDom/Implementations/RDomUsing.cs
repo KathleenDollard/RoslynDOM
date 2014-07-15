@@ -9,6 +9,10 @@ namespace RoslynDom
     public class RDomUsingStemMemberFactory
             : RDomStemMemberFactory<RDomUsing, UsingDirectiveSyntax>
     {
+        public override void InitializeItem(RDomUsing newItem, UsingDirectiveSyntax syntax)
+        {
+            newItem. Name = syntax.Name.NameFrom();
+        }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {
             // TODO: Handle alias's
@@ -26,39 +30,39 @@ namespace RoslynDom
             UsingDirectiveSyntax rawItem)
            : base(rawItem)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomUsing(
-            UsingDirectiveSyntax rawItem,
-            params PublicAnnotation[] publicAnnotations)
-          : base(rawItem, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomUsing(
+        //    UsingDirectiveSyntax rawItem,
+        //    params PublicAnnotation[] publicAnnotations)
+        //  : base(rawItem, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
         internal RDomUsing(RDomUsing oldRDom)
              : base(oldRDom)
         { }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            Name = TypedSyntax.Name.NameFrom();
-        }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    Name = TypedSyntax.Name.NameFrom();
+        //}
 
-        protected void Initialize2()
-        {
-            Initialize();
-        }
+        //protected void Initialize2()
+        //{
+        //    Initialize();
+        //}
 
-        public override UsingDirectiveSyntax BuildSyntax()
-        {
-            var nameSyntax = SyntaxFactory.IdentifierName(Name);
-            var node = SyntaxFactory.UsingDirective(nameSyntax);
+        //public override UsingDirectiveSyntax BuildSyntax()
+        //{
+        //    var nameSyntax = SyntaxFactory.IdentifierName(Name);
+        //    var node = SyntaxFactory.UsingDirective(nameSyntax);
 
-            return (UsingDirectiveSyntax)RoslynUtilities.Format(node);
-        }
+        //    return (UsingDirectiveSyntax)RoslynUtilities.Format(node);
+        //}
 
         public StemMemberKind StemMemberKind
         { get { return StemMemberKind.Using; } }

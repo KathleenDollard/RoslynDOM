@@ -11,6 +11,30 @@ namespace RoslynDom
     public class RDomPropertyTypeMemberFactory
           : RDomTypeMemberFactory<RDomProperty, PropertyDeclarationSyntax>
     {
+        public override void InitializeItem(RDomProperty newItem, PropertyDeclarationSyntax syntax)
+        {
+            newItem.Name = newItem.TypedSymbol.Name;
+            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
+            // TODO: Get and set accessibility
+            // TODO: Type parameters and constraints
+            newItem.PropertyType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
+            newItem.IsAbstract = newItem.Symbol.IsAbstract;
+            newItem.IsVirtual = newItem.Symbol.IsVirtual;
+            newItem.IsOverride = newItem.Symbol.IsOverride;
+            newItem.IsSealed = newItem.Symbol.IsSealed;
+            newItem.IsStatic = newItem.Symbol.IsStatic;
+            var propSymbol = newItem.Symbol as IPropertySymbol;
+            if (propSymbol == null) throw new InvalidOperationException();
+            newItem.CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
+            newItem.CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
+            var getAccessorSyntax = newItem.TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
+            var setAccessorSyntax = newItem.TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
+            if (getAccessorSyntax != null)
+            { newItem.GetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(getAccessorSyntax).FirstOrDefault()); }
+            if (setAccessorSyntax != null)
+            { newItem.SetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(setAccessorSyntax).FirstOrDefault()); }
+        }
+
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
         {
             var nameSyntax = SyntaxFactory.Identifier(item.Name);
@@ -45,23 +69,23 @@ namespace RoslynDom
                 PropertyDeclarationSyntax rawItem)
             : base(rawItem)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomProperty(
-             PropertyDeclarationSyntax rawItem,
-             IEnumerable<IParameter> parameters,
-             IAccessor getAccessor,
-             IAccessor setAccessor,
-             params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, publicAnnotations)
-        {
-            foreach (var parameter in parameters)
-            { AddParameter(parameter); }
-            GetAccessor = getAccessor;
-            SetAccessor = setAccessor;
-            Initialize();
-        }
+        //internal RDomProperty(
+        //     PropertyDeclarationSyntax rawItem,
+        //     IEnumerable<IParameter> parameters,
+        //     IAccessor getAccessor,
+        //     IAccessor setAccessor,
+        //     params PublicAnnotation[] publicAnnotations)
+        //    : base(rawItem, publicAnnotations)
+        //{
+        //    foreach (var parameter in parameters)
+        //    { AddParameter(parameter); }
+        //    GetAccessor = getAccessor;
+        //    SetAccessor = setAccessor;
+        //    Initialize();
+        //}
 
         internal RDomProperty(RDomProperty oldRDom)
             : base(oldRDom)
@@ -81,69 +105,69 @@ namespace RoslynDom
             CanGet = oldRDom.CanGet;
             CanSet = oldRDom.CanSet;
         }
-        protected override void Initialize()
-        {
-            base.Initialize();
-            AccessModifier = GetAccessibility();
-            // TODO: Get and set accessibility
-            PropertyType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
-            IsAbstract = Symbol.IsAbstract;
-            IsVirtual = Symbol.IsVirtual;
-            IsOverride = Symbol.IsOverride;
-            IsSealed = Symbol.IsSealed;
-            IsStatic = Symbol.IsStatic;
-            var propSymbol = Symbol as IPropertySymbol;
-            if (propSymbol == null) throw new InvalidOperationException();
-            CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
-            CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
-        }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    AccessModifier = GetAccessibility();
+        //    // TODO: Get and set accessibility
+        //    PropertyType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
+        //    IsAbstract = Symbol.IsAbstract;
+        //    IsVirtual = Symbol.IsVirtual;
+        //    IsOverride = Symbol.IsOverride;
+        //    IsSealed = Symbol.IsSealed;
+        //    IsStatic = Symbol.IsStatic;
+        //    var propSymbol = Symbol as IPropertySymbol;
+        //    if (propSymbol == null) throw new InvalidOperationException();
+        //    CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
+        //    CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
+        //}
 
-        private void Initialize2()
-        {
-            Initialize();
-            // Parameters are for VB and not supported in C#
-            var getAccessorSyntax = TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
-            var setAccessorSyntax = TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
-            if (getAccessorSyntax != null)
-            { GetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(getAccessorSyntax).FirstOrDefault()); }
-            if (setAccessorSyntax != null)
-            { SetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(setAccessorSyntax).FirstOrDefault()); }
-        }
+        //private void Initialize2()
+        //{
+        //    Initialize();
+        //    // Parameters are for VB and not supported in C#
+        //    var getAccessorSyntax = TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
+        //    var setAccessorSyntax = TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
+        //    if (getAccessorSyntax != null)
+        //    { GetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(getAccessorSyntax).FirstOrDefault()); }
+        //    if (setAccessorSyntax != null)
+        //    { SetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(setAccessorSyntax).FirstOrDefault()); }
+        //}
 
-        public override PropertyDeclarationSyntax BuildSyntax()
-        {
-            var nameSyntax = SyntaxFactory.Identifier(Name);
-            var returnType = ((RDomReferencedType)PropertyType).BuildSyntax();
-            var modifiers = this.BuildModfierSyntax();
-            var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
-                            .WithModifiers(modifiers);
+       //  public override PropertyDeclarationSyntax BuildSyntax()
+       //{
+       //     var nameSyntax = SyntaxFactory.Identifier(Name);
+       //     var returnType = ((RDomReferencedType)PropertyType).BuildSyntax();
+       //     var modifiers = this.BuildModfierSyntax();
+       //     var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
+       //                     .WithModifiers(modifiers);
 
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
-            node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildAccessorList(), node, (n, item) => n.WithAccessorList(item));
-            //var parameters = BuildTypeParameterList();
-            //var typeParameters = BuildTypeParameterList();
-            //var constraintClauses = BuildConstraintClauses();
+       //     node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
+       //     node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildAccessorList(), node, (n, item) => n.WithAccessorList(item));
+       //     //var parameters = BuildTypeParameterList();
+       //     //var typeParameters = BuildTypeParameterList();
+       //     //var constraintClauses = BuildConstraintClauses();
 
-            return (PropertyDeclarationSyntax)RoslynUtilities.Format(node);
-        }
+       //     return (PropertyDeclarationSyntax)RoslynUtilities.Format(node);
+       // }
 
-        private AccessorListSyntax BuildAccessorList()
-        {
-            var list = new List<AccessorDeclarationSyntax>();
-            if (CanGet)
-            {
-                var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration);
-                node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(GetStatements), node, (n, item) => n.WithBody(item));
-                list.Add(node);
-            }
-            if (CanSet)
-            {
-                var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration);
-                node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(SetStatements), node, (n, item) => n.WithBody(item));
-                list.Add(node);
-            }
-            return SyntaxFactory.AccessorList(SyntaxFactory.List<AccessorDeclarationSyntax>(list));
-        }
+        //private AccessorListSyntax BuildAccessorList()
+        //{
+        //    var list = new List<AccessorDeclarationSyntax>();
+        //    if (CanGet)
+        //    {
+        //        var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration);
+        //        node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(GetStatements), node, (n, item) => n.WithBody(item));
+        //        list.Add(node);
+        //    }
+        //    if (CanSet)
+        //    {
+        //        var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration);
+        //        node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(SetStatements), node, (n, item) => n.WithBody(item));
+        //        list.Add(node);
+        //    }
+        //    return SyntaxFactory.AccessorList(SyntaxFactory.List<AccessorDeclarationSyntax>(list));
+        //}
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }

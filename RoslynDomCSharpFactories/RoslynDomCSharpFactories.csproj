@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8AE6F765-35A1-492F-84A1-86807155AA2C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RoslynDomCSharpFactories</RootNamespace>
+    <AssemblyName>RoslynDomCSharpFactories</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeAnalysis">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.1.20-beta\lib\portable-net45+win8\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Reflection.Metadata">
+      <HintPath>..\packages\Microsoft.Bcl.Metadata.1.0.11-alpha\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoslynDomCSharpUtilities.cs" />
+    <Compile Include="RoslynCSharpUtilities.cs" />
+    <Compile Include="StructureFactories\RDomAccessor.cs" />
+    <Compile Include="StatementFactories\RDomAssignmentStatement.cs" />
+    <Compile Include="BaseFactories\RDomBaseFactory.cs" />
+    <Compile Include="BaseFactories\RDomBaseFactoryHelper.cs" />
+    <Compile Include="StatementFactories\RDomBlockStatement.cs" />
+    <Compile Include="StructureFactories\RDomClass.cs" />
+    <Compile Include="StatementFactories\RDomDeclarationStatement.cs" />
+    <Compile Include="StructureFactories\RDomEnum.cs" />
+    <Compile Include="BaseFactories\RDomExpression.cs" />
+    <Compile Include="StructureFactories\RDomField.cs" />
+    <Compile Include="StatementFactories\RDomIfStatement.cs" />
+    <Compile Include="StructureFactories\RDomInterface.cs" />
+    <Compile Include="StatementFactories\RDomInvocationStatement.cs" />
+    <Compile Include="StructureFactories\RDomMethod.cs" />
+    <Compile Include="StructureFactories\RDomNamespace.cs" />
+    <Compile Include="StructureFactories\RDomProperty.cs" />
+    <Compile Include="StructureFactories\RDomReferencedType.cs" />
+    <Compile Include="StatementFactories\RDomReturnStatement.cs" />
+    <Compile Include="StructureFactories\RDomRoot.cs" />
+    <Compile Include="StructureFactories\RDomStructure.cs" />
+    <Compile Include="StructureFactories\RDomUsing.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RoslynDomCommon\RoslynDomCommon.csproj">
+      <Project>{4f7977ed-7d76-40b6-bfb8-185c2b5a04b7}</Project>
+      <Name>RoslynDomCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynDomRDomCommon\RoslynDomRDomCommon.csproj">
+      <Project>{1e5b8601-b717-471d-a9ee-0c03d15491a5}</Project>
+      <Name>RoslynDomRDomCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

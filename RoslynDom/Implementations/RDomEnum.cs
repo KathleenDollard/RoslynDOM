@@ -8,10 +8,21 @@ using System.Linq;
 
 namespace RoslynDom
 {
-    public class RDomEnumTypeMemberFactory
-        : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
+    internal static class RDomEnumFactoryHelper
     {
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        public static void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
+        {
+            newItem.Name = newItem.TypedSymbol.Name;
+            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
+            var symbol = newItem.Symbol as INamedTypeSymbol;
+            if (symbol != null)
+            {
+                var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
+                newItem.UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
+            }
+        }
+
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomEnum item)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
@@ -29,13 +40,31 @@ namespace RoslynDom
         }
     }
 
+    public class RDomEnumTypeMemberFactory
+        : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
+    {
+        public override void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
+        {
+            RDomEnumFactoryHelper.InitializeItem(newItem, syntax);
+        }
+
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item);
+        }
+    }
+
 
     public class RDomEnumStemMemberFactory
            : RDomStemMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
+        public override void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
+        {
+            RDomEnumFactoryHelper.InitializeItem(newItem, syntax);
+        }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {
-            return RDomFactory.BuildSyntaxGroup(item);
+            return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item);
         }
     }
 
@@ -46,16 +75,16 @@ namespace RoslynDom
              EnumDeclarationSyntax rawItem)
            : base(rawItem)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomEnum(
-          EnumDeclarationSyntax rawItem,
-          params PublicAnnotation[] publicAnnotations)
-        : base(rawItem, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomEnum(
+        //  EnumDeclarationSyntax rawItem,
+        //  params PublicAnnotation[] publicAnnotations)
+        //: base(rawItem, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
         internal RDomEnum(RDomEnum oldRDom)
              : base(oldRDom)
@@ -64,34 +93,34 @@ namespace RoslynDom
             UnderlyingType = oldRDom.UnderlyingType;
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            AccessModifier = GetAccessibility();
-            var symbol = Symbol as INamedTypeSymbol;
-            if (symbol != null)
-            {
-                var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
-                UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
-            }
-        }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    AccessModifier = GetAccessibility();
+        //    var symbol = Symbol as INamedTypeSymbol;
+        //    if (symbol != null)
+        //    {
+        //        var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
+        //        UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
+        //    }
+        //}
 
-        private void Initialize2()
-        {
-            Initialize();
-        }
+        //private void Initialize2()
+        //{
+        //    Initialize();
+        //}
 
-        public override EnumDeclarationSyntax BuildSyntax()
-        {
-            var modifiers = this.BuildModfierSyntax();
-            var node = SyntaxFactory.EnumDeclaration(Name)
-                            .WithModifiers(modifiers);
-            //var node = SyntaxFactory.EnumDeclaration(Name);
-            // TODO: Support enum members
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
+        //public override EnumDeclarationSyntax BuildSyntax()
+        //{
+        //    var modifiers = this.BuildModfierSyntax();
+        //    var node = SyntaxFactory.EnumDeclaration(Name)
+        //                    .WithModifiers(modifiers);
+        //    //var node = SyntaxFactory.EnumDeclaration(Name);
+        //    // TODO: Support enum members
+        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
 
-            return (EnumDeclarationSyntax)RoslynUtilities.Format(node);
-        }
+        //    return (EnumDeclarationSyntax)RoslynUtilities.Format(node);
+        //}
 
         public IEnumerable<IAttribute> Attributes
         { get { return GetAttributes(); } }
@@ -99,6 +128,7 @@ namespace RoslynDom
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 
+        public IType ContainingType { get; set; }
 
         public string QualifiedName
         {

@@ -5,7 +5,7 @@ namespace RoslynDomCommon.InterfacesForStatements
 {
     public interface IThrowStatement : IStatement
     {
-        string ExceptionVarName { get; }
+        string ExceptionVarName { get; set; }
         IReferencedType ExceptionType { get; }
         IEnumerable<IArgument> Arguments { get; }
     }

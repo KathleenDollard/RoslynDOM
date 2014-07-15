@@ -4,6 +4,6 @@ namespace RoslynDom.Common
 {
     public interface IAssignmentStatement : IStatement, IDom<IAssignmentStatement >
     {
-        IExpression Expression { get; }
+        IExpression Expression { get; set; }
     }
 }

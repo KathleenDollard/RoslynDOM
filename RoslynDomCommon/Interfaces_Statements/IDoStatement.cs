@@ -8,7 +8,7 @@ namespace RoslynDom.Common
 {
     public interface IDoStatement :ILoop
     {
-        IExpression Condition { get; }
-        bool TestAtEnd{ get; }
+        IExpression Condition { get; set; }
+        bool TestAtEnd{ get; set; }
     }
 }

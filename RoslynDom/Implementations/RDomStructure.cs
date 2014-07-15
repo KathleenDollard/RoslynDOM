@@ -8,10 +8,21 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomStructureTypeMemberFactory
-          : RDomTypeMemberFactory<RDomStructure, StructDeclarationSyntax>
+    internal static class RDomStructureFactoryHelper
     {
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        public static void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
+        {
+            newItem.Name = newItem.TypedSymbol.Name;
+            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
+            var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
+            foreach (var typeParameter in newTypeParameters)
+            { newItem.AddOrMoveTypeParameter(typeParameter); }
+            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+            foreach (var member in members)
+            { newItem.AddOrMoveMember(member); }
+        }
+
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomStructure item)
         {
             // This is identical to Class, but didn't work out reuse here
             var modifiers = item.BuildModfierSyntax();
@@ -19,7 +30,7 @@ namespace RoslynDom
             var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
             var node = SyntaxFactory.StructDeclaration(identifier)
                 .WithModifiers(modifiers);
-            var itemAsStruct = item as IStructure ;
+            var itemAsStruct = item as IStructure;
             if (itemAsStruct == null) { throw new InvalidOperationException(); }
             var membersSyntax = itemAsStruct.Members
                         .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
@@ -29,16 +40,31 @@ namespace RoslynDom
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
     }
+    public class RDomStructureTypeMemberFactory
+      : RDomTypeMemberFactory<RDomStructure, StructDeclarationSyntax>
+    {
+        public override void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
+        {
+            RDomStructureFactoryHelper.InitializeItem(newItem, syntax);
+        }
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            return RDomStructureFactoryHelper.BuildSyntax((RDomStructure)item);
+        }
+    }
 
 
     public class RDomStructureStemMemberFactory
            : RDomStemMemberFactory<RDomStructure, StructDeclarationSyntax>
     {
+        public override void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
+        {
+            RDomStructureFactoryHelper.InitializeItem(newItem, syntax);
+        }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {
-            // Can't use a direct call to RDomFactory here because it would not resolve to the correct factory. 
-            // Could possibly use a direct call, but that would require both methods be replaced in alternate languages
-            return RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntaxGroup(item);
+
+            return RDomStructureFactoryHelper.BuildSyntax((RDomStructure)item);
         }
     }
 
@@ -49,43 +75,43 @@ namespace RoslynDom
                  StructDeclarationSyntax rawItem)
         : base(rawItem, MemberKind.Structure, StemMemberKind.Structure)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomStructure(
-          StructDeclarationSyntax rawItem,
-          IEnumerable<ITypeMember> members,
-          params PublicAnnotation[] publicAnnotations)
-          : base(rawItem, MemberKind.Structure, StemMemberKind.Structure, members, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomStructure(
+        //  StructDeclarationSyntax rawItem,
+        //  IEnumerable<ITypeMember> members,
+        //  params PublicAnnotation[] publicAnnotations)
+        //  : base(rawItem, MemberKind.Structure, StemMemberKind.Structure, members, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
         internal RDomStructure(RDomStructure oldRDom)
              : base(oldRDom)
         { }
 
-        private void Initialize2()
-        {
-            Initialize();
-            var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
-            foreach (var member in members)
-            { AddOrMoveMember(member); }
-        }
+        //private void Initialize2()
+        //{
+        //    Initialize();
+        //    var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+        //    foreach (var member in members)
+        //    { AddOrMoveMember(member); }
+        //}
 
-        public override StructDeclarationSyntax BuildSyntax()
-        {
-            var modifiers = this.BuildModfierSyntax();
-            var node = SyntaxFactory.StructDeclaration(Name)
-                            .WithModifiers(modifiers);
+        //public override StructDeclarationSyntax BuildSyntax()
+        //{
+        //    var modifiers = this.BuildModfierSyntax();
+        //    var node = SyntaxFactory.StructDeclaration(Name)
+        //                    .WithModifiers(modifiers);
 
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(true), node, (n, l) => n.WithMembers(l));
-            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
-            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
+        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(true), node, (n, l) => n.WithMembers(l));
+        //    //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
+        //    //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
+        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
 
-            return (StructDeclarationSyntax)RoslynUtilities.Format(node);
-        }
+        //    return (StructDeclarationSyntax)RoslynUtilities.Format(node);
+        //}
 
 
         public IEnumerable<IClass> Classes

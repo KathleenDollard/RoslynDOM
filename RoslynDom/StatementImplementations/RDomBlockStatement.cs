@@ -10,6 +10,15 @@ namespace RoslynDom
     public class RDomBlockStatementFactory
          : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
     {
+        public override void InitializeItem(RDomBlockStatement newItem, BlockSyntax syntax)
+        {
+            foreach (var statementSyntax in syntax.Statements)
+            {
+                var statements = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax);
+                foreach (var statement in statements)
+                { newItem.AddOrMoveStatement(statement); }
+            }
+        }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
         {
             var itemAsT = item as IBlockStatement;
@@ -31,16 +40,16 @@ namespace RoslynDom
         internal RDomBlockStatement(BlockSyntax rawItem)
            : base(rawItem)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomBlockStatement(
-            BlockSyntax rawItem,
-              IEnumerable<PublicAnnotation> publicAnnotations)
-          : base(rawItem, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomBlockStatement(
+        //    BlockSyntax rawItem,
+        //      IEnumerable<PublicAnnotation> publicAnnotations)
+        //  : base(rawItem, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
 
         internal RDomBlockStatement(RDomBlockStatement oldRDom)
@@ -52,25 +61,25 @@ namespace RoslynDom
         }
 
 
-        protected override void Initialize()
-        {
-            foreach (var statementSyntax in TypedSyntax.Statements)
-            {
-                var statements = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax);
-                foreach (var statement in statements)
-                { AddOrMoveStatement(statement); }
-            }
-        }
+        //protected override void Initialize()
+        //{
+        //    foreach (var statementSyntax in TypedSyntax.Statements)
+        //    {
+        //        var statements = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax);
+        //        foreach (var statement in statements)
+        //        { AddOrMoveStatement(statement); }
+        //    }
+        //}
 
-        protected void Initialize2()
-        {
-            Initialize();
-        }
+        //protected void Initialize2()
+        //{
+        //    Initialize();
+        //}
 
-        public override BlockSyntax BuildSyntax()
-        {
-            return null;
-        }
+        //public override BlockSyntax BuildSyntax()
+        //{
+        //    return null;
+        //}
 
 
         public void RemoveStatement(IStatement statement)

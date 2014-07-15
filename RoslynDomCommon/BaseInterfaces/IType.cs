@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
-    public interface IType :  IHasAttributes, IHasNamespace, IStemMember, ITypeMember
+    public interface IType :  IDom, IHasAttributes, IHasNamespace, IStemMember, ITypeMember, ICanBeNested
     {
     }
 
-    public interface IType<T> : IType, IDom,  ITypeMember<T>
+    public interface IType<T> : IType,   ITypeMember<T>
         where T : IType<T>
     {
     }

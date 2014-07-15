@@ -6,7 +6,7 @@ namespace RoslynDom.Common
     {
         object RawItem { get; }
         object OriginalRawItem { get; }
-        string Name { get; }
+        string Name { get; set; }
         string OuterName { get; }
         bool Matches(IDom other);
         IDom Parent { get; }

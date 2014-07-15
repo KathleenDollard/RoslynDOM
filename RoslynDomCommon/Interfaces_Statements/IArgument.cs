@@ -8,9 +8,9 @@ namespace RoslynDom.Common
 {
     public interface IArgument
     {
-        string Name { get; }
-        bool IsRef { get; }
-        bool IsOut { get; }
-        IExpression ValueExpression { get; }
+        string Name { get; set; }
+        bool IsRef { get; set; }
+        bool IsOut { get; set; }
+        IExpression ValueExpression { get; set; }
     }
 }

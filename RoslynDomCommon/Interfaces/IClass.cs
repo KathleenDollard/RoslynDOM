@@ -10,10 +10,10 @@ namespace RoslynDom.Common
         IHasImplementedInterfaces , 
         ICanBeStatic 
     {
-        bool IsAbstract { get; }
-        bool IsSealed { get; }
+        bool IsAbstract { get; set; }
+        bool IsSealed { get; set; }
 
-        IReferencedType BaseType { get; }
+        IReferencedType BaseType { get; set; }
 
     }
 }

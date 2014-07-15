@@ -8,6 +8,6 @@ namespace RoslynDom.Common
 {
     public interface ICastExpression : IExpression
     {
-        IReferencedType Type { get; }
+        IReferencedType Type { get; set; }
     }
 }

@@ -10,6 +10,17 @@ namespace RoslynDom
     public class RDomRootFactory
           : RDomRootContainerFactory<RDomRoot, CompilationUnitSyntax>
     {
+        public override void InitializeItem(RDomRoot newItem, CompilationUnitSyntax syntax)
+        {
+            newItem.Name = "Root";
+            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+            var usings = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Usings, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+            foreach (var member in members)
+            { newItem.AddOrMoveStemMember(member); }
+            foreach (var member in usings)
+            { newItem.AddOrMoveStemMember(member); }
+        }
+
         public override IEnumerable<SyntaxNode> BuildSyntax(IRoot item)
         {
             var node = SyntaxFactory.CompilationUnit();
@@ -17,6 +28,7 @@ namespace RoslynDom
                         .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
                         .ToList();
             var membersSyntax = item.StemMembers
+                        .Where(x=>!(x is IUsing))
                         .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithUsings(SyntaxFactory.List(usingsSyntax));
@@ -32,48 +44,48 @@ namespace RoslynDom
         internal RDomRoot(CompilationUnitSyntax rawItem)
             : base(rawItem)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomRoot(CompilationUnitSyntax rawItem,
-            IEnumerable<IStemMember> members,
-            IEnumerable<IUsing> usings,
-            params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, members, usings, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomRoot(CompilationUnitSyntax rawItem,
+        //    IEnumerable<IStemMember> members,
+        //    IEnumerable<IUsing> usings,
+        //    params PublicAnnotation[] publicAnnotations)
+        //    : base(rawItem, members, usings, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
         internal RDomRoot(RDomRoot oldRDom)
             : base(oldRDom)
         { }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            Name = "Root";
-        }
-        protected void Initialize2()
-        {
-            Initialize();
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    Name = "Root";
+        //}
+        //protected void Initialize2()
+        //{
+        //    Initialize();
 
-            var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
-            var usings = ListUtilities.MakeList(TypedSyntax, x => x.Usings, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
-            foreach (var member in members)
-            { AddOrMoveStemMember(member); }
-            foreach (var member in usings)
-            { AddOrMoveStemMember(member); }
-        }
+        //    var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+        //    var usings = ListUtilities.MakeList(TypedSyntax, x => x.Usings, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+        //    foreach (var member in members)
+        //    { AddOrMoveStemMember(member); }
+        //    foreach (var member in usings)
+        //    { AddOrMoveStemMember(member); }
+        //}
 
-        public override CompilationUnitSyntax BuildSyntax()
-        {
-            var node = SyntaxFactory.CompilationUnit();
+        //public override CompilationUnitSyntax BuildSyntax()
+        //{
+        //    var node = SyntaxFactory.CompilationUnit();
 
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildUsings(), node, (n, l) => n.WithUsings(l));
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildStemMembers(), node, (n, l) => n.WithMembers(l));
+        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildUsings(), node, (n, l) => n.WithUsings(l));
+        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildStemMembers(), node, (n, l) => n.WithMembers(l));
 
-            return (CompilationUnitSyntax)RoslynUtilities.Format(node);
-        }
+        //    return (CompilationUnitSyntax)RoslynUtilities.Format(node);
+        //}
 
         public bool HasSyntaxErrors
         {

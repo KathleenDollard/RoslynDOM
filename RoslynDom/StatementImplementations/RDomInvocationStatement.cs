@@ -11,6 +11,12 @@ namespace RoslynDom
     public class RDomInvocationStatementFactory
          : RDomStatementFactory<RDomInvocationStatement, ExpressionStatementSyntax>
     {
+        public override void InitializeItem(RDomInvocationStatement newItem, ExpressionStatementSyntax syntax)
+        {
+            var expression = syntax.Expression;
+            newItem.Invocation = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(expression).FirstOrDefault();
+        }
+
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
         {
             var itemAsT = item as IInvocationStatement;
@@ -38,16 +44,16 @@ namespace RoslynDom
         internal RDomInvocationStatement(ExpressionStatementSyntax rawItem)
            : base(rawItem)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomInvocationStatement(
-              ExpressionStatementSyntax rawExpression,
-              IEnumerable<PublicAnnotation> publicAnnotations)
-            : base(rawExpression, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomInvocationStatement(
+        //      ExpressionStatementSyntax rawExpression,
+        //      IEnumerable<PublicAnnotation> publicAnnotations)
+        //    : base(rawExpression, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
         internal RDomInvocationStatement(RDomInvocationStatement oldRDom)
              : base(oldRDom)
@@ -55,22 +61,22 @@ namespace RoslynDom
             Invocation = oldRDom.Invocation.Copy();
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            var expression = TypedSyntax.Expression;
-            Invocation = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(expression).FirstOrDefault();
-        }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    var expression = TypedSyntax.Expression;
+        //    Invocation = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(expression).FirstOrDefault();
+        //}
 
-        protected void Initialize2()
-        {
-            Initialize();
-        }
+        //protected void Initialize2()
+        //{
+        //    Initialize();
+        //}
 
-        public override ExpressionStatementSyntax BuildSyntax()
-        {
-            return null;
-        }
+        //public override ExpressionStatementSyntax BuildSyntax()
+        //{
+        //    return null;
+        //}
 
         public IExpression Invocation { get; set; }
     }

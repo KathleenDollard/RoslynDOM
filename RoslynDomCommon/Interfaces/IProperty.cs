@@ -4,10 +4,10 @@ namespace RoslynDom.Common
 {
     public interface IProperty : IPropertyOrMethod<IProperty >
     {
-        IReferencedType PropertyType { get; }
-        bool CanGet { get; }
-        bool CanSet { get; }
-        IAccessor GetAccessor { get; }
-        IAccessor SetAccessor { get; }
+        IReferencedType PropertyType { get; set; }
+        bool CanGet { get; set; }
+        bool CanSet { get; set; }
+        IAccessor GetAccessor { get; set; }
+        IAccessor SetAccessor { get; set; }
     }
 }

@@ -13,6 +13,11 @@ namespace RoslynDom
     public class RDomExpressionFactory
                  : RDomExpressionFactory<RDomExpression, ExpressionSyntax>
     {
+        public override void InitializeItem(RDomExpression newItem, ExpressionSyntax rawItem)
+        {
+            newItem.Expression = rawItem.ToString();
+        }
+
         public override IEnumerable<SyntaxNode> BuildSyntax(IExpression item)
         {
             var itemAsT = item as IExpression;
@@ -26,7 +31,7 @@ namespace RoslynDom
         internal RDomExpression(ExpressionSyntax rawItem)
            : base(rawItem)
         {
-            Expression = rawItem.ToString();
+            //Initialize();
         }
 
         internal RDomExpression(RDomExpression oldRDom)
@@ -34,6 +39,12 @@ namespace RoslynDom
         {
             Expression = oldRDom.Expression;
         }
+
+        //protected override void Initialize()
+        //{
+        //    // don't call base initialize, name has no meaning
+        //    Expression = RawItem.ToString();
+        //}
 
         public string Expression { get; set; }
     }

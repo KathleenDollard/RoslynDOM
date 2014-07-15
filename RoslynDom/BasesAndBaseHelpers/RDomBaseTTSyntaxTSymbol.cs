@@ -21,25 +21,25 @@ namespace RoslynDom
         private string _containingTypeName;
 
         protected RDomBase(TSyntax rawItem)
-             : base( RDomFactoryHelper.GetPublicAnnotations(rawItem))
+             : base(RDomFactoryHelper.GetPublicAnnotations(rawItem))
         {
             _rawSyntax = rawItem;
             _originalRawSyntax = rawItem;
         }
 
-        protected RDomBase(TSyntax rawItem, params PublicAnnotation[] publicAnnotations)
-            : base(publicAnnotations)
-        {
-            _rawSyntax = rawItem;
-            _originalRawSyntax = rawItem;
-        }
+        //protected RDomBase(TSyntax rawItem, params PublicAnnotation[] publicAnnotations)
+        //    : base(publicAnnotations)
+        //{
+        //    _rawSyntax = rawItem;
+        //    _originalRawSyntax = rawItem;
+        //}
 
-        protected RDomBase(TSyntax rawItem, IEnumerable< PublicAnnotation> publicAnnotations)
-            : base(publicAnnotations)
-        {
-            _rawSyntax = rawItem;
-            _originalRawSyntax = rawItem;
-        }
+        //protected RDomBase(TSyntax rawItem, IEnumerable< PublicAnnotation> publicAnnotations)
+        //    : base(publicAnnotations)
+        //{
+        //    _rawSyntax = rawItem;
+        //    _originalRawSyntax = rawItem;
+        //}
 
         protected RDomBase(T oldIDom)
              : base(oldIDom)
@@ -53,20 +53,14 @@ namespace RoslynDom
             //_symbol = default(TSymbol); // this should be reset, this line is to remind us
         }
 
-        protected override void Initialize()
-        {
-            if (TypedSymbol != null)
-            {
-                Name = TypedSymbol.Name;
-                _containingTypeName = GetContainingTypeName(Symbol.ContainingType);
-            }
-        }
-
-         // public and virtual instead of abstract during development only
-        public virtual TSyntax BuildSyntax()
-        {
-            return null;
-        }
+        //protected override void Initialize()
+        //{
+        //    if (TypedSymbol != null)
+        //    {
+        //        Name = TypedSymbol.Name;
+        //        _containingTypeName = GetContainingTypeName(Symbol.ContainingType);
+        //    }
+        //}
 
         protected SyntaxList<AttributeListSyntax> BuildAttributeListSyntax()
         {
@@ -81,8 +75,6 @@ namespace RoslynDom
             return list;
         }
 
-
- 
 
         public TSyntax TypedSyntax
         { get { return _rawSyntax; } }
@@ -134,7 +126,7 @@ namespace RoslynDom
             throw new InvalidOperationException();
         }
 
-    
+
         protected virtual AccessModifier GetAccessibility()
         {
             if (Symbol == null) { return AccessModifier.NotApplicable; }

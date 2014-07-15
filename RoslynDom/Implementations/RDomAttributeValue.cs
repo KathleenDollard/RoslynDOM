@@ -152,7 +152,7 @@ namespace RoslynDom
             return ret;
         }
 
-        public override AttributeArgumentSyntax BuildSyntax()
+        public  AttributeArgumentSyntax BuildSyntax()
         {
             var argNameSyntax = SyntaxFactory.IdentifierName(Name);
             var kind = RoslynUtilities.SyntaxKindFromLiteralKind(_literalKind, _value);

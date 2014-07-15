@@ -8,9 +8,9 @@ namespace RoslynDom.Common
 {
     public interface ICatch : IStatement
     {
-        IExpression Condition { get; }
-        string ExceptionName { get; }
-        string ExceptionType { get; } // For .NET, this should be IReferencedType, not sure on other platforms
+        IExpression Condition { get; set; }
+        string ExceptionName { get; set; }
+        string ExceptionType { get; set; } // For .NET, this should be IReferencedType, not sure on other platforms
         IEnumerable<IStatement> Statements { get; }
     }
 }

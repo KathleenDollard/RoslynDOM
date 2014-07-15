@@ -4,10 +4,10 @@ namespace RoslynDom.Common
 {
     public interface IPropertyOrMethod : IHasReturnType, ICanBeStatic, ITypeMember
     {
-        bool IsAbstract { get; }
-        bool IsVirtual { get; }
-        bool IsOverride { get; }
-        bool IsSealed { get; }
+        bool IsAbstract { get; set; }
+        bool IsVirtual { get; set; }
+        bool IsOverride { get; set; }
+        bool IsSealed { get; set; }
 
         IEnumerable<IParameter> Parameters { get; }
     }

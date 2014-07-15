@@ -2,7 +2,7 @@
 {
     public interface IHasNamespace
     {
-        string Namespace { get; }
-        string QualifiedName { get; }
+        string Namespace { get;  }
+        string QualifiedName { get;  }
     }
 }

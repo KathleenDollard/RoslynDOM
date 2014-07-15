@@ -2,6 +2,6 @@
 {
     public interface ICanBeStatic
     {
-        bool IsStatic { get; }
+        bool IsStatic { get; set; }
     }
 }

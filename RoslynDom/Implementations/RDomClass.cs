@@ -8,10 +8,25 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomClassTypeMemberFactory
-           : RDomTypeMemberFactory<RDomClass, ClassDeclarationSyntax>
+    internal static class RDomClassFactoryHelper
     {
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        public static void InitializeItem(RDomClass newItem, ClassDeclarationSyntax syntax)
+        {
+            newItem.Name = newItem.TypedSymbol.Name;
+            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
+            var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
+            foreach (var typeParameter in newTypeParameters)
+            { newItem.AddOrMoveTypeParameter(typeParameter); }
+            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+            foreach (var member in members)
+            { newItem.AddOrMoveMember(member); }
+            newItem.BaseType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.BaseType);
+            newItem.IsAbstract = newItem.Symbol.IsAbstract;
+            newItem.IsSealed = newItem.Symbol.IsSealed;
+            newItem.IsStatic = newItem.Symbol.IsStatic;
+        }
+
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
@@ -29,16 +44,29 @@ namespace RoslynDom
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
     }
-
+    public class RDomClassTypeMemberFactory
+           : RDomTypeMemberFactory<RDomClass, ClassDeclarationSyntax>
+    {
+        public override void InitializeItem(RDomClass newItem, ClassDeclarationSyntax syntax)
+        {
+            RDomClassFactoryHelper.InitializeItem(newItem, syntax);
+        }
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            return RDomClassFactoryHelper.BuildSyntax((RDomClass)item);
+        }
+    }
 
     public class RDomClassStemMemberFactory
            : RDomStemMemberFactory<RDomClass, ClassDeclarationSyntax>
     {
+        public override void InitializeItem(RDomClass newItem, ClassDeclarationSyntax syntax)
+        {
+            RDomClassFactoryHelper.InitializeItem(newItem, syntax);
+        }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {
-            // Can't use a direct call to RDomFactory here because it would not resolve to the correct factory. 
-            // Could possibly use a direct call, but that would require both methods be replaced in alternate languages
-            return RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntaxGroup(item);
+            return RDomClassFactoryHelper.BuildSyntax((RDomClass)item);
         }
     }
 
@@ -55,16 +83,16 @@ namespace RoslynDom
         internal RDomClass(ClassDeclarationSyntax rawItem)
              : base(rawItem, MemberKind.Class, StemMemberKind.Class)
         {
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomClass(ClassDeclarationSyntax rawItem,
-               IEnumerable<ITypeMember> members,
-               params PublicAnnotation[] publicAnnotations)
-               : base(rawItem, MemberKind.Class, StemMemberKind.Class, members, publicAnnotations)
-        {
-            Initialize();
-        }
+        //internal RDomClass(ClassDeclarationSyntax rawItem,
+        //       IEnumerable<ITypeMember> members,
+        //       params PublicAnnotation[] publicAnnotations)
+        //       : base(rawItem, MemberKind.Class, StemMemberKind.Class, members, publicAnnotations)
+        //{
+        //    Initialize();
+        //}
 
         internal RDomClass(RDomClass oldRDom)
              : base(oldRDom)
@@ -75,36 +103,36 @@ namespace RoslynDom
             IsStatic = oldRDom.IsStatic;
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            BaseType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType);
-            IsAbstract = Symbol.IsAbstract;
-            IsSealed = Symbol.IsSealed;
-            IsStatic = Symbol.IsStatic;
-        }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    BaseType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.BaseType);
+        //    IsAbstract = Symbol.IsAbstract;
+        //    IsSealed = Symbol.IsSealed;
+        //    IsStatic = Symbol.IsStatic;
+        //}
 
-        private void Initialize2()
-        {
-            Initialize();
-            var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
-            foreach (var member in members)
-            { AddOrMoveMember(member); }
-        }
+        //private void Initialize2()
+        //{
+        //    Initialize();
+        //    var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+        //    foreach (var member in members)
+        //    { AddOrMoveMember(member); }
+        //}
 
-        public override ClassDeclarationSyntax BuildSyntax()
-        {
-            var modifiers = this.BuildModfierSyntax();
-            var node = SyntaxFactory.ClassDeclaration(Name)
-                            .WithModifiers(modifiers);
+        //public override ClassDeclarationSyntax BuildSyntax()
+        //{
+        //    var modifiers = this.BuildModfierSyntax();
+        //    var node = SyntaxFactory.ClassDeclaration(Name)
+        //                    .WithModifiers(modifiers);
 
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(true), node, (n, l) => n.WithMembers(l));
-            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
-            //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
+        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(true), node, (n, l) => n.WithMembers(l));
+        //    //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
+        //    //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
+        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
 
-            return (ClassDeclarationSyntax)RoslynUtilities.Format(node);
-        }
+        //    return (ClassDeclarationSyntax)RoslynUtilities.Format(node);
+        //}
 
 
         public IEnumerable<IClass> Classes
@@ -138,7 +166,6 @@ namespace RoslynDom
         public bool IsSealed { get; set; }
 
         public bool IsStatic { get; set; }
-
 
         public IReferencedType BaseType { get; set; }
 

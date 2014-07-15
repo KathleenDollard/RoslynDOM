@@ -10,7 +10,13 @@ namespace RoslynDom
     public class RDomFieldTypeMemberFactory
           : RDomTypeMemberFactory<RDomField, FieldDeclarationSyntax>
     {
-
+        public override void InitializeItem(RDomField newItem, FieldDeclarationSyntax syntax)
+        {
+            newItem.Name = newItem.TypedSymbol.Name;
+            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
+            newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
+            newItem.IsStatic = newItem.Symbol.IsStatic;
+        }
         public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode)
         {
             var list = new List<ITypeMember>();
@@ -19,7 +25,9 @@ namespace RoslynDom
             var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                list.Add(new RDomField(rawField, decl));
+                var newItem = new RDomField(rawField, decl);
+                list.Add(newItem);
+                InitializeItem(newItem, rawField);
             }
             return list;
         }
@@ -65,18 +73,18 @@ namespace RoslynDom
            : base(rawItem)
         {
             _varSyntax = varSyntax;
-            Initialize2();
+            //Initialize2();
         }
 
-        internal RDomField(
-                    FieldDeclarationSyntax rawItem,
-                    VariableDeclaratorSyntax varSyntax,
-                    params PublicAnnotation[] publicAnnotations)
-            : base(rawItem, publicAnnotations)
-        {
-            _varSyntax = varSyntax;
-            Initialize();
-        }
+        //internal RDomField(
+        //            FieldDeclarationSyntax rawItem,
+        //            VariableDeclaratorSyntax varSyntax,
+        //            params PublicAnnotation[] publicAnnotations)
+        //    : base(rawItem, publicAnnotations)
+        //{
+        //    _varSyntax = varSyntax;
+        //    Initialize();
+        //}
 
         internal RDomField(RDomField oldRDom)
              : base(oldRDom)
@@ -87,36 +95,36 @@ namespace RoslynDom
             IsStatic = oldRDom.IsStatic;
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-            AccessModifier = GetAccessibility();
-            ReturnType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
-            IsStatic = Symbol.IsStatic;
-        }
+        //protected override void Initialize()
+        //{
+        //    base.Initialize();
+        //    AccessModifier = GetAccessibility();
+        //    ReturnType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
+        //    IsStatic = Symbol.IsStatic;
+        //}
 
-        private void Initialize2()
-        {
-            Initialize();
-        }
+        //private void Initialize2()
+        //{
+        //    Initialize();
+        //}
 
-        public override FieldDeclarationSyntax BuildSyntax()
-        {
-            var nameSyntax = SyntaxFactory.Identifier(Name);
-            var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
-            var modifiers = this.BuildModfierSyntax();
-            var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
-            var variableNode = SyntaxFactory.VariableDeclaration(returnType)
-               .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(nameSyntax)));
-            var node = SyntaxFactory.FieldDeclaration(variableNode)
-               .WithModifiers(modifiers);
+        //public override FieldDeclarationSyntax BuildSyntax()
+        //{
+        //    var nameSyntax = SyntaxFactory.Identifier(Name);
+        //    var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
+        //    var modifiers = this.BuildModfierSyntax();
+        //    var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
+        //    var variableNode = SyntaxFactory.VariableDeclaration(returnType)
+        //       .WithVariables(
+        //                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+        //                    SyntaxFactory.VariableDeclarator(nameSyntax)));
+        //    var node = SyntaxFactory.FieldDeclaration(variableNode)
+        //       .WithModifiers(modifiers);
 
-            node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
+        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
 
-            return (FieldDeclarationSyntax)RoslynUtilities.Format(node);
-        }
+        //    return (FieldDeclarationSyntax)RoslynUtilities.Format(node);
+        //}
 
         protected override bool CheckSameIntent(IField other, bool includePublicAnnotations)
         {

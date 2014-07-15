@@ -13,7 +13,7 @@ namespace RoslynDom
 {
     public static class RoslynUtilities
     {
-        internal static string NameFrom(this SyntaxNode node)
+        public static string NameFrom(this SyntaxNode node)
         {
             var qualifiedNameNode = node.ChildNodes()
                                       .OfType<QualifiedNameSyntax>()
@@ -169,7 +169,9 @@ namespace RoslynDom
         {
             var memberAsT = member as TRDom;
             if (memberAsT == null) return false;
-            list.Add(makeDelegate(memberAsT));
+            var newItem =makeDelegate(memberAsT);
+            if (newItem == null) throw new InvalidOperationException();
+            list.Add(newItem);
             return true; ;
 
         }
@@ -201,5 +203,10 @@ namespace RoslynDom
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); 
         }
 
+        public static AccessModifier GetAccessibilityFromSymbol(ISymbol symbol)
+        {
+            if (symbol == null) { return AccessModifier.NotApplicable; }
+            return (AccessModifier)symbol.DeclaredAccessibility;
+        }
     }
 }

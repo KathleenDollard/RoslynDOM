@@ -4,10 +4,10 @@ namespace RoslynDomCommon.InterfacesForStatements
 {
     public interface IForEachStatement : ILoop
     {
-        string LoopVarName { get; }
-        IExpression CollectionExpression { get; }
-        bool ImplicitlyTyped { get; }
-        IReferencedType ExplicitVarType { get; }
+        string LoopVarName { get; set; }
+        IExpression CollectionExpression { get; set; }
+        bool ImplicitlyTyped { get; set; }
+        IReferencedType ExplicitVarType { get; set; }
  
     }
 }

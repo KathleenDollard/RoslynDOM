@@ -8,7 +8,7 @@ namespace RoslynDom.Common
 {
     public interface IObjectCreationExpression : IExpression 
     {
-        IReferencedType Type{ get; } 
+        IReferencedType Type{ get; set; } 
         IEnumerable<IArgument > Arguments { get; }
     }
 }
