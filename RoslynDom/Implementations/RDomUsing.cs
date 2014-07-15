@@ -16,7 +16,7 @@ namespace RoslynDom
             var identifier = SyntaxFactory.IdentifierName(item.Name);
             var node = SyntaxFactory.UsingDirective(identifier);
             
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return new SyntaxNode[] { node.NormalizeWhitespace() };
         }
     }
 

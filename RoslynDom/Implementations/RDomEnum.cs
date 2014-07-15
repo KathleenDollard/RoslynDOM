@@ -21,7 +21,8 @@ namespace RoslynDom
             var itemAsEnum = item as IEnum;
             if (itemAsEnum == null) { throw new InvalidOperationException(); }
             //var membersSyntax = itemAsEnum.Members
-            //            .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x));
+            //            .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x))
+            //            .ToList();
             //node = node.WithMembers(SyntaxFactory.List(membersSyntax));
             // TODO: Class type members and type constraints
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
@@ -34,7 +35,7 @@ namespace RoslynDom
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {
-            return RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(item);
+            return RDomFactory.BuildSyntaxGroup(item);
         }
     }
 

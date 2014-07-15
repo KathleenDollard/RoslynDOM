@@ -100,7 +100,8 @@ namespace RoslynDom
             return factoryProvider.GetFactories<T>();
         }
 
-        public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
+        public abstract SyntaxNode BuildSyntax(IDom item);
+        public abstract IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item);
 
     }
 
@@ -168,7 +169,7 @@ namespace RoslynDom
     {
         public IEnumerable<T> MakeItem(TSyntax rawStatement)
         {
-            var factories = Factories.OrderByDescending(x => x.Priority);
+            var factories = Factories.OrderByDescending(x => x.Priority).ToArray();
             foreach (var factory in factories)
             {
                 if (factory.CanCreateFrom(rawStatement))
@@ -179,13 +180,18 @@ namespace RoslynDom
             return null;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+        public override IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
         {
             if (item == null) return null;
             var itemAsT = item as T;
             if (itemAsT == null) throw new InvalidOperationException();
             var factory = GetFactory(itemAsT);
             return factory.BuildSyntax(itemAsT);
+        }
+
+        public override SyntaxNode BuildSyntax(IDom item)
+        {
+            return BuildSyntaxGroup(item).Single();
         }
     }
 

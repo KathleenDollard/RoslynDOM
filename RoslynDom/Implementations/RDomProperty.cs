@@ -15,23 +15,23 @@ namespace RoslynDom
         {
             var nameSyntax = SyntaxFactory.Identifier(item.Name);
             var itemAsProeprty = item as IProperty;
-            var returnType = (TypeSyntax)RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsProeprty.ReturnType).First();
+            var returnType = (TypeSyntax)RDomFactory.BuildSyntax(itemAsProeprty.ReturnType);
             var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
             var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
                             .WithModifiers(modifiers);
 
             var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
-            if (!attributes.Any()) { node = node.WithAttributeLists(attributes); }
+            if (attributes.Any()) { node = node.WithAttributeLists(attributes); }
 
             var accessors = SyntaxFactory.List<AccessorDeclarationSyntax>();
-            var getAccessorSyntax = RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsProeprty.GetAccessor).FirstOrDefault();
+            var getAccessorSyntax = RDomFactory.BuildSyntaxGroup(itemAsProeprty.GetAccessor).FirstOrDefault();
             if (getAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)getAccessorSyntax); }
-            var setAccessorSyntax = RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsProeprty.SetAccessor).FirstOrDefault();
+            var setAccessorSyntax = RDomFactory.BuildSyntaxGroup(itemAsProeprty.SetAccessor).FirstOrDefault();
             if (setAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)setAccessorSyntax); }
             if (accessors.Any()) { node = node.WithAccessorList(SyntaxFactory.AccessorList(accessors)); }
             // TODO: parameters , typeParameters and constraintClauses 
 
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return new SyntaxNode[] { node.NormalizeWhitespace() };
         }
     }
 

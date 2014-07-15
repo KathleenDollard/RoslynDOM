@@ -7,9 +7,21 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-   public class RDomBlockStatementFactory
-        : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
-    { }
+    public class RDomBlockStatementFactory
+         : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        {
+            var itemAsT = item as IBlockStatement;
+
+            var statementSyntaxList = itemAsT.Statements
+              .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
+              .ToList();
+            var node = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
+            return new SyntaxNode[] { node.NormalizeWhitespace() };
+
+        }
+    }
 
 
     public class RDomBlockStatement : RDomBase<IBlockStatement, BlockSyntax, ISymbol>, IBlockStatement
@@ -25,23 +37,32 @@ namespace RoslynDom
         internal RDomBlockStatement(
             BlockSyntax rawItem,
               IEnumerable<PublicAnnotation> publicAnnotations)
-          : base(rawItem,   publicAnnotations)
+          : base(rawItem, publicAnnotations)
         {
             Initialize();
         }
 
-     
+
         internal RDomBlockStatement(RDomBlockStatement oldRDom)
              : base(oldRDom)
-        { }
-
- 
-        protected override void Initialize()
         {
-            base.Initialize();
+            var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
+            foreach (var statement in statements)
+            { AddOrMoveStatement(statement); }
         }
 
-       protected void Initialize2()
+
+        protected override void Initialize()
+        {
+            foreach (var statementSyntax in TypedSyntax.Statements)
+            {
+                var statements = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax);
+                foreach (var statement in statements)
+                { AddOrMoveStatement(statement); }
+            }
+        }
+
+        protected void Initialize2()
         {
             Initialize();
         }

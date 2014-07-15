@@ -11,20 +11,24 @@ namespace RoslynDom
 {
     // Factories are specific to the type, FactoryHelpers are specific to the level (StemMember, TypeMember, Statement, Expression)
     public abstract class RDomFactoryBase<T, TSyntax, TKind> : IRDomFactory<TKind>
-        where T : TKind
+        where T : TKind  // This isn't stupid - TKind is the broader category, T is the specific 
         where TSyntax : SyntaxNode
+        where TKind : class
     {
         public RDomFactoryBase()
         { }
 
         public virtual FactoryPriority Priority
-        { get { return FactoryPriority.Normal; } }
+        {
+            get
+            {
+                if (this.GetType().IsConstructedGenericType) { return FactoryPriority.Fallback; }
+                return FactoryPriority.Normal;
+            }
+        }
 
         public abstract IEnumerable<SyntaxNode> BuildSyntax(TKind item);
-        //{
-        //    return null;
-        //}
-
+       
         public virtual bool CanCreateFrom(SyntaxNode syntaxNode)
         {
             return (syntaxNode is TSyntax);
@@ -33,20 +37,27 @@ namespace RoslynDom
         public virtual IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode)
         {
             var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode);
-            var newStatement = Activator.CreateInstance(
+            var newItem = Activator.CreateInstance(
                         typeof(T),
                         BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,
                         new object[] { (TSyntax)syntaxNode }, null);
-            return new TKind[] { (TKind)newStatement };
+            var itemAsTKind = newItem as TKind;
+            InitializeItem(itemAsTKind);
+            return new TKind[] { itemAsTKind };
         }
+
+        public virtual void InitializeItem(TKind newItem)
+        { return; }
     }
 
-    public  class RDomRootContainerFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IRoot>
+    public class RDomRootContainerFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IRoot>
              where T : IRoot
              where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IRoot item)
-        { return null; }
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class RDomStemMemberFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IStemMember>
@@ -54,38 +65,48 @@ namespace RoslynDom
             where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
-        { return null;  }
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public  class RDomTypeMemberFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, ITypeMember>
+    public class RDomTypeMemberFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, ITypeMember>
             where T : ITypeMember
             where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
-        { return null; }
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public  class RDomStatementFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IStatement>
+    public class RDomStatementFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IStatement>
             where T : IStatement
             where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
-        { return null; }
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public  class RDomExpressionFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IExpression>
+    public class RDomExpressionFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IExpression>
              where T : IExpression
              where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IExpression item)
-        { return null; }
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public  class RDomMiscFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IMisc>
+    public class RDomMiscFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IMisc>
              where T : IMisc
              where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
-        { return null; }
+        {
+            throw new NotImplementedException();
+        }
     }
 }

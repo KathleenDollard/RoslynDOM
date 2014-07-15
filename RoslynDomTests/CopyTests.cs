@@ -95,16 +95,15 @@ namespace RoslynDomTests
             Assert.IsTrue(newMethod.SameIntent(newMethod)); // test identity
             var statements = newMethod.Statements.ToArray();
             var rDomStatement = newMethod.Statements.First() as IStatement;
-            // TODO: Include BuildSyntax in test
             Assert.IsTrue(statements[0] is RDomIfStatement);
             Assert.IsTrue(statements[1] is RDomDeclarationStatement);
             Assert.IsTrue(statements[2] is RDomAssignmentStatement);
             Assert.IsTrue(statements[3] is RDomReturnStatement);
-            var outputOld = ((RDomMethod)method).BuildSyntax();
-            var outputNew = ((RDomMethod)newMethod).BuildSyntax();
+            var outputOld = RDomFactory.BuildSyntax(method);
+            var outputNew = RDomFactory.BuildSyntax(newMethod);
             Assert.AreEqual(outputOld.ToString(), outputNew.ToString());
-            Assert.Inconclusive();
-            // Assert.AreEqual(@"var x = "", "";", rDomStatement.BuildSyntax().ToString());
+            var expected = "public String Foo(Int32 id, String firstName, String lastName)\r\n{\r\n    if (true)\r\n    {\r\n    }\r\n\r\n    var x = \", \";\r\n    x = lastName + x + firstName;\r\n    return ret;\r\n}";
+            Assert.AreEqual(expected, outputNew.ToString());
         }
 
         [TestMethod, TestCategory(CopyCategory)]

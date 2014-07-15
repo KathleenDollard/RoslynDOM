@@ -43,7 +43,7 @@ namespace RoslynDom
             return root;
         }
 
-        public static IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+        public static IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
         {
             IEnumerable<SyntaxNode> syntaxNodes;
             if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }
@@ -55,6 +55,11 @@ namespace RoslynDom
             return null;
         }
 
+        public static SyntaxNode BuildSyntax(IDom item)
+        {
+            return BuildSyntaxGroup(item).Single();
+        }
+
         private static bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> syntaxNode)
             where TKind : class
         {
@@ -62,7 +67,7 @@ namespace RoslynDom
             var itemAsKind = item as TKind;
             if (itemAsKind == null){ return false; }
             var helper = RDomFactoryHelper.GetHelper<TKind>();
-            syntaxNode = helper.BuildSyntax(item);
+            syntaxNode = helper.BuildSyntaxGroup(item);
             return true;
         }
 

@@ -88,6 +88,7 @@
     <Compile Include="PublicAnnotationFactory.cs" />
     <Compile Include="RDomFactory.cs" />
     <Compile Include="FactoryProvider.cs" />
+    <Compile Include="StatementImplementations\RDomInvocationStatement.cs" />
     <Compile Include="StatementImplementations\RDomAssignmentStatement.cs" />
     <Compile Include="IRDomFactory.cs" />
     <Compile Include="StatementImplementations\RDomReturnStatement.cs" />
@@ -107,7 +108,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoslynUtilities.cs" />
     <Compile Include="RoslynDomUtilities.cs" />
-    <Compile Include="StatementImplementations\RDomBaseBlock.cs" />
     <Compile Include="StatementImplementations\RDomIfStatement.cs" />
     <Compile Include="StatementImplementations\RDomBlockStatement.cs" />
   </ItemGroup>

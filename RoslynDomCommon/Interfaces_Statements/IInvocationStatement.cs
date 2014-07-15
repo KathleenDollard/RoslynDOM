@@ -2,9 +2,9 @@
 
 namespace RoslynDom.Common
 {
-    public interface IInvocationStatement : IStatement 
+    public interface IInvocationStatement : IStatement , IDom<IInvocationStatement>
     {
-        string Invocation { get;   } // NOt ready to dive here yet
+        IExpression Invocation { get;   } // NOt ready to dive here yet
         
     }
 }

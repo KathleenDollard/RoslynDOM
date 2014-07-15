@@ -16,7 +16,12 @@ namespace RoslynDom
         public RDomPublicAnnotationFactoryHelper() : base()
         { }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+        public override SyntaxNode BuildSyntax(IDom item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
         {
             throw new NotImplementedException();
         }

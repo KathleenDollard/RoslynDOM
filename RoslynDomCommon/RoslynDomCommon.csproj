@@ -59,7 +59,6 @@
     <Compile Include="Interfaces_Statements\IEmptyStatement.cs" />
     <Compile Include="Interfaces_Statements\IContinueStatement.cs" />
     <Compile Include="Interfaces_Statements\IBreakStatement.cs" />
-    <Compile Include="Interfaces_Statements\ICondition.cs" />
     <Compile Include="Interfaces_Statements\IDeclarationStatement.cs" />
     <Compile Include="Interfaces_Statements\IDoStatement.cs" />
     <Compile Include="BaseInterfaces\IExpression.cs" />

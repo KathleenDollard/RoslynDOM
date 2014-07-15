@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Simplification;
 using RoslynDom.Common;
 using System.Reflection;
 
@@ -77,20 +78,91 @@ namespace RoslynDom
 
         public static SyntaxNode Format(SyntaxNode node)
         {
-            node = Formatter.Format(node, new CustomWorkspace());
+            var span = node.FullSpan;
+            node = Formatter.Format(node, span, new CustomWorkspace());
             return node;
         }
 
-        public static IEnumerable<IStatement> GetStatements(BlockSyntax blockSyntax)
+        public static string Simplify(SyntaxNode node)
         {
-            var list = new List<IStatement>();
-            var statements = blockSyntax.Statements;
-            foreach (var statement in statements)
-            {
+            var source = node.ToString();
+            var projectId = ProjectId.CreateNewId();
+            var documentId = DocumentId.CreateNewId(projectId);
 
-            }
-            return list;
+            var solution = new CustomWorkspace().CurrentSolution
+                .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
+                .AddMetadataReference(projectId, Mscorlib)
+                .AddMetadataReference(projectId, AppDomain.CurrentDomain.GetAssemblies()
+                    .Where(a => string.Compare(a.GetName().Name, "System", StringComparison.OrdinalIgnoreCase) == 0)
+                    .Select(a => new MetadataFileReference(a.Location)).Single())
+                .AddDocument(documentId, "MyFile.cs", source);
+            var document = solution.GetDocument(documentId);
+
+            // Format the document.
+            document = Formatter.FormatAsync(document).Result;
+
+            // Simplify names used in the document i.e. remove unnecessary namespace qualifiers.
+            var newRoot = (SyntaxNode)document.GetSyntaxRootAsync().Result;
+            newRoot = new SimplifyNamesAnnotionRewriter().Visit(newRoot);
+            document = document.WithSyntaxRoot(newRoot);
+
+            document = Simplifier.ReduceAsync(document).Result;
+            var ret = document.GetSyntaxRootAsync().Result.ToString();
+            return ret;
         }
+
+        private class SimplifyNamesAnnotionRewriter : CSharpSyntaxRewriter
+        {
+            private SyntaxNode AnnotateNodeWithSimplifyAnnotation(SyntaxNode node)
+            {
+                return node.WithAdditionalAnnotations(Simplifier.Annotation);
+            }
+
+            public override SyntaxNode VisitAliasQualifiedName(AliasQualifiedNameSyntax node)
+            {
+                // not descending into node to simplify the whole expression
+                return AnnotateNodeWithSimplifyAnnotation(node);
+            }
+
+            public override SyntaxNode VisitQualifiedName(QualifiedNameSyntax node)
+            {
+                // not descending into node to simplify the whole expression
+                return AnnotateNodeWithSimplifyAnnotation(node);
+            }
+
+            public override SyntaxNode VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
+            {
+                // not descending into node to simplify the whole expression
+                return AnnotateNodeWithSimplifyAnnotation(node);
+            }
+
+            public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
+            {
+                // not descending into node to simplify the whole expression
+                return AnnotateNodeWithSimplifyAnnotation(node);
+            }
+
+            public override SyntaxNode VisitGenericName(GenericNameSyntax node)
+            {
+                // not descending into node to simplify the whole expression
+                return AnnotateNodeWithSimplifyAnnotation(node);
+            }
+        }
+
+        private static MetadataReference mscorlib;
+        private static MetadataReference Mscorlib
+        {
+            get
+            {
+                if (mscorlib == null)
+                {
+                    mscorlib = new MetadataFileReference(typeof(object).Assembly.Location);
+                }
+
+                return mscorlib;
+            }
+        }
+
 
         internal static bool TryAddSyntaxNode<TInput, TSyntaxNode, TRDom>(IList<TSyntaxNode> list, TInput member, Func<TRDom, TSyntaxNode> makeDelegate)
                  where TRDom : class
@@ -118,6 +190,15 @@ namespace RoslynDom
             if (item != null) { return makeDelegate(input, item); }
             return input;
 
+        }
+
+        internal static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
+        {
+            // Since this happens a lot, it's a small optimization to directly call the correct helper. If that turns out to be too leaky an abstraction, call RDomFactory
+            var statementSyntaxList = statements
+                            .SelectMany(x => RDomFactoryHelper.StatementFactoryHelper.BuildSyntaxGroup(x))
+                            .ToList();
+            return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); 
         }
 
     }

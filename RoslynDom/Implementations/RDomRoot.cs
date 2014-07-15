@@ -14,9 +14,11 @@ namespace RoslynDom
         {
             var node = SyntaxFactory.CompilationUnit();
             var usingsSyntax = item.Usings
-                        .SelectMany(x => RDomFactoryHelper.StemMemberFactoryHelper.BuildSyntax(x));
+                        .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
+                        .ToList();
             var membersSyntax = item.StemMembers
-                        .SelectMany(x => RDomFactoryHelper.StemMemberFactoryHelper.BuildSyntax(x));
+                        .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
+                        .ToList();
             node = node.WithUsings(SyntaxFactory.List(usingsSyntax));
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
             return new SyntaxNode[] { RoslynUtilities.Format(node) };

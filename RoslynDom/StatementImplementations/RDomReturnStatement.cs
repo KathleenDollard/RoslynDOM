@@ -12,9 +12,21 @@ namespace RoslynDom
 {
     public class RDomReturnStatementFactory
                 : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        {
+            var itemAsT = item as IReturnStatement;
+            var node = SyntaxFactory.ReturnStatement();
+            if (itemAsT.Return != null)
+            {
+                var returnExpressionSyntax = RDomFactory.BuildSyntax(itemAsT.Return);
+                node = node.WithExpression((ExpressionSyntax)returnExpressionSyntax);
+            }
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
 
-    public class RDomReturnStatement : RDomBase<IReturnStatement, ReturnStatementSyntax, ISymbol>,  IReturnStatement
+    public class RDomReturnStatement : RDomBase<IReturnStatement, ReturnStatementSyntax, ISymbol>, IReturnStatement
     {
 
         internal RDomReturnStatement(ReturnStatementSyntax rawItem)
@@ -24,21 +36,27 @@ namespace RoslynDom
         }
 
         internal RDomReturnStatement(
-              ReturnStatementSyntax  rawReturn,
+              ReturnStatementSyntax rawReturn,
               IEnumerable<PublicAnnotation> publicAnnotations)
-            : base(rawReturn,  publicAnnotations)
+            : base(rawReturn, publicAnnotations)
         {
             Initialize();
         }
 
         internal RDomReturnStatement(RDomReturnStatement oldRDom)
              : base(oldRDom)
-        { }
+        {
+            Return = oldRDom.Return.Copy();
+        }
 
         protected override void Initialize()
         {
             base.Initialize();
-            Return = new RDomExpression(TypedSyntax.Expression);
+            if (TypedSyntax.Expression != null)
+            {
+                Return = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(TypedSyntax.Expression).FirstOrDefault();
+                if (Return == null) throw new InvalidOperationException();
+            }
         }
 
         protected void Initialize2()

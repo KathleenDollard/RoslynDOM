@@ -11,24 +11,6 @@ namespace RoslynDom
           : RDomTypeMemberFactory<RDomField, FieldDeclarationSyntax>
     {
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
-        {
-            var nameSyntax = SyntaxFactory.Identifier(item.Name);
-            var itemAsField  = item as IField;
-            var returnType = (TypeSyntax)RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsField.ReturnType).First();
-            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
-            var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
-            var variableNode = SyntaxFactory.VariableDeclaration(returnType)
-               .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(nameSyntax)));
-            var node = SyntaxFactory.FieldDeclaration(variableNode)
-               .WithModifiers(modifiers);
-            var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes );
-            if (!attributes.Any()) { node = node.WithAttributeLists(attributes );}
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
-        }
-
         public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode)
         {
             var list = new List<ITypeMember>();
@@ -41,7 +23,26 @@ namespace RoslynDom
             }
             return list;
         }
-    }
+
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        {
+            var nameSyntax = SyntaxFactory.Identifier(item.Name);
+            var itemAsField  = item as IField;
+            var returnType = (TypeSyntax)RDomFactory.BuildSyntaxGroup(itemAsField.ReturnType).First();
+            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
+            var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
+            var variableNode = SyntaxFactory.VariableDeclaration(returnType)
+               .WithVariables(
+                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
+                            SyntaxFactory.VariableDeclarator(nameSyntax)));
+            var node = SyntaxFactory.FieldDeclaration(variableNode)
+               .WithModifiers(modifiers);
+            var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes );
+            if (attributes.Any()) { node = node.WithAttributeLists(attributes );}
+            return new SyntaxNode[] { node.NormalizeWhitespace() };
+        }
+
+     }
 
 
     /// <summary>

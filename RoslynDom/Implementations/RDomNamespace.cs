@@ -19,10 +19,16 @@ namespace RoslynDom
             var itemAsNamespace = item as INamespace;
             if (itemAsNamespace == null) { throw new InvalidOperationException(); }
             var usingsSyntax = itemAsNamespace.Usings
-                        .Select(x => RDomFactoryHelper.StemMemberFactoryHelper.BuildSyntax(x));
+                        .Select(x => RDomFactory.BuildSyntaxGroup(x))
+                        .OfType<UsingDirectiveSyntax>()
+                        .ToList();
+            if (usingsSyntax.Count() > 0) { node = node.WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(usingsSyntax)); }
             var membersSyntax = itemAsNamespace.StemMembers
-                        .Select(x => RDomFactoryHelper.StemMemberFactoryHelper.BuildSyntax(x));
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+                        .Select(x => RDomFactory.BuildSyntaxGroup(x))
+                        .OfType<MemberDeclarationSyntax>()
+                        .ToList();
+            if (usingsSyntax.Count() > 0) { node = node.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(membersSyntax)); }
+            return new SyntaxNode[] { node.NormalizeWhitespace() };
         }
     }
 

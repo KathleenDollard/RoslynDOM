@@ -8,8 +8,11 @@ namespace RoslynDom.Common
 {
     public interface IIfStatement : IStatement, IDom<IIfStatement >
     {
-        ICondition Condition { get; }
+        IExpression  Condition { get; }
         IEnumerable<IStatement> Statements { get; }
-        IEnumerable<IIfStatement> Elses { get; }
+        IEnumerable<IIfStatement> ElseIfs { get; }
+        IEnumerable<IStatement> ElseStatements { get; }
+        bool HasBlock { get; }
+        bool ElseHasBlock { get; }
     }
 }

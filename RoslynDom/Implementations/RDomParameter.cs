@@ -3,12 +3,35 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Linq;
 
 namespace RoslynDom
 {
     public class RDomParameterMiscFactory
             : RDomMiscFactory<RDomParameter, ParameterSyntax>
-    { }
+    {
+        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
+        {
+            var nameSyntax = SyntaxFactory.Identifier(item.Name);
+            var itemAsT = item as IParameter;
+            var syntaxType = (TypeSyntax)(RDomFactory.BuildSyntax(itemAsT.Type));
+
+            var node = SyntaxFactory.Parameter(nameSyntax)
+                        .WithType(syntaxType);
+
+            var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(itemAsT.Attributes);
+            if (attributes.Any()) { node = node.WithAttributeLists(attributes); }
+
+            var modifiers = SyntaxFactory.TokenList();
+            if (itemAsT.IsOut) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.OutKeyword)); }
+            if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
+            if (itemAsT.IsParamArray) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ParamsKeyword)); }
+            if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
+            if (modifiers.Any()) { node = node.WithModifiers(modifiers); }
+            return new SyntaxNode[] { node.NormalizeWhitespace() };
+
+        }
+    }
 
 
     public class RDomParameter : RDomBase<IParameter, ParameterSyntax, IParameterSymbol>, IParameter

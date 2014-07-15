@@ -15,13 +15,14 @@ namespace RoslynDom
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
-            var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
-            var node = SyntaxFactory.ClassDeclaration (identifier)
+            var node = SyntaxFactory.ClassDeclaration(identifier)
                 .WithModifiers(modifiers);
             var itemAsClass = item as IClass;
             if (itemAsClass == null) { throw new InvalidOperationException(); }
+            var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
+            if (attributes.Any()) { node = node.WithAttributeLists(attributes); }
             var membersSyntax = itemAsClass.Members
-                        .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x))
+                        .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
             // TODO: Class type members and type constraints
@@ -35,7 +36,9 @@ namespace RoslynDom
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {
-           return  RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(item);
+            // Can't use a direct call to RDomFactory here because it would not resolve to the correct factory. 
+            // Could possibly use a direct call, but that would require both methods be replaced in alternate languages
+            return RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntaxGroup(item);
         }
     }
 

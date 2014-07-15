@@ -14,23 +14,27 @@ namespace RoslynDom
         {
             var nameSyntax = SyntaxFactory.Identifier(item.Name);
             var itemAsMethod = item as IMethod;
-            var returnType = (TypeSyntax)RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(itemAsMethod.ReturnType).First();
+            var returnTypeSyntax = (TypeSyntax)RDomFactory.BuildSyntaxGroup(itemAsMethod.ReturnType).First();
             var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
-            var node = SyntaxFactory.MethodDeclaration(returnType, nameSyntax)
+            var node = SyntaxFactory.MethodDeclaration(returnTypeSyntax, nameSyntax)
                             .WithModifiers(modifiers);
             var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
-            if (!attributes.Any()) { node = node.WithAttributeLists(attributes); }
+            if (attributes.Any()) { node = node.WithAttributeLists(attributes); }
             var parameterSyntaxList = itemAsMethod.Parameters
-                        .SelectMany(x => RDomFactoryHelper.MiscFactoryHelper.BuildSyntax(x))
-                        .OfType<ParameterSyntax>();
+                        .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
+                        .OfType<ParameterSyntax>()
+                        .ToList();
             if (parameterSyntaxList.Any()) {  node = node.WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList (parameterSyntaxList)));}
-            var statementSyntaxList = itemAsMethod.Statements
-                        .SelectMany(x => RDomFactoryHelper.StatementFactoryHelper.BuildSyntax(x));
-            if (statementSyntaxList.Any()) { node = node.WithBody(SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList))); }
+            node = node.WithBody(RoslynUtilities.MakeStatementBlock(itemAsMethod.Statements));
+
             // TODO: typeParameters  and constraintClauses 
 
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
 
+        public override void InitializeItem(ITypeMember newItem)
+        {
+            base.InitializeItem(newItem);
         }
     }
 
