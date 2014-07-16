@@ -8,23 +8,6 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomReferencedTypeMiscFactory
-           : RDomMiscFactory<RDomReferencedType, FieldDeclarationSyntax>
-    {
-        // I'm still evolving how types are handled.
-        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
-        {
-            var node =  SyntaxFactory.ParseTypeName(item.Name);
-            return new SyntaxNode[] { node.NormalizeWhitespace() };
-     }
-
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode)
-        {
-            // Not currently used
-            throw new NotImplementedException();
-        }
-    }
-
     public class RDomReferencedType : RDomBase, IReferencedType
     {
         // I'm still evolving how types are handled.

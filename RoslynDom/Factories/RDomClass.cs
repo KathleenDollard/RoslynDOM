@@ -6,18 +6,18 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     internal static class RDomClassFactoryHelper
     {
-        public static void InitializeItem(IClass newItem, ClassDeclarationSyntax syntax)
+        public static void InitializeItem(RDomClass newItem, ClassDeclarationSyntax syntax)
         {
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
             foreach (var typeParameter in newTypeParameters)
             { newItem.AddOrMoveTypeParameter(typeParameter); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x));
             foreach (var member in members)
             { newItem.AddOrMoveMember(member); }
             newItem.BaseType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.BaseType);
@@ -26,7 +26,7 @@ namespace RoslynDom.CSharpFactories
             newItem.IsStatic = newItem.Symbol.IsStatic;
         }
 
-        public static IEnumerable<SyntaxNode> BuildSyntax(IClass item)
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
@@ -45,9 +45,9 @@ namespace RoslynDom.CSharpFactories
         }
     }
     public class RDomClassTypeMemberFactory
-           : RDomTypeMemberFactory<IClass, ClassDeclarationSyntax>
+           : RDomTypeMemberFactory<RDomClass, ClassDeclarationSyntax>
     {
-        public override void InitializeItem(IClass newItem, ClassDeclarationSyntax syntax)
+        public override void InitializeItem(RDomClass newItem, ClassDeclarationSyntax syntax)
         {
             RDomClassFactoryHelper.InitializeItem(newItem, syntax);
         }
@@ -58,9 +58,9 @@ namespace RoslynDom.CSharpFactories
     }
 
     public class RDomClassStemMemberFactory
-           : RDomStemMemberFactory<IClass, ClassDeclarationSyntax>
+           : RDomStemMemberFactory<RDomClass, ClassDeclarationSyntax>
     {
-        public override void InitializeItem(IClass newItem, ClassDeclarationSyntax syntax)
+        public override void InitializeItem(RDomClass newItem, ClassDeclarationSyntax syntax)
         {
             RDomClassFactoryHelper.InitializeItem(newItem, syntax);
         }

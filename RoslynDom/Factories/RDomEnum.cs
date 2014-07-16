@@ -6,11 +6,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 using System.Linq;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     internal static class RDomEnumFactoryHelper
     {
-        public static void InitializeItem(IEnum newItem, EnumDeclarationSyntax syntax)
+        public static void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
         {
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
@@ -22,7 +22,7 @@ namespace RoslynDom.CSharpFactories
             }
         }
 
-        public static IEnumerable<SyntaxNode> BuildSyntax(IEnum item)
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomEnum item)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
@@ -41,9 +41,9 @@ namespace RoslynDom.CSharpFactories
     }
 
     public class RDomEnumTypeMemberFactory
-        : RDomTypeMemberFactory<IEnum, EnumDeclarationSyntax>
+        : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
-        public override void InitializeItem(IEnum newItem, EnumDeclarationSyntax syntax)
+        public override void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
         {
             RDomEnumFactoryHelper.InitializeItem(newItem, syntax);
         }
@@ -56,9 +56,9 @@ namespace RoslynDom.CSharpFactories
 
 
     public class RDomEnumStemMemberFactory
-           : RDomStemMemberFactory<IEnum, EnumDeclarationSyntax>
+           : RDomStemMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
-        public override void InitializeItem(IEnum newItem, EnumDeclarationSyntax syntax)
+        public override void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
         {
             RDomEnumFactoryHelper.InitializeItem(newItem, syntax);
         }
@@ -67,6 +67,5 @@ namespace RoslynDom.CSharpFactories
             return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item);
         }
     }
-
 
 }

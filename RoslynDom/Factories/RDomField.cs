@@ -5,12 +5,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomFieldTypeMemberFactory
-          : RDomTypeMemberFactory<IField, FieldDeclarationSyntax>
+          : RDomTypeMemberFactory<RDomField, FieldDeclarationSyntax>
     {
-        public override void InitializeItem(IField newItem, FieldDeclarationSyntax syntax)
+        public override void InitializeItem(RDomField newItem, FieldDeclarationSyntax syntax)
         {
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
@@ -51,5 +51,5 @@ namespace RoslynDom.CSharpFactories
         }
 
      }
-
+     
 }

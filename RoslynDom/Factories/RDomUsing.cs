@@ -4,12 +4,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomUsingStemMemberFactory
-            : RDomStemMemberFactory<IUsing, UsingDirectiveSyntax>
+            : RDomStemMemberFactory<RDomUsing, UsingDirectiveSyntax>
     {
-        public override void InitializeItem(IUsing newItem, UsingDirectiveSyntax syntax)
+        public override void InitializeItem(RDomUsing newItem, UsingDirectiveSyntax syntax)
         {
             newItem. Name = syntax.Name.NameFrom();
         }

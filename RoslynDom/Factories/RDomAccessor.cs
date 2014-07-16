@@ -5,21 +5,21 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomPropertyAccessorMiscFactory
-          : RDomMiscFactory<IAccessor, AccessorDeclarationSyntax>
+          : RDomMiscFactory<RDomPropertyAccessor, AccessorDeclarationSyntax>
     {
-        public override void InitializeItem(IAccessor newItem, AccessorDeclarationSyntax syntax)
+        public override void InitializeItem(RDomPropertyAccessor newItem, AccessorDeclarationSyntax syntax)
         {
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             if (syntax.Body != null)
             {
-                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
+                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x));
                 foreach (var statement in statements)
                 { newItem.AddStatement(statement); }
             }
         }
     }
 
- }
+}

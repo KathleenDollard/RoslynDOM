@@ -6,23 +6,23 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     internal static class RDomStructureFactoryHelper
     {
-        public static void InitializeItem(IStructure newItem, StructDeclarationSyntax syntax)
+        public static void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
         {
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
             foreach (var typeParameter in newTypeParameters)
             { newItem.AddOrMoveTypeParameter(typeParameter); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x));
             foreach (var member in members)
             { newItem.AddOrMoveMember(member); }
         }
 
-        public static IEnumerable<SyntaxNode> BuildSyntax(IStructure item)
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomStructure item)
         {
             // This is identical to Class, but didn't work out reuse here
             var modifiers = item.BuildModfierSyntax();
@@ -41,9 +41,9 @@ namespace RoslynDom.CSharpFactories
         }
     }
     public class RDomStructureTypeMemberFactory
-      : RDomTypeMemberFactory<IStructure, StructDeclarationSyntax>
+      : RDomTypeMemberFactory<RDomStructure, StructDeclarationSyntax>
     {
-        public override void InitializeItem(IStructure newItem, StructDeclarationSyntax syntax)
+        public override void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
         {
             RDomStructureFactoryHelper.InitializeItem(newItem, syntax);
         }
@@ -55,9 +55,9 @@ namespace RoslynDom.CSharpFactories
 
 
     public class RDomStructureStemMemberFactory
-           : RDomStemMemberFactory<IStructure, StructDeclarationSyntax>
+           : RDomStemMemberFactory<RDomStructure, StructDeclarationSyntax>
     {
-        public override void InitializeItem(IStructure newItem, StructDeclarationSyntax syntax)
+        public override void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
         {
             RDomStructureFactoryHelper.InitializeItem(newItem, syntax);
         }
@@ -67,6 +67,5 @@ namespace RoslynDom.CSharpFactories
             return RDomStructureFactoryHelper.BuildSyntax((RDomStructure)item);
         }
     }
-
-
+     
 }

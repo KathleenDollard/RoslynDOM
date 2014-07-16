@@ -6,12 +6,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomPropertyTypeMemberFactory
-          : RDomTypeMemberFactory<IProperty, PropertyDeclarationSyntax>
+          : RDomTypeMemberFactory<RDomProperty, PropertyDeclarationSyntax>
     {
-        public override void InitializeItem(IProperty newItem, PropertyDeclarationSyntax syntax)
+        public override void InitializeItem(RDomProperty newItem, PropertyDeclarationSyntax syntax)
         {
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
@@ -27,12 +27,12 @@ namespace RoslynDom.CSharpFactories
             if (propSymbol == null) throw new InvalidOperationException();
             newItem.CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
             newItem.CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
-            var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
-            var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
+            var getAccessorSyntax = newItem.TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
+            var setAccessorSyntax = newItem.TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
             if (getAccessorSyntax != null)
-            { newItem.GetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(getAccessorSyntax).FirstOrDefault()); }
+            { newItem.GetAccessor = (IAccessor)(RDomFactoryHelper.GetHelper<IMisc>().MakeItem(getAccessorSyntax).FirstOrDefault()); }
             if (setAccessorSyntax != null)
-            { newItem.SetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(setAccessorSyntax).FirstOrDefault()); }
+            { newItem.SetAccessor = (IAccessor)(RDomFactoryHelper.GetHelper<IMisc>().MakeItem(setAccessorSyntax).FirstOrDefault()); }
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
@@ -59,4 +59,4 @@ namespace RoslynDom.CSharpFactories
         }
     }
 
- }
+}

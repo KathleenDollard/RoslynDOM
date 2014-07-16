@@ -6,23 +6,23 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 using System.Linq;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     internal static class RDomInterfaceFactoryHelper
     {
-        public static void InitializeItem(IInterface newItem, InterfaceDeclarationSyntax syntax)
+        public static void InitializeItem(RDomInterface newItem, InterfaceDeclarationSyntax syntax)
         {
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
             foreach (var typeParameter in newTypeParameters)
             { newItem.AddOrMoveTypeParameter(typeParameter); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
+            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x));
             foreach (var member in members)
             { newItem.AddOrMoveMember(member); }
         }
 
-        public static IEnumerable<SyntaxNode> BuildSyntax(IInterface item)
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomInterface item)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
@@ -41,9 +41,9 @@ namespace RoslynDom.CSharpFactories
     }
 
     public class RDomInterfaceTypeMemberFactory
-       : RDomTypeMemberFactory<IInterface, InterfaceDeclarationSyntax>
+       : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
     {
-        public override void InitializeItem(IInterface newItem, InterfaceDeclarationSyntax syntax)
+        public override void InitializeItem(RDomInterface newItem, InterfaceDeclarationSyntax syntax)
         {
             RDomInterfaceFactoryHelper.InitializeItem(newItem, syntax);
         }
@@ -55,9 +55,9 @@ namespace RoslynDom.CSharpFactories
 
 
     public class RDomInterfaceStemMemberFactory
-           : RDomStemMemberFactory<IInterface, InterfaceDeclarationSyntax>
+           : RDomStemMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
     {
-        public override void InitializeItem(IInterface newItem, InterfaceDeclarationSyntax syntax)
+        public override void InitializeItem(RDomInterface newItem, InterfaceDeclarationSyntax syntax)
         {
             RDomInterfaceFactoryHelper.InitializeItem(newItem, syntax);
         }
@@ -66,5 +66,7 @@ namespace RoslynDom.CSharpFactories
             return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item);
         }
     }
+
+
 
 }

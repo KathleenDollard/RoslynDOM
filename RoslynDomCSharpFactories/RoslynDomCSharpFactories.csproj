@@ -61,27 +61,9 @@
     <Compile Include="RDomFactory.cs" />
     <Compile Include="RoslynDomCSharpUtilities.cs" />
     <Compile Include="RoslynCSharpUtilities.cs" />
-    <Compile Include="StructureFactories\RDomAccessor.cs" />
-    <Compile Include="StatementFactories\RDomAssignmentStatement.cs" />
     <Compile Include="BaseFactories\RDomBaseItemFactory.cs" />
     <Compile Include="BaseFactories\RDomBaseFactoryHelper.cs" />
-    <Compile Include="StatementFactories\RDomBlockStatement.cs" />
-    <Compile Include="StructureFactories\RDomClass.cs" />
-    <Compile Include="StatementFactories\RDomDeclarationStatement.cs" />
-    <Compile Include="StructureFactories\RDomEnum.cs" />
     <Compile Include="BaseFactories\RDomExpression.cs" />
-    <Compile Include="StructureFactories\RDomField.cs" />
-    <Compile Include="StatementFactories\RDomIfStatement.cs" />
-    <Compile Include="StructureFactories\RDomInterface.cs" />
-    <Compile Include="StatementFactories\RDomInvocationStatement.cs" />
-    <Compile Include="StructureFactories\RDomMethod.cs" />
-    <Compile Include="StructureFactories\RDomNamespace.cs" />
-    <Compile Include="StructureFactories\RDomProperty.cs" />
-    <Compile Include="StructureFactories\RDomReferencedType.cs" />
-    <Compile Include="StatementFactories\RDomReturnStatement.cs" />
-    <Compile Include="StructureFactories\RDomRoot.cs" />
-    <Compile Include="StructureFactories\RDomStructure.cs" />
-    <Compile Include="StructureFactories\RDomUsing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

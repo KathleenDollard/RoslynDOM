@@ -8,68 +8,7 @@ using System.Linq;
 
 namespace RoslynDom
 {
-    internal static class RDomInterfaceFactoryHelper
-    {
-        public static void InitializeItem(RDomInterface newItem, InterfaceDeclarationSyntax syntax)
-        {
-            newItem.Name = newItem.TypedSymbol.Name;
-            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
-            var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            foreach (var typeParameter in newTypeParameters)
-            { newItem.AddOrMoveTypeParameter(typeParameter); }
-            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x));
-            foreach (var member in members)
-            { newItem.AddOrMoveMember(member); }
-        }
-
-        public static IEnumerable<SyntaxNode> BuildSyntax(RDomInterface item)
-        {
-            var modifiers = item.BuildModfierSyntax();
-            var identifier = SyntaxFactory.Identifier(item.Name);
-            var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
-            var node = SyntaxFactory.InterfaceDeclaration(identifier)
-                .WithModifiers(modifiers);
-            var itemAsInterface = item as IInterface;
-            if (itemAsInterface == null) { throw new InvalidOperationException(); }
-            var membersSyntax = itemAsInterface.Members
-                        .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
-                        .ToList();
-            node = node.WithMembers(SyntaxFactory.List(membersSyntax));
-            // TODO: Class type members and type constraints
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
-        }
-    }
-
-    public class RDomInterfaceTypeMemberFactory
-       : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
-    {
-        public override void InitializeItem(RDomInterface newItem, InterfaceDeclarationSyntax syntax)
-        {
-            RDomInterfaceFactoryHelper.InitializeItem(newItem, syntax);
-        }
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
-        {
-            return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item);
-        }
-    }
-
-
-    public class RDomInterfaceStemMemberFactory
-           : RDomStemMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
-    {
-        public override void InitializeItem(RDomInterface newItem, InterfaceDeclarationSyntax syntax)
-        {
-            RDomInterfaceFactoryHelper.InitializeItem(newItem, syntax);
-        }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
-        {
-            return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item);
-        }
-    }
-
-
-
-    public class RDomInterface : RDomBaseType<IInterface, InterfaceDeclarationSyntax>, IInterface
+     public class RDomInterface : RDomBaseType<IInterface, InterfaceDeclarationSyntax>, IInterface
     {
         internal RDomInterface(
                InterfaceDeclarationSyntax rawItem)

@@ -5,16 +5,16 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomRootFactory
-          : RDomRootContainerFactory<IRoot, CompilationUnitSyntax>
+          : RDomRootContainerFactory<RDomRoot, CompilationUnitSyntax>
     {
-        public override void InitializeItem(IRoot newItem, CompilationUnitSyntax syntax)
+        public override void InitializeItem(RDomRoot newItem, CompilationUnitSyntax syntax)
         {
             newItem.Name = "Root";
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
-            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.StemMemberFactoryHelper.MakeItem(x));
+            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember >().MakeItem(x));
+            var usings = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x));
             foreach (var member in members)
             { newItem.AddOrMoveStemMember(member); }
             foreach (var member in usings)
@@ -36,5 +36,6 @@ namespace RoslynDom.CSharpFactories
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
     }
+
 
 }

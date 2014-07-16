@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomExampleTests", "Ro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomRDomCommon", "RoslynDomRDomCommon\RoslynDomRDomCommon.csproj", "{1E5B8601-B717-471D-A9EE-0C03D15491A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomCSharpFactories", "RoslynDomCSharpFactories\RoslynDomCSharpFactories.csproj", "{8AE6F765-35A1-492F-84A1-86807155AA2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{1E5B8601-B717-471D-A9EE-0C03D15491A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E5B8601-B717-471D-A9EE-0C03D15491A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E5B8601-B717-471D-A9EE-0C03D15491A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AE6F765-35A1-492F-84A1-86807155AA2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AE6F765-35A1-492F-84A1-86807155AA2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AE6F765-35A1-492F-84A1-86807155AA2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AE6F765-35A1-492F-84A1-86807155AA2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

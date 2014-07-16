@@ -6,15 +6,15 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomInvocationStatementFactory
-         : RDomStatementFactory<IInvocationStatement, ExpressionStatementSyntax>
+         : RDomStatementFactory<RDomInvocationStatement, ExpressionStatementSyntax>
     {
-        public override void InitializeItem(IInvocationStatement newItem, ExpressionStatementSyntax syntax)
+        public override void InitializeItem(RDomInvocationStatement newItem, ExpressionStatementSyntax syntax)
         {
             var expression = syntax.Expression;
-            newItem.Invocation = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(expression).FirstOrDefault();
+            newItem.Invocation = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression).FirstOrDefault();
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
@@ -36,6 +36,4 @@ namespace RoslynDom.CSharpFactories
             return syntaxNode is ExpressionStatementSyntax;
         }
     }
-
-
 }

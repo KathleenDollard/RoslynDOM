@@ -4,12 +4,13 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Practices.Unity;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomDeclarationStatementFactory
-        : RDomStatementFactory<IDeclarationStatement, VariableDeclaratorSyntax>
+        : RDomStatementFactory<RDomDeclarationStatement, VariableDeclaratorSyntax>
     {
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
@@ -32,9 +33,9 @@ namespace RoslynDom.CSharpFactories
             return list;
         }
 
-        public override void InitializeItem(IDeclarationStatement newItem, VariableDeclaratorSyntax syntax)
+        public override void InitializeItem(RDomDeclarationStatement newItem, VariableDeclaratorSyntax syntax)
         {
-            newItem.Name = newItem.Symbol.Name;
+            newItem.Name = newItem.TypedSymbol.Name;
             var declaration = syntax.Parent as VariableDeclarationSyntax;
             if (declaration == null) throw new InvalidOperationException();
             newItem.IsImplicitlyTyped = (declaration.Type.ToString() == "var");
@@ -43,7 +44,7 @@ namespace RoslynDom.CSharpFactories
             if (syntax.Initializer != null)
             {
                 var equalsClause = syntax.Initializer;
-                newItem.Initializer = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(equalsClause.Value).FirstOrDefault();
+                newItem.Initializer = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(equalsClause.Value).FirstOrDefault();
             }
 
         }
@@ -70,6 +71,4 @@ namespace RoslynDom.CSharpFactories
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
     }
-
-
 }

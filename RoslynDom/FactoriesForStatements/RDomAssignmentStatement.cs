@@ -6,12 +6,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomAssignmentStatementFactory
-         : RDomStatementFactory<IAssignmentStatement, ExpressionStatementSyntax>
+         : RDomStatementFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
     {
-        public override void InitializeItem(IAssignmentStatement newItem, ExpressionStatementSyntax syntax)
+        public override void InitializeItem(RDomAssignmentStatement newItem, ExpressionStatementSyntax syntax)
         {
             var binary = syntax.Expression as BinaryExpressionSyntax;
             if (binary == null) throw new InvalidOperationException();
@@ -24,7 +24,7 @@ namespace RoslynDom.CSharpFactories
             var expression = right as ExpressionSyntax;
             if (expression == null) throw new InvalidOperationException();
             newItem.Name = identifier.ToString();
-            newItem.Expression = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(expression).FirstOrDefault();
+            newItem.Expression = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression).FirstOrDefault();
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
         {
@@ -44,6 +44,4 @@ namespace RoslynDom.CSharpFactories
             return statement.Expression.CSharpKind() == SyntaxKind.SimpleAssignmentExpression;
         }
     }
-
-
 }

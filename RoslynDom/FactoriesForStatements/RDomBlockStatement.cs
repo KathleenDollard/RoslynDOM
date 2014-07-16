@@ -5,16 +5,16 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomBlockStatementFactory
-         : RDomStatementFactory<IBlockStatement, BlockSyntax>
+             : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
     {
-        public override void InitializeItem(IBlockStatement newItem, BlockSyntax syntax)
+        public override void InitializeItem(RDomBlockStatement newItem, BlockSyntax syntax)
         {
             foreach (var statementSyntax in syntax.Statements)
             {
-                var statements = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax);
+                var statements = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax);
                 foreach (var statement in statements)
                 { newItem.AddOrMoveStatement(statement); }
             }
@@ -31,6 +31,5 @@ namespace RoslynDom.CSharpFactories
 
         }
     }
-
 
 }

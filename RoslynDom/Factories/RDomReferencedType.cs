@@ -6,10 +6,10 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomReferencedTypeMiscFactory
-           : RDomMiscFactory<IReferencedType, FieldDeclarationSyntax>
+           : RDomMiscFactory<RDomReferencedType, FieldDeclarationSyntax>
     {
         // I'm still evolving how types are handled.
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
@@ -24,4 +24,5 @@ namespace RoslynDom.CSharpFactories
             throw new NotImplementedException();
         }
     }
+
 }

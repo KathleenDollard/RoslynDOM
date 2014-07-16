@@ -5,18 +5,19 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Practices.Unity;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomReturnStatementFactory
-                : RDomStatementFactory<IReturnStatement, ReturnStatementSyntax>
+                : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>
     {
-        public override void InitializeItem(IReturnStatement newItem, ReturnStatementSyntax syntax)
+        public override void InitializeItem(RDomReturnStatement newItem, ReturnStatementSyntax syntax)
         {
             if (syntax.Expression != null)
             {
-                newItem.Return = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(syntax.Expression).FirstOrDefault();
+                newItem.Return = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Expression).FirstOrDefault();
                 if (newItem.Return == null) throw new InvalidOperationException();
             }
         }
@@ -33,5 +34,4 @@ namespace RoslynDom.CSharpFactories
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
     }
-
 }

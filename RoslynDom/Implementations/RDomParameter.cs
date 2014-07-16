@@ -7,44 +7,6 @@ using System.Linq;
 
 namespace RoslynDom
 {
-    public class RDomParameterMiscFactory
-            : RDomMiscFactory<RDomParameter, ParameterSyntax>
-    {
-        public override void InitializeItem(RDomParameter newItem, ParameterSyntax syntax)
-        {
-            newItem.Name = newItem.TypedSymbol.Name;
-            newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
-            newItem.IsOut = newItem.TypedSymbol.RefKind == RefKind.Out;
-            newItem.IsRef = newItem.TypedSymbol.RefKind == RefKind.Ref;
-            newItem.IsParamArray = newItem.TypedSymbol.IsParams;
-            newItem.IsOptional = newItem.TypedSymbol.IsOptional;
-            newItem.Ordinal = newItem.TypedSymbol.Ordinal;
-        }
-
-        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
-        {
-            var nameSyntax = SyntaxFactory.Identifier(item.Name);
-            var itemAsT = item as IParameter;
-            var syntaxType = (TypeSyntax)(RDomFactory.BuildSyntax(itemAsT.Type));
-
-            var node = SyntaxFactory.Parameter(nameSyntax)
-                        .WithType(syntaxType);
-
-            var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(itemAsT.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes); }
-
-            var modifiers = SyntaxFactory.TokenList();
-            if (itemAsT.IsOut) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.OutKeyword)); }
-            if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
-            if (itemAsT.IsParamArray) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ParamsKeyword)); }
-            if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
-            if (modifiers.Any()) { node = node.WithModifiers(modifiers); }
-            return new SyntaxNode[] { node.NormalizeWhitespace() };
-
-        }
-    }
-
-
     public class RDomParameter : RDomBase<IParameter, ParameterSyntax, IParameterSymbol>, IParameter
     {
      

@@ -6,17 +6,17 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomIfStatementFactory
-         : RDomStatementFactory<IIfStatement, IfStatementSyntax>
+         : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
     {
-        public override void InitializeItem(IIfStatement newItem, IfStatementSyntax syntax)
+        public override void InitializeItem(RDomIfStatement newItem, IfStatementSyntax syntax)
         {
-            newItem.Condition = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(syntax.Condition).FirstOrDefault();
+            newItem.Condition = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Condition).FirstOrDefault();
             if (syntax.Condition == null) { throw new InvalidOperationException(); }
             bool hasBlock = false;
-            var statements = GetStatementsFromSyntax(syntax.Statement, ref hasBlock);
+            var statements = GetStatementsFromSyntax(newItem.TypedSyntax.Statement, ref hasBlock);
             newItem.HasBlock  = hasBlock;
             foreach (var statement in statements)
             { newItem.AddOrMoveStatement(statement); }
@@ -24,7 +24,7 @@ namespace RoslynDom.CSharpFactories
             InitializeElse(newItem, syntax);
         }
 
-        private void InitializeElse(IIfStatement newItem, IfStatementSyntax syntax)
+        private void InitializeElse(RDomIfStatement newItem, IfStatementSyntax syntax)
         {
             if (syntax.Else == null) return;
             var elseAsIf = syntax.Else.Statement as IfStatementSyntax;
@@ -57,7 +57,7 @@ namespace RoslynDom.CSharpFactories
             }
         }
 
-        private void InitializeElseStatement(IIfStatement newItem, IfStatementSyntax syntax,StatementSyntax statement)
+        private void InitializeElseStatement(RDomIfStatement newItem, IfStatementSyntax syntax,StatementSyntax statement)
         {
             newItem.ElseHasBlock = statement is BlockSyntax;
             bool hasBlock = false;
@@ -69,7 +69,7 @@ namespace RoslynDom.CSharpFactories
 
         private IEnumerable<IStatement> GetStatementsFromSyntax(StatementSyntax statementSyntax, ref bool hasBlock)
         {
-            var statement = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax).First();
+            var statement = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax).First();
             var list = new List<IStatement>();
             var blockStatement = statement as IBlockStatement;
             if (blockStatement != null)
@@ -150,6 +150,4 @@ namespace RoslynDom.CSharpFactories
             return elseClause;
         }
     }
-
-
 }
