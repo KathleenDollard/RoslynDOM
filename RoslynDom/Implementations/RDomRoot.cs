@@ -7,10 +7,10 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-     public class RDomRoot : RDomBaseStemContainer<IRoot, CompilationUnitSyntax, ISymbol>, IRoot
+     public class RDomRoot : RDomBaseStemContainer<IRoot, ISymbol>, IRoot
     {
 
-        internal RDomRoot(CompilationUnitSyntax rawItem)
+        internal RDomRoot(SyntaxNode rawItem)
             : base(rawItem)
         {
             //Initialize2();

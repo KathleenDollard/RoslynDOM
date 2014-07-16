@@ -1,13 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomReturnStatement : RDomBase<IReturnStatement, ReturnStatementSyntax, ISymbol>, IReturnStatement
+    public class RDomReturnStatement : RDomBase<IReturnStatement, ISymbol>, IReturnStatement
     {
 
-        internal RDomReturnStatement(ReturnStatementSyntax rawItem)
+        internal RDomReturnStatement(SyntaxNode rawItem)
            : base(rawItem)
         {
            // Initialize2();

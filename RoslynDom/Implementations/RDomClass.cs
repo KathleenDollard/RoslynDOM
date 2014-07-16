@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
@@ -14,9 +11,9 @@ namespace RoslynDom
     /// <remarks>
     /// I'm not currently supporting parameters (am supporting type parameters) because I don't understand them
     /// </remarks>
-    public class RDomClass : RDomBaseType<IClass, ClassDeclarationSyntax>, IClass
+    public class RDomClass : RDomBaseType<IClass>, IClass
     {
-        internal RDomClass(ClassDeclarationSyntax rawItem)
+        internal RDomClass(SyntaxNode rawItem)
              : base(rawItem, MemberKind.Class, StemMemberKind.Class)
         {
             //Initialize2();

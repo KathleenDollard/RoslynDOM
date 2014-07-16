@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomBlockStatement : RDomBase<IBlockStatement, BlockSyntax, ISymbol>, IBlockStatement
+    public class RDomBlockStatement : RDomBase<IBlockStatement, ISymbol>, IBlockStatement
     {
         private IList<IStatement> _statements = new List<IStatement>();
 
-        internal RDomBlockStatement(BlockSyntax rawItem)
+        internal RDomBlockStatement(SyntaxNode rawItem)
            : base(rawItem)
         {
             //Initialize2();

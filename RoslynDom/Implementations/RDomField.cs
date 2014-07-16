@@ -18,7 +18,7 @@ namespace RoslynDom
     /// obviously). At that point, the variable declaration will need to be held in
     /// the class. 
     /// </remarks>
-    public class RDomField : RDomBase<IField, FieldDeclarationSyntax, IFieldSymbol>, IField
+    public class RDomField : RDomBase<IField, IFieldSymbol>, IField
     {
         private VariableDeclaratorSyntax _varSyntax;
 

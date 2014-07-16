@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
-using System.Linq;
 
 namespace RoslynDom
 {
-     public class RDomEnum : RDomBase<IEnum, EnumDeclarationSyntax, ISymbol>, IEnum
+    public class RDomEnum : RDomBase<IEnum,  ISymbol>, IEnum
     {
         internal RDomEnum(
-             EnumDeclarationSyntax rawItem)
+             SyntaxNode rawItem)
            : base(rawItem)
         {
             //Initialize2();

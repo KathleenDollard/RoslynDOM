@@ -1,20 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomMethod : RDomBase<IMethod, MethodDeclarationSyntax, IMethodSymbol>, IMethod
+    public class RDomMethod : RDomBase<IMethod, IMethodSymbol>, IMethod
     {
         private IList<IParameter> _parameters = new List<IParameter>();
         private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
         private IList<IStatement> _statements = new List<IStatement>();
 
         internal RDomMethod(
-                MethodDeclarationSyntax rawItem)
+                SyntaxNode rawItem)
            : base(rawItem)
         {
             //Initialize();

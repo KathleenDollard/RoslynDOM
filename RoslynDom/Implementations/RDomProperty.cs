@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomProperty : RDomBase<IProperty, PropertyDeclarationSyntax, IPropertySymbol>, IProperty
+    public class RDomProperty : RDomBase<IProperty, IPropertySymbol>, IProperty
     {
         private IList<IParameter> _parameters = new List<IParameter>();
         private IList<IStatement> _getStatements = new List<IStatement>();
         private IList<IStatement> _setStatements = new List<IStatement>();
 
         internal RDomProperty(
-                PropertyDeclarationSyntax rawItem)
+                SyntaxNode rawItem)
             : base(rawItem)
         {
             //Initialize2();

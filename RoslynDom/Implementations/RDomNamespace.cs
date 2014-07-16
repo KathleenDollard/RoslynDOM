@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomNamespace : RDomBaseStemContainer<INamespace, NamespaceDeclarationSyntax, INamespaceSymbol>, INamespace
+    public class RDomNamespace : RDomBaseStemContainer<INamespace, INamespaceSymbol>, INamespace
     {
         //private string _outerName;
 
-        internal RDomNamespace(NamespaceDeclarationSyntax rawItem)
+        internal RDomNamespace(SyntaxNode rawItem)
            : base(rawItem)
         {
             //Initialize2();

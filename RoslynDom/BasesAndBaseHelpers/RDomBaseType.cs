@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseType<T, TSyntax>
-        : RDomBase<T, TSyntax, INamedTypeSymbol>, IType<T>, IRDomTypeMemberContainer
-        where TSyntax : SyntaxNode
+    public abstract class RDomBaseType<T>
+        : RDomBase<T, INamedTypeSymbol>, IType<T>, IRDomTypeMemberContainer
         where T : class, IType<T>
     {
         private IList<ITypeMember> _members = new List<ITypeMember>();
@@ -19,7 +15,7 @@ namespace RoslynDom
         private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
 
         internal RDomBaseType(
-              TSyntax rawItem,
+              SyntaxNode rawItem,
               MemberKind memberKind,
               StemMemberKind stemMemberKind)
            : base(rawItem)
@@ -45,7 +41,7 @@ namespace RoslynDom
         internal RDomBaseType(T oldIDom)
              : base(oldIDom)
         {
-            var oldRDom = oldIDom as RDomBaseType<T, TSyntax>;
+            var oldRDom = oldIDom as RDomBaseType<T>;
             _memberKind = oldRDom._memberKind;
             _stemMemberKind = oldRDom._stemMemberKind;
             AccessModifier = oldRDom.AccessModifier;

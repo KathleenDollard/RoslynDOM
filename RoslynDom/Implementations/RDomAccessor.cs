@@ -7,7 +7,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomPropertyAccessor : RDomBase<IAccessor, AccessorDeclarationSyntax, ISymbol>, IAccessor
+    public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
     {
         private IList<IStatement> _statements = new List<IStatement>();
 

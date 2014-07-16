@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-     public class RDomUsing : RDomBase<IUsing, UsingDirectiveSyntax, ISymbol>, IUsing
+    public class RDomUsing : RDomBase<IUsing,  ISymbol>, IUsing
     {
         internal RDomUsing(
-            UsingDirectiveSyntax rawItem)
+            SyntaxNode rawItem)
            : base(rawItem)
         {
             //Initialize2();

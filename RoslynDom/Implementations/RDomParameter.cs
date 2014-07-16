@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace RoslynDom
 {
-    public class RDomParameter : RDomBase<IParameter, ParameterSyntax, IParameterSymbol>, IParameter
+    public class RDomParameter : RDomBase<IParameter,  IParameterSymbol>, IParameter
     {
      
 

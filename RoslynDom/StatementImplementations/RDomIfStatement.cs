@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomIfStatement : RDomBase<IIfStatement, IfStatementSyntax, ISymbol>, IIfStatement
+    public class RDomIfStatement : RDomBase<IIfStatement, ISymbol>, IIfStatement
     {
         private IList<IIfStatement> _elses = new List<IIfStatement>();
         private IList<IStatement> _statements = new List<IStatement>();
         private IList<IStatement> _elseStatements = new List<IStatement>();
 
-        public RDomIfStatement(IfStatementSyntax rawItem)
+        public RDomIfStatement(SyntaxNode rawItem)
             : base(rawItem)
         {
   //          Initialize2();

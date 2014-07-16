@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
-using System.Linq;
 
 namespace RoslynDom
 {
-     public class RDomInterface : RDomBaseType<IInterface, InterfaceDeclarationSyntax>, IInterface
+    public class RDomInterface : RDomBaseType<IInterface>, IInterface
     {
         internal RDomInterface(
-               InterfaceDeclarationSyntax rawItem)
+               SyntaxNode rawItem)
         : base(rawItem, MemberKind.Interface, StemMemberKind.Interface)
         {
             //Initialize2();

@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-     public class RDomStructure : RDomBaseType<IStructure, StructDeclarationSyntax>, IStructure
+    public class RDomStructure : RDomBaseType<IStructure>, IStructure
     {
         internal RDomStructure(
-                 StructDeclarationSyntax rawItem)
+                 SyntaxNode rawItem)
         : base(rawItem, MemberKind.Structure, StemMemberKind.Structure)
         {
             //Initialize2();

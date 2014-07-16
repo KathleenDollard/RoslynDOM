@@ -9,8 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
-    public abstract class RDomBase<T, TSyntax, TSymbol> : RDomBase<T>, IRoslynDom<T,  TSymbol>
-          where TSyntax : SyntaxNode
+    public abstract class RDomBase<T,  TSymbol> : RDomBase<T>, IRoslynDom<T,  TSymbol>
           where TSymbol : ISymbol
           where T : class, IDom<T>
     {
@@ -44,7 +43,7 @@ namespace RoslynDom
         protected RDomBase(T oldIDom)
              : base(oldIDom)
         {
-            var oldRDom = oldIDom as RDomBase<T, TSyntax, TSymbol>;
+            var oldRDom = oldIDom as RDomBase<T,  TSymbol>;
             _rawSyntax = oldRDom._rawSyntax;
             _originalRawSyntax = oldRDom._originalRawSyntax;
             if (oldRDom._attributes != null)

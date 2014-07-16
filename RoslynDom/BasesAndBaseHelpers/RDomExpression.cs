@@ -10,7 +10,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomExpression : RDomBase<IExpression, ExpressionSyntax, ISymbol>, IExpression
+    public class RDomExpression : RDomBase<IExpression, ISymbol>, IExpression
     {
         internal RDomExpression(ExpressionSyntax rawItem)
            : base(rawItem)

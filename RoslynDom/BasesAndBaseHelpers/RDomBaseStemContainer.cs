@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
-    public abstract class RDomBaseStemContainer<T, TSyntax, TSymbol> : RDomBase<T, TSyntax, TSymbol>, IRDomStemContainer
-        where TSyntax : SyntaxNode
+    public abstract class RDomBaseStemContainer<T, TSymbol> : RDomBase<T, TSymbol>, IRDomStemContainer
         where TSymbol : ISymbol
         where T : class, IDom<T>
     {
         private IList<IStemMember> _members = new List<IStemMember>();
 
-        internal RDomBaseStemContainer(TSyntax rawItem)
+        internal RDomBaseStemContainer(SyntaxNode rawItem)
            : base(rawItem)
         {
             //Initialize();
@@ -42,7 +37,7 @@ namespace RoslynDom
         {
             // ick. but I it avoids an FxCop error, not sure which is worse
             // also, really need to keep them in order so need to iterate entire list in order
-            var oldRDom = oldIDom as RDomBaseStemContainer<T, TSyntax, TSymbol>;
+            var oldRDom = oldIDom as RDomBaseStemContainer<T,  TSymbol>;
             var newMembers = new List<IStemMember>();
             _members = new List<IStemMember>();
             foreach (var member in oldRDom.StemMembers)

@@ -1,13 +1,12 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomInvocationStatement : RDomBase<IInvocationStatement, ExpressionStatementSyntax, ISymbol>, IInvocationStatement
+    public class RDomInvocationStatement : RDomBase<IInvocationStatement, ISymbol>, IInvocationStatement
     {
 
-        internal RDomInvocationStatement(ExpressionStatementSyntax rawItem)
+        internal RDomInvocationStatement(SyntaxNode rawItem)
            : base(rawItem)
         {
             //Initialize2();

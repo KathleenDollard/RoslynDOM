@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-     public class RDomDeclarationStatement : RDomBase<IDeclarationStatement, VariableDeclaratorSyntax, ISymbol>, IDeclarationStatement
+    public class RDomDeclarationStatement : RDomBase<IDeclarationStatement, ISymbol>, IDeclarationStatement
     {
-        public RDomDeclarationStatement(VariableDeclaratorSyntax rawItem)
+        public RDomDeclarationStatement(SyntaxNode rawItem)
            : base(rawItem)
         {
             //Initialize2();

@@ -11,7 +11,7 @@ namespace RoslynDom
     //    { get { return FactoryPriority.Normal - 1; } }
     //}
 
-    public class RDomInvalidTypeMember : RDomBase<IInvalidTypeMember, SyntaxNode, ISymbol>, IInvalidTypeMember
+    public class RDomInvalidTypeMember : RDomBase<IInvalidTypeMember,  ISymbol>, IInvalidTypeMember
     {
         internal RDomInvalidTypeMember(
                      SyntaxNode rawItem)
