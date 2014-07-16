@@ -78,7 +78,7 @@ namespace RoslynDom
             return new RDomReferencedType(this);
         }
 
-         internal override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+         protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
             if (!CheckSameIntent(other as IReferencedType, includePublicAnnotations)) { return false; }
             return sameIntent.SameIntent(this as IReferencedType, other as IReferencedType, includePublicAnnotations);
@@ -131,7 +131,7 @@ namespace RoslynDom
             throw new NotImplementedException();
         }
 
-        internal override ISymbol GetSymbol(SyntaxNode node)
+        protected override ISymbol GetSymbol(SyntaxNode node)
         {
             throw new NotImplementedException();
         }

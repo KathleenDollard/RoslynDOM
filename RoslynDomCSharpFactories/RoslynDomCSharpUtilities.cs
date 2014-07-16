@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Reflection;
 
-namespace RoslynDom
+namespace RoslynDom.CSharpFactories
 {
     internal static class RoslynDomCSharpUtilities
     {

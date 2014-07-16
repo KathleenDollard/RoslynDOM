@@ -13,7 +13,7 @@ namespace RoslynDom
     {
         public override void InitializeItem(RDomIfStatement newItem, IfStatementSyntax syntax)
         {
-            newItem.Condition = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(syntax.Condition).FirstOrDefault();
+            newItem.Condition = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Condition).FirstOrDefault();
             if (syntax.Condition == null) { throw new InvalidOperationException(); }
             bool hasBlock = false;
             var statements = GetStatementsFromSyntax(newItem.TypedSyntax.Statement, ref hasBlock);
@@ -69,7 +69,7 @@ namespace RoslynDom
 
         private IEnumerable<IStatement> GetStatementsFromSyntax(StatementSyntax statementSyntax, ref bool hasBlock)
         {
-            var statement = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax).First();
+            var statement = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax).First();
             var list = new List<IStatement>();
             var blockStatement = statement as IBlockStatement;
             if (blockStatement != null)

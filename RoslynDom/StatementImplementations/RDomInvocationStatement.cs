@@ -14,7 +14,7 @@ namespace RoslynDom
         public override void InitializeItem(RDomInvocationStatement newItem, ExpressionStatementSyntax syntax)
         {
             var expression = syntax.Expression;
-            newItem.Invocation = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(expression).FirstOrDefault();
+            newItem.Invocation = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression).FirstOrDefault();
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)

@@ -167,7 +167,7 @@ namespace RoslynDom
             }
         }
 
-        internal override ISymbol GetSymbol(SyntaxNode node)
+        protected override ISymbol GetSymbol(SyntaxNode node)
         {
             var model = GetModel();
             var symbol = (TSymbol)model.GetDeclaredSymbol(node);

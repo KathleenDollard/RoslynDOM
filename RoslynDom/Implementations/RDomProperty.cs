@@ -30,9 +30,9 @@ namespace RoslynDom
             var getAccessorSyntax = newItem.TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
             var setAccessorSyntax = newItem.TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
             if (getAccessorSyntax != null)
-            { newItem.GetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(getAccessorSyntax).FirstOrDefault()); }
+            { newItem.GetAccessor = (IAccessor)(RDomFactoryHelper.GetHelper<IMisc>().MakeItem(getAccessorSyntax).FirstOrDefault()); }
             if (setAccessorSyntax != null)
-            { newItem.SetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(setAccessorSyntax).FirstOrDefault()); }
+            { newItem.SetAccessor = (IAccessor)(RDomFactoryHelper.GetHelper<IMisc>().MakeItem(setAccessorSyntax).FirstOrDefault()); }
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)

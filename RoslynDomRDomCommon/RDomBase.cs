@@ -47,7 +47,7 @@ namespace RoslynDom
 
         public abstract object OriginalRawItem { get; }
 
-        public IDom Parent { get; internal set; }
+        public IDom Parent { get; protected set; }
 
         public void RemoveFromParent()
         {
@@ -123,7 +123,7 @@ namespace RoslynDom
 
         public abstract object RequestValue(string propertyName);
 
-        internal abstract ISymbol GetSymbol(SyntaxNode node);
+        protected abstract ISymbol GetSymbol(SyntaxNode node);
 
         /// <summary>
         /// For a discussion of names <see cref="OuterName"/>
@@ -146,7 +146,7 @@ namespace RoslynDom
             return SameIntentInternal(other, includePublicAnnotations);
         }
 
-        internal abstract bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+        protected abstract bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
                          where TLocal : class;
 
 

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
 using RoslynDom.Common;
 
-namespace RoslynDom
+namespace RoslynDom.CSharpFactories
 {
     public static class RoslynCSharpUtilities
     {

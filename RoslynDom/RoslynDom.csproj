@@ -68,8 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeValueStyle.cs" />
-    <Compile Include="BasesAndBaseHelpers\RDomBase.cs" />
-    <Compile Include="BasesAndBaseHelpers\RDomBaseFactoryHelper.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseOfT.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseTTSyntaxTSymbol.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
@@ -84,13 +82,9 @@
     <Compile Include="Implementations\RDomInterface.cs" />
     <Compile Include="Implementations\RDomInvalidTypeMember.cs" />
     <Compile Include="Implementations\RDomAccessor.cs" />
-    <Compile Include="IRDomCanLoad.cs" />
-    <Compile Include="IRDomContainers.cs" />
-    <Compile Include="IRDomFactory.cs" />
-    <Compile Include="IRoslynDom.cs" />
     <Compile Include="PublicAnnotationFactory.cs" />
     <Compile Include="RDomFactory.cs" />
-    <Compile Include="FactoryProvider.cs" />
+    <Compile Include="RegisterCSharpFactories.cs" />
     <Compile Include="RoslynDomUtilities.cs" />
     <Compile Include="RoslynUtilities.cs" />
     <Compile Include="StatementImplementations\RDomInvocationStatement.cs" />
@@ -120,6 +114,10 @@
     <ProjectReference Include="..\RoslynDomCommon\RoslynDomCommon.csproj">
       <Project>{4f7977ed-7d76-40b6-bfb8-185c2b5a04b7}</Project>
       <Name>RoslynDomCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynDomRDomCommon\RoslynDomRDomCommon.csproj">
+      <Project>{1e5b8601-b717-471d-a9ee-0c03d15491a5}</Project>
+      <Name>RoslynDomRDomCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\RoslynDomUtilities\RoslynDomUtilities.csproj">
       <Project>{278404a0-aa81-402c-9ff0-b183715e2997}</Project>

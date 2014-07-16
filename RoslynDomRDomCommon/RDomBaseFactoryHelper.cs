@@ -10,88 +10,112 @@ namespace RoslynDom
 
     public abstract class RDomFactoryHelper
     {
+        // WARNING: At present you must register all factories before retrieving any. So,
         private static FactoryProvider factoryProvider = new FactoryProvider();
         private static IRDomFactory<PublicAnnotation> publicAnnotationFactory;
-        private static RDomRootFactoryHelper rootFactoryHelper;
-        private static RDomStemMemberFactoryHelper stemMemberFactoryHelper;
-        private static RDomTypeMemberFactoryHelper typeMemberFactoryHelper;
-        private static RDomStatementFactoryHelper statementFactoryHelper;
-        private static RDomExpressionFactoryHelper expressionFactoryHelper;
-        private static RDomMiscFactoryHelper miscFactoryHelper;
+        private static List<Tuple<Type, RDomFactoryHelper>> registration = new List<Tuple<Type, RDomFactoryHelper>>();
+        //private static RDomRootFactoryHelper rootFactoryHelper;
+        //private static RDomStemMemberFactoryHelper stemMemberFactoryHelper;
+        //private static RDomTypeMemberFactoryHelper typeMemberFactoryHelper;
+        //private static RDomStatementFactoryHelper statementFactoryHelper;
+        //private static RDomExpressionFactoryHelper expressionFactoryHelper;
+        //private static RDomMiscFactoryHelper miscFactoryHelper;
 
-        public static void Initialize()
-        {
-            publicAnnotationFactory = factoryProvider.GetPublicAnnotationFactory();
-        }
+        //public static void Initialize()
+        //{
+        //    publicAnnotationFactory = factoryProvider.GetPublicAnnotationFactory();
+        //}
 
-        public static RDomRootFactoryHelper RootFactoryHelper
+        public static void Register<TKind>(RDomFactoryHelper<TKind> factoryHelper)
+            where TKind : class, IDom
         {
-            get
-            {
-                if (rootFactoryHelper == null) { rootFactoryHelper = new RDomRootFactoryHelper(); }
-                return rootFactoryHelper;
-            }
-        }
-        public static RDomStemMemberFactoryHelper StemMemberFactoryHelper
-        {
-            get
-            {
-                if (stemMemberFactoryHelper == null) { stemMemberFactoryHelper = new RDomStemMemberFactoryHelper(); }
-                return stemMemberFactoryHelper;
-            }
-        }
-        public static RDomTypeMemberFactoryHelper TypeMemberFactoryHelper
-        {
-            get
-            {
-                if (typeMemberFactoryHelper == null) { typeMemberFactoryHelper = new RDomTypeMemberFactoryHelper(); }
-                return typeMemberFactoryHelper;
-            }
-        }
-        public static RDomStatementFactoryHelper StatementFactoryHelper
-        {
-            get
-            {
-                if (statementFactoryHelper == null) { statementFactoryHelper = new RDomStatementFactoryHelper(); }
-                return statementFactoryHelper;
-            }
-        }
-        public static RDomExpressionFactoryHelper ExpressionFactoryHelper
-        {
-            get
-            {
-                if (expressionFactoryHelper == null) { expressionFactoryHelper = new RDomExpressionFactoryHelper(); }
-                return expressionFactoryHelper;
-            }
-        }
-        public static RDomMiscFactoryHelper MiscFactoryHelper
-        {
-            get
-            {
-                if (miscFactoryHelper == null) { miscFactoryHelper = new RDomMiscFactoryHelper(); }
-                return miscFactoryHelper;
-            }
+            registration.Add(new Tuple<Type, RDomFactoryHelper>(typeof(TKind), factoryHelper));
         }
 
-        public static RDomFactoryHelper GetHelper<TKind>()
+        public static void RegisterPublicAnnotationFactory(IRDomFactory<PublicAnnotation> factory)
         {
-            if (typeof(TKind) == typeof(IRoot)) { return RootFactoryHelper; }
-            if (typeof(TKind) == typeof(IStemMember)) { return StemMemberFactoryHelper; }
-            if (typeof(TKind) == typeof(ITypeMember)) { return TypeMemberFactoryHelper; }
-            if (typeof(TKind) == typeof(IStatement)) { return StatementFactoryHelper; }
-            if (typeof(TKind) == typeof(IExpression)) { return ExpressionFactoryHelper; }
-            if (typeof(TKind) == typeof(IMisc)) { return MiscFactoryHelper; }
+            publicAnnotationFactory = factory;
+        }
+
+        public static RDomFactoryHelper<TKind> GetHelper<TKind>()
+            where TKind :class, IDom
+        {
+            foreach (var tuple in registration)
+            {
+                if (tuple.Item1 == typeof(TKind)) { return (RDomFactoryHelper<TKind>)tuple.Item2; }
+            }
             throw new InvalidOperationException();
         }
 
+        //public static RDomRootFactoryHelper RootFactoryHelper
+        //{
+        //    get
+        //    {
+        //        if (rootFactoryHelper == null) { rootFactoryHelper = new RDomRootFactoryHelper(); }
+        //        return rootFactoryHelper;
+        //    }
+        //}
+        //public static RDomStemMemberFactoryHelper StemMemberFactoryHelper
+        //{
+        //    get
+        //    {
+        //        if (stemMemberFactoryHelper == null) { stemMemberFactoryHelper = new RDomStemMemberFactoryHelper(); }
+        //        return stemMemberFactoryHelper;
+        //    }
+        //}
+        //public static RDomTypeMemberFactoryHelper TypeMemberFactoryHelper
+        //{
+        //    get
+        //    {
+        //        if (typeMemberFactoryHelper == null) { typeMemberFactoryHelper = new RDomTypeMemberFactoryHelper(); }
+        //        return typeMemberFactoryHelper;
+        //    }
+        //}
+        //public static RDomStatementFactoryHelper StatementFactoryHelper
+        //{
+        //    get
+        //    {
+        //        if (statementFactoryHelper == null) { statementFactoryHelper = new RDomStatementFactoryHelper(); }
+        //        return statementFactoryHelper;
+        //    }
+        //}
+        //public static RDomExpressionFactoryHelper ExpressionFactoryHelper
+        //{
+        //    get
+        //    {
+        //        if (expressionFactoryHelper == null) { expressionFactoryHelper = new RDomExpressionFactoryHelper(); }
+        //        return expressionFactoryHelper;
+        //    }
+        //}
+        //public static RDomMiscFactoryHelper MiscFactoryHelper
+        //{
+        //    get
+        //    {
+        //        if (miscFactoryHelper == null) { miscFactoryHelper = new RDomMiscFactoryHelper(); }
+        //        return miscFactoryHelper;
+        //    }
+        //}
+
+        //public static RDomFactoryHelper GetHelper<TKind>()
+        //{
+        //    if (typeof(TKind) == typeof(IRoot)) { return RootFactoryHelper; }
+        //    if (typeof(TKind) == typeof(IStemMember)) { return StemMemberFactoryHelper; }
+        //    if (typeof(TKind) == typeof(ITypeMember)) { return TypeMemberFactoryHelper; }
+        //    if (typeof(TKind) == typeof(IStatement)) { return StatementFactoryHelper; }
+        //    if (typeof(TKind) == typeof(IExpression)) { return ExpressionFactoryHelper; }
+        //    if (typeof(TKind) == typeof(IMisc)) { return MiscFactoryHelper; }
+        //    throw new InvalidOperationException();
+        //}
+
         public static IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode)
         {
-            if (publicAnnotationFactory == null) Initialize();
+            if (publicAnnotationFactory == null) { throw new InvalidOperationException(); }
             return publicAnnotationFactory.CreateFrom(syntaxNode);
         }
 
         protected static IEnumerable<IRDomFactory<T>> GetFactories<T>()
         {
+            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
             return factoryProvider.GetFactories<T>();
         }
 
@@ -101,6 +125,7 @@ namespace RoslynDom
     }
 
     public abstract class RDomFactoryHelper<T> : RDomFactoryHelper
+        where T : class, IDom
     {
         private IEnumerable<IRDomFactory<T>> factories;
         private IRDomFactory<T> genericFactory;
@@ -156,13 +181,7 @@ namespace RoslynDom
             return found.Item1;
         }
 
-    }
-
-    public abstract class RDomFactoryHelper<T, TSyntax> : RDomFactoryHelper<T>
-        where T : class
-        where TSyntax : SyntaxNode
-    {
-        public IEnumerable<T> MakeItem(TSyntax rawStatement)
+        public IEnumerable<T> MakeItem(SyntaxNode rawStatement)
         {
             var factories = Factories.OrderByDescending(x => x.Priority).ToArray();
             foreach (var factory in factories)
@@ -190,25 +209,5 @@ namespace RoslynDom
         }
     }
 
-    public class RDomRootFactoryHelper : RDomFactoryHelper<IRoot, CompilationUnitSyntax>
-    { internal RDomRootFactoryHelper() { } }
-
-    public class RDomStemMemberFactoryHelper : RDomFactoryHelper<IStemMember, SyntaxNode>
-    { internal RDomStemMemberFactoryHelper() { } }
-
-
-    public class RDomTypeMemberFactoryHelper : RDomFactoryHelper<ITypeMember, MemberDeclarationSyntax>
-    { internal RDomTypeMemberFactoryHelper() { } }
-
-
-    public class RDomStatementFactoryHelper : RDomFactoryHelper<IStatement, StatementSyntax>
-    { internal RDomStatementFactoryHelper() { } }
-
-
-    public class RDomExpressionFactoryHelper : RDomFactoryHelper<IExpression, ExpressionSyntax>
-    { internal RDomExpressionFactoryHelper() { } }
-
-    public class RDomMiscFactoryHelper : RDomFactoryHelper<IMisc, SyntaxNode>
-    { internal RDomMiscFactoryHelper() { } }
 
 }

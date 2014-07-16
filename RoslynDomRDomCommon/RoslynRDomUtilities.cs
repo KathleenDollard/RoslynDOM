@@ -6,7 +6,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public static class RoslynUtilities
+    public static class RoslynRDomUtilities
     {
 
         private static MetadataReference mscorlib;

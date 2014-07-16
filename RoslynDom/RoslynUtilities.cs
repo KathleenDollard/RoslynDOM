@@ -164,43 +164,42 @@ namespace RoslynDom
         }
 
 
-        internal static bool TryAddSyntaxNode<TInput, TSyntaxNode, TRDom>(IList<TSyntaxNode> list, TInput member, Func<TRDom, TSyntaxNode> makeDelegate)
-                 where TRDom : class
-        {
-            var memberAsT = member as TRDom;
-            if (memberAsT == null) return false;
-            var newItem =makeDelegate(memberAsT);
-            if (newItem == null) throw new InvalidOperationException();
-            list.Add(newItem);
-            return true; ;
+        //internal static bool TryAddSyntaxNode<TInput, TSyntaxNode, TRDom>(IList<TSyntaxNode> list, TInput member, Func<TRDom, TSyntaxNode> makeDelegate)
+        //         where TRDom : class
+        //{
+        //    var memberAsT = member as TRDom;
+        //    if (memberAsT == null) return false;
+        //    var newItem =makeDelegate(memberAsT);
+        //    if (newItem == null) throw new InvalidOperationException();
+        //    list.Add(newItem);
+        //    return true; ;
 
-        }
+        //}
 
-        internal static TReturn UpdateNodeIfListNotEmpty<T, TReturn>(SyntaxList<T> list, TReturn input, Func<TReturn, SyntaxList<T>, TReturn> makeDelegate)
-            where T : SyntaxNode
-            where TReturn : SyntaxNode
-        {
-            if (list.Any()) { return makeDelegate(input, list); }
-            return input;
+        //internal static TReturn UpdateNodeIfListNotEmpty<T, TReturn>(SyntaxList<T> list, TReturn input, Func<TReturn, SyntaxList<T>, TReturn> makeDelegate)
+        //    where T : SyntaxNode
+        //    where TReturn : SyntaxNode
+        //{
+        //    if (list.Any()) { return makeDelegate(input, list); }
+        //    return input;
 
-        }
+        //}
 
-        internal static TReturn UpdateNodeIfItemNotNull<T, TReturn>(T item, TReturn input, Func<TReturn, T, TReturn> makeDelegate)
-                where T : SyntaxNode
-                where TReturn : SyntaxNode
-        {
-            if (item != null) { return makeDelegate(input, item); }
-            return input;
+        //internal static TReturn UpdateNodeIfItemNotNull<T, TReturn>(T item, TReturn input, Func<TReturn, T, TReturn> makeDelegate)
+        //        where T : SyntaxNode
+        //        where TReturn : SyntaxNode
+        //{
+        //    if (item != null) { return makeDelegate(input, item); }
+        //    return input;
 
-        }
+        //}
 
         internal static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
         {
-            // Since this happens a lot, it's a small optimization to directly call the correct helper. If that turns out to be too leaky an abstraction, call RDomFactory
             var statementSyntaxList = statements
-                            .SelectMany(x => RDomFactoryHelper.StatementFactoryHelper.BuildSyntaxGroup(x))
+                            .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
                             .ToList();
-            return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); 
+            return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
         }
 
         public static AccessModifier GetAccessibilityFromSymbol(ISymbol symbol)

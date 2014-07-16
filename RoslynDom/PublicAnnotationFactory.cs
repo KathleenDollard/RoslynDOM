@@ -11,21 +11,18 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomPublicAnnotationFactoryHelper : RDomFactoryHelper<PublicAnnotation>
-    {
-        public RDomPublicAnnotationFactoryHelper() : base()
-        { }
+    //public class RDomPublicAnnotationFactoryHelper : RDomFactoryHelper<PublicAnnotation>
+    //{
+    //    public override SyntaxNode BuildSyntax(IDom item)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        public override SyntaxNode BuildSyntax(IDom item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    public override IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 
     // TODO: Figure out why this doesn't use normal factory inheritance tree
     public class PublicAnnotationFactory :  IPublicAnnotationFactory

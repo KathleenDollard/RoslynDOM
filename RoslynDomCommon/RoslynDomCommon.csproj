@@ -146,7 +146,12 @@
     <None Include="InterfaceCommonality.cd" />
     <None Include="Interface_Statements.cd" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\RoslynDomUtilities\RoslynDomUtilities.csproj">
+      <Project>{278404a0-aa81-402c-9ff0-b183715e2997}</Project>
+      <Name>RoslynDomUtilities</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

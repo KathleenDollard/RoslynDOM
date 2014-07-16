@@ -44,7 +44,7 @@ namespace RoslynDom
             if (syntax.Initializer != null)
             {
                 var equalsClause = syntax.Initializer;
-                newItem.Initializer = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(equalsClause.Value).FirstOrDefault();
+                newItem.Initializer = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(equalsClause.Value).FirstOrDefault();
             }
 
         }

@@ -39,7 +39,7 @@ namespace RoslynDom
             return (T)newItem;
         }
 
-        internal override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+        protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
             if (!CheckSameIntent(other as T, includePublicAnnotations)) { return false; }
             return sameIntent.SameIntent(this as T, other as T, includePublicAnnotations);

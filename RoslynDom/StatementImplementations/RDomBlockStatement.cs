@@ -14,7 +14,7 @@ namespace RoslynDom
         {
             foreach (var statementSyntax in syntax.Statements)
             {
-                var statements = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax);
+                var statements = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax);
                 foreach (var statement in statements)
                 { newItem.AddOrMoveStatement(statement); }
             }

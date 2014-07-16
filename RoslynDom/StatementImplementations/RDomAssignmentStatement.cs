@@ -24,7 +24,7 @@ namespace RoslynDom
             var expression = right as ExpressionSyntax;
             if (expression == null) throw new InvalidOperationException();
             newItem.Name = identifier.ToString();
-            newItem.Expression = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(expression).FirstOrDefault();
+            newItem.Expression = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression).FirstOrDefault();
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
         {

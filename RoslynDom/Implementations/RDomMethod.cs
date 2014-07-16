@@ -25,12 +25,12 @@ namespace RoslynDom
             newItem.IsSealed = newItem.Symbol.IsSealed;
             newItem.IsStatic = newItem.Symbol.IsStatic;
             newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
-            var parameters = ListUtilities.MakeList(rawItem, x => x.ParameterList.Parameters, x => RDomFactoryHelper.MiscFactoryHelper.MakeItem(x));
+            var parameters = ListUtilities.MakeList(rawItem, x => x.ParameterList.Parameters, x => RDomFactoryHelper.GetHelper<IMisc>().MakeItem(x));
             foreach (var parameter in parameters)
             { newItem.AddParameter((IParameter)parameter); }
             if (rawItem.Body != null)
             {
-                var statements = ListUtilities.MakeList(rawItem, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
+                var statements = ListUtilities.MakeList(rawItem, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x));
                 foreach (var statement in statements)
                 { newItem.AddStatement(statement); }
             }

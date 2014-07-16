@@ -7,10 +7,10 @@ using System.Reflection;
 
 namespace RoslynDom
 {
-    internal static class RoslynDomUtilities
+    public static class RoslynDomUtilities
     {
 
-        internal static IEnumerable<INamespace> GetAllChildNamespaces(
+        public static IEnumerable<INamespace> GetAllChildNamespaces(
             IStemContainer stemContainer,
             bool includeSelf = false)
         {
@@ -27,19 +27,19 @@ namespace RoslynDom
             return ret;
         }
 
-        internal static IEnumerable<INamespace> GetNonEmptyNamespaces(
+        public static IEnumerable<INamespace> GetNonEmptyNamespaces(
             IStemContainer stemContainer)
         {
             return GetAllChildNamespaces(stemContainer)
                 .Where(x => x.StemMembers.Where(y => y.StemMemberKind != StemMemberKind.Namespace).Count() != 0);
         }
 
-        internal static IEnumerable<ITypeParameter> TypeParametersFrom(this INamedTypeSymbol rDomType)
+        public static IEnumerable<ITypeParameter> TypeParametersFrom(this INamedTypeSymbol rDomType)
         {
             return TypeParametersFrom(rDomType.TypeParameters);
         }
 
-        internal static IEnumerable<ITypeParameter> TypeParametersFrom(this IMethodSymbol rDomType)
+        public static IEnumerable<ITypeParameter> TypeParametersFrom(this IMethodSymbol rDomType)
         {
             return TypeParametersFrom(rDomType.TypeParameters);
         }
@@ -54,7 +54,7 @@ namespace RoslynDom
             return retList;
         }
 
-        internal static IEnumerable<IReferencedType> ImpementedInterfacesFrom(this IHasImplementedInterfaces rDomType, bool all)
+        public static IEnumerable<IReferencedType> ImpementedInterfacesFrom(this IHasImplementedInterfaces rDomType, bool all)
         {
             var symbol = ((IRoslynDom)rDomType).Symbol as INamedTypeSymbol;
             var retList = new List<IReferencedType>();
@@ -70,7 +70,7 @@ namespace RoslynDom
 
         }
 
-        internal static void RemoveMemberFromParent(IDom parent, IDom member)
+        public static void RemoveMemberFromParent(IDom parent, IDom member)
         {
             if (member.Parent != parent) { throw new InvalidOperationException(); }
             var memberAsRDom = member as RDomBase;
@@ -78,7 +78,7 @@ namespace RoslynDom
             memberAsRDom.RemoveFromParent();
         }
 
-        internal static void PrepMemberForAdd(IDom parent, IDom member)
+        public static void PrepMemberForAdd(IDom parent, IDom member)
         {
             var memberAsRDom = member as RDomBase;
             if (memberAsRDom == null) throw new InvalidOperationException();
@@ -86,10 +86,11 @@ namespace RoslynDom
             {
                 memberAsRDom.RemoveFromParent();
             }
-            memberAsRDom.Parent = parent;
+            ReflectionUtilities.SetPropertyValue(memberAsRDom, "Parent", parent);
+            //memberAsRDom.Parent = parent;
         }
 
-        internal static IEnumerable<T> CopyMembers<T>(IEnumerable<T> members)
+        public static IEnumerable<T> CopyMembers<T>(IEnumerable<T> members)
         {
             var ret = new List<T>();
             if (members != null)
@@ -102,7 +103,7 @@ namespace RoslynDom
             return ret;
         }
 
-        internal static T Copy<T>(T oldItem)
+        public static T Copy<T>(T oldItem)
         {
             var type = oldItem.GetType();
             var constructor = type.GetTypeInfo()

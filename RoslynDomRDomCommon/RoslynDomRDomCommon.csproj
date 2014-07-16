@@ -52,7 +52,6 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -63,10 +62,12 @@
     <Compile Include="IRDomFactory.cs" />
     <Compile Include="IRoslynDom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RDomBase.cs" />
     <Compile Include="RDomBaseFactory.cs" />
     <Compile Include="RDomBaseFactoryHelper.cs" />
+    <Compile Include="RDomList.cs" />
     <Compile Include="RoslynDomUtilities.cs" />
-    <Compile Include="RoslynUtilities.cs" />
+    <Compile Include="RoslynRDomUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

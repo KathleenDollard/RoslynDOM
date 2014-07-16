@@ -17,7 +17,7 @@ namespace RoslynDom
         {
             if (syntax.Expression != null)
             {
-                newItem.Return = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(syntax.Expression).FirstOrDefault();
+                newItem.Return = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Expression).FirstOrDefault();
                 if (newItem.Return == null) throw new InvalidOperationException();
             }
         }

@@ -15,7 +15,7 @@ namespace RoslynDom
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             if (syntax.Body != null)
             {
-                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
+                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x));
                 foreach (var statement in statements)
                 { newItem.AddStatement(statement); }
             }
