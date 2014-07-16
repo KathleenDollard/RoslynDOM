@@ -9,13 +9,13 @@ namespace RoslynDom
     public class RDomTypeParameter : RDomReferencedType, ITypeParameter
     {
         private IList<IReferencedType> _constraintTypes = new List<IReferencedType>();
-        internal RDomTypeParameter(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
+        public RDomTypeParameter(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
             : base(raw, symbol)
         {
             // DO NOT call Initialize here. It is being called from the base RDomReferencedType class
         }
 
-        internal RDomTypeParameter(RDomTypeParameter oldRDom)
+        public RDomTypeParameter(RDomTypeParameter oldRDom)
              : base(oldRDom)
         {
             Variance = oldRDom.Variance;

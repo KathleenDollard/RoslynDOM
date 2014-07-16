@@ -11,7 +11,7 @@ namespace RoslynDom
 {
      public class RDomDeclarationStatement : RDomBase<IDeclarationStatement, VariableDeclaratorSyntax, ISymbol>, IDeclarationStatement
     {
-        internal RDomDeclarationStatement(VariableDeclaratorSyntax rawItem)
+        public RDomDeclarationStatement(VariableDeclaratorSyntax rawItem)
            : base(rawItem)
         {
             //Initialize2();

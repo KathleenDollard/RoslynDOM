@@ -17,21 +17,21 @@ namespace RoslynDom
         private string _outerTypeName;
         private ISameIntent<IReferencedType> sameIntent = SameIntent_Factory.SameIntent<IReferencedType>();
 
-        internal RDomReferencedType(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
+        public RDomReferencedType(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
         {
             _raw = raw;
             _symbol = symbol;
             Initialize();
         }
 
-        internal RDomReferencedType(TypeInfo typeInfo, ISymbol symbol)
+        public RDomReferencedType(TypeInfo typeInfo, ISymbol symbol)
         {
             _typeInfo = typeInfo;
             _symbol = symbol == null ? typeInfo.Type : symbol;
             Initialize();
         }
 
-        internal RDomReferencedType(RDomReferencedType oldRDom)
+        public RDomReferencedType(RDomReferencedType oldRDom)
              : base(oldRDom)
         {
             _symbol = oldRDom._symbol;

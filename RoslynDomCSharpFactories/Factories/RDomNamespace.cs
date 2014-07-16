@@ -18,8 +18,8 @@ namespace RoslynDom
             // Thus, this replaces hte base Initialize name with the correct one
             newItem.Name = newItem.TypedSyntax.NameFrom();
             if (newItem.Name.StartsWith("@")) { newItem.Name = newItem.Name.Substring(1); }
-            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x));
-            var usings = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x));
+            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x));
             foreach (var member in members)
             { newItem.AddOrMoveStemMember(member); }
             foreach (var member in usings)

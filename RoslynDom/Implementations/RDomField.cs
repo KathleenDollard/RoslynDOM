@@ -22,7 +22,7 @@ namespace RoslynDom
     {
         private VariableDeclaratorSyntax _varSyntax;
 
-        internal RDomField(
+        public RDomField(
                 FieldDeclarationSyntax rawItem,
                 VariableDeclaratorSyntax varSyntax)
            : base(rawItem)

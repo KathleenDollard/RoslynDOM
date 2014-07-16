@@ -57,13 +57,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseFactories\RDomExpression.cs" />
+    <Compile Include="FactoriesForStatements\RDomAssignmentStatement.cs" />
+    <Compile Include="FactoriesForStatements\RDomBlockStatement.cs" />
+    <Compile Include="FactoriesForStatements\RDomDeclarationStatement.cs" />
+    <Compile Include="FactoriesForStatements\RDomIfStatement.cs" />
+    <Compile Include="FactoriesForStatements\RDomInvocationStatement.cs" />
+    <Compile Include="FactoriesForStatements\RDomReturnStatement.cs" />
+    <Compile Include="Factories\RDomAccessor.cs" />
+    <Compile Include="Factories\RDomClass.cs" />
+    <Compile Include="Factories\RDomEnum.cs" />
+    <Compile Include="Factories\RDomField.cs" />
+    <Compile Include="Factories\RDomInterface.cs" />
+    <Compile Include="Factories\RDomMethod.cs" />
+    <Compile Include="Factories\RDomNamespace.cs" />
+    <Compile Include="Factories\RDomParameter.cs" />
+    <Compile Include="Factories\RDomProperty.cs" />
+    <Compile Include="Factories\RDomReferencedType.cs" />
+    <Compile Include="Factories\RDomRoot.cs" />
+    <Compile Include="Factories\RDomStructure.cs" />
+    <Compile Include="Factories\RDomUsing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RDomFactory.cs" />
-    <Compile Include="RoslynDomCSharpUtilities.cs" />
+    <Compile Include="RoslynDomSymbolUtilities.cs" />
     <Compile Include="RoslynCSharpUtilities.cs" />
     <Compile Include="BaseFactories\RDomBaseItemFactory.cs" />
-    <Compile Include="BaseFactories\RDomBaseFactoryHelper.cs" />
-    <Compile Include="BaseFactories\RDomExpression.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -72,6 +90,10 @@
     <ProjectReference Include="..\RoslynDomCommon\RoslynDomCommon.csproj">
       <Project>{4f7977ed-7d76-40b6-bfb8-185c2b5a04b7}</Project>
       <Name>RoslynDomCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynDomRDomCommon\RoslynDomRDomCommon.csproj">
+      <Project>{1e5b8601-b717-471d-a9ee-0c03d15491a5}</Project>
+      <Name>RoslynDomRDomCommon</Name>
     </ProjectReference>
     <ProjectReference Include="..\RoslynDomUtilities\RoslynDomUtilities.csproj">
       <Project>{278404a0-aa81-402c-9ff0-b183715e2997}</Project>

@@ -17,7 +17,7 @@ namespace RoslynDom
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
             foreach (var typeParameter in newTypeParameters)
             { newItem.AddOrMoveTypeParameter(typeParameter); }
-            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x));
             foreach (var member in members)
             { newItem.AddOrMoveMember(member); }
         }

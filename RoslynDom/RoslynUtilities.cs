@@ -194,7 +194,7 @@ namespace RoslynDom
 
         //}
 
-        internal static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
+        public static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
         {
             var statementSyntaxList = statements
                             .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))

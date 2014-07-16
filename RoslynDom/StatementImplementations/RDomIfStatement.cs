@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -14,7 +11,7 @@ namespace RoslynDom
         private IList<IStatement> _statements = new List<IStatement>();
         private IList<IStatement> _elseStatements = new List<IStatement>();
 
-        internal RDomIfStatement(IfStatementSyntax rawItem)
+        public RDomIfStatement(IfStatementSyntax rawItem)
             : base(rawItem)
         {
   //          Initialize2();

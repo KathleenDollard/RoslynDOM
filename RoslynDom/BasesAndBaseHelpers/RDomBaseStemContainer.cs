@@ -143,12 +143,12 @@ namespace RoslynDom
             if (member.Parent == null)
             { _members.Remove(member); }
             else
-            { RoslynDomUtilities.RemoveMemberFromParent(this, member); }
+            { RoslynDomSymbolUtilities.RemoveMemberFromParent(this, member); }
         }
 
         public void AddOrMoveStemMember(IStemMember member)
         {
-            RoslynDomUtilities.PrepMemberForAdd(this, member);
+            RoslynDomSymbolUtilities.PrepMemberForAdd(this, member);
             _members.Add(member);
         }
 

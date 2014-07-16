@@ -44,7 +44,7 @@ namespace RoslynDom.CSharpFactories
         public  IRoot GetRootFromSyntaxTree(SyntaxTree tree)
         {
             //var root2 = RDomFactory2.MakeRoot(tree);
-            var rootFactoryHelper = RDomFactoryHelper.RootFactoryHelper;
+            var rootFactoryHelper = RDomFactoryHelper.GetHelper<IRoot>();
             var root = rootFactoryHelper.MakeItem(tree.GetCompilationUnitRoot()).FirstOrDefault();
             return root;
         }
@@ -67,7 +67,7 @@ namespace RoslynDom.CSharpFactories
         }
 
         private  bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> syntaxNode)
-            where TKind : class
+            where TKind : class, IDom
         {
             syntaxNode = null;
             var itemAsKind = item as TKind;

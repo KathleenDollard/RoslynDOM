@@ -13,8 +13,8 @@ namespace RoslynDom
         public override void InitializeItem(RDomRoot newItem, CompilationUnitSyntax syntax)
         {
             newItem.Name = "Root";
-            var members = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember >().MakeItem(x));
-            var usings = ListUtilities.MakeList(newItem.TypedSyntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember >().MakeItem(x));
+            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x));
             foreach (var member in members)
             { newItem.AddOrMoveStemMember(member); }
             foreach (var member in usings)

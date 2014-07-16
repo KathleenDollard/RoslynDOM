@@ -27,8 +27,8 @@ namespace RoslynDom
             if (propSymbol == null) throw new InvalidOperationException();
             newItem.CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
             newItem.CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
-            var getAccessorSyntax = newItem.TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
-            var setAccessorSyntax = newItem.TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
+            var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
+            var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
             if (getAccessorSyntax != null)
             { newItem.GetAccessor = (IAccessor)(RDomFactoryHelper.GetHelper<IMisc>().MakeItem(getAccessorSyntax).FirstOrDefault()); }
             if (setAccessorSyntax != null)

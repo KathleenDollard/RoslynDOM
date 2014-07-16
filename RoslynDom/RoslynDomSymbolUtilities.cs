@@ -5,17 +5,17 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Reflection;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom.Common
 {
-    internal static class RoslynDomCSharpUtilities
+    internal static class RoslynDomSymbolUtilities
     {
 
-        internal static IEnumerable<ITypeParameter> TypeParametersFrom(this INamedTypeSymbol rDomType)
+        public static IEnumerable<ITypeParameter> TypeParametersFrom(this INamedTypeSymbol rDomType)
         {
             return TypeParametersFrom(rDomType.TypeParameters);
         }
 
-        internal static IEnumerable<ITypeParameter> TypeParametersFrom(this IMethodSymbol rDomType)
+        public static IEnumerable<ITypeParameter> TypeParametersFrom(this IMethodSymbol rDomType)
         {
             return TypeParametersFrom(rDomType.TypeParameters);
         }
@@ -30,7 +30,7 @@ namespace RoslynDom.CSharpFactories
             return retList;
         }
 
-        internal static IEnumerable<IReferencedType> ImpementedInterfacesFrom(this IHasImplementedInterfaces rDomType, bool all)
+        public static IEnumerable<IReferencedType> ImpementedInterfacesFrom(this IHasImplementedInterfaces rDomType, bool all)
         {
             var symbol = ((IRoslynDom)rDomType).Symbol as INamedTypeSymbol;
             var retList = new List<IReferencedType>();
@@ -46,7 +46,7 @@ namespace RoslynDom.CSharpFactories
 
         }
 
-        internal static void RemoveMemberFromParent(IDom parent, IDom member)
+        public static void RemoveMemberFromParent(IDom parent, IDom member)
         {
             if (member.Parent != parent) { throw new InvalidOperationException(); }
             var memberAsRDom = member as RDomBase;
@@ -54,7 +54,7 @@ namespace RoslynDom.CSharpFactories
             memberAsRDom.RemoveFromParent();
         }
 
-        internal static void PrepMemberForAdd(IDom parent, IDom member)
+        public static void PrepMemberForAdd(IDom parent, IDom member)
         {
             var memberAsRDom = member as RDomBase;
             if (memberAsRDom == null) throw new InvalidOperationException();

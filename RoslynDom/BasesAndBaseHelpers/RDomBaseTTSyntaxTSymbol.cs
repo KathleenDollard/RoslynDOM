@@ -9,18 +9,18 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
-    public abstract class RDomBase<T, TSyntax, TSymbol> : RDomBase<T>, IRoslynDom<T, TSyntax, TSymbol>
+    public abstract class RDomBase<T, TSyntax, TSymbol> : RDomBase<T>, IRoslynDom<T,  TSymbol>
           where TSyntax : SyntaxNode
           where TSymbol : ISymbol
           where T : class, IDom<T>
     {
-        private TSyntax _originalRawSyntax;
-        private TSyntax _rawSyntax;
+        private SyntaxNode _originalRawSyntax;
+        private SyntaxNode _rawSyntax;
         private TSymbol _symbol;
         private IEnumerable<IAttribute> _attributes;
         private string _containingTypeName;
 
-        protected RDomBase(TSyntax rawItem)
+        protected RDomBase(SyntaxNode rawItem)
              : base(RDomFactoryHelper.GetPublicAnnotations(rawItem))
         {
             _rawSyntax = rawItem;
@@ -76,10 +76,10 @@ namespace RoslynDom
         }
 
 
-        public TSyntax TypedSyntax
+        public SyntaxNode TypedSyntax
         { get { return _rawSyntax; } }
 
-        protected TSyntax OriginalTypedSyntax
+        protected SyntaxNode OriginalTypedSyntax
         { get { return _originalRawSyntax; } }
 
         public override object RawItem
@@ -96,7 +96,7 @@ namespace RoslynDom
             get
             {
                 if (_symbol == null)
-                { _symbol = (TSymbol)GetSymbol(TypedSyntax); }
+                { _symbol = (TSymbol)GetSymbol(_rawSyntax); }
                 return _symbol;
             }
         }
@@ -143,7 +143,7 @@ namespace RoslynDom
 
         private SemanticModel GetModel()
         {
-            var tree = TypedSyntax.SyntaxTree;
+            var tree = _rawSyntax.SyntaxTree;
             var compilation = CSharpCompilation.Create("MyCompilation",
                                            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                                            syntaxTrees: new[] { tree },
@@ -179,7 +179,7 @@ namespace RoslynDom
         {
             if (_attributes == null)
             {
-                _attributes = RDomAttribute.MakeAttributes(this, Symbol, TypedSyntax);
+                _attributes = RDomAttribute.MakeAttributes(this, Symbol, _rawSyntax);
             }
             return _attributes;
         }

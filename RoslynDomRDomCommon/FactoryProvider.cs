@@ -22,7 +22,7 @@ namespace RoslynDom
             ConfigureContainer(registrations);
         }
 
-        internal IEnumerable<IRDomFactory<TKind>> GetFactories<TKind>()
+        public IEnumerable<IRDomFactory<TKind>> GetFactories<TKind>()
         {
             if (!isLoaded) throw new InvalidOperationException();
             return UnityContainer.ResolveAll<IRDomFactory<TKind>>();

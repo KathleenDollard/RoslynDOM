@@ -8,12 +8,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomExpressionFactory
-                 : RDomExpressionFactory<IExpression, ExpressionSyntax>
+                 : RDomExpressionFactory<RDomExpression, ExpressionSyntax>
     {
-        public override void InitializeItem(IExpression newItem, ExpressionSyntax rawItem)
+        public override void InitializeItem(RDomExpression newItem, ExpressionSyntax rawItem)
         {
             newItem.Expression = rawItem.ToString();
         }
@@ -25,5 +25,4 @@ namespace RoslynDom.CSharpFactories
             return new SyntaxNode[] { node.NormalizeWhitespace() };
         }
     }
-
 }

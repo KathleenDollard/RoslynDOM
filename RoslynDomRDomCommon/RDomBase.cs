@@ -47,7 +47,8 @@ namespace RoslynDom
 
         public abstract object OriginalRawItem { get; }
 
-        public IDom Parent { get; protected set; }
+        // TODO: Return the parent set to hidden
+        public IDom Parent { get;  set; }
 
         public void RemoveFromParent()
         {

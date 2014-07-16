@@ -16,7 +16,7 @@ namespace RoslynDom
             newItem.Condition = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Condition).FirstOrDefault();
             if (syntax.Condition == null) { throw new InvalidOperationException(); }
             bool hasBlock = false;
-            var statements = GetStatementsFromSyntax(newItem.TypedSyntax.Statement, ref hasBlock);
+            var statements = GetStatementsFromSyntax(syntax.Statement, ref hasBlock);
             newItem.HasBlock  = hasBlock;
             foreach (var statement in statements)
             { newItem.AddOrMoveStatement(statement); }

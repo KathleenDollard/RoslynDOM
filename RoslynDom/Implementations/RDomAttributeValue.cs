@@ -47,8 +47,10 @@ namespace RoslynDom
         }
 
         private Tuple<object, LiteralKind> GetAttributeValueValue(
-                    AttributeArgumentSyntax arg)
+                    SyntaxNode argNode)
         {
+            var arg = argNode as AttributeArgumentSyntax;
+            if (arg == null) throw new InvalidOperationException();
             // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
             var expr = arg.Expression;
             var literalKind = LiteralKind.Unknown;

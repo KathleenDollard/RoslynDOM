@@ -90,7 +90,7 @@ namespace RoslynDom.CSharpFactories
 
             var solution = new CustomWorkspace().CurrentSolution
                 .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
-                .AddMetadataReference(projectId, Mscorlib)
+                .AddMetadataReference(projectId, RoslynRDomUtilities. Mscorlib)
                 .AddMetadataReference(projectId, AppDomain.CurrentDomain.GetAssemblies()
                     .Where(a => string.Compare(a.GetName().Name, "System", StringComparison.OrdinalIgnoreCase) == 0)
                     .Select(a => new MetadataFileReference(a.Location)).Single())
@@ -154,7 +154,7 @@ namespace RoslynDom.CSharpFactories
         {
             // Since this happens a lot, it's a small optimization to directly call the correct helper. If that turns out to be too leaky an abstraction, call RDomFactory
             var statementSyntaxList = statements
-                            .SelectMany(x => RDomFactoryHelper.StatementFactoryHelper.BuildSyntaxGroup(x))
+                            .SelectMany(x => RDomFactoryHelper.GetHelper<IStatement>().BuildSyntaxGroup(x))
                             .ToList();
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
         }

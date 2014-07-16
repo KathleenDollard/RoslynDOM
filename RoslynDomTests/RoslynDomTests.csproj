@@ -100,6 +100,10 @@
       <Project>{4f7977ed-7d76-40b6-bfb8-185c2b5a04b7}</Project>
       <Name>RoslynDomCommon</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RoslynDomCSharpFactories\RoslynDomCSharpFactories.csproj">
+      <Project>{8ae6f765-35a1-492f-84a1-86807155aa2c}</Project>
+      <Name>RoslynDomCSharpFactories</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RoslynDomRDomCommon\RoslynDomRDomCommon.csproj">
       <Project>{1e5b8601-b717-471d-a9ee-0c03d15491a5}</Project>
       <Name>RoslynDomRDomCommon</Name>

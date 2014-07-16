@@ -31,7 +31,7 @@ namespace RoslynDom
 
         protected override void Initialize()
         {
-            Name = TypedSyntax.Name.ToString();
+            Name = ((AttributeSyntax)TypedSyntax).Name.ToString();
         }
 
         public  AttributeSyntax BuildSyntax()
