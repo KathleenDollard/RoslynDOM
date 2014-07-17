@@ -30,8 +30,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var output = RDomFactory.BuildSyntax(root);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(5, statements.Count());
@@ -60,8 +60,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var output = RDomFactory.BuildSyntax(root);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(5, statements.Count());
@@ -71,7 +71,7 @@ namespace RoslynDomTests
             Assert.IsInstanceOfType(statements[3], typeof(RDomDeclarationStatement));
             Assert.IsInstanceOfType(statements[4], typeof(RDomDeclarationStatement));
             // TODO: Solve simplification problem.
-            var actual = RoslynUtilities.Simplify(output);
+            var actual = RoslynCSharpUtilities.Simplify(output);
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        var w = \", \";\r\n        String x = \", \";\r\n        var y = new Bar(4, \"Fred\");\r\n        XYZ xyz = new XYZ();\r\n        Bar z = Bar(w, x);\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
@@ -99,8 +99,8 @@ namespace RoslynDomTests
             }           
             ";
 
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var output = RDomFactory.BuildSyntax(root);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(3, statements.Count());
@@ -114,7 +114,7 @@ namespace RoslynDomTests
             Assert.IsInstanceOfType((statements[0] as IIfStatement).ElseStatements.First(), typeof(RDomInvocationStatement));
 
             // TODO: Solve simplification problem.
-            var actual = RoslynUtilities.Simplify(output);
+            var actual = RoslynCSharpUtilities.Simplify(output);
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        if (z = 1)\r\n        {\r\n            var x = 42;\r\n        }\r\n        else if (z = 2)\r\n        {\r\n            var x = 43;\r\n            y = x + x;\r\n        }\r\n        else\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n\r\n        if (z = 1)\r\n            Console.WriteLine();\r\n        if (z = 2)\r\n            Console.Write();\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
@@ -143,8 +143,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var output = RDomFactory.BuildSyntax(root);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(3, statements.Count());
@@ -154,7 +154,7 @@ namespace RoslynDomTests
             Assert.AreEqual(3, ((IBlockStatement)statements[0]).Statements.Count());
             Assert.AreEqual(4, ((IBlockStatement)((IBlockStatement)statements[0]).Statements.Last()).Statements.Count());
             // TODO: Solve simplification problem.
-            var actual = RoslynUtilities.Simplify(output);
+            var actual = RoslynCSharpUtilities.Simplify(output);
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        {\r\n            var z;\r\n            var z;\r\n            {\r\n                z = 43;\r\n                z = x + y;\r\n                z = x + y;\r\n                z = x + y;\r\n            }\r\n        }\r\n\r\n        z = Console.WriteLine();\r\n        {\r\n        }\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
@@ -173,15 +173,15 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var output = RDomFactory.BuildSyntax(root);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(2, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomInvocationStatement));
             Assert.IsInstanceOfType(statements[1], typeof(RDomInvocationStatement));
             // TODO: Solve simplification problem.
-            var actual = RoslynUtilities.Simplify(output);
+            var actual = RoslynCSharpUtilities.Simplify(output);
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        Console.WriteLine();\r\n        Math.Pow(4, 2);\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
@@ -203,14 +203,14 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            var output = RDomFactory.BuildSyntax(root);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomReturnStatement));
             // TODO: Solve simplification problem.
-            var actual = RoslynUtilities.Simplify(output);
+            var actual = RoslynCSharpUtilities.Simplify(output);
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        return;\r\n    }\r\n\r\n    public Int32 Foo()\r\n    {\r\n        return 42;\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }

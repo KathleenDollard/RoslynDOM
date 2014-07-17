@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public class RDomCSharpFactory
     {
@@ -41,15 +36,22 @@ namespace RoslynDom.CSharpFactories
             return GetRootFromSyntaxTree(tree);
         }
 
-        public  IRoot GetRootFromSyntaxTree(SyntaxTree tree)
+        public IRoot GetRootFromSyntaxTree(SyntaxTree tree)
         {
             //var root2 = RDomFactory2.MakeRoot(tree);
+            CSharpFactory.Register();
+            var compilation = CSharpCompilation.Create("MyCompilation",
+                                           options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                                           syntaxTrees: new[] { tree },
+                                           references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
+            var model = compilation.GetSemanticModel(tree);
             var rootFactoryHelper = RDomFactoryHelper.GetHelper<IRoot>();
-            var root = rootFactoryHelper.MakeItem(tree.GetCompilationUnitRoot()).FirstOrDefault();
+            var root = rootFactoryHelper.MakeItem(tree.GetCompilationUnitRoot(), model).FirstOrDefault();
             return root;
         }
 
-        public  IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
+
+        public IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
         {
             IEnumerable<SyntaxNode> syntaxNodes;
             if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }

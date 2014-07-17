@@ -1,37 +1,25 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Linq;
 
 namespace RoslynDom
 {
     public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
     {
         private IList<IStatement> _statements = new List<IStatement>();
+        private AttributeList _attributes = new AttributeList();
 
-        internal RDomPropertyAccessor(
-                  AccessorDeclarationSyntax rawItem)
-           : base(rawItem)
-        {
-            //Initialize2();
-        }
 
-        //internal RDomPropertyAccessor(
-        //    AccessorDeclarationSyntax rawItem,
-        //    IEnumerable<IStatement> statements,
-        //    params PublicAnnotation[] publicAnnotations)
-        //  : base(rawItem, publicAnnotations)
-        //{
-        //    foreach (var statement in statements)
-        //    { AddStatement(statement); }
-        //    Initialize();
-        //}
+        public RDomPropertyAccessor(
+                  SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        { }
 
         internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
-             : base(oldRDom)
+            : base(oldRDom)
         {
+                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
             foreach (var statement in newStatements)
             { AddStatement(statement); }
@@ -39,37 +27,14 @@ namespace RoslynDom
             AccessModifier = oldRDom.AccessModifier;
         }
 
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-
-        //    AccessModifier = GetAccessibility();
-        //}
-
-        //private void Initialize2()
-        //{
-        //    if (TypedSyntax.Body != null)
-        //    {
-        //        var statements = ListUtilities.MakeList(TypedSyntax, x => x.Body.Statements, x => RDomFactoryHelper.StatementFactoryHelper.MakeItem(x));
-        //        foreach (var statement in statements)
-        //        { AddStatement(statement); }
-        //    }
-        //    Initialize();
-        //}
-
-        //public override AccessorDeclarationSyntax BuildSyntax()
-        //{
-        //    return null;
-        //}
-
         public void RemoveStatement(IStatement statement)
         { _statements.Remove(statement); }
 
         public void AddStatement(IStatement statement)
         { _statements.Add(statement); }
 
-        public IEnumerable<IAttribute> Attributes
-        { get { return GetAttributes(); } }
+        public AttributeList Attributes
+        { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
         public IReferencedType ReturnType { get; set; }

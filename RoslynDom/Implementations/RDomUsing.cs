@@ -3,45 +3,15 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomUsing : RDomBase<IUsing,  ISymbol>, IUsing
+    public class RDomUsing : RDomBase<IUsing, ISymbol>, IUsing
     {
-        internal RDomUsing(
-            SyntaxNode rawItem)
-           : base(rawItem)
-        {
-            //Initialize2();
-        }
-
-        //internal RDomUsing(
-        //    UsingDirectiveSyntax rawItem,
-        //    params PublicAnnotation[] publicAnnotations)
-        //  : base(rawItem, publicAnnotations)
-        //{
-        //    Initialize();
-        //}
-
-        internal RDomUsing(RDomUsing oldRDom)
-             : base(oldRDom)
+        public RDomUsing(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
         { }
 
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //    Name = TypedSyntax.Name.NameFrom();
-        //}
-
-        //protected void Initialize2()
-        //{
-        //    Initialize();
-        //}
-
-        //public override UsingDirectiveSyntax BuildSyntax()
-        //{
-        //    var nameSyntax = SyntaxFactory.IdentifierName(Name);
-        //    var node = SyntaxFactory.UsingDirective(nameSyntax);
-
-        //    return (UsingDirectiveSyntax)RoslynUtilities.Format(node);
-        //}
+        internal RDomUsing(RDomUsing oldRDom)
+            : base(oldRDom)
+        { }
 
         public StemMemberKind StemMemberKind
         { get { return StemMemberKind.Using; } }

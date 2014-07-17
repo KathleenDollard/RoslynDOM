@@ -10,28 +10,36 @@ namespace RoslynDom
     public class RDomParameterMiscFactory
             : RDomMiscFactory<RDomParameter, ParameterSyntax>
     {
-        public override void InitializeItem(RDomParameter newItem, ParameterSyntax syntax)
+        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
+            var syntax = syntaxNode as ParameterSyntax;
+            var newItem = new RDomParameter(syntaxNode, model);
             newItem.Name = newItem.TypedSymbol.Name;
+
+            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            newItem.Attributes.AddOrMoveAttributeRange(attributes);
+
             newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
             newItem.IsOut = newItem.TypedSymbol.RefKind == RefKind.Out;
             newItem.IsRef = newItem.TypedSymbol.RefKind == RefKind.Ref;
             newItem.IsParamArray = newItem.TypedSymbol.IsParams;
             newItem.IsOptional = newItem.TypedSymbol.IsOptional;
             newItem.Ordinal = newItem.TypedSymbol.Ordinal;
+
+            return new IMisc[] { newItem };
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
         {
             var nameSyntax = SyntaxFactory.Identifier(item.Name);
             var itemAsT = item as IParameter;
-            var syntaxType = (TypeSyntax)(RDomFactory.BuildSyntax(itemAsT.Type));
+            var syntaxType = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Type));
 
             var node = SyntaxFactory.Parameter(nameSyntax)
                         .WithType(syntaxType);
 
-            var attributes = BuildSyntaxExtensions.BuildAttributeListSyntax(itemAsT.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes); }
+            var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsT.Attributes);
+            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             var modifiers = SyntaxFactory.TokenList();
             if (itemAsT.IsOut) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.OutKeyword)); }

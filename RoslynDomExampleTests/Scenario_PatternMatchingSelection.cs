@@ -44,7 +44,7 @@ namespace Namespace1
 }
 ";
 
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var rootAttributes = GetRootAttributeNames(root).ToArray();
             Assert.AreEqual(5, rootAttributes.Count());
             Assert.AreEqual("A", rootAttributes[0]);
@@ -64,10 +64,9 @@ namespace Namespace1
 
         private IEnumerable<string> GetRootAttributeNames(IRoot root)
         {
-                // This method may go away in favor of public annotations as soon as I work that out
-                // I don't see this being used except as design time annotations
+                
 var classAttributeNames = from x in root.RootClasses
-                            from a in x.Attributes
+                            from a in x.Attributes.Attributes
                             select a.Name;
                 return classAttributeNames;
         }
@@ -92,7 +91,7 @@ var classAttributeNames = from x in root.RootClasses
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
 
             var using1 = root.Usings.First();
             Assert.AreEqual("Fred",using1.PublicAnnotations.GetValue <string>("kad_Test1","val1"));
@@ -101,7 +100,7 @@ var classAttributeNames = from x in root.RootClasses
             Assert.AreEqual(40,    using1.PublicAnnotations.GetValue("kad_Test1","val2"));
 
             var class1 = root.RootClasses.First();
-            Assert.AreEqual("Bill",  class1.PublicAnnotations.GetValue( "kad_Test2", "kad_Test2"));
+            Assert.AreEqual("Bill",  class1.PublicAnnotations.GetValue( "kad_Test2", ""));
             Assert.AreEqual(41,      class1.PublicAnnotations.GetValue("kad_Test2", "val2"));
             Assert.AreEqual("Percy", class1.PublicAnnotations.GetValue("kad_Test3", "val1"));
             Assert.AreEqual(42, class1.PublicAnnotations.GetValue("kad_Test3", "val2"));

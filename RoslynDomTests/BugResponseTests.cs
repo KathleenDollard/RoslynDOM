@@ -17,7 +17,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             // The issue here is tha the system is unforgiving of the single close square bracket  
             Assert.IsFalse (root.PublicAnnotations.HasPublicAnnotation("_xf_OutputForEach"));
         }

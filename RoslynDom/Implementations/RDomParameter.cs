@@ -1,34 +1,22 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 using System.Linq;
 
 namespace RoslynDom
 {
-    public class RDomParameter : RDomBase<IParameter,  IParameterSymbol>, IParameter
+    public class RDomParameter : RDomBase<IParameter, IParameterSymbol>, IParameter
     {
-     
+        private AttributeList _attributes = new AttributeList();
 
-        internal RDomParameter(
-             ParameterSyntax rawItem)
-           : base(rawItem)
-        {
-            //Initialize2();
-        }
-
-        //internal RDomParameter(
-        //    ParameterSyntax rawItem,
-        //    params PublicAnnotation[] publicAnnotations)
-        //  : base(rawItem, publicAnnotations)
-        //{
-        //    Initialize();
-        //}
+        public RDomParameter(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        { }
 
         internal RDomParameter(RDomParameter oldRDom)
-             : base(oldRDom)
+           : base(oldRDom)
         {
+                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
             Type = oldRDom.Type;
             IsOut = oldRDom.IsOut;
             IsRef = oldRDom.IsRef;
@@ -36,41 +24,8 @@ namespace RoslynDom
             IsOptional = oldRDom.IsOptional;
             Ordinal = oldRDom.Ordinal;
         }
-
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //    _type = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
-        //    _isOut = TypedSymbol.RefKind == RefKind.Out;
-        //    _isRef = TypedSymbol.RefKind == RefKind.Ref;
-        //    _isParamArray = TypedSymbol.IsParams;
-        //    _isOptional = TypedSymbol.IsOptional;
-        //    _ordinal = TypedSymbol.Ordinal;
-        //}
-
-        //private void Initialize2()
-        //{ Initialize();  }
-
-        //public override ParameterSyntax BuildSyntax()
-        //{
-        //    var identifier = SyntaxFactory.Identifier(Name);
-        //    var syntaxType = ((RDomReferencedType)Type).BuildSyntax();
-        //    var node = SyntaxFactory.Parameter(identifier)
-        //                .WithType(syntaxType);
-        //    var attributes = BuildAttributeListSyntax();
-        //    if ( attributes.Any())
-        //    { node = node.WithAttributeLists(attributes); }
-        //    var modifiers = SyntaxFactory.TokenList();
-        //    if (IsOut) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.OutKeyword)); }
-        //    if (IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
-        //    if (IsParamArray) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ParamsKeyword )); }
-        //    if (IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
-        //    if (modifiers.Any()) { node = node.WithModifiers(modifiers); }
-        //    return node;
-        //}
-
-        public IEnumerable<IAttribute> Attributes
-        { get { return GetAttributes(); } }
+        public AttributeList Attributes
+        { get { return _attributes; } }
 
         public IReferencedType Type { get; set; }
 

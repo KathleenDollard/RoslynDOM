@@ -12,7 +12,7 @@ namespace RoslynDom
     {
         public static void Register()
         {
-            RDomFactoryHelper.RegisterPublicAnnotationFactory(new PublicAnnotationFactory());
+            //RDomFactoryHelper.RegisterPublicAnnotationFactory(new PublicAnnotationFactory());
             RDomFactoryHelper.Register<IRoot>(new RDomRootFactoryHelper());
             RDomFactoryHelper.Register<IStemMember>(new RDomStemMemberFactoryHelper());
             RDomFactoryHelper.Register<ITypeMember>(new RDomTypeMemberFactoryHelper());

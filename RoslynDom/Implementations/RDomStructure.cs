@@ -7,48 +7,17 @@ namespace RoslynDom
 {
     public class RDomStructure : RDomBaseType<IStructure>, IStructure
     {
-        internal RDomStructure(
-                 SyntaxNode rawItem)
-        : base(rawItem, MemberKind.Structure, StemMemberKind.Structure)
-        {
-            //Initialize2();
-        }
-
-        //internal RDomStructure(
-        //  StructDeclarationSyntax rawItem,
-        //  IEnumerable<ITypeMember> members,
-        //  params PublicAnnotation[] publicAnnotations)
-        //  : base(rawItem, MemberKind.Structure, StemMemberKind.Structure, members, publicAnnotations)
-        //{
-        //    Initialize();
-        //}
-
-        internal RDomStructure(RDomStructure oldRDom)
-             : base(oldRDom)
+        private AttributeList _attributes = new AttributeList();
+        public RDomStructure(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model, MemberKind.Structure, StemMemberKind.Structure)
         { }
 
-        //private void Initialize2()
-        //{
-        //    Initialize();
-        //    var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
-        //    foreach (var member in members)
-        //    { AddOrMoveMember(member); }
-        //}
+        internal RDomStructure(RDomStructure oldRDom)
+            : base(oldRDom)
+        { }
 
-        //public override StructDeclarationSyntax BuildSyntax()
-        //{
-        //    var modifiers = this.BuildModfierSyntax();
-        //    var node = SyntaxFactory.StructDeclaration(Name)
-        //                    .WithModifiers(modifiers);
-
-        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(true), node, (n, l) => n.WithMembers(l));
-        //    //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
-        //    //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
-        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
-
-        //    return (StructDeclarationSyntax)RoslynUtilities.Format(node);
-        //}
-
+        public AttributeList Attributes
+        { get { return _attributes; } }
 
         public IEnumerable<IClass> Classes
         {

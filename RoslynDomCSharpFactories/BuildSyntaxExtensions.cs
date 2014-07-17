@@ -12,6 +12,12 @@ namespace RoslynDom
 {
     public static class BuildSyntaxExtensions
     {
+        public static SyntaxList<AttributeListSyntax> WrapInAttributeList(this IEnumerable<SyntaxNode> attributes)
+        {
+            var node = SyntaxFactory.List<AttributeListSyntax>(attributes.OfType<AttributeListSyntax>()) ;
+            return node;
+        }
+
         public static  SyntaxTokenList BuildModfierSyntax(this  IHasAccessModifier hasAccessModifier)
         {
             var list = SyntaxFactory.TokenList();
@@ -53,18 +59,19 @@ namespace RoslynDom
             var ret = SyntaxFactory.Block(statementSyntaxList);
             return ret;
         }
-        public static SyntaxList<AttributeListSyntax> BuildAttributeListSyntax(IEnumerable<IAttribute> attributes)
-        {
-            var list = SyntaxFactory.List<AttributeListSyntax>();
-            if (attributes.Any())
-            {
-                var attribList = SyntaxFactory.AttributeList();
-                var attributeSyntax = attributes.Select(x => ((RDomAttribute)x).BuildSyntax());
-                attribList = attribList.AddAttributes(attributeSyntax.ToArray());
-                list = list.Add(attribList);
-            }
-            return list;
-        }
+        //public static SyntaxList<AttributeListSyntax> BuildAttributeListSyntax(IEnumerable<IAttribute> attributes)
+        //{
+        //    var list = SyntaxFactory.List<AttributeListSyntax>();
+        //    if (attributes.Any())
+        //    {
+        //        var attribList = SyntaxFactory.AttributeList();
+        //        var attributeSyntax = attributes.Select(x => ((RDomAttribute)x).BuildSyntax());
+        //        var attributeSyntax = attributes.Select(x => .BuildSyntax());
+        //        attribList = attribList.AddAttributes(attributeSyntax.ToArray());
+        //        list = list.Add(attribList);
+        //    }
+        //    return list;
+        //}
 
     }
 }

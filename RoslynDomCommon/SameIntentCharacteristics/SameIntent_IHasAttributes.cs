@@ -6,7 +6,7 @@ namespace RoslynDom.Common
     {
         public bool SameIntent(IHasAttributes one, IHasAttributes other, bool includePublicAnnotations)
         {
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.Attributes, other.Attributes, includePublicAnnotations)) { return false; }
+            if (!SameIntentHelpers.CheckSameIntentChildList(one.Attributes.Attributes, other.Attributes.Attributes, includePublicAnnotations)) { return false; }
             return true;
         }
     }

@@ -28,7 +28,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual(true, root.PublicAnnotations.HasPublicAnnotation("kad_Test1"));
             Assert.AreEqual(true, root.PublicAnnotations.HasPublicAnnotation("kad_Test2"));
         }
@@ -42,7 +42,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.IsTrue(root.PublicAnnotations.HasPublicAnnotation("kad_Test1"));
         }
 
@@ -54,7 +54,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.IsTrue(root.PublicAnnotations.HasPublicAnnotation("kad_Test2"));
         }
 
@@ -70,7 +70,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.IsTrue(root.PublicAnnotations.HasPublicAnnotation("kad_Test1"));
             Assert.IsTrue(root.PublicAnnotations.HasPublicAnnotation("kad_Test2"));
         }
@@ -85,7 +85,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
         }
         #endregion
 
@@ -106,7 +106,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var using1 = root.Usings.First();
             var using2 = root.Usings.Last();
             Assert.IsTrue(using1.PublicAnnotations.HasPublicAnnotation("kad_Test3"));
@@ -132,7 +132,7 @@ namespace RoslynDomTests
                 { }
             }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var namespace1 = root.Namespaces.First();
             Assert.IsTrue(namespace1.PublicAnnotations.HasPublicAnnotation("kad_Test4"));
             Assert.IsTrue(namespace1.PublicAnnotations.HasPublicAnnotation("kad_Test5"));
@@ -172,7 +172,7 @@ namespace RoslynDomTests
                 { }
 }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var structure1 = root.RootStructures.First();
             var interface1 = root.RootInterfaces.First();
@@ -217,7 +217,7 @@ namespace RoslynDomTests
                 { }
 }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var field = root.RootClasses.First().Fields.First();
             var property = root.RootClasses.First().Properties.First();
             var method = root.RootClasses.First().Methods.First();
@@ -239,7 +239,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual(false, root.RootClasses.First().PublicAnnotations.HasPublicAnnotation("xxxx"));
             Assert.IsNull(root.RootClasses.First().PublicAnnotations.GetValue("xxxx", "yyy"));
         }
@@ -254,7 +254,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.IsNull(root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "yyy"));
         }
 
@@ -268,7 +268,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val1"));
             Assert.AreEqual(42, root.RootClasses.First().PublicAnnotations.GetValue<int>("kad_Test3", "val2"));
         }
@@ -283,7 +283,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val1"));
             Assert.AreEqual(42, root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val2"));
         }
@@ -298,9 +298,9 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "kad_Test3"));
-            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue<string>("kad_Test3", "kad_Test3"));
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", ""));
+            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue<string>("kad_Test3", ""));
             Assert.AreEqual(42, root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "val2"));
         }
 
@@ -314,8 +314,8 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", "kad_Test3"));
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            Assert.AreEqual("Fred", root.RootClasses.First().PublicAnnotations.GetValue("kad_Test3", ""));
             Assert.AreEqual(null, root.RootClasses.First().PublicAnnotations.GetValue("kad_TestX", "val2"));
             Assert.AreEqual(0, root.RootClasses.First().PublicAnnotations.GetValue<int>("kad_TestX", "val2"));
         }
@@ -330,7 +330,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             object value1;
             object value2;
             object valueX;
@@ -366,7 +366,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             object value1;
             object value2;
             object valueX;
@@ -396,7 +396,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var publicAnnotations = root.RootClasses.First().PublicAnnotations;
             Assert.IsTrue(publicAnnotations.HasValue("kad_Test3", "val1"));
             Assert.IsTrue(publicAnnotations.HasValue("kad_Test3", "val2"));
@@ -416,7 +416,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var publicAnnotations = root.RootClasses.First().PublicAnnotations as IHasLookupValue;
             PublicAnnotation annotValue;
             PublicAnnotation annotValue2;
@@ -441,7 +441,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var publicAnnotations = root.RootClasses.First().PublicAnnotations as IHasLookupValue;
             var value = publicAnnotations.GetValue<string>("kad_Test3");
         }
@@ -457,7 +457,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             string annotValue;
             var publicAnnotations = root.RootClasses.First().PublicAnnotations as IHasLookupValue;
             var value = publicAnnotations.TryGetValue<string >("kad_Test3", out annotValue);
@@ -481,7 +481,7 @@ namespace RoslynDomTests
             public class MyClass2
             { }
                ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var class2 = root.RootClasses.Last();
             Assert.IsTrue(class1.PublicAnnotations.SameIntent(class2.PublicAnnotations ));
@@ -501,7 +501,7 @@ namespace RoslynDomTests
             public class MyClass3
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var classes = root.RootClasses.ToArray();
             Assert.IsFalse(classes[0].PublicAnnotations.SameIntent(classes[1].PublicAnnotations));
             Assert.IsFalse(classes[0].PublicAnnotations.SameIntent(classes[2].PublicAnnotations));
@@ -518,7 +518,7 @@ namespace RoslynDomTests
             public class MyClass2
             { }
             ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var classes = root.RootClasses.ToArray();
             var class1 = classes[0].Copy();
             var class2 = classes[1].Copy();
@@ -539,13 +539,13 @@ namespace RoslynDomTests
             public class MyClass
             { }
 ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var cl = root.RootClasses.First();
             var newName = "kad_Test3";
             var newKey = "val3";
             var newValue = 43;
             cl.PublicAnnotations.AddValue(newName, newKey, newValue);
-            Assert.AreEqual("Fred", cl.PublicAnnotations.GetValue("kad_Test3", "kad_Test3"));
+            Assert.AreEqual("Fred", cl.PublicAnnotations.GetValue("kad_Test3",""));
             Assert.AreEqual(42, cl.PublicAnnotations.GetValue("kad_Test3", "val2"));
             Assert.AreEqual(newValue , cl.PublicAnnotations.GetValue(newName, newKey));
         }
@@ -559,7 +559,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
 ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var cl = root.RootClasses.First();
             var newName = "kad_Test3";
             var newValue = 43;
@@ -576,7 +576,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
 ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var cl = root.RootClasses.First();
             cl.PublicAnnotations.Add(null);
             Assert.IsNotNull( cl.PublicAnnotations);
@@ -592,7 +592,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
 ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var cl = root.RootClasses.First();
             var publicAnnotations = cl.PublicAnnotations;
             var newPublicAnnotations = publicAnnotations.Copy();
@@ -610,7 +610,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
 ";
-            var root = RDomFactory.GetRootFromString(csharpCode);
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var cl = root.RootClasses.First();
             var publicAnnotations = cl.PublicAnnotations;
             var newPublicAnnotations = publicAnnotations.Copy();

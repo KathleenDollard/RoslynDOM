@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom
@@ -48,10 +45,10 @@ namespace RoslynDom
             _outerTypeName = GetContainingTypeName();
         }
 
-        public virtual TypeSyntax  BuildSyntax()
-        {
-            return SyntaxFactory.ParseTypeName(Name);
-        }
+        //public virtual TypeSyntax  BuildSyntax()
+        //{
+        //    return SyntaxFactory.ParseTypeName(Name);
+        //}
 
         public virtual bool Matches(IReferencedType  other)
         { return this.Name == other.Name; }
@@ -114,10 +111,10 @@ namespace RoslynDom
             throw new NotImplementedException();
         }
 
-        protected override ISymbol GetSymbol(SyntaxNode node)
-        {
-            throw new NotImplementedException();
-        }
+        //protected override ISymbol GetSymbol(SyntaxNode node)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
           private string GetName()
         {

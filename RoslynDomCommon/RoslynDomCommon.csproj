@@ -36,6 +36,8 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttributeList.cs" />
+    <Compile Include="Enums\AttributeValueStyle.cs" />
     <Compile Include="BaseInterfaces\IMisc.cs" />
     <Compile Include="BaseInterfaces\ILoop.cs" />
     <Compile Include="BaseInterfaces\IPropertyOrMethod.cs" />

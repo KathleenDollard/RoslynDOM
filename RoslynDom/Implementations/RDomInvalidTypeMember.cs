@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -11,18 +12,18 @@ namespace RoslynDom
     //    { get { return FactoryPriority.Normal - 1; } }
     //}
 
-    public class RDomInvalidTypeMember : RDomBase<IInvalidTypeMember,  ISymbol>, IInvalidTypeMember
+    public class RDomInvalidTypeMember : RDomBase<IInvalidTypeMember, ISymbol>, IInvalidTypeMember
     {
-        internal RDomInvalidTypeMember(
-                     SyntaxNode rawItem)
-           : base(rawItem)
-        {
-            Initialize();
-        }
+        private AttributeList  _attributes = new AttributeList();
+
+        public RDomInvalidTypeMember(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        { }
 
         internal RDomInvalidTypeMember(RDomInvalidTypeMember oldRDom)
              : base(oldRDom)
         {
+                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
         }
         protected override void Initialize()
@@ -31,8 +32,8 @@ namespace RoslynDom
             AccessModifier = GetAccessibility();
         }
 
-        public IEnumerable<IAttribute> Attributes
-        { get { return GetAttributes(); } }
+         public AttributeList Attributes
+        { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
 

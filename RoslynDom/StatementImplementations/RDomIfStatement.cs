@@ -10,19 +10,9 @@ namespace RoslynDom
         private IList<IStatement> _statements = new List<IStatement>();
         private IList<IStatement> _elseStatements = new List<IStatement>();
 
-        public RDomIfStatement(SyntaxNode rawItem)
-            : base(rawItem)
-        {
-  //          Initialize2();
-        }
-
-        //internal RDomIfStatement(
-        //     IfStatementSyntax rawItem,
-        //       IEnumerable<PublicAnnotation> publicAnnotations)
-        //    : base(rawItem, publicAnnotations)
-        //{
-        //    Initialize();
-        //}
+        public RDomIfStatement(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        { }
 
         internal RDomIfStatement(RDomIfStatement oldRDom)
             : base(oldRDom)
@@ -40,105 +30,6 @@ namespace RoslynDom
             HasBlock = oldRDom.HasBlock;
             ElseHasBlock = oldRDom.ElseHasBlock;
         }
-
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //    Condition = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(TypedSyntax.Condition).FirstOrDefault();
-        //    if (Condition == null) { throw new InvalidOperationException(); }
-
-        //    var statements = GetStatementsFromSyntax(TypedSyntax.Statement);
-        //    foreach (var statement in statements)
-        //    { AddOrMoveStatement(statement); }
-
-        //    InitializeElse();
-        //}
-
-        //private IEnumerable<IStatement> GetStatementsFromSyntax(StatementSyntax statementSyntax)
-        //{
-        //    var statement = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax).First();
-        //    var list = new List<IStatement>();
-        //    var blockStatement = statement as IBlockStatement;
-        //    if (blockStatement != null)
-        //    {
-        //        HasBlock = true;
-        //        foreach (var state in blockStatement.Statements)
-        //        {
-        //            // Don't need to copy because abandoning block
-        //            list.Add(state);
-        //        }
-        //    }
-        //    else
-        //    { list.Add(statement); }
-        //    return list;
-        //}
-
-        //private void InitializeElse()
-        //{
-        //    if (TypedSyntax.Else == null) return;
-        //    var elseAsIf = TypedSyntax.Else.Statement as IfStatementSyntax;
-        //    if (elseAsIf == null)
-        //    {
-        //        InitializeElseStatement(TypedSyntax.Else.Statement);
-        //    }
-        //    else
-        //    {
-
-        //        // Recurse this down the if chain
-        //        var newIf = new RDomIfStatement(elseAsIf);
-        //        var elseIfs = newIf.ElseIfs;
-        //        var elseStatements = newIf.ElseStatements;
-        //        //foreach (var item in newIf.ElseIfs) { newIf.RemoveElseIf(item); }
-        //        //foreach (var item in newIf.ElseStatements) { newIf.RemoveElseStatement(item); }
-        //        AddOrMoveElseIf(newIf);
-        //        if (!newIf.ElseIfs.Any())
-        //        {
-        //            // this should move them
-        //            foreach (var elseif in elseIfs)
-        //            { AddOrMoveElseIf(elseif); }  // Don't need to copy as we are trashing original
-        //            if (elseStatements.Any())
-        //            {
-        //                ElseHasBlock = newIf.ElseHasBlock;
-        //                foreach (var statement in elseStatements)
-        //                { AddOrMoveElseStatement(statement); }
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private void InitializeElseStatement(StatementSyntax statement)
-        //{
-        //    ElseHasBlock = statement is BlockSyntax;
-        //    var statements = GetStatementsFromSyntax(TypedSyntax.Else.Statement);
-        //    foreach (var state in statements)
-        //    { AddOrMoveElseStatement(state); }
-        //}
-
-        //protected void Initialize2()
-        //{
-        //    Initialize();
-        //}
-
-        //public override IfStatementSyntax BuildSyntax()
-        //{
-        //    // TODO: Current work KAD
-        //    //var nameSyntax = SyntaxFactory.Identifier(Name);
-        //    //var statementsAsSyntax = Statements.Select(x => ((RDomStatement)x).BuildSyntax()).ToArray();
-        //    //StatementSyntax statement;
-        //    //if (HasBlock || this.Statements.Count() > 1)
-        //    //{ statement = SyntaxFactory.Block(statementsAsSyntax); }
-        //    //else if (this.Statements.Count() == 1)
-        //    //{ statement = statementsAsSyntax.First(); }
-        //    //else
-        //    //{ statement = SyntaxFactory.EmptyStatement(); }
-        //    //var condition = (Condition as RDomCondition).BuildSyntax();
-        //    //var node = SyntaxFactory.IfStatement(condition, statement);
-
-        //    //node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildElseSyntax(), node, (n, item) => n.WithElse(item));
-
-        //    //return (StatementSyntax)RoslynUtilities.Format(node);
-        //    return null;
-        //}
 
         public IExpression Condition { get; set; }
 

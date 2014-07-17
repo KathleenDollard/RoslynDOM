@@ -28,6 +28,18 @@ namespace RoslynDom
             return UnityContainer.ResolveAll<IRDomFactory<TKind>>();
         }
 
+        public IPublicAnnotationFactory GetPublicAnnotationFactory()
+        {
+            if (!isLoaded) throw new InvalidOperationException();
+            return UnityContainer.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
+        }
+
+        public IAttributeFactory GetAttributeFactory()
+        {
+            if (!isLoaded) throw new InvalidOperationException();
+            return UnityContainer.ResolveAll<IAttributeFactory>().FirstOrDefault();
+        }
+
         private IUnityContainer UnityContainer
         {
             get
@@ -42,6 +54,8 @@ namespace RoslynDom
             // TODO: Work out a mechanism for people to add configuration
             var container = new UnityContainer();
             var types = AllClasses.FromAssembliesInBasePath();
+            LoadSpecificFactoryIntoContainer<IPublicAnnotationFactory>(types, container);
+            LoadSpecificFactoryIntoContainer<IAttributeFactory>(types, container);
             foreach (var registration in registrations)
             {
                 var methodInfo = ReflectionUtilities.MakeGenericMethod(this.GetType(),
@@ -53,32 +67,36 @@ namespace RoslynDom
             return container;
         }
 
-        //private UnityContainer ConfigureContainer()
-        //{
-        //    // TODO: Work out a mechanism for people to add configuration
-        //    var container = new UnityContainer();
-        //    var types = AllClasses.FromAssembliesInBasePath();
-        //    LoadFactoriesIntoContainer<PublicAnnotation>(types, container, null, new RDomPublicAnnotationFactoryHelper());
-        //    LoadFactoriesIntoContainer<IMisc>(types, container, typeof(RDomMiscFactory<,>), RDomFactoryHelper.MiscFactoryHelper);
-        //    LoadFactoriesIntoContainer<IExpression>(types, container, typeof(RDomExpressionFactory<,>), RDomFactoryHelper.ExpressionFactoryHelper);
-        //    LoadFactoriesIntoContainer<IStatement>(types, container, typeof(RDomStatementFactory<,>), RDomFactoryHelper.StatementFactoryHelper);
-        //    LoadFactoriesIntoContainer<ITypeMember>(types, container, typeof(RDomTypeMemberFactory<,>), RDomFactoryHelper.TypeMemberFactoryHelper);
-        //    LoadFactoriesIntoContainer<IStemMember>(types, container, typeof(RDomStemMemberFactory<,>), RDomFactoryHelper.StemMemberFactoryHelper);
-        //    LoadFactoriesIntoContainer<IRoot>(types, container, typeof(RDomRootContainerFactory<,>), RDomFactoryHelper.RootFactoryHelper);
-        //    unityContainer = container;
-        //    CheckContainer();
-        //    return container;
-        //}
+
         private void CheckContainer()
         {
-            Contract.Assert(2 <= GetFactories<IMisc>().Count());
-            Contract.Assert(0 <= GetFactories<IExpression>().Count());
-            Contract.Assert(3 <= GetFactories<IStatement>().Count());
-            Contract.Assert(6 <= GetFactories<ITypeMember>().Count());
-            Contract.Assert(6 <= GetFactories<IStemMember>().Count());
-            Contract.Assert(1 <= GetFactories<IRoot>().Count());
+            Contract.Assert(null != GetPublicAnnotationFactory()
+                        && null != GetAttributeFactory()
+                        && 2 <= GetFactories<IMisc>().Count()
+                        && 1 <= GetFactories<IExpression>().Count()
+                        && 3 <= GetFactories<IStatement>().Count()
+                        && 6 <= GetFactories<ITypeMember>().Count()
+                        && 6 <= GetFactories<IStemMember>().Count()
+                        && 1 <= GetFactories<IRoot>().Count());
 
         }
+        private void LoadSpecificFactoryIntoContainer<T>(
+                     IEnumerable<Type> types,
+                     UnityContainer container)
+        {
+            var factoryType = typeof(T);
+            foreach (var type in types)
+            {
+                if (factoryType.IsAssignableFrom(type))
+                {
+                    container.RegisterType(factoryType, type, type.FullName,
+                               new ContainerControlledLifetimeManager(),
+                               new InjectionMember[] { });
+                    return;
+                }
+            }
+        }
+
         private void LoadFactoriesIntoContainer<TKind>(IEnumerable<Type> types,
                     UnityContainer container,
                     Type rDomFactoryBase,

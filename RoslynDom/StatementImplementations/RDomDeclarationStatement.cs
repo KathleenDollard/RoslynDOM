@@ -5,19 +5,9 @@ namespace RoslynDom
 {
     public class RDomDeclarationStatement : RDomBase<IDeclarationStatement, ISymbol>, IDeclarationStatement
     {
-        public RDomDeclarationStatement(SyntaxNode rawItem)
-           : base(rawItem)
-        {
-            //Initialize2();
-        }
-
-        //internal RDomDeclarationStatement(
-        //      VariableDeclaratorSyntax rawDeclaration,
-        //      IEnumerable<PublicAnnotation> publicAnnotations)
-        //    : base(rawDeclaration, publicAnnotations)
-        //{
-        //    Initialize();
-        //}
+        public RDomDeclarationStatement(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        { }
 
         internal RDomDeclarationStatement(RDomDeclarationStatement oldRDom)
              : base(oldRDom)
@@ -27,32 +17,6 @@ namespace RoslynDom
             Type = oldRDom.Type.Copy();
             Initializer = oldRDom.Initializer.Copy();
         }
-
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //    var declaration = TypedSyntax.Parent as VariableDeclarationSyntax;
-        //    if (declaration == null) throw new InvalidOperationException();
-        //    IsImplicitlyTyped = (declaration.Type.ToString() == "var");
-        //    var typeSymbol = ((ILocalSymbol)TypedSymbol).Type;
-        //    Type = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, typeSymbol);
-        //    if (TypedSyntax.Initializer != null)
-        //    {
-        //        var equalsClause = TypedSyntax.Initializer;
-        //        Initializer = RDomFactoryHelper.ExpressionFactoryHelper.MakeItem(equalsClause.Value).FirstOrDefault();
-        //    }
-
-        //}
-
-        //protected void Initialize2()
-        //{
-        //    Initialize();
-        //}
-
-        //public override VariableDeclaratorSyntax BuildSyntax()
-        //{
-        //    return null;
-        //}
 
         public IExpression Initializer { get; set; }
 

@@ -10,16 +10,26 @@ namespace RoslynDom
 {
     internal static class RDomStructureFactoryHelper
     {
-        public static void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
+        public static RDomStructure CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
+            var syntax = syntaxNode as StructDeclarationSyntax;
+            var newItem = new RDomStructure(syntaxNode, model);
+
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
+
+            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            newItem.Attributes.AddOrMoveAttributeRange(attributes);
+
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
             foreach (var typeParameter in newTypeParameters)
             { newItem.AddOrMoveTypeParameter(typeParameter); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x));
+
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, model));
             foreach (var member in members)
             { newItem.AddOrMoveMember(member); }
+
+            return  newItem ;
         }
 
         public static IEnumerable<SyntaxNode> BuildSyntax(RDomStructure item)
@@ -27,13 +37,14 @@ namespace RoslynDom
             // This is identical to Class, but didn't work out reuse here
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
-            var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
             var node = SyntaxFactory.StructDeclaration(identifier)
                 .WithModifiers(modifiers);
+            var attributes = RDomFactoryHelper.BuildAttributeSyntax(item.Attributes);
+            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
             var itemAsStruct = item as IStructure;
             if (itemAsStruct == null) { throw new InvalidOperationException(); }
             var membersSyntax = itemAsStruct.Members
-                        .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
             // TODO: Class type members and type constraints
@@ -43,9 +54,10 @@ namespace RoslynDom
     public class RDomStructureTypeMemberFactory
       : RDomTypeMemberFactory<RDomStructure, StructDeclarationSyntax>
     {
-        public override void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
-            RDomStructureFactoryHelper.InitializeItem(newItem, syntax);
+            var ret = RDomStructureFactoryHelper.CreateFrom(syntaxNode, model);
+            return new ITypeMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
         {
@@ -53,13 +65,13 @@ namespace RoslynDom
         }
     }
 
-
     public class RDomStructureStemMemberFactory
            : RDomStemMemberFactory<RDomStructure, StructDeclarationSyntax>
     {
-        public override void InitializeItem(RDomStructure newItem, StructDeclarationSyntax syntax)
+        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
-            RDomStructureFactoryHelper.InitializeItem(newItem, syntax);
+            var ret = RDomStructureFactoryHelper.CreateFrom(syntaxNode, model);
+            return new IStemMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {

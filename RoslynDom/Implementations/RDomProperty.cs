@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
@@ -9,28 +10,11 @@ namespace RoslynDom
         private IList<IParameter> _parameters = new List<IParameter>();
         private IList<IStatement> _getStatements = new List<IStatement>();
         private IList<IStatement> _setStatements = new List<IStatement>();
+        private AttributeList _attributes = new AttributeList();
 
-        internal RDomProperty(
-                SyntaxNode rawItem)
-            : base(rawItem)
-        {
-            //Initialize2();
-        }
-
-        //internal RDomProperty(
-        //     PropertyDeclarationSyntax rawItem,
-        //     IEnumerable<IParameter> parameters,
-        //     IAccessor getAccessor,
-        //     IAccessor setAccessor,
-        //     params PublicAnnotation[] publicAnnotations)
-        //    : base(rawItem, publicAnnotations)
-        //{
-        //    foreach (var parameter in parameters)
-        //    { AddParameter(parameter); }
-        //    GetAccessor = getAccessor;
-        //    SetAccessor = setAccessor;
-        //    Initialize();
-        //}
+        public RDomProperty(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        { }
 
         internal RDomProperty(RDomProperty oldRDom)
             : base(oldRDom)
@@ -38,6 +22,7 @@ namespace RoslynDom
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             foreach (var parameter in newParameters)
             { AddParameter(parameter); }
+            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             GetAccessor = oldRDom.GetAccessor == null ? null : oldRDom.GetAccessor.Copy();
             SetAccessor = oldRDom.SetAccessor == null ? null : oldRDom.SetAccessor.Copy();
@@ -50,72 +35,8 @@ namespace RoslynDom
             CanGet = oldRDom.CanGet;
             CanSet = oldRDom.CanSet;
         }
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //    AccessModifier = GetAccessibility();
-        //    // TODO: Get and set accessibility
-        //    PropertyType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
-        //    IsAbstract = Symbol.IsAbstract;
-        //    IsVirtual = Symbol.IsVirtual;
-        //    IsOverride = Symbol.IsOverride;
-        //    IsSealed = Symbol.IsSealed;
-        //    IsStatic = Symbol.IsStatic;
-        //    var propSymbol = Symbol as IPropertySymbol;
-        //    if (propSymbol == null) throw new InvalidOperationException();
-        //    CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
-        //    CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
-        //}
-
-        //private void Initialize2()
-        //{
-        //    Initialize();
-        //    // Parameters are for VB and not supported in C#
-        //    var getAccessorSyntax = TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
-        //    var setAccessorSyntax = TypedSyntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
-        //    if (getAccessorSyntax != null)
-        //    { GetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(getAccessorSyntax).FirstOrDefault()); }
-        //    if (setAccessorSyntax != null)
-        //    { SetAccessor = (IAccessor)(RDomFactoryHelper.MiscFactoryHelper.MakeItem(setAccessorSyntax).FirstOrDefault()); }
-        //}
-
-       //  public override PropertyDeclarationSyntax BuildSyntax()
-       //{
-       //     var nameSyntax = SyntaxFactory.Identifier(Name);
-       //     var returnType = ((RDomReferencedType)PropertyType).BuildSyntax();
-       //     var modifiers = this.BuildModfierSyntax();
-       //     var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
-       //                     .WithModifiers(modifiers);
-
-       //     node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
-       //     node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildAccessorList(), node, (n, item) => n.WithAccessorList(item));
-       //     //var parameters = BuildTypeParameterList();
-       //     //var typeParameters = BuildTypeParameterList();
-       //     //var constraintClauses = BuildConstraintClauses();
-
-       //     return (PropertyDeclarationSyntax)RoslynUtilities.Format(node);
-       // }
-
-        //private AccessorListSyntax BuildAccessorList()
-        //{
-        //    var list = new List<AccessorDeclarationSyntax>();
-        //    if (CanGet)
-        //    {
-        //        var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration);
-        //        node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(GetStatements), node, (n, item) => n.WithBody(item));
-        //        list.Add(node);
-        //    }
-        //    if (CanSet)
-        //    {
-        //        var node = SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration);
-        //        node = RoslynUtilities.UpdateNodeIfItemNotNull(BuildSyntaxExtensions.BuildStatementBlock(SetStatements), node, (n, item) => n.WithBody(item));
-        //        list.Add(node);
-        //    }
-        //    return SyntaxFactory.AccessorList(SyntaxFactory.List<AccessorDeclarationSyntax>(list));
-        //}
-
-        public IEnumerable<IAttribute> Attributes
-        { get { return GetAttributes(); } }
+        public AttributeList Attributes
+        { get { return _attributes; } }
 
         public IReferencedType PropertyType { get; set; }
 

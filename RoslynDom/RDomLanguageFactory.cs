@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Practices.Unity;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomFactory
+    public class RDomLanguageFactory
     {
         public static IRoot GetRootFromFile(string fileName)
         {
@@ -39,8 +32,13 @@ namespace RoslynDom
         {
             //var root2 = RDomFactory2.MakeRoot(tree);
             CSharpFactory.Register();
-            var rootFactoryHelper = RDomFactoryHelper.GetHelper<IRoot >();
-            var root = rootFactoryHelper.MakeItem(tree.GetCompilationUnitRoot()).FirstOrDefault();
+            var compilation = CSharpCompilation.Create("MyCompilation",
+                                           options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                                           syntaxTrees: new[] { tree },
+                                           references: new[] { new MetadataFileReference(typeof(object).Assembly.Location )});
+            var model = compilation.GetSemanticModel(tree);
+            var rootFactoryHelper = RDomFactoryHelper.GetHelper<IRoot>();
+            var root = rootFactoryHelper.MakeItem(tree.GetCompilationUnitRoot(), model).FirstOrDefault();
             return root;
         }
 
@@ -66,7 +64,7 @@ namespace RoslynDom
         {
             syntaxNode = null;
             var itemAsKind = item as TKind;
-            if (itemAsKind == null){ return false; }
+            if (itemAsKind == null) { return false; }
             var helper = RDomFactoryHelper.GetHelper<TKind>();
             syntaxNode = helper.BuildSyntaxGroup(item);
             return true;

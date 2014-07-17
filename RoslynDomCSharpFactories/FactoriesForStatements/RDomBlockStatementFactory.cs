@@ -10,21 +10,26 @@ namespace RoslynDom
     public class RDomBlockStatementFactory
              : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
     {
-        public override void InitializeItem(RDomBlockStatement newItem, BlockSyntax syntax)
+        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
+            var syntax = syntaxNode as BlockSyntax;
+            var newItem = new RDomBlockStatement(syntaxNode, model);
+
             foreach (var statementSyntax in syntax.Statements)
             {
-                var statements = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax);
+                var statements = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax, model);
                 foreach (var statement in statements)
                 { newItem.AddOrMoveStatement(statement); }
             }
+
+            return new IStatement[] { newItem };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
         {
             var itemAsT = item as IBlockStatement;
 
             var statementSyntaxList = itemAsT.Statements
-              .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
+              .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
               .ToList();
             var node = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
             return new SyntaxNode[] { node.NormalizeWhitespace() };

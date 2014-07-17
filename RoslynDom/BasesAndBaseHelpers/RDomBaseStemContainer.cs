@@ -13,24 +13,9 @@ namespace RoslynDom
     {
         private IList<IStemMember> _members = new List<IStemMember>();
 
-        internal RDomBaseStemContainer(SyntaxNode rawItem)
-           : base(rawItem)
-        {
-            //Initialize();
-        }
-
-        //internal RDomBaseStemContainer(TSyntax rawItem,
-        //                IEnumerable<IStemMember> members,
-        //                IEnumerable<IUsing> usings,
-        //                params PublicAnnotation[] publicAnnotations)
-        //: base(rawItem, publicAnnotations)
-        //{
-        //    foreach (var member in members)
-        //    { AddOrMoveStemMember(member); }
-        //    foreach (var member in usings)
-        //    { AddOrMoveStemMember(member); }
-        //    Initialize();
-        //}
+        internal RDomBaseStemContainer(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        {}
 
         internal RDomBaseStemContainer(T oldIDom)
              : base(oldIDom)
@@ -76,54 +61,6 @@ namespace RoslynDom
                 }
             }
         }
-
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //}
-
-        //protected SyntaxList<MemberDeclarationSyntax> BuildStemMembers()
-        //{
-        //    var list = new List<MemberDeclarationSyntax>();
-        //    foreach (var member in StemMembers)
-        //    {
-        //        if (BuildStemMember(list, member)) { continue; }
-        //        if (member is RDomUsing) continue;
-        //        throw new InvalidOperationException();
-        //    }
-        //    return SyntaxFactory.List<SyntaxNode>(list);
-        //}
-
-        //protected virtual bool BuildStemMember(IList<MemberDeclarationSyntax> list, IStemMember member)
-        //{
-        //    if (TryAddMemberSyntaxNode<RDomNamespace>(list, member, x => x.BuildSyntax())) { return true; }
-        //    if (TryAddMemberSyntaxNode<RDomClass>(list, member, x => x.BuildSyntax())) { return true; }
-        //    if (TryAddMemberSyntaxNode<RDomStructure>(list, member, x => x.BuildSyntax())) { return true; }
-        //    if (TryAddMemberSyntaxNode<RDomInterface>(list, member, x => x.BuildSyntax())) { return true; }
-        //    if (TryAddMemberSyntaxNode<RDomEnum>(list, member, x => x.BuildSyntax())) { return true; }
-        //    return false;
-        //}
-
-        //protected SyntaxList<UsingDirectiveSyntax> BuildUsings()
-        //{
-        //    var list = new List<UsingDirectiveSyntax>();
-        //    if (Usings != null)
-        //    {
-        //        foreach (var member in Usings)
-        //        {
-        //            if (RoslynUtilities.TryAddSyntaxNode<IStemMember, UsingDirectiveSyntax, RDomUsing>(list, member, x => x.BuildSyntax())) { continue; };
-        //            throw new InvalidOperationException();
-        //        }
-        //    }
-        //    return SyntaxFactory.List<UsingDirectiveSyntax>(list);
-        //}
-
-        //protected bool TryAddMemberSyntaxNode<TRDom>(IList<MemberDeclarationSyntax> list, IStemMember member, Func<TRDom, MemberDeclarationSyntax> makeDelegate)
-        //     where TRDom : class
-        //{
-        //    return RoslynUtilities.TryAddSyntaxNode<IStemMember, MemberDeclarationSyntax, TRDom>(list, member, makeDelegate);
-        //}
-
 
         public string Namespace
         // Parent always works here - if its a namespace, we deliberately skip the current, otherwise, the current is never a namespace

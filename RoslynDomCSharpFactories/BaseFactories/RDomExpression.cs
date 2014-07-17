@@ -13,7 +13,7 @@ namespace RoslynDom
     public class RDomExpressionFactory
                  : RDomExpressionFactory<RDomExpression, ExpressionSyntax>
     {
-        public override void InitializeItem(RDomExpression newItem, ExpressionSyntax rawItem)
+        public override void InitializeItem(RDomExpression newItem, ExpressionSyntax rawItem, SemanticModel  model)
         {
             newItem.Expression = rawItem.ToString();
         }

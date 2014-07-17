@@ -16,23 +16,23 @@ namespace RoslynDom
             return syntaxNode is LocalDeclarationStatementSyntax;
         }
 
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode)
+        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
             var list = new List<IStatement>();
-            // We can't do this in the constructor, because many may be created and we want to flatten
+
             var rawDeclaration = syntaxNode as LocalDeclarationStatementSyntax;
             var rawVariableDeclaration = rawDeclaration.Declaration;
             var declarators = rawDeclaration.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                var newItem = new RDomDeclarationStatement( decl);
+                var newItem = new RDomDeclarationStatement( decl, model);
                 list.Add(newItem);
-                InitializeItem(newItem, decl);
+                InitializeNewItem(newItem, decl, model);
             }
             return list;
         }
-
-        public override void InitializeItem(RDomDeclarationStatement newItem, VariableDeclaratorSyntax syntax)
+   
+        public void InitializeNewItem(RDomDeclarationStatement newItem, VariableDeclaratorSyntax syntax, SemanticModel model)
         {
             newItem.Name = newItem.TypedSymbol.Name;
             var declaration = syntax.Parent as VariableDeclarationSyntax;
@@ -43,7 +43,8 @@ namespace RoslynDom
             if (syntax.Initializer != null)
             {
                 var equalsClause = syntax.Initializer;
-                newItem.Initializer = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(equalsClause.Value).FirstOrDefault();
+                newItem.Initializer = RDomFactoryHelper.GetHelper<IExpression>()
+                                .MakeItem(equalsClause.Value, model).FirstOrDefault();
             }
 
         }
@@ -57,11 +58,11 @@ namespace RoslynDom
             if (itemAsT.IsImplicitlyTyped)
             { typeSyntax = SyntaxFactory.IdentifierName("var"); }
             else
-            { typeSyntax = (TypeSyntax)(RDomFactory.BuildSyntax(itemAsT.Type)); }
+            { typeSyntax = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Type)); }
             var nodeDeclarator = SyntaxFactory.VariableDeclarator(item.Name);
             if (itemAsT.Initializer != null)
             {
-                var expressionSyntax = RDomFactory.BuildSyntax(itemAsT.Initializer);
+                var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Initializer);
                 nodeDeclarator = nodeDeclarator.WithInitializer(SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax));
             }
             var nodeDeclaratorInList = SyntaxFactory.SeparatedList(SyntaxFactory.List<VariableDeclaratorSyntax>(new VariableDeclaratorSyntax[] { (VariableDeclaratorSyntax)nodeDeclarator }));

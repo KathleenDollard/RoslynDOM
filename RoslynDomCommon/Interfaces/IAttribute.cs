@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface IAttribute : IDom<IAttribute>
+    public interface IAttribute : IDom<IAttribute>, IMisc
     {
         // TODO: Consider: Determine how AllowMultiple will play
         // TODO: Consider: Not supporting methods on attributes yet

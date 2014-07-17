@@ -11,8 +11,11 @@ namespace RoslynDom
     public class RDomAssignmentStatementFactory
          : RDomStatementFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
     {
-        public override void InitializeItem(RDomAssignmentStatement newItem, ExpressionStatementSyntax syntax)
+        public override IEnumerable<IStatement > CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
+            var syntax = syntaxNode as ExpressionStatementSyntax;
+            var newItem = new RDomAssignmentStatement(syntaxNode, model);
+
             var binary = syntax.Expression as BinaryExpressionSyntax;
             if (binary == null) throw new InvalidOperationException();
             // TODO: handle all the other kinds of assigments here (like +=)
@@ -24,13 +27,15 @@ namespace RoslynDom
             var expression = right as ExpressionSyntax;
             if (expression == null) throw new InvalidOperationException();
             newItem.Name = identifier.ToString();
-            newItem.Expression = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression).FirstOrDefault();
+            newItem.Expression = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression, model).FirstOrDefault();
+
+            return new IStatement[] { newItem };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
         {
             var nameSyntax = SyntaxFactory.IdentifierName(item.Name);
             var itemAsT = item as IAssignmentStatement;
-            var expressionSyntax = RDomFactory.BuildSyntax(itemAsT.Expression );
+            var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Expression );
 
             var assignmentSyntax = SyntaxFactory.BinaryExpression(SyntaxKind.SimpleAssignmentExpression, nameSyntax, (ExpressionSyntax)expressionSyntax);
             var node = SyntaxFactory.ExpressionStatement(assignmentSyntax );

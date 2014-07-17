@@ -8,50 +8,17 @@ namespace RoslynDom
     {
         private IList<IStatement> _statements = new List<IStatement>();
 
-        internal RDomBlockStatement(SyntaxNode rawItem)
-           : base(rawItem)
-        {
-            //Initialize2();
-        }
-
-        //internal RDomBlockStatement(
-        //    BlockSyntax rawItem,
-        //      IEnumerable<PublicAnnotation> publicAnnotations)
-        //  : base(rawItem, publicAnnotations)
-        //{
-        //    Initialize();
-        //}
-
+        public RDomBlockStatement(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        { }
 
         internal RDomBlockStatement(RDomBlockStatement oldRDom)
-             : base(oldRDom)
+            : base(oldRDom)
         {
             var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
             foreach (var statement in statements)
             { AddOrMoveStatement(statement); }
         }
-
-
-        //protected override void Initialize()
-        //{
-        //    foreach (var statementSyntax in TypedSyntax.Statements)
-        //    {
-        //        var statements = RDomFactoryHelper.StatementFactoryHelper.MakeItem(statementSyntax);
-        //        foreach (var statement in statements)
-        //        { AddOrMoveStatement(statement); }
-        //    }
-        //}
-
-        //protected void Initialize2()
-        //{
-        //    Initialize();
-        //}
-
-        //public override BlockSyntax BuildSyntax()
-        //{
-        //    return null;
-        //}
-
 
         public void RemoveStatement(IStatement statement)
         { _statements.Remove(statement); }

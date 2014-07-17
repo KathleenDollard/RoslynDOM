@@ -34,23 +34,8 @@
     <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Common.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration">
-      <HintPath>..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention">
-      <HintPath>..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable">
@@ -67,13 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeValueStyle.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseOfT.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseTTSyntaxTSymbol.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseStemContainer.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomExpression.cs" />
-    <Compile Include="BuildSyntaxExtensions.cs" />
     <Compile Include="Implementations\RDomAttributeValue.cs" />
     <Compile Include="Implementations\RDomAttribute.cs" />
     <Compile Include="Implementations\RDomClass.cs" />
@@ -82,8 +65,6 @@
     <Compile Include="Implementations\RDomInterface.cs" />
     <Compile Include="Implementations\RDomInvalidTypeMember.cs" />
     <Compile Include="Implementations\RDomAccessor.cs" />
-    <Compile Include="PublicAnnotationFactory.cs" />
-    <Compile Include="RDomFactory.cs" />
     <Compile Include="RegisterCSharpFactories.cs" />
     <Compile Include="RoslynDomSymbolUtilities.cs" />
     <Compile Include="RoslynUtilities.cs" />

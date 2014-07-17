@@ -6,47 +6,13 @@ namespace RoslynDom
 {
     public class RDomInterface : RDomBaseType<IInterface>, IInterface
     {
-        internal RDomInterface(
-               SyntaxNode rawItem)
-        : base(rawItem, MemberKind.Interface, StemMemberKind.Interface)
-        {
-            //Initialize2();
-        }
-
-        //     internal RDomInterface(
-        //    InterfaceDeclarationSyntax rawItem,
-        //    IEnumerable<ITypeMember> members,
-        //    params PublicAnnotation[] publicAnnotations) 
-        //    : base(rawItem, MemberKind.Interface,StemMemberKind.Interface,  members, publicAnnotations )
-        //{
-        //    Initialize();
-        //}
+        public RDomInterface(SyntaxNode rawItem, SemanticModel model)
+        : base(rawItem, model, MemberKind.Interface, StemMemberKind.Interface)
+        { }
 
         internal RDomInterface(RDomInterface oldRDom)
              : base(oldRDom)
         { }
-
-        //private void Initialize2()
-        //{
-        //    Initialize();
-        //    var members = ListUtilities.MakeList(TypedSyntax, x => x.Members, x => RDomFactoryHelper.TypeMemberFactoryHelper.MakeItem(x));
-        //    foreach (var member in members)
-        //    { AddOrMoveMember(member); }
-        //}
-
-        //public override InterfaceDeclarationSyntax BuildSyntax()
-        //{
-        //    var modifiers = this.BuildModfierSyntax();
-        //    var node = SyntaxFactory.InterfaceDeclaration(Name)
-        //                    .WithModifiers(modifiers);
-
-        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildMembers(false), node, (n, l) => n.WithMembers(l));
-        //    //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildTypeParameterList(), node, (n, l) => n.WithTypeParameters(l));
-        //    //node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildConstraintClauses(), node, (n, l) => n.WithTypeConstraints(l));
-        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
-
-        //    return (InterfaceDeclarationSyntax)RoslynUtilities.Format(node);
-        //}
 
         public IEnumerable<IReferencedType> AllImplementedInterfaces
         {

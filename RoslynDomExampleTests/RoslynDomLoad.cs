@@ -15,7 +15,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Load_root_from_file_example()
         {
-            IRoot root = RDomFactory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             Assert.IsNotNull(root);
             Assert.AreEqual(3, root.Namespaces.Count());
         }
@@ -24,7 +24,7 @@ namespace RoslynDomExampleTests
         public void Load_root_from_string_example()
         {
             var csharpCode = File.ReadAllText(@"..\..\TestFile.cs");
-            IRoot root = RDomFactory.GetRootFromString(csharpCode);
+            IRoot root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.IsNotNull(root);
             Assert.AreEqual(3, root.Namespaces.Count());
         }
@@ -34,7 +34,7 @@ namespace RoslynDomExampleTests
         {
             var csharpCode = File.ReadAllText(@"..\..\TestFile.cs");
             var tree = CSharpSyntaxTree.ParseText(csharpCode);
-            var root = RDomFactory.GetRootFromSyntaxTree(tree);
+            var root = RDomCSharpFactory.Factory.GetRootFromSyntaxTree(tree);
             Assert.IsNotNull(root);
             Assert.AreEqual(3, root.Namespaces.Count());
         }
@@ -48,7 +48,7 @@ namespace RoslynDomExampleTests
             var project = solution.Projects.Where(x => x.Name == "RoslynDomExampleTests").FirstOrDefault();
             var document = project.Documents.Where(x => x.Name == "TestFile.cs").FirstOrDefault();
             Assert.IsNotNull(document);
-            var root = RDomFactory.GetRootFromDocument(document);
+            var root = RDomCSharpFactory.Factory.GetRootFromDocument(document);
             Assert.IsNotNull(root);
             Assert.AreEqual(3, root.Namespaces.Count());
         }

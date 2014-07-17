@@ -11,32 +11,42 @@ namespace RoslynDom
     public class RDomIfStatementFactory
          : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
     {
-        public override void InitializeItem(RDomIfStatement newItem, IfStatementSyntax syntax)
+        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
-            newItem.Condition = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Condition).FirstOrDefault();
+            var syntax = syntaxNode as IfStatementSyntax;
+            var newItem = new RDomIfStatement(syntaxNode, model);
+
+            InitializeItem(newItem, syntax, model);
+
+            return new IStatement[] { newItem };
+        }
+
+        public override void InitializeItem(RDomIfStatement newItem, IfStatementSyntax syntax, SemanticModel model)
+        {
+          newItem.Condition = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Condition, model).FirstOrDefault();
             if (syntax.Condition == null) { throw new InvalidOperationException(); }
             bool hasBlock = false;
-            var statements = GetStatementsFromSyntax(syntax.Statement, ref hasBlock);
+            var statements = GetStatementsFromSyntax(syntax.Statement, ref hasBlock, model);
             newItem.HasBlock  = hasBlock;
             foreach (var statement in statements)
             { newItem.AddOrMoveStatement(statement); }
 
-            InitializeElse(newItem, syntax);
+            InitializeElse(newItem, syntax, model);
         }
 
-        private void InitializeElse(RDomIfStatement newItem, IfStatementSyntax syntax)
+        private void InitializeElse(RDomIfStatement newItem, IfStatementSyntax syntax, SemanticModel model)
         {
             if (syntax.Else == null) return;
             var elseAsIf = syntax.Else.Statement as IfStatementSyntax;
             if (elseAsIf == null)
             {
-                InitializeElseStatement(newItem, syntax,syntax.Else.Statement);
+                InitializeElseStatement(newItem, syntax,syntax.Else.Statement, model);
             }
             else
             {
                 // Recurse this down the if chain
-                var newIf = new RDomIfStatement(elseAsIf);
-                InitializeItem(newIf, elseAsIf);
+                var newIf = new RDomIfStatement(elseAsIf, model);
+                InitializeItem(newIf, elseAsIf, model);
                 var elseIfs = newIf.ElseIfs;
                 var elseStatements = newIf.ElseStatements;
                 //foreach (var item in newIf.ElseIfs) { newIf.RemoveElseIf(item); }
@@ -57,19 +67,19 @@ namespace RoslynDom
             }
         }
 
-        private void InitializeElseStatement(RDomIfStatement newItem, IfStatementSyntax syntax,StatementSyntax statement)
+        private void InitializeElseStatement(RDomIfStatement newItem, IfStatementSyntax syntax,StatementSyntax statement, SemanticModel model)
         {
             newItem.ElseHasBlock = statement is BlockSyntax;
             bool hasBlock = false;
-            var statements = GetStatementsFromSyntax(syntax.Else.Statement, ref hasBlock);
+            var statements = GetStatementsFromSyntax(syntax.Else.Statement, ref hasBlock, model);
             newItem.ElseHasBlock = hasBlock;
             foreach (var state in statements)
             { newItem.AddOrMoveElseStatement(state); }
         }
 
-        private IEnumerable<IStatement> GetStatementsFromSyntax(StatementSyntax statementSyntax, ref bool hasBlock)
+        private IEnumerable<IStatement> GetStatementsFromSyntax(StatementSyntax statementSyntax, ref bool hasBlock, SemanticModel model)
         {
-            var statement = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax).First();
+            var statement = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax, model).First();
             var list = new List<IStatement>();
             var blockStatement = statement as IBlockStatement;
             if (blockStatement != null)
@@ -107,7 +117,7 @@ namespace RoslynDom
             if (itemAsT.Condition == null) return SyntaxFactory.EmptyStatement(); // This shold not happen 
 
             var statement = BuildStatement(itemAsT.Statements, itemAsT.HasBlock);
-            var condition = RDomFactory.BuildSyntax(itemAsT.Condition);
+            var condition = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Condition);
             var node = SyntaxFactory.IfStatement((ExpressionSyntax)condition, statement);
 
             if (elseClauseSyntax != null) { node = node.WithElse(elseClauseSyntax); }
@@ -119,7 +129,7 @@ namespace RoslynDom
         {
             StatementSyntax statement;
             var statementSyntaxList = statements
-                         .SelectMany(x => RDomFactory.BuildSyntaxGroup(x))
+                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
                          .ToList();
             if (hasBlock || statements.Count() > 1)
             { statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); }

@@ -31,7 +31,7 @@ namespace RoslynDom.CSharpFactories
             return (syntaxNode is TSyntax);
         }
 
-        public virtual IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode)
+        public virtual IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
             var syntax = syntaxNode as TSyntax;
             var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode);

@@ -10,8 +10,9 @@ namespace RoslynDom
 
     public abstract class RDomFactoryHelper
     {
-        // WARNING: At present you must register all factories before retrieving any. So,
+        // WARNING: At present you must register all factories before retrieving any. 
         private static FactoryProvider factoryProvider = new FactoryProvider();
+        private static IAttributeFactory attributeFactory;
         private static IRDomFactory<PublicAnnotation> publicAnnotationFactory;
         private static List<Tuple<Type, RDomFactoryHelper>> registration = new List<Tuple<Type, RDomFactoryHelper>>();
         //private static RDomRootFactoryHelper rootFactoryHelper;
@@ -32,13 +33,13 @@ namespace RoslynDom
             registration.Add(new Tuple<Type, RDomFactoryHelper>(typeof(TKind), factoryHelper));
         }
 
-        public static void RegisterPublicAnnotationFactory(IRDomFactory<PublicAnnotation> factory)
-        {
-            publicAnnotationFactory = factory;
-        }
+        //public static void RegisterPublicAnnotationFactory(IRDomFactory<PublicAnnotation> factory)
+        //{
+        //    publicAnnotationFactory = factory;
+        //}
 
         public static RDomFactoryHelper<TKind> GetHelper<TKind>()
-            where TKind :class, IDom
+            where TKind : class, IDom
         {
             foreach (var tuple in registration)
             {
@@ -47,70 +48,32 @@ namespace RoslynDom
             throw new InvalidOperationException();
         }
 
-        //public static RDomRootFactoryHelper RootFactoryHelper
-        //{
-        //    get
-        //    {
-        //        if (rootFactoryHelper == null) { rootFactoryHelper = new RDomRootFactoryHelper(); }
-        //        return rootFactoryHelper;
-        //    }
-        //}
-        //public static RDomStemMemberFactoryHelper StemMemberFactoryHelper
-        //{
-        //    get
-        //    {
-        //        if (stemMemberFactoryHelper == null) { stemMemberFactoryHelper = new RDomStemMemberFactoryHelper(); }
-        //        return stemMemberFactoryHelper;
-        //    }
-        //}
-        //public static RDomTypeMemberFactoryHelper TypeMemberFactoryHelper
-        //{
-        //    get
-        //    {
-        //        if (typeMemberFactoryHelper == null) { typeMemberFactoryHelper = new RDomTypeMemberFactoryHelper(); }
-        //        return typeMemberFactoryHelper;
-        //    }
-        //}
-        //public static RDomStatementFactoryHelper StatementFactoryHelper
-        //{
-        //    get
-        //    {
-        //        if (statementFactoryHelper == null) { statementFactoryHelper = new RDomStatementFactoryHelper(); }
-        //        return statementFactoryHelper;
-        //    }
-        //}
-        //public static RDomExpressionFactoryHelper ExpressionFactoryHelper
-        //{
-        //    get
-        //    {
-        //        if (expressionFactoryHelper == null) { expressionFactoryHelper = new RDomExpressionFactoryHelper(); }
-        //        return expressionFactoryHelper;
-        //    }
-        //}
-        //public static RDomMiscFactoryHelper MiscFactoryHelper
-        //{
-        //    get
-        //    {
-        //        if (miscFactoryHelper == null) { miscFactoryHelper = new RDomMiscFactoryHelper(); }
-        //        return miscFactoryHelper;
-        //    }
-        //}
-
-        //public static RDomFactoryHelper GetHelper<TKind>()
-        //{
-        //    if (typeof(TKind) == typeof(IRoot)) { return RootFactoryHelper; }
-        //    if (typeof(TKind) == typeof(IStemMember)) { return StemMemberFactoryHelper; }
-        //    if (typeof(TKind) == typeof(ITypeMember)) { return TypeMemberFactoryHelper; }
-        //    if (typeof(TKind) == typeof(IStatement)) { return StatementFactoryHelper; }
-        //    if (typeof(TKind) == typeof(IExpression)) { return ExpressionFactoryHelper; }
-        //    if (typeof(TKind) == typeof(IMisc)) { return MiscFactoryHelper; }
-        //    throw new InvalidOperationException();
-        //}
-
         public static IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode)
         {
-            if (publicAnnotationFactory == null) { throw new InvalidOperationException(); }
-            return publicAnnotationFactory.CreateFrom(syntaxNode);
+            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
+            if (publicAnnotationFactory == null) { publicAnnotationFactory = factoryProvider.GetPublicAnnotationFactory(); }
+            return publicAnnotationFactory.CreateFrom(syntaxNode, null);
+        }
+
+        public static IEnumerable<IAttribute> GetAttributesFrom(SyntaxNode parentNode, IDom newParent, SemanticModel model)
+        {
+            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
+            if (attributeFactory == null) { attributeFactory = factoryProvider.GetAttributeFactory(); }
+            return attributeFactory.ExtractAttributes(parentNode, newParent, model);
+        }
+
+        public static IEnumerable<IAttribute> CreateAttributeFrom(SyntaxNode attributeNode, SemanticModel model)
+        {
+            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
+            if (attributeFactory == null) { attributeFactory = factoryProvider.GetAttributeFactory(); }
+            return attributeFactory.CreateFrom(attributeNode,  model);
+        }
+
+        public static IEnumerable<SyntaxNode> BuildAttributeSyntax(AttributeList attributes)
+        {
+            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
+            if (attributeFactory == null) { attributeFactory = factoryProvider.GetAttributeFactory(); }
+            return attributeFactory.BuildSyntax(attributes);
         }
 
         protected static IEnumerable<IRDomFactory<T>> GetFactories<T>()
@@ -181,14 +144,14 @@ namespace RoslynDom
             return found.Item1;
         }
 
-        public IEnumerable<T> MakeItem(SyntaxNode rawStatement)
+        public IEnumerable<T> MakeItem(SyntaxNode rawStatement, SemanticModel model)
         {
             var factories = Factories.OrderByDescending(x => x.Priority).ToArray();
             foreach (var factory in factories)
             {
                 if (factory.CanCreateFrom(rawStatement))
                 {
-                    return factory.CreateFrom(rawStatement);
+                    return factory.CreateFrom(rawStatement, model);
                 }
             }
             return null;

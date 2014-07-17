@@ -10,33 +10,22 @@ namespace RoslynDom
         where T : class, IType<T>
     {
         private IList<ITypeMember> _members = new List<ITypeMember>();
-        private MemberKind _memberKind;
-        private StemMemberKind _stemMemberKind;
+        private MemberKind _memberKind;        // This should remain readonly
+        private StemMemberKind _stemMemberKind;// This should remain readonly
         private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
+        private AttributeList _attributes = new AttributeList();
 
         internal RDomBaseType(
               SyntaxNode rawItem,
+              SemanticModel model, 
               MemberKind memberKind,
               StemMemberKind stemMemberKind)
-           : base(rawItem)
+           : base(rawItem, model)
         {
             _memberKind = memberKind;
             _stemMemberKind = stemMemberKind;
         }
 
-        //internal RDomBaseType(
-        //    TSyntax rawItem,
-        //    MemberKind memberKind,
-        //    StemMemberKind stemMemberKind,
-        //    IEnumerable<ITypeMember> members,
-        //    params PublicAnnotation[] publicAnnotations)
-        //    : base(rawItem, publicAnnotations)
-        //{
-        //    foreach (var member in members)
-        //    { AddOrMoveMember(member); }
-        //    _memberKind = memberKind;
-        //    _stemMemberKind = stemMemberKind;
-        //}
 
         internal RDomBaseType(T oldIDom)
              : base(oldIDom)
@@ -44,6 +33,7 @@ namespace RoslynDom
             var oldRDom = oldIDom as RDomBaseType<T>;
             _memberKind = oldRDom._memberKind;
             _stemMemberKind = oldRDom._stemMemberKind;
+            Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             var newMembers = RoslynDomUtilities.CopyMembers(oldRDom._members);
             foreach (var member in newMembers)
@@ -53,48 +43,7 @@ namespace RoslynDom
             { AddOrMoveTypeParameter(typeParameter); }
         }
 
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //    AccessModifier = (AccessModifier)Symbol.DeclaredAccessibility;
-        //    var newTypeParameters = this.TypedSymbol.TypeParametersFrom();
-        //    foreach (var typeParameter in newTypeParameters)
-        //    { AddOrMoveTypeParameter(typeParameter); }
-        //}
-
-        //protected SyntaxList<MemberDeclarationSyntax> BuildMembers(bool nestedTypesAllowed)
-        //{
-        //    var list = new List<MemberDeclarationSyntax>();
-        //    foreach (var member in Members)
-        //    {
-        //        if (!BuildMember(list, member, nestedTypesAllowed)) { throw new InvalidOperationException(); }
-        //    }
-        //    return SyntaxFactory.List<MemberDeclarationSyntax>(list);
-        //}
-
-        //protected virtual bool BuildMember(IList<MemberDeclarationSyntax> list, ITypeMember member, bool nestedTypesAllowed)
-        //{
-        //    if (TryAddMemberSyntaxNode<RDomMethod>(list, member, x => x.BuildSyntax())) { return true; }
-        //    if (TryAddMemberSyntaxNode<RDomProperty>(list, member, x => x.BuildSyntax())) { return true; }
-        //    if (TryAddMemberSyntaxNode<RDomField>(list, member, x => x.BuildSyntax())) { return true; }
-        //    if (nestedTypesAllowed)
-        //    {
-        //        if (TryAddMemberSyntaxNode<RDomClass>(list, member, x => x.BuildSyntax())) { return true; }
-        //        if (TryAddMemberSyntaxNode<RDomStructure>(list, member, x => x.BuildSyntax())) { return true; }
-        //        if (TryAddMemberSyntaxNode<RDomInterface>(list, member, x => x.BuildSyntax())) { return true; }
-        //        if (TryAddMemberSyntaxNode<RDomEnum>(list, member, x => x.BuildSyntax())) { return true; }
-        //    }
-        //    return false;
-        //}
-
-        //protected bool TryAddMemberSyntaxNode<TRDom>(IList<MemberDeclarationSyntax> list, ITypeMember member, Func<TRDom, MemberDeclarationSyntax> makeDelegate)
-        //     where TRDom : class
-        //{
-        //    return RoslynUtilities.TryAddSyntaxNode<ITypeMember, MemberDeclarationSyntax, TRDom>(list, member, makeDelegate);
-        //}
-
-
-        public void RemoveMember(ITypeMember member)
+         public void RemoveMember(ITypeMember member)
         {
             if (member.Parent == null)
             { _members.Remove(member); }
@@ -147,9 +96,8 @@ namespace RoslynDom
 
         public IEnumerable<IField> Fields
         { get { return Members.OfType<IField>(); } }
-
-        public IEnumerable<IAttribute> Attributes
-        { get { return GetAttributes(); } }
+        public AttributeList Attributes
+        { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
 

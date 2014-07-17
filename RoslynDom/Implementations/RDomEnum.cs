@@ -1,64 +1,27 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomEnum : RDomBase<IEnum,  ISymbol>, IEnum
+    public class RDomEnum : RDomBase<IEnum, ISymbol>, IEnum
     {
-        internal RDomEnum(
-             SyntaxNode rawItem)
-           : base(rawItem)
-        {
-            //Initialize2();
-        }
+        private AttributeList _attributes = new AttributeList();
 
-        //internal RDomEnum(
-        //  EnumDeclarationSyntax rawItem,
-        //  params PublicAnnotation[] publicAnnotations)
-        //: base(rawItem, publicAnnotations)
-        //{
-        //    Initialize();
-        //}
+        public RDomEnum(SyntaxNode rawItem, SemanticModel model)
+           : base(rawItem, model)
+        { }
 
         internal RDomEnum(RDomEnum oldRDom)
              : base(oldRDom)
         {
+                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             UnderlyingType = oldRDom.UnderlyingType;
         }
-
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //    AccessModifier = GetAccessibility();
-        //    var symbol = Symbol as INamedTypeSymbol;
-        //    if (symbol != null)
-        //    {
-        //        var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
-        //        UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
-        //    }
-        //}
-
-        //private void Initialize2()
-        //{
-        //    Initialize();
-        //}
-
-        //public override EnumDeclarationSyntax BuildSyntax()
-        //{
-        //    var modifiers = this.BuildModfierSyntax();
-        //    var node = SyntaxFactory.EnumDeclaration(Name)
-        //                    .WithModifiers(modifiers);
-        //    //var node = SyntaxFactory.EnumDeclaration(Name);
-        //    // TODO: Support enum members
-        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, l) => n.WithAttributeLists(l));
-
-        //    return (EnumDeclarationSyntax)RoslynUtilities.Format(node);
-        //}
-
-        public IEnumerable<IAttribute> Attributes
-        { get { return GetAttributes(); } }
+        public AttributeList Attributes
+        { get { return _attributes; } }
 
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }

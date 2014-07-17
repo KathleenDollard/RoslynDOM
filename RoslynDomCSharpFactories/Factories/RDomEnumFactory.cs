@@ -10,9 +10,15 @@ namespace RoslynDom
 {
     internal static class RDomEnumFactoryHelper
     {
-        public static void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
+        public static RDomEnum CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
+            var syntax = syntaxNode as EnumDeclarationSyntax;
+            var newItem = new RDomEnum(syntaxNode, model);
             newItem.Name = newItem.TypedSymbol.Name;
+
+            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            newItem.Attributes.AddOrMoveAttributeRange(attributes);
+
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             var symbol = newItem.Symbol as INamedTypeSymbol;
             if (symbol != null)
@@ -20,15 +26,18 @@ namespace RoslynDom
                 var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
                 newItem.UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
             }
+
+            return newItem;
         }
 
         public static IEnumerable<SyntaxNode> BuildSyntax(RDomEnum item)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
-            var attributeSyntax = BuildSyntaxExtensions.BuildAttributeListSyntax(item.Attributes);
             var node = SyntaxFactory.EnumDeclaration(identifier)
                 .WithModifiers(modifiers);
+            var attributes = RDomFactoryHelper.BuildAttributeSyntax(item.Attributes);
+            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
             var itemAsEnum = item as IEnum;
             if (itemAsEnum == null) { throw new InvalidOperationException(); }
             //var membersSyntax = itemAsEnum.Members
@@ -43,9 +52,10 @@ namespace RoslynDom
     public class RDomEnumTypeMemberFactory
         : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
-        public override void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
-            RDomEnumFactoryHelper.InitializeItem(newItem, syntax);
+            var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode, model);
+            return new ITypeMember[] { ret };
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
@@ -58,9 +68,10 @@ namespace RoslynDom
     public class RDomEnumStemMemberFactory
            : RDomStemMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
-        public override void InitializeItem(RDomEnum newItem, EnumDeclarationSyntax syntax)
+        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
-            RDomEnumFactoryHelper.InitializeItem(newItem, syntax);
+            var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode, model);
+            return new IStemMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {

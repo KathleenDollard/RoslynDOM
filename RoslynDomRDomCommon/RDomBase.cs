@@ -124,9 +124,7 @@ namespace RoslynDom
 
         public abstract object RequestValue(string propertyName);
 
-        protected abstract ISymbol GetSymbol(SyntaxNode node);
-
-        /// <summary>
+          /// <summary>
         /// For a discussion of names <see cref="OuterName"/>
         /// </summary>
         /// <returns>The string name, same as Roslyn symbol's name</returns>

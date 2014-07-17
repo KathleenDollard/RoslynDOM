@@ -11,7 +11,7 @@ namespace RoslynDom
     public interface IRDomFactory<TKind> :IRDomFactory 
     {
         bool CanCreateFrom(SyntaxNode syntaxNode);
-        IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode);
+        IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, SemanticModel model);
         FactoryPriority Priority { get; }
 
         IEnumerable<SyntaxNode> BuildSyntax(TKind item);
@@ -24,6 +24,12 @@ namespace RoslynDom
 
     public interface IPublicAnnotationFactory : IRDomFactory<PublicAnnotation >
     {    }
+
+    public interface IAttributeFactory : IRDomFactory<IAttribute>
+    {
+        IEnumerable<IAttribute > ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model);
+        IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributes);
+    }
     //public class RDomFactory<TSyntax, TCreate, TFactory>
     //    (CandidatePriority candidatePriority, CandidateKind candidateKind)
     //    where TFactory : IRDomStatementFactory< TCreate >

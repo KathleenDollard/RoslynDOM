@@ -9,10 +9,16 @@ namespace RoslynDom
     public class RDomUsingStemMemberFactory
             : RDomStemMemberFactory<RDomUsing, UsingDirectiveSyntax>
     {
-        public override void InitializeItem(RDomUsing newItem, UsingDirectiveSyntax syntax)
+        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
+            var syntax = syntaxNode as UsingDirectiveSyntax;
+            var newItem = new RDomUsing(syntaxNode, model);
+
             newItem. Name = syntax.Name.NameFrom();
+
+            return new IStemMember[] { newItem };
         }
+
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
         {
             // TODO: Handle alias's

@@ -12,13 +12,18 @@ namespace RoslynDom
     public class RDomReturnStatementFactory
                 : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>
     {
-        public override void InitializeItem(RDomReturnStatement newItem, ReturnStatementSyntax syntax)
+        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
+            var syntax = syntaxNode as ReturnStatementSyntax;
+            var newItem = new RDomReturnStatement(syntaxNode, model);
+
             if (syntax.Expression != null)
             {
-                newItem.Return = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Expression).FirstOrDefault();
+                newItem.Return = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Expression, model).FirstOrDefault();
                 if (newItem.Return == null) throw new InvalidOperationException();
             }
+
+            return new IStatement[] { newItem };
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
@@ -27,7 +32,7 @@ namespace RoslynDom
             var node = SyntaxFactory.ReturnStatement();
             if (itemAsT.Return != null)
             {
-                var returnExpressionSyntax = RDomFactory.BuildSyntax(itemAsT.Return);
+                var returnExpressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Return);
                 node = node.WithExpression((ExpressionSyntax)returnExpressionSyntax);
             }
             return new SyntaxNode[] { RoslynUtilities.Format(node) };

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -20,66 +18,23 @@ namespace RoslynDom
     /// </remarks>
     public class RDomField : RDomBase<IField, IFieldSymbol>, IField
     {
-        private VariableDeclaratorSyntax _varSyntax;
+        private AttributeList _attributes = new AttributeList();
 
         public RDomField(
-                FieldDeclarationSyntax rawItem,
-                VariableDeclaratorSyntax varSyntax)
-           : base(rawItem)
+                SyntaxNode rawItem,
+                SemanticModel model)
+                : base(rawItem, model)
         {
-            _varSyntax = varSyntax;
-            //Initialize2();
         }
 
-        //internal RDomField(
-        //            FieldDeclarationSyntax rawItem,
-        //            VariableDeclaratorSyntax varSyntax,
-        //            params PublicAnnotation[] publicAnnotations)
-        //    : base(rawItem, publicAnnotations)
-        //{
-        //    _varSyntax = varSyntax;
-        //    Initialize();
-        //}
-
         internal RDomField(RDomField oldRDom)
-             : base(oldRDom)
+            : base(oldRDom)
         {
-            _varSyntax = oldRDom._varSyntax;
+                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
             IsStatic = oldRDom.IsStatic;
         }
-
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-        //    AccessModifier = GetAccessibility();
-        //    ReturnType = new RDomReferencedType(TypedSymbol.DeclaringSyntaxReferences, TypedSymbol.Type);
-        //    IsStatic = Symbol.IsStatic;
-        //}
-
-        //private void Initialize2()
-        //{
-        //    Initialize();
-        //}
-
-        //public override FieldDeclarationSyntax BuildSyntax()
-        //{
-        //    var nameSyntax = SyntaxFactory.Identifier(Name);
-        //    var returnType = ((RDomReferencedType)ReturnType).BuildSyntax();
-        //    var modifiers = this.BuildModfierSyntax();
-        //    var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
-        //    var variableNode = SyntaxFactory.VariableDeclaration(returnType)
-        //       .WithVariables(
-        //                SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-        //                    SyntaxFactory.VariableDeclarator(nameSyntax)));
-        //    var node = SyntaxFactory.FieldDeclaration(variableNode)
-        //       .WithModifiers(modifiers);
-
-        //    node = RoslynUtilities.UpdateNodeIfListNotEmpty(BuildAttributeListSyntax(), node, (n, list) => n.WithAttributeLists(list));
-
-        //    return (FieldDeclarationSyntax)RoslynUtilities.Format(node);
-        //}
 
         protected override bool CheckSameIntent(IField other, bool includePublicAnnotations)
         {
@@ -89,14 +44,10 @@ namespace RoslynDom
             if (IsStatic != other.IsStatic) return false;
             return true;
         }
-
-        public IEnumerable<IAttribute> Attributes
-        { get { return GetAttributes(); } }
+        public AttributeList Attributes
+        { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
-
-        public override IFieldSymbol TypedSymbol
-        { get { return (IFieldSymbol)base.GetSymbol(_varSyntax); } }
 
         public IReferencedType ReturnType { get; set; }
 

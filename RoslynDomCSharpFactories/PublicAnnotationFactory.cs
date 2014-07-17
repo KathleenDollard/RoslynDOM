@@ -6,25 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Practices.Unity;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    //public class RDomPublicAnnotationFactoryHelper : RDomFactoryHelper<PublicAnnotation>
-    //{
-    //    public override SyntaxNode BuildSyntax(IDom item)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public override IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
-
-    // TODO: Figure out why this doesn't use normal factory inheritance tree
     public class PublicAnnotationFactory :  IPublicAnnotationFactory
     {
          public FactoryPriority Priority
@@ -36,7 +21,7 @@ namespace RoslynDom
             return true;
         }
 
-        public IEnumerable<PublicAnnotation> CreateFrom(SyntaxNode syntaxNode)
+        public IEnumerable<PublicAnnotation> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         {
             IEnumerable<PublicAnnotation> list;
             var syntaxRoot = syntaxNode as CompilationUnitSyntax;
@@ -95,14 +80,13 @@ namespace RoslynDom
                 { str = string.IsNullOrWhiteSpace(strRoot) ? str : ""; }
                 if (!string.IsNullOrWhiteSpace(str))
                 {
-                    var attrib = GetAnnotationStringAsAttribute(str);
-                    var newPublicAnnotation = new PublicAnnotation(attrib.Name.ToString());
-                    var args = attrib.ArgumentList.Arguments;
-                    foreach (var arg in args)
+                    var attribSyntax = GetAnnotationStringAsAttribute(str);
+                    // Reuse the evaluation work done in attribute to follow same rules
+                    var tempAttribute = RDomFactoryHelper.CreateAttributeFrom(attribSyntax, null).FirstOrDefault();
+                    var newPublicAnnotation = new PublicAnnotation(tempAttribute.Name.ToString());
+                    foreach (var attributeValue in tempAttribute.AttributeValues )
                     {
-                        // reuse parsing
-                        var tempRDomAttributeValue = new RDomAttributeValue(arg, attrib, null);
-                        newPublicAnnotation.AddItem(tempRDomAttributeValue.Name, tempRDomAttributeValue.Value);
+                        newPublicAnnotation.AddItem(attributeValue.Name ?? "", attributeValue.Value);
                     }
                     ret.Add(newPublicAnnotation);
                 }

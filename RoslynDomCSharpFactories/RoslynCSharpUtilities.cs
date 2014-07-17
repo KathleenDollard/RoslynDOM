@@ -8,36 +8,44 @@ using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom
 {
     public static class RoslynCSharpUtilities
     {
-        public static string NameFrom(this SyntaxNode node)
-        {
-            var qualifiedNameNode = node.ChildNodes()
-                                      .OfType<QualifiedNameSyntax>()
-                                      .SingleOrDefault();
-            var identifierNameNodes = node.ChildNodes()
-                               .OfType<IdentifierNameSyntax>();
-            var name = "";
-            if (qualifiedNameNode != null)
+ 
+            public static string NameFrom(this SyntaxNode node)
             {
-                name = name + qualifiedNameNode.ToString();
+                var qualifiedNameNode = node.ChildNodes()
+                                          .OfType<QualifiedNameSyntax>()
+                                          .SingleOrDefault();
+                var identifierNameNodes = node.ChildNodes()
+                                   .OfType<IdentifierNameSyntax>();
+                var name = "";
+                if (qualifiedNameNode != null)
+                {
+                    name = name + qualifiedNameNode.ToString();
+                }
+                foreach (var identifierNameNode in identifierNameNodes)
+                {
+                    var identifierName = identifierNameNode.ToString();
+                    if (!(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(identifierName)))
+                    { name += "."; }
+                    name = name += identifierName;
+                }
+                if (!string.IsNullOrWhiteSpace(name)) return name;
+                var nameToken = node.ChildTokens()
+                                          .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+                                          .SingleOrDefault();
+                return nameToken.ValueText;
             }
-            foreach (var identifierNameNode in identifierNameNodes)
-            {
-                var identifierName = identifierNameNode.ToString();
-                if (!(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(identifierName)))
-                { name += "."; }
-                name = name += identifierName;
-            }
-            if (!string.IsNullOrWhiteSpace(name)) return name;
-            var nameToken = node.ChildTokens()
-                                      .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
-                                      .SingleOrDefault();
-            return nameToken.ValueText;
-        }
 
+             public static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
+        {
+            var statementSyntaxList = statements
+                            .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                            .ToList();
+            return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
+        }
 
         public static LiteralKind LiteralKindFromSyntaxKind(SyntaxKind kind)
         {
@@ -90,7 +98,7 @@ namespace RoslynDom.CSharpFactories
 
             var solution = new CustomWorkspace().CurrentSolution
                 .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
-                .AddMetadataReference(projectId, RoslynRDomUtilities. Mscorlib)
+                .AddMetadataReference(projectId, RoslynRDomUtilities.Mscorlib)
                 .AddMetadataReference(projectId, AppDomain.CurrentDomain.GetAssemblies()
                     .Where(a => string.Compare(a.GetName().Name, "System", StringComparison.OrdinalIgnoreCase) == 0)
                     .Select(a => new MetadataFileReference(a.Location)).Single())
@@ -147,18 +155,6 @@ namespace RoslynDom.CSharpFactories
                 return AnnotateNodeWithSimplifyAnnotation(node);
             }
         }
-
-
-
-        public static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
-        {
-            // Since this happens a lot, it's a small optimization to directly call the correct helper. If that turns out to be too leaky an abstraction, call RDomFactory
-            var statementSyntaxList = statements
-                            .SelectMany(x => RDomFactoryHelper.GetHelper<IStatement>().BuildSyntaxGroup(x))
-                            .ToList();
-            return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
-        }
-
-
+        
     }
 }
