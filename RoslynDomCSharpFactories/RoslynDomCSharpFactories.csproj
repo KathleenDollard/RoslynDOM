@@ -62,6 +62,7 @@
     <Compile Include="FactoriesForStatements\LoopFactoryHelper.cs" />
     <Compile Include="FactoriesForStatements\RDomAssignmentStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomBlockStatementFactory.cs" />
+    <Compile Include="FactoriesForStatements\RDomForEachStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomVariableDeclarationtFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomDeclarationStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomForStatementFactory.cs" />

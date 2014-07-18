@@ -296,7 +296,41 @@ namespace RoslynDomTests
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForStatement));
             var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        do\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n        while (true);\r\n    }\r\n}";
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        for (Int32 i = 0; i < 10; i++)\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
+            Assert.AreEqual(expectedString, actual);
+        }
+
+        public void Foo()
+        {
+            foreach (var i in new int[] { 1, 2, 3, 4, 5, 6 })
+            {
+                Console.WriteLine(i);
+            }
+        }
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_foreach_statements_for_method()
+        {
+
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    foreach (var i in new int[] { 1, 2, 3, 4, 5, 6 })
+                    {
+                        Console.WriteLine(i);
+                    }
+                }
+            }           
+            ";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var method = root.RootClasses.First().Methods.First();
+            var statements = method.Statements.ToArray();
+            Assert.AreEqual(1, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
+            var actual = output.ToString();
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (var i in new int[]\r\n{\r\n1, 2, 3, 4, 5, 6\r\n})\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
         #endregion

@@ -4,19 +4,19 @@
     {
         Unknown = 0,
         Block,      // done
-        Do,         
+        Do,         // done
         ForEach,    
-        For,                 // not suporting multiple initializers or incrementors right now 
+        For,        // done     // not suporting multiple initializers or incrementors right now 
         If,         // done
         Empty,      
         Return,     // done
         Declaration,// done
         Try,
+        While,      // done
+        Using,   
 
-        //While,   variation of Do
         //Else,    characteristic of If
-        //Using,   characteristic of Block
-        //Catch,   characteristic of Try
+        // Catch,  characteristic of Try
         //Switch,   // can this be handled as a special case of if?
         Break,    // probably have to support
         Continue, // probably have to support
@@ -29,8 +29,8 @@
         Special // (platform or lanuguage specific)
         //Yield, Split into YieldBreak and YieldReturn (expression)
 
-        //Checked ( characteristic of block? )
-        //Lock,   ( characteristic of block? )
+        //Checked ( characteristic of block? probably not)
+        //Lock,   ( characteristic of block? probably not)
 
         // Planning to avoid unless someone has a scenario. Fixed and unsafe could be characteristics, perhaps
         //Unsafe,

@@ -9,14 +9,14 @@ namespace RoslynDom.Common
 
     public interface IVariable
     {
-  IExpression Initializer { get; set; }
+        IExpression Initializer { get; set; }
         IReferencedType Type { get; set; }
         bool IsImplicitlyTyped { get; set; }
         bool IsConst { get; set; }
     }
 
-    public interface IVariableDeclaration : IVariable, IDom<IVariableDeclaration >, IMisc
+    public interface IVariableDeclaration : IVariable, IDom<IVariableDeclaration>, IMisc
     {
-      
+
     }
 }

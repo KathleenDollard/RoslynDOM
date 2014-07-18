@@ -69,6 +69,7 @@
     <Compile Include="RegisterCSharpFactories.cs" />
     <Compile Include="RoslynDomSymbolUtilities.cs" />
     <Compile Include="RoslynUtilities.cs" />
+    <Compile Include="StatementImplementations\RDomForEachStatement.cs" />
     <Compile Include="StatementImplementations\RDomVariableDeclaration.cs" />
     <Compile Include="StatementImplementations\RDomForStatement.cs" />
     <Compile Include="StatementImplementations\RDomDoStatement.cs" />
