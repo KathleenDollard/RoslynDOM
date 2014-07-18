@@ -13,10 +13,8 @@ namespace RoslynDom
         //private Type _type;
         //private AttributeValueStyle _style;
 
-        public RDomAttributeValue(
-            SyntaxNode rawItem,
-            SemanticModel model)
-            : base(rawItem, model)
+        public RDomAttributeValue(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         {
             //Initialize(model);
             //var tuple = GetAttributeValueName(rawItem, attributeSyntax);
@@ -31,7 +29,7 @@ namespace RoslynDom
             ValueType = oldRDom.ValueType;
             Value = oldRDom.Value;
             // TODO: manage type
-           Type = oldRDom.Type;
+            Type = oldRDom.Type;
             Style = oldRDom.Style;
         }
 
@@ -122,7 +120,7 @@ namespace RoslynDom
         //}
 
         public object Value { get; set; }
-       
+
         public LiteralKind ValueType { get; set; }
 
         public AttributeValueStyle Style { get; set; }

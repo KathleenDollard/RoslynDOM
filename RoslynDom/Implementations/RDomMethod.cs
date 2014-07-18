@@ -13,8 +13,8 @@ namespace RoslynDom
         private IList<IStatement> _statements = new List<IStatement>();
         private AttributeList _attributes = new AttributeList();
 
-        public RDomMethod(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomMethod(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomMethod(RDomMethod oldRDom)

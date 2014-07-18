@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeList.cs" />
+    <Compile Include="Enums\AccessorType.cs" />
     <Compile Include="Enums\AttributeValueStyle.cs" />
     <Compile Include="BaseInterfaces\IMisc.cs" />
     <Compile Include="BaseInterfaces\ILoop.cs" />
@@ -64,6 +65,8 @@
     <Compile Include="Interfaces_Statements\IBreakStatement.cs" />
     <Compile Include="Interfaces_Statements\IDeclarationStatement.cs" />
     <Compile Include="Interfaces_Statements\IDoStatement.cs" />
+    <Compile Include="Interfaces_Statements\IVariableDeclaration.cs" />
+    <Compile Include="Interfaces_Statements\IWhileStatement.cs" />
     <Compile Include="BaseInterfaces\IExpression.cs" />
     <Compile Include="Interfaces_Statements\ICatch.cs" />
     <Compile Include="Interfaces_Statements\IForEachStatement.cs" />

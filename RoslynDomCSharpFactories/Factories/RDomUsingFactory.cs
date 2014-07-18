@@ -9,10 +9,10 @@ namespace RoslynDom
     public class RDomUsingStemMemberFactory
             : RDomStemMemberFactory<RDomUsing, UsingDirectiveSyntax>
     {
-        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as UsingDirectiveSyntax;
-            var newItem = new RDomUsing(syntaxNode, model);
+            var newItem = new RDomUsing(syntaxNode,parent, model);
 
             newItem. Name = syntax.Name.NameFrom();
 

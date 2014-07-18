@@ -11,7 +11,7 @@ namespace RoslynDom
     public interface IRDomFactory<TKind> :IRDomFactory 
     {
         bool CanCreateFrom(SyntaxNode syntaxNode);
-        IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, SemanticModel model);
+        IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
         FactoryPriority Priority { get; }
 
         IEnumerable<SyntaxNode> BuildSyntax(TKind item);

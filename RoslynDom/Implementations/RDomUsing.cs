@@ -5,8 +5,8 @@ namespace RoslynDom
 {
     public class RDomUsing : RDomBase<IUsing, ISymbol>, IUsing
     {
-        public RDomUsing(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomUsing(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomUsing(RDomUsing oldRDom)

@@ -2,11 +2,8 @@
 
 namespace RoslynDom.Common
 {
-    public interface IDeclarationStatement : IStatement, IDom<IDeclarationStatement >
+    public interface IDeclarationStatement : IStatement, IDom<IDeclarationStatement >, IVariable
     {
-        IExpression Initializer { get; set; }
-        IReferencedType Type { get; set; }
-        bool IsImplicitlyTyped { get; set; }
-        bool IsConst { get; set; }
+  
     }
 }

@@ -3,13 +3,13 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomDeclarationStatement : RDomBase<IDeclarationStatement, ISymbol>, IDeclarationStatement
+    public class RDomVariableDeclaration : RDomBase<IVariableDeclaration, ISymbol>, IVariableDeclaration
     {
-        public RDomDeclarationStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        public RDomVariableDeclaration(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { }
 
-        internal RDomDeclarationStatement(RDomDeclarationStatement oldRDom)
+        internal RDomVariableDeclaration(IVariableDeclaration oldRDom)
              : base(oldRDom)
         {
             IsImplicitlyTyped = oldRDom.IsImplicitlyTyped;

@@ -16,16 +16,16 @@ namespace RoslynDom
             return syntaxNode is FieldDeclarationSyntax;
         }
 
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<ITypeMember>();
 
-            var fieldPublicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode);
+            var fieldPublicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode, parent);
             var rawField = syntaxNode as FieldDeclarationSyntax;
             var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                var newItem = new RDomField(decl, model);
+                var newItem = new RDomField(decl,parent, model);
                 list.Add(newItem);
                 newItem.Name = newItem.TypedSymbol.Name;
 

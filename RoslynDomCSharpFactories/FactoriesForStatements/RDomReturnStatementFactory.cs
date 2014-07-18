@@ -12,14 +12,14 @@ namespace RoslynDom
     public class RDomReturnStatementFactory
                 : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>
     {
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
         {
             var syntax = syntaxNode as ReturnStatementSyntax;
-            var newItem = new RDomReturnStatement(syntaxNode, model);
+            var newItem = new RDomReturnStatement(syntaxNode,parent, model);
 
             if (syntax.Expression != null)
             {
-                newItem.Return = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Expression, model).FirstOrDefault();
+                newItem.Return = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Expression, newItem, model).FirstOrDefault();
                 if (newItem.Return == null) throw new InvalidOperationException();
             }
 

@@ -12,9 +12,12 @@ namespace RoslynDomTests
     [TestClass]
     public class StatementTests
     {
-        private const string CodeLoadCategory = "CodeLoad";
+        private const string MethodCodeLoadCategory = "MethodCodeLoad";
+        private const string PropertyCodeLoadCategory = "PropertyCodeLoad";
 
-        [TestMethod, TestCategory(CodeLoadCategory)]
+        #region code loading, method as example
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_misc_statements_for_method()
         {
             var csharpCode = @"
@@ -44,7 +47,7 @@ namespace RoslynDomTests
             Assert.AreEqual(expectedString, output.ToString());
         }
 
-        [TestMethod, TestCategory(CodeLoadCategory)]
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_declaration_statements_for_method()
         {
             var csharpCode = @"
@@ -77,7 +80,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod, TestCategory(CodeLoadCategory)]
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_if_statements_for_method()
         {
             var csharpCode = @"
@@ -120,7 +123,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod, TestCategory(CodeLoadCategory)]
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_block_statements_for_method()
         {
             var csharpCode = @"
@@ -160,7 +163,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod, TestCategory(CodeLoadCategory)]
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_invocation_statements_for_method()
         {
             var csharpCode = @"
@@ -187,7 +190,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod, TestCategory(CodeLoadCategory)]
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_return_statements_for_method()
         {
             var csharpCode = @"
@@ -216,5 +219,134 @@ namespace RoslynDomTests
         }
 
 
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_while_statements_for_method()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    while (true)
+                    {
+                        Console.WriteLine();
+                    }
+                }
+            }           
+            ";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var method = root.RootClasses.First().Methods.First();
+            var statements = method.Statements.ToArray();
+            Assert.AreEqual(1, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomWhileStatement));
+            var actual = output.ToString();
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        while (true)\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n    }\r\n}";
+            Assert.AreEqual(expectedString, actual);
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_do_statements_for_method()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    do 
+                    {
+                        Console.WriteLine();
+                    }
+                    while (true)
+                }
+            }           
+            ";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var method = root.RootClasses.First().Methods.First();
+            var statements = method.Statements.ToArray();
+            Assert.AreEqual(1, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomDoStatement));
+            var actual = output.ToString();
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        do\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n        while (true);\r\n    }\r\n}";
+            Assert.AreEqual(expectedString, actual);
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_for_statements_for_method()
+        {
+   
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Console.WriteLine(i);
+                    }
+                }
+            }           
+            ";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var method = root.RootClasses.First().Methods.First();
+            var statements = method.Statements.ToArray();
+            Assert.AreEqual(1, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomForStatement));
+            var actual = output.ToString();
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        do\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n        while (true);\r\n    }\r\n}";
+            Assert.AreEqual(expectedString, actual);
+        }
+        #endregion
+
+        #region property code loading
+        [TestMethod, TestCategory(PropertyCodeLoadCategory)]
+        public void Can_load_return_statements_for_property()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                public string Foo
+                {
+                    get{
+                            if (true) {}
+                            var x = "", "";
+                            x = lastName + x + firstName;
+                            Foo2();
+                            return true;
+                    }
+                    set{
+                            Foo2();
+                            x = lastName + x + firstName;
+                            if (true) {}
+                            var x = "", "";
+                            return true;
+                    }   
+                }
+            }           
+            ";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var property = root.RootClasses.First().Properties .First();
+            var statements = property.GetAccessor.Statements.ToArray();
+            Assert.AreEqual(5, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomIfStatement));
+            Assert.IsInstanceOfType(statements[1], typeof(RDomDeclarationStatement));
+            Assert.IsInstanceOfType(statements[2], typeof(RDomAssignmentStatement));
+            Assert.IsInstanceOfType(statements[3], typeof(RDomInvocationStatement));
+            Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
+             statements = property.SetAccessor.Statements.ToArray();
+            Assert.AreEqual(5, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomInvocationStatement));
+            Assert.IsInstanceOfType(statements[1], typeof(RDomAssignmentStatement));
+            Assert.IsInstanceOfType(statements[2], typeof(RDomIfStatement));
+            Assert.IsInstanceOfType(statements[3], typeof(RDomDeclarationStatement));
+            Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
+            var expectedString = "public class Bar\r\n{\r\n    public String Foo\r\n    {\r\n        get\r\n        {\r\n            if (true)\r\n            {\r\n            }\r\n\r\n            var x = \", \";\r\n            x = lastName + x + firstName;\r\n            Foo2();\r\n            return true;\r\n        }\r\n\r\n        set\r\n        {\r\n            Foo2();\r\n            x = lastName + x + firstName;\r\n            if (true)\r\n            {\r\n            }\r\n\r\n            var x = \", \";\r\n            return true;\r\n        }\r\n    }\r\n}";
+            Assert.AreEqual(expectedString, output.ToString());
+        }
+        #endregion
     }
 }

@@ -8,8 +8,8 @@ namespace RoslynDom
     {
         private IList<IStatement> _statements = new List<IStatement>();
 
-        public RDomBlockStatement(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomBlockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomBlockStatement(RDomBlockStatement oldRDom)

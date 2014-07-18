@@ -5,8 +5,8 @@ namespace RoslynDom
 {
     public class RDomExpression : RDomBase<IExpression, ISymbol>, IExpression
     {
-        internal RDomExpression(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        internal RDomExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomExpression(RDomExpression oldRDom)

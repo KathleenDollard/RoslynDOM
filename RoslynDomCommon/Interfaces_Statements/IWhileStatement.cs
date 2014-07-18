@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IDoStatement : ILoop<IDoStatement>
+    public interface IWhileStatement : ILoop<IWhileStatement >
     {
-
     }
 }

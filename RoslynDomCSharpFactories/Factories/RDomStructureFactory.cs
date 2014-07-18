@@ -10,10 +10,10 @@ namespace RoslynDom
 {
     internal static class RDomStructureFactoryHelper
     {
-        public static RDomStructure CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public static RDomStructure CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as StructDeclarationSyntax;
-            var newItem = new RDomStructure(syntaxNode, model);
+            var newItem = new RDomStructure(syntaxNode, parent,model);
 
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
@@ -25,7 +25,7 @@ namespace RoslynDom
             foreach (var typeParameter in newTypeParameters)
             { newItem.AddOrMoveTypeParameter(typeParameter); }
 
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, newItem, model));
             foreach (var member in members)
             { newItem.AddOrMoveMember(member); }
 
@@ -54,9 +54,9 @@ namespace RoslynDom
     public class RDomStructureTypeMemberFactory
       : RDomTypeMemberFactory<RDomStructure, StructDeclarationSyntax>
     {
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomStructureFactoryHelper.CreateFrom(syntaxNode, model);
+            var ret = RDomStructureFactoryHelper.CreateFrom(syntaxNode, parent, model);
             return new ITypeMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
@@ -68,9 +68,9 @@ namespace RoslynDom
     public class RDomStructureStemMemberFactory
            : RDomStemMemberFactory<RDomStructure, StructDeclarationSyntax>
     {
-        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomStructureFactoryHelper.CreateFrom(syntaxNode, model);
+            var ret = RDomStructureFactoryHelper.CreateFrom(syntaxNode, parent,model);
             return new IStemMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)

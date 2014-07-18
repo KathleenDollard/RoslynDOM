@@ -13,9 +13,9 @@ namespace RoslynDom
     {
         private IList<IStemMember> _members = new List<IStemMember>();
 
-        internal RDomBaseStemContainer(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
-        {}
+        internal RDomBaseStemContainer(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
+        { }
 
         internal RDomBaseStemContainer(T oldIDom)
              : base(oldIDom)

@@ -6,8 +6,8 @@ namespace RoslynDom
     public class RDomInvocationStatement : RDomBase<IInvocationStatement, ISymbol>, IInvocationStatement
     {
 
-        public RDomInvocationStatement(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomInvocationStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomInvocationStatement(RDomInvocationStatement oldRDom)

@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="BasesAndBaseHelpers\RDomBaseOfT.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseTTSyntaxTSymbol.cs" />
+    <Compile Include="BasesAndBaseHelpers\RDomBaseLoop.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseStemContainer.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomExpression.cs" />
@@ -68,6 +69,10 @@
     <Compile Include="RegisterCSharpFactories.cs" />
     <Compile Include="RoslynDomSymbolUtilities.cs" />
     <Compile Include="RoslynUtilities.cs" />
+    <Compile Include="StatementImplementations\RDomVariableDeclaration.cs" />
+    <Compile Include="StatementImplementations\RDomForStatement.cs" />
+    <Compile Include="StatementImplementations\RDomDoStatement.cs" />
+    <Compile Include="StatementImplementations\RDomWhileStatement.cs" />
     <Compile Include="StatementImplementations\RDomInvocationStatement.cs" />
     <Compile Include="StatementImplementations\RDomAssignmentStatement.cs" />
     <Compile Include="StatementImplementations\RDomReturnStatement.cs" />

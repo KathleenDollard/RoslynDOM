@@ -48,11 +48,11 @@ namespace RoslynDom
             throw new InvalidOperationException();
         }
 
-        public static IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode)
+        public static IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode, IDom parent)
         {
             if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
             if (publicAnnotationFactory == null) { publicAnnotationFactory = factoryProvider.GetPublicAnnotationFactory(); }
-            return publicAnnotationFactory.CreateFrom(syntaxNode, null);
+            return publicAnnotationFactory.CreateFrom(syntaxNode, parent, null);
         }
 
         public static IEnumerable<IAttribute> GetAttributesFrom(SyntaxNode parentNode, IDom newParent, SemanticModel model)
@@ -62,11 +62,11 @@ namespace RoslynDom
             return attributeFactory.ExtractAttributes(parentNode, newParent, model);
         }
 
-        public static IEnumerable<IAttribute> CreateAttributeFrom(SyntaxNode attributeNode, SemanticModel model)
+        public static IEnumerable<IAttribute> CreateAttributeFrom(SyntaxNode attributeNode, IDom parent, SemanticModel model)
         {
             if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
             if (attributeFactory == null) { attributeFactory = factoryProvider.GetAttributeFactory(); }
-            return attributeFactory.CreateFrom(attributeNode,  model);
+            return attributeFactory.CreateFrom(attributeNode, parent, model);
         }
 
         public static IEnumerable<SyntaxNode> BuildAttributeSyntax(AttributeList attributes)
@@ -144,14 +144,14 @@ namespace RoslynDom
             return found.Item1;
         }
 
-        public IEnumerable<T> MakeItem(SyntaxNode rawStatement, SemanticModel model)
+        public IEnumerable<T> MakeItem(SyntaxNode rawStatement, IDom parent, SemanticModel model)
         {
             var factories = Factories.OrderByDescending(x => x.Priority).ToArray();
             foreach (var factory in factories)
             {
                 if (factory.CanCreateFrom(rawStatement))
                 {
-                    return factory.CreateFrom(rawStatement, model);
+                    return factory.CreateFrom(rawStatement, parent, model);
                 }
             }
             return null;

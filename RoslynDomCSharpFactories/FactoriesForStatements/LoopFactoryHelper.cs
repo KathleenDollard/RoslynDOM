@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RoslynDom;
+using RoslynDom.Common;
+
+namespace RoslynDom
+{
+    internal class LoopFactoryHelper
+    {
+        public static IEnumerable<IStatement> CreateFrom<T>(
+            T newItem, ExpressionSyntax condition, StatementSyntax statement, IDom parent, SemanticModel model)
+            where T : ILoop<T>
+        {
+
+            newItem.Condition = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(condition, newItem, model).FirstOrDefault();
+            if (condition == null) { throw new InvalidOperationException(); }
+            bool hasBlock = false;
+            var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statement, newItem, ref hasBlock, model);
+            newItem.HasBlock = hasBlock;
+            foreach (var stmnt in statements)
+            { newItem.AddOrMoveStatement(stmnt); }
+
+            return new IStatement[] { newItem };
+        }
+
+        public static IEnumerable<SyntaxNode> BuildSyntax<T>
+            (T item, Func<ExpressionSyntax, StatementSyntax, SyntaxNode> makeSyntaxDelegate)
+            where T : ILoop<T>
+        {
+
+            SyntaxNode node;
+            if (item.Condition == null)
+            { node = SyntaxFactory.EmptyStatement(); }// This shold not happen 
+            else
+            {
+                var statement = RoslynCSharpUtilities.BuildStatement(item.Statements, item.HasBlock);
+                var condition = RDomCSharpFactory.Factory.BuildSyntax(item.Condition);
+                node = makeSyntaxDelegate((ExpressionSyntax)condition, statement);
+            }
+            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+        }
+    }
+}

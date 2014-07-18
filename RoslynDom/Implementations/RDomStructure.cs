@@ -8,8 +8,9 @@ namespace RoslynDom
     public class RDomStructure : RDomBaseType<IStructure>, IStructure
     {
         private AttributeList _attributes = new AttributeList();
-        public RDomStructure(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model, MemberKind.Structure, StemMemberKind.Structure)
+
+        public RDomStructure(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem,parent,  model, MemberKind.Structure, StemMemberKind.Structure)
         { }
 
         internal RDomStructure(RDomStructure oldRDom)

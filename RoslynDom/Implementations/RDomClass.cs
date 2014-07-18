@@ -13,8 +13,8 @@ namespace RoslynDom
     /// </remarks>
     public class RDomClass : RDomBaseType<IClass>, IClass
     {
-        public RDomClass(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model, MemberKind.Class, StemMemberKind.Class)
+        public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem,parent, model, MemberKind.Class, StemMemberKind.Class)
         { }
 
         internal RDomClass(RDomClass oldRDom)

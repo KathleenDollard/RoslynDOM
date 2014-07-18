@@ -6,8 +6,8 @@ namespace RoslynDom
 {
     public class RDomInterface : RDomBaseType<IInterface>, IInterface
     {
-        public RDomInterface(SyntaxNode rawItem, SemanticModel model)
-        : base(rawItem, model, MemberKind.Interface, StemMemberKind.Interface)
+        public RDomInterface(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        : base(rawItem, parent,model, MemberKind.Interface, StemMemberKind.Interface)
         { }
 
         internal RDomInterface(RDomInterface oldRDom)

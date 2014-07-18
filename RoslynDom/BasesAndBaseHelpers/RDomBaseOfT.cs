@@ -16,8 +16,8 @@ namespace RoslynDom
           : base(publicAnnotations)
         { }
 
-         protected RDomBase(T oldRDom)
-          : base(oldRDom)
+        protected RDomBase(T oldRDom)
+         : base(oldRDom)
         { }
 
         public virtual T Copy()

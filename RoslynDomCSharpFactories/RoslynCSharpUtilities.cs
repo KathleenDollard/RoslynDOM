@@ -12,34 +12,34 @@ namespace RoslynDom
 {
     public static class RoslynCSharpUtilities
     {
- 
-            public static string NameFrom(this SyntaxNode node)
-            {
-                var qualifiedNameNode = node.ChildNodes()
-                                          .OfType<QualifiedNameSyntax>()
-                                          .SingleOrDefault();
-                var identifierNameNodes = node.ChildNodes()
-                                   .OfType<IdentifierNameSyntax>();
-                var name = "";
-                if (qualifiedNameNode != null)
-                {
-                    name = name + qualifiedNameNode.ToString();
-                }
-                foreach (var identifierNameNode in identifierNameNodes)
-                {
-                    var identifierName = identifierNameNode.ToString();
-                    if (!(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(identifierName)))
-                    { name += "."; }
-                    name = name += identifierName;
-                }
-                if (!string.IsNullOrWhiteSpace(name)) return name;
-                var nameToken = node.ChildTokens()
-                                          .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
-                                          .SingleOrDefault();
-                return nameToken.ValueText;
-            }
 
-             public static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
+        public static string NameFrom(this SyntaxNode node)
+        {
+            var qualifiedNameNode = node.ChildNodes()
+                                      .OfType<QualifiedNameSyntax>()
+                                      .SingleOrDefault();
+            var identifierNameNodes = node.ChildNodes()
+                               .OfType<IdentifierNameSyntax>();
+            var name = "";
+            if (qualifiedNameNode != null)
+            {
+                name = name + qualifiedNameNode.ToString();
+            }
+            foreach (var identifierNameNode in identifierNameNodes)
+            {
+                var identifierName = identifierNameNode.ToString();
+                if (!(string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(identifierName)))
+                { name += "."; }
+                name = name += identifierName;
+            }
+            if (!string.IsNullOrWhiteSpace(name)) return name;
+            var nameToken = node.ChildTokens()
+                                      .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+                                      .SingleOrDefault();
+            return nameToken.ValueText;
+        }
+
+        public static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
         {
             var statementSyntaxList = statements
                             .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
@@ -118,6 +118,40 @@ namespace RoslynDom
             return ret;
         }
 
+        public static IEnumerable<IStatement> GetStatementsFromSyntax(StatementSyntax statementSyntax, IDom parent, ref bool hasBlock, SemanticModel model)
+        {
+            var statement = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax, parent, model).First();
+            var list = new List<IStatement>();
+            var blockStatement = statement as IBlockStatement;
+            if (blockStatement != null)
+            {
+                hasBlock = true;
+                foreach (var state in blockStatement.Statements)
+                {
+                    // Don't need to copy because abandoning block
+                    list.Add(state);
+                }
+            }
+            else
+            { list.Add(statement); }
+            return list;
+        }
+
+        public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, bool hasBlock)
+        {
+            StatementSyntax statement;
+            var statementSyntaxList = statements
+                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                         .ToList();
+            if (hasBlock || statements.Count() > 1)
+            { statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); }
+            else if (statements.Count() == 1)
+            { statement = (StatementSyntax)statementSyntaxList.First(); }
+            else
+            { statement = SyntaxFactory.EmptyStatement(); }
+            return statement;
+        }
+
         private class SimplifyNamesAnnotionRewriter : CSharpSyntaxRewriter
         {
             private SyntaxNode AnnotateNodeWithSimplifyAnnotation(SyntaxNode node)
@@ -155,6 +189,6 @@ namespace RoslynDom
                 return AnnotateNodeWithSimplifyAnnotation(node);
             }
         }
-        
+
     }
 }

@@ -18,7 +18,7 @@ namespace RoslynDom
             return new SyntaxNode[] { node.NormalizeWhitespace() };
      }
 
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             // Not currently used
             throw new NotImplementedException();

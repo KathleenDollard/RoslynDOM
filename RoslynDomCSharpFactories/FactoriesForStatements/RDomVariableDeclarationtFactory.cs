@@ -8,31 +8,30 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomDeclarationStatementFactory
-        : RDomStatementFactory<RDomDeclarationStatement, VariableDeclaratorSyntax>
+    public class RDomVariableDeclarationFactory
+        : RDomMiscFactory<RDomVariableDeclaration, VariableDeclaratorSyntax>
     {
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
-            return syntaxNode is LocalDeclarationStatementSyntax;
+            return syntaxNode is VariableDeclarationSyntax;
         }
 
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var list = new List<IStatement>();
+            var list = new List<IMisc>();
 
-            var rawDeclaration = syntaxNode as LocalDeclarationStatementSyntax;
-            var rawVariableDeclaration = rawDeclaration.Declaration;
-            var declarators = rawDeclaration.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
+            var rawVariableDeclaration = syntaxNode as VariableDeclarationSyntax;
+            var declarators = rawVariableDeclaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                var newItem = new RDomDeclarationStatement( decl, parent, model);
+                var newItem = new RDomVariableDeclaration( decl, parent, model);
                 list.Add(newItem);
                 InitializeNewItem(newItem, decl, model);
             }
             return list;
         }
    
-        public void InitializeNewItem(RDomDeclarationStatement newItem, VariableDeclaratorSyntax syntax, SemanticModel model)
+        public void InitializeNewItem(RDomVariableDeclaration newItem, VariableDeclaratorSyntax syntax, SemanticModel model)
         {
             newItem.Name = newItem.TypedSymbol.Name;
             var declaration = syntax.Parent as VariableDeclarationSyntax;
@@ -49,9 +48,9 @@ namespace RoslynDom
 
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
         {
-            var itemAsT = item as IDeclarationStatement;
+            var itemAsT = item as IVariableDeclaration;
             var nameSyntax = SyntaxFactory.Identifier(item.Name);
             TypeSyntax typeSyntax;
             // TODO: Type alias are not currently being used. Could be brute forced here, but I'd rather run a simplifier for real world scenarios

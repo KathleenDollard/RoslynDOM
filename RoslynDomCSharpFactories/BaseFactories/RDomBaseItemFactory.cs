@@ -31,10 +31,10 @@ namespace RoslynDom.CSharpFactories
             return (syntaxNode is TSyntax);
         }
 
-        public virtual IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public virtual IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as TSyntax;
-            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode);
+            var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode, parent);
             var newItem = Activator.CreateInstance(
                         typeof(T),
                         BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,

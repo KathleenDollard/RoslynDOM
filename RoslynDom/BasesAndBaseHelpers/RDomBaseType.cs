@@ -17,10 +17,11 @@ namespace RoslynDom
 
         internal RDomBaseType(
               SyntaxNode rawItem,
+              IDom parent,
               SemanticModel model, 
               MemberKind memberKind,
               StemMemberKind stemMemberKind)
-           : base(rawItem, model)
+           : base(rawItem,parent, model)
         {
             _memberKind = memberKind;
             _stemMemberKind = stemMemberKind;

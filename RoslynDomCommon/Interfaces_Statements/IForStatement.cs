@@ -1,14 +1,11 @@
 ﻿using RoslynDom.Common;
 
-namespace RoslynDomCommon.InterfacesForStatements
+namespace RoslynDom.Common
 {
-    public interface IForStatement : ILoop
+    public interface IForStatement : ILoop<IForStatement>
     {
-        string LoopVarName { get; set; }
-        IReferencedType LoopVarType { get; set; }
-        bool ImplicitlyTyped { get; set; }
-        int StartValue { get; set; }
-        int EndValue { get; set; }
-        int IncrementBy { get; set; }
+        IVariableDeclaration Variable { get; set; }
+ 
+        IExpression  Incrementor { get; set; }
     }
 }

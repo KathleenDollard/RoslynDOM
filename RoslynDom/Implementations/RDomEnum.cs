@@ -9,8 +9,8 @@ namespace RoslynDom
     {
         private AttributeList _attributes = new AttributeList();
 
-        public RDomEnum(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomEnum(RDomEnum oldRDom)

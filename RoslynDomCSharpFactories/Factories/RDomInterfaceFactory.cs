@@ -10,10 +10,10 @@ namespace RoslynDom
 {
     internal static class RDomInterfaceFactoryHelper
     {
-        public static RDomInterface CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public static RDomInterface CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as InterfaceDeclarationSyntax;
-            var newItem = new RDomInterface(syntaxNode, model);
+            var newItem = new RDomInterface(syntaxNode, parent,model);
             newItem.Name = newItem.TypedSymbol.Name;
 
             var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
@@ -25,7 +25,7 @@ namespace RoslynDom
             foreach (var typeParameter in newTypeParameters)
             { newItem.AddOrMoveTypeParameter(typeParameter); }
 
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, newItem, model));
             foreach (var member in members)
             { newItem.AddOrMoveMember(member); }
 
@@ -54,9 +54,9 @@ namespace RoslynDom
     public class RDomInterfaceTypeMemberFactory
        : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
     {
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, model);
+            var ret = RDomInterfaceFactoryHelper.CreateFrom(syntaxNode,parent, model);
             return new ITypeMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
@@ -69,9 +69,9 @@ namespace RoslynDom
     public class RDomInterfaceStemMemberFactory
            : RDomStemMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
     {
-        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, model);
+            var ret = RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent,model);
             return new IStemMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)

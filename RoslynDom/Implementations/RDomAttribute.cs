@@ -7,21 +7,19 @@ namespace RoslynDom
 {
     public class RDomAttribute : RDomBase<IAttribute, ISymbol>, IAttribute
     {
-        private List<IAttributeValue> _attributeValues = new List < IAttributeValue > ();
+        private List<IAttributeValue> _attributeValues = new List<IAttributeValue>();
 
-        public RDomAttribute(
-            SyntaxNode rawItem,
-            SemanticModel model)
-            : base(rawItem, model)
-        {}
+        public RDomAttribute(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
+        { }
 
         internal RDomAttribute(
             RDomAttribute oldRDom)
             : base(oldRDom)
         {
             var newAttributeValues = RoslynDomUtilities.CopyMembers(oldRDom._attributeValues);
-            foreach(var value in newAttributeValues )
-            { AddOrMoveAttributeValue (value); }
+            foreach (var value in newAttributeValues)
+            { AddOrMoveAttributeValue(value); }
         }
 
         //protected override void Initialize()

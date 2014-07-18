@@ -11,10 +11,10 @@ namespace RoslynDom
     public class RDomAssignmentStatementFactory
          : RDomStatementFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
     {
-        public override IEnumerable<IStatement > CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStatement > CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ExpressionStatementSyntax;
-            var newItem = new RDomAssignmentStatement(syntaxNode, model);
+            var newItem = new RDomAssignmentStatement(syntaxNode, parent,model);
 
             var binary = syntax.Expression as BinaryExpressionSyntax;
             if (binary == null) throw new InvalidOperationException();
@@ -27,7 +27,7 @@ namespace RoslynDom
             var expression = right as ExpressionSyntax;
             if (expression == null) throw new InvalidOperationException();
             newItem.Name = identifier.ToString();
-            newItem.Expression = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression, model).FirstOrDefault();
+            newItem.Expression = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression, newItem, model).FirstOrDefault();
 
             return new IStatement[] { newItem };
         }

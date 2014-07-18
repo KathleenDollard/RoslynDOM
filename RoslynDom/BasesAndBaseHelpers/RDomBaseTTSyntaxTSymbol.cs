@@ -16,11 +16,12 @@ namespace RoslynDom
         //private AttributeList _attributes = new AttributeList();
         private string _containingTypeName;
 
-        protected RDomBase(SyntaxNode rawItem, SemanticModel model)
-             : base(RDomFactoryHelper.GetPublicAnnotations(rawItem))
+        protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
+             : base(RDomFactoryHelper.GetPublicAnnotations(rawItem, parent))
         {
             _rawSyntax = rawItem;
             _originalRawSyntax = rawItem;
+            Parent = parent;
             if (model != null)
             {
                 _symbol = (TSymbol)model.GetDeclaredSymbol(rawItem);

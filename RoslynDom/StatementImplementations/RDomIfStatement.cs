@@ -10,8 +10,8 @@ namespace RoslynDom
         private IList<IStatement> _statements = new List<IStatement>();
         private IList<IStatement> _elseStatements = new List<IStatement>();
 
-        public RDomIfStatement(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomIfStatement(RDomIfStatement oldRDom)

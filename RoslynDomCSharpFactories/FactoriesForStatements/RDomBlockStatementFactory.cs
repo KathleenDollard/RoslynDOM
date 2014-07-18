@@ -10,14 +10,14 @@ namespace RoslynDom
     public class RDomBlockStatementFactory
              : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
     {
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as BlockSyntax;
-            var newItem = new RDomBlockStatement(syntaxNode, model);
+            var newItem = new RDomBlockStatement(syntaxNode, parent, model);
 
             foreach (var statementSyntax in syntax.Statements)
             {
-                var statements = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax, model);
+                var statements = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax, newItem, model);
                 foreach (var statement in statements)
                 { newItem.AddOrMoveStatement(statement); }
             }

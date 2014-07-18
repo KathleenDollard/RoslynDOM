@@ -59,9 +59,14 @@
   <ItemGroup>
     <Compile Include="BaseFactories\RDomExpression.cs" />
     <Compile Include="BuildSyntaxExtensions.cs" />
+    <Compile Include="FactoriesForStatements\LoopFactoryHelper.cs" />
     <Compile Include="FactoriesForStatements\RDomAssignmentStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomBlockStatementFactory.cs" />
+    <Compile Include="FactoriesForStatements\RDomVariableDeclarationtFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomDeclarationStatementFactory.cs" />
+    <Compile Include="FactoriesForStatements\RDomForStatementFactory.cs" />
+    <Compile Include="FactoriesForStatements\RDomDoStatementFactory.cs" />
+    <Compile Include="FactoriesForStatements\RDomWhileStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomIfStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomInvocationStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomReturnStatementFactory.cs" />

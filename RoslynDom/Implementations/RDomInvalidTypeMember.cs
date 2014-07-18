@@ -16,8 +16,8 @@ namespace RoslynDom
     {
         private AttributeList  _attributes = new AttributeList();
 
-        public RDomInvalidTypeMember(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomInvalidTypeMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomInvalidTypeMember(RDomInvalidTypeMember oldRDom)

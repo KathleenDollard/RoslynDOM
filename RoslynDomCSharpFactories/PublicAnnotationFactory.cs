@@ -21,7 +21,7 @@ namespace RoslynDom
             return true;
         }
 
-        public IEnumerable<PublicAnnotation> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public IEnumerable<PublicAnnotation> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             IEnumerable<PublicAnnotation> list;
             var syntaxRoot = syntaxNode as CompilationUnitSyntax;
@@ -82,7 +82,7 @@ namespace RoslynDom
                 {
                     var attribSyntax = GetAnnotationStringAsAttribute(str);
                     // Reuse the evaluation work done in attribute to follow same rules
-                    var tempAttribute = RDomFactoryHelper.CreateAttributeFrom(attribSyntax, null).FirstOrDefault();
+                    var tempAttribute = RDomFactoryHelper.CreateAttributeFrom(attribSyntax,null, null).FirstOrDefault();
                     var newPublicAnnotation = new PublicAnnotation(tempAttribute.Name.ToString());
                     foreach (var attributeValue in tempAttribute.AttributeValues )
                     {

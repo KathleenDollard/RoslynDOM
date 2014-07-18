@@ -10,14 +10,14 @@ namespace RoslynDom
     public class RDomRootFactory
           : RDomRootContainerFactory<RDomRoot, CompilationUnitSyntax>
     {
-        public override IEnumerable<IRoot> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IRoot> CreateFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
         {
             var syntax = syntaxNode as CompilationUnitSyntax;
-            var newItem = new RDomRoot(syntaxNode, model);
+            var newItem = new RDomRoot(syntaxNode, parent,model);
 
             newItem.Name = "Root";
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember >().MakeItem(x, model));
-            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember >().MakeItem(x,newItem,  model));
+            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
             foreach (var member in members)
             { newItem.AddOrMoveStemMember(member); }
             foreach (var member in usings)

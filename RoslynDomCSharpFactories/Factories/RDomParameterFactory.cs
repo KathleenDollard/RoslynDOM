@@ -10,10 +10,10 @@ namespace RoslynDom
     public class RDomParameterMiscFactory
             : RDomMiscFactory<RDomParameter, ParameterSyntax>
     {
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ParameterSyntax;
-            var newItem = new RDomParameter(syntaxNode, model);
+            var newItem = new RDomParameter(syntaxNode, parent,model);
             newItem.Name = newItem.TypedSymbol.Name;
 
             var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);

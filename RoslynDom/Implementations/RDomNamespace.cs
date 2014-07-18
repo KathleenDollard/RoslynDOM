@@ -5,8 +5,8 @@ namespace RoslynDom
 {
     public class RDomNamespace : RDomBaseStemContainer<INamespace, INamespaceSymbol>, INamespace
     {
-        public RDomNamespace(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomNamespace(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomNamespace(RDomNamespace oldRDom)

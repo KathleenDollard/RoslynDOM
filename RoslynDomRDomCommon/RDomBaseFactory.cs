@@ -32,7 +32,7 @@ namespace RoslynDom
             return (syntaxNode is TSyntax);
         }
 
-        public abstract IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, SemanticModel model);
+        public abstract IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
           
         //public virtual IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
         //{
@@ -47,7 +47,7 @@ namespace RoslynDom
         //    return new TKind[] { itemAsT };
         //}
 
-        public virtual void InitializeItem(T newItem, TSyntax syntax, SemanticModel model)
+        public virtual void InitializeItem(T newItem, TSyntax syntax, IDom parent, SemanticModel model)
         { return; }
     }
 
@@ -91,16 +91,16 @@ namespace RoslynDom
         public override IEnumerable<SyntaxNode> BuildSyntax(IExpression item)
         {            throw new NotImplementedException();        }
 
-        public override IEnumerable<IExpression> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IExpression> CreateFrom(SyntaxNode syntaxNode,IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as TSyntax;
             //var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode);
             var newItem = Activator.CreateInstance(
                         typeof(T),
                         BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,
-                        new object[] { syntax , model}, null);
+                        new object[] { syntax , parent, model}, null);
             var itemAsT = newItem as T;
-            InitializeItem(itemAsT, syntax, model);
+            InitializeItem(itemAsT, syntax, parent,model);
             return new IExpression[] { itemAsT };
         }
     }

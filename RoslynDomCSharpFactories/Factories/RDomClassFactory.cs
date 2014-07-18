@@ -10,10 +10,10 @@ namespace RoslynDom
 {
     public static class RDomClassFactoryHelper
     {
-        internal static RDomClass CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        internal static RDomClass CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ClassDeclarationSyntax;
-            var newItem = new RDomClass(syntaxNode, model);
+            var newItem = new RDomClass(syntaxNode,parent, model);
                         newItem.Name = newItem.TypedSymbol.Name;
 
             var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
@@ -23,7 +23,7 @@ namespace RoslynDom
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
             foreach (var typeParameter in newTypeParameters)
             { newItem.AddOrMoveTypeParameter(typeParameter); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, newItem, model));
             foreach (var member in members)
             { newItem.AddOrMoveMember(member); }
             newItem.BaseType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.BaseType);
@@ -56,9 +56,9 @@ namespace RoslynDom
     public class RDomClassTypeMemberFactory
            : RDomTypeMemberFactory<RDomClass, ClassDeclarationSyntax>
     {
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomClassFactoryHelper.CreateFrom(syntaxNode, model);
+            var ret = RDomClassFactoryHelper.CreateFrom(syntaxNode,parent, model);
             return new ITypeMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
@@ -70,9 +70,9 @@ namespace RoslynDom
     public class RDomClassStemMemberFactory
            : RDomStemMemberFactory<RDomClass, ClassDeclarationSyntax>
     {
-        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomClassFactoryHelper.CreateFrom(syntaxNode, model);
+            var ret = RDomClassFactoryHelper.CreateFrom(syntaxNode,parent, model);
             return new IStemMember[] { ret };
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)

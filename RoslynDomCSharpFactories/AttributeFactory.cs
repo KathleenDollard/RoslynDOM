@@ -21,22 +21,22 @@ namespace RoslynDom
             return (syntaxNode is AttributeListSyntax || syntaxNode is AttributeSyntax);
         }
 
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            return InternalCreateFrom(syntaxNode, model);
+            return InternalCreateFrom(syntaxNode,parent, model);
         }
 
-        IEnumerable<IAttribute> IRDomFactory<IAttribute>.CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        IEnumerable<IAttribute> IRDomFactory<IAttribute>.CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            return InternalCreateFrom(syntaxNode, model);
+            return InternalCreateFrom(syntaxNode, parent, model);
          }
 
-        private IEnumerable<IAttribute> InternalCreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        private IEnumerable<IAttribute> InternalCreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntaxAsList = syntaxNode as AttributeListSyntax;
-            if (syntaxAsList != null) { return CreateFromList(syntaxAsList, model); }
+            if (syntaxAsList != null) { return CreateFromList(syntaxAsList, parent, model); }
             var attributeSyntax = syntaxNode as AttributeSyntax;
-            if (attributeSyntax != null) { return new IAttribute[] { CreateFromItem(attributeSyntax, model) }; }
+            if (attributeSyntax != null) { return new IAttribute[] { CreateFromItem(attributeSyntax, parent, model) }; }
             return new List<IAttribute>();
         }
 
@@ -84,7 +84,7 @@ namespace RoslynDom
                 // TODO: In those cases where we do have a symbol reference to the attribute, try to use it
                 var appRef = attributeData.ApplicationSyntaxReference;
                 var attribSyntax = parentNode.SyntaxTree.GetRoot().FindNode(appRef.Span) as AttributeSyntax;
-                var newItem = CreateFromItem(attribSyntax, model);
+                var newItem = CreateFromItem(attribSyntax, newParent, model);
                 list.Add(newItem);
             }
             return list;
@@ -129,26 +129,26 @@ namespace RoslynDom
         #endregion
 
         #region Private methods to support adding attributes
-        private IAttribute CreateFromItem(AttributeSyntax attributeSyntax, SemanticModel model)
+        private IAttribute CreateFromItem(AttributeSyntax attributeSyntax, IDom parent, SemanticModel model)
         {
-            var newItem = new RDomAttribute(attributeSyntax, model);
+            var newItem = new RDomAttribute(attributeSyntax, parent, model);
             newItem.Name = attributeSyntax.Name.ToString();
-            var values = MakeAttributeValues(attributeSyntax, model);
+            var values = MakeAttributeValues(attributeSyntax, newItem, model);
             foreach (var value in values)
             { newItem.AddOrMoveAttributeValue(value); }
             return newItem;
         }
 
-        private IEnumerable<IAttribute> CreateFromList(AttributeListSyntax syntaxAsList, SemanticModel model)
+        private IEnumerable<IAttribute> CreateFromList(AttributeListSyntax syntaxAsList, IDom parent, SemanticModel model)
         {
             var list = new List<IAttribute>();
             foreach (var attSyntax in syntaxAsList.Attributes)
-            { list.Add(CreateFromItem(attSyntax, model)); }
+            { list.Add(CreateFromItem(attSyntax,parent,  model)); }
             return list;
         }
 
         private IEnumerable<IAttributeValue> MakeAttributeValues(
-             AttributeSyntax attrib, SemanticModel model)
+             AttributeSyntax attrib, IDom parent, SemanticModel model)
         {
             var ret = new List<IAttributeValue>();
             if (attrib.ArgumentList != null)
@@ -156,7 +156,7 @@ namespace RoslynDom
                 var arguments = attrib.ArgumentList.Arguments;
                 foreach (AttributeArgumentSyntax arg in arguments)
                 {
-                    var newAttributeValue = new RDomAttributeValue(arg, model);
+                    var newAttributeValue = new RDomAttributeValue(arg, parent, model);
                     InitializeAttributeValue(newAttributeValue, arg, model);
                     ret.Add(newAttributeValue);
                 }

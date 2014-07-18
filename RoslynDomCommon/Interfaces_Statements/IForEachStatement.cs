@@ -1,8 +1,8 @@
 ﻿using RoslynDom.Common;
 
-namespace RoslynDomCommon.InterfacesForStatements
+namespace RoslynDom.Common
 {
-    public interface IForEachStatement : ILoop
+    public interface IForEachStatement : ILoop<IForEachStatement>
     {
         string LoopVarName { get; set; }
         IExpression CollectionExpression { get; set; }

@@ -3,14 +3,14 @@
     public enum StatementKind
     {
         Unknown = 0,
-        Block,
-        Do,
-        ForEach,
-        For,
-        If,
-        Empty,
-        Return,
-        Declaration,
+        Block,      // done
+        Do,         
+        ForEach,    
+        For,                 // not suporting multiple initializers or incrementors right now 
+        If,         // done
+        Empty,      
+        Return,     // done
+        Declaration,// done
         Try,
 
         //While,   variation of Do
@@ -23,15 +23,16 @@
         Throw,    // probably have to support
 
         //Expression statements, // break this appart into two kinds
-        Invocation,
-        Assignment,
+        Invocation,  // done
+        Assignment,  // done
 
         Special // (platform or lanuguage specific)
-        //Checked (block)
-        //Lock,
         //Yield, Split into YieldBreak and YieldReturn (expression)
 
-        // Planning to avoid unless someone has a scenario
+        //Checked ( characteristic of block? )
+        //Lock,   ( characteristic of block? )
+
+        // Planning to avoid unless someone has a scenario. Fixed and unsafe could be characteristics, perhaps
         //Unsafe,
         //Fixed,
         //Goto,

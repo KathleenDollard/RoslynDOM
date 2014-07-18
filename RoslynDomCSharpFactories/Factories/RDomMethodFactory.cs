@@ -10,10 +10,10 @@ namespace RoslynDom
     public class RDomMethodTypeMemberFactory
           : RDomTypeMemberFactory<RDomMethod, MethodDeclarationSyntax>
     {
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as MethodDeclarationSyntax;
-            var newItem = new RDomMethod(syntaxNode, model);
+            var newItem = new RDomMethod(syntaxNode,parent, model);
             newItem.Name = newItem.TypedSymbol.Name;
 
             var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
@@ -31,12 +31,12 @@ namespace RoslynDom
             newItem.IsSealed = newItem.Symbol.IsSealed;
             newItem.IsStatic = newItem.Symbol.IsStatic;
             newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
-            var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => RDomFactoryHelper.GetHelper<IMisc>().MakeItem(x, model));
+            var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => RDomFactoryHelper.GetHelper<IMisc>().MakeItem(x, newItem, model));
             foreach (var parameter in parameters)
             { newItem.AddParameter((IParameter)parameter); }
             if (syntax.Body != null)
             {
-                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x, model));
+                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x, newItem, model));
                 foreach (var statement in statements)
                 { newItem.AddStatement(statement); }
             }

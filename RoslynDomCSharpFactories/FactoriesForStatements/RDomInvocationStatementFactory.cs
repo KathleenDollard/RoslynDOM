@@ -11,13 +11,13 @@ namespace RoslynDom
     public class RDomInvocationStatementFactory
          : RDomStatementFactory<RDomInvocationStatement, ExpressionStatementSyntax>
     {
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ExpressionStatementSyntax;
-            var newItem = new RDomInvocationStatement(syntaxNode, model);
+            var newItem = new RDomInvocationStatement(syntaxNode, parent, model);
 
             var expression = syntax.Expression;
-            newItem.Invocation = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression, model).FirstOrDefault();
+            newItem.Invocation = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression, newItem, model).FirstOrDefault();
 
             return new IStatement[] { newItem };
         }

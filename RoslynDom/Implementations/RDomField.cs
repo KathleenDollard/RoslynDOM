@@ -20,17 +20,15 @@ namespace RoslynDom
     {
         private AttributeList _attributes = new AttributeList();
 
-        public RDomField(
-                SyntaxNode rawItem,
-                SemanticModel model)
-                : base(rawItem, model)
+        public RDomField(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         {
         }
 
         internal RDomField(RDomField oldRDom)
             : base(oldRDom)
         {
-                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
+            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
             IsStatic = oldRDom.IsStatic;

@@ -46,7 +46,7 @@ namespace RoslynDom
                                            references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
             var model = compilation.GetSemanticModel(tree);
             var rootFactoryHelper = RDomFactoryHelper.GetHelper<IRoot>();
-            var root = rootFactoryHelper.MakeItem(tree.GetCompilationUnitRoot(), model).FirstOrDefault();
+            var root = rootFactoryHelper.MakeItem(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();
             return root;
         }
 
@@ -60,7 +60,7 @@ namespace RoslynDom
             if (TryBuildSyntax<IStatement>(item, out syntaxNodes)) { return syntaxNodes; }
             if (TryBuildSyntax<IExpression>(item, out syntaxNodes)) { return syntaxNodes; }
             if (TryBuildSyntax<IMisc>(item, out syntaxNodes)) { return syntaxNodes; }
-            return null;
+            return new List<SyntaxNode>();
         }
 
         public  SyntaxNode BuildSyntax(IDom item)

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IDoStatement : ILoop<IDoStatement>
+    public enum AccessorType
     {
-
+        Unknown = 0,
+        Get,
+        Set
     }
 }

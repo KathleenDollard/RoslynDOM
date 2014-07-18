@@ -7,8 +7,9 @@ namespace RoslynDom
 {
     public class RDomRoot : RDomBaseStemContainer<IRoot, ISymbol>, IRoot
     {
-        public RDomRoot(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        // This takes a parent because in the future there will be a rootGroup concept for multiple files
+        public RDomRoot(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomRoot(RDomRoot oldRDom)

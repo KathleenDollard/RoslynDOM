@@ -6,8 +6,8 @@ namespace RoslynDom
     public class RDomAssignmentStatement : RDomBase<IAssignmentStatement, ISymbol>, IAssignmentStatement
     {
 
-        public RDomAssignmentStatement(SyntaxNode rawItem, SemanticModel model)
-           : base(rawItem, model)
+        public RDomAssignmentStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+           : base(rawItem, parent, model)
         { }
 
         internal RDomAssignmentStatement(RDomAssignmentStatement oldRDom)

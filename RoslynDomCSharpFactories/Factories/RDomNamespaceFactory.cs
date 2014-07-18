@@ -12,17 +12,17 @@ namespace RoslynDom
     public class RDomNamespaceStemMemberFactory
            : RDomStemMemberFactory<RDomNamespace, NamespaceDeclarationSyntax>
     {
-        public override IEnumerable<IStemMember > CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<IStemMember > CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as NamespaceDeclarationSyntax;
-            var newItem = new RDomNamespace(syntaxNode, model);
+            var newItem = new RDomNamespace(syntaxNode, parent,model);
 
             // Qualified name unbundles namespaces, and if it's defined together, we want it together here. 
             // Thus, this replaces hte base Initialize name with the correct one
             newItem.Name = newItem.TypedSyntax.NameFrom();
             if (newItem.Name.StartsWith("@")) { newItem.Name = newItem.Name.Substring(1); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, model));
-            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
+            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
             foreach (var member in members)
             { newItem.AddOrMoveStemMember(member); }
             foreach (var member in usings)

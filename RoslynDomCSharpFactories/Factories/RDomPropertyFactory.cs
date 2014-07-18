@@ -11,10 +11,10 @@ namespace RoslynDom
     public class RDomPropertyTypeMemberFactory
           : RDomTypeMemberFactory<RDomProperty, PropertyDeclarationSyntax>
     {
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
+        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as PropertyDeclarationSyntax;
-            var newItem = new RDomProperty(syntaxNode, model);
+            var newItem = new RDomProperty(syntaxNode, parent, model);
 
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
@@ -40,9 +40,9 @@ namespace RoslynDom
             var accessorFactory = RDomFactoryHelper.GetHelper<IMisc>();
             if (accessorFactory == null) { throw new InvalidOperationException(); }
             if (getAccessorSyntax != null)
-            { newItem.GetAccessor = (IAccessor)accessorFactory.MakeItem(getAccessorSyntax, model).FirstOrDefault(); }
+            { newItem.GetAccessor = (IAccessor)accessorFactory.MakeItem(getAccessorSyntax, newItem, model).FirstOrDefault(); }
             if (setAccessorSyntax != null)
-            { newItem.SetAccessor = (IAccessor)accessorFactory.MakeItem(setAccessorSyntax, model).FirstOrDefault(); }
+            { newItem.SetAccessor = (IAccessor)accessorFactory.MakeItem(setAccessorSyntax, newItem, model).FirstOrDefault(); }
 
             return new ITypeMember[] { newItem };
         }
