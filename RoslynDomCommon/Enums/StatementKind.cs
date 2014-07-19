@@ -5,7 +5,7 @@
         Unknown = 0,
         Block,      // done
         Do,         // done
-        ForEach,    
+        ForEach,    // done
         For,        // done     // not suporting multiple initializers or incrementors right now 
         If,         // done
         Empty,      

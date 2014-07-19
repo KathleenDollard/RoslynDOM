@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ICatch : IStatement
+    public interface ICatch : IStatement, IHasCondition, IStatementContainer
     {
-        IExpression Condition { get; set; }
         string ExceptionName { get; set; }
         string ExceptionType { get; set; } // For .NET, this should be IReferencedType, not sure on other platforms
-        IEnumerable<IStatement> Statements { get; }
     }
 }

@@ -18,51 +18,78 @@ namespace RoslynDom
             _accessorType = accessorType;
         }
 
-    internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
-            : base(oldRDom)
+        internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
+                : base(oldRDom)
         {
-        Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-        var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-        foreach (var statement in newStatements)
-        { AddStatement(statement); }
+            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
+            var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
+            foreach (var statement in newStatements)
+            { AddOrMoveStatement(statement); }
 
-        AccessModifier = oldRDom.AccessModifier;
-    }
-
-    public void RemoveStatement(IStatement statement)
-    { _statements.Remove(statement); }
-
-    public void AddStatement(IStatement statement)
-    { _statements.Add(statement); }
-
-    public AttributeList Attributes
-    { get { return _attributes; } }
-
-    public AccessModifier AccessModifier { get; set; }
-    public IReferencedType ReturnType { get; set; }
-    public bool IsAbstract { get; set; }
-    public bool IsVirtual { get; set; }
-    public bool IsOverride { get; set; }
-    public bool IsSealed { get; set; }
-    public bool IsStatic { get; set; }
-    public bool IsExtensionMethod { get; set; }
-
-    public IEnumerable<IStatement> Statements
-    { get { return _statements; } }
-
-    public MemberKind MemberKind
-    { get { return MemberKind.Method; } }
-
-    public AccessorType AccessorType
-    { get { return _accessorType; } }
-
-    public override object RequestValue(string name)
-    {
-        if (name == "TypeName")
-        {
-            return ReturnType.QualifiedName;
+            AccessModifier = oldRDom.AccessModifier;
         }
-        return base.RequestValue(name);
+
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = base.Children.ToList();
+                list.AddRange(_statements);
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = base.Descendants.ToList();
+                foreach (var statement in _statements)
+                { list.AddRange(statement.DescendantsAndSelf); }
+                return list;
+            }
+        }
+
+        public void RemoveStatement(IStatement statement)
+        { _statements.Remove(statement); }
+
+        public void AddOrMoveStatement(IStatement statement)
+        { _statements.Add(statement); }
+
+        public AttributeList Attributes
+        { get { return _attributes; } }
+
+        public AccessModifier AccessModifier { get; set; }
+        public IReferencedType ReturnType { get; set; }
+        public bool IsAbstract { get; set; }
+        public bool IsVirtual { get; set; }
+        public bool IsOverride { get; set; }
+        public bool IsSealed { get; set; }
+        public bool IsStatic { get; set; }
+        public bool IsExtensionMethod { get; set; }
+
+        public IEnumerable<IStatement> Statements
+        { get { return _statements; } }
+
+        public MemberKind MemberKind
+        { get { return MemberKind.Method; } }
+
+        public AccessorType AccessorType
+        { get { return _accessorType; } }
+
+        public bool HasBlock
+        {
+            get { return true; }
+            set { }
+        }
+
+        public override object RequestValue(string name)
+        {
+            if (name == "TypeName")
+            {
+                return ReturnType.QualifiedName;
+            }
+            return base.RequestValue(name);
+        }
     }
-}
 }

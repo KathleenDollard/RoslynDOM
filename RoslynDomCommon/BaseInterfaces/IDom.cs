@@ -10,6 +10,12 @@ namespace RoslynDom.Common
         string OuterName { get; }
         bool Matches(IDom other);
         IDom Parent { get; }
+        IEnumerable<IDom> Children { get; }
+
+        IEnumerable<IDom> Ancestors { get; }
+        IEnumerable<IDom> AncestorsAndSelf { get; }
+        IEnumerable<IDom> Descendants { get; }
+        IEnumerable<IDom> DescendantsAndSelf { get; }
 
         object RequestValue(string propertyName);
 

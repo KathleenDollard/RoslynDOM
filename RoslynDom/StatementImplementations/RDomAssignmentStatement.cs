@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
@@ -16,6 +17,12 @@ namespace RoslynDom
             VarName = oldRDom.VarName;
             Expression = oldRDom.Expression;
         }
+
+        public override IEnumerable<IDom> Children
+        { get { return new List<IDom>() { Expression }; } }
+
+        public override IEnumerable<IDom> Descendants
+        { get { return new List<IDom>() { Expression }; } }
 
         public string VarName { get; set; }
         public IExpression Expression { get; set; }

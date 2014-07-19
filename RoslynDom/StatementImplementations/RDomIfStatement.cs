@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomIfStatement : RDomBase<IIfStatement, ISymbol>, IIfStatement
+    public class RDomIfStatement : RDomIfBaseStatement<IIfStatement>, IIfStatement
     {
-        private IList<IIfStatement> _elses = new List<IIfStatement>();
-        private IList<IStatement> _statements = new List<IStatement>();
-        private IList<IStatement> _elseStatements = new List<IStatement>();
+        private IList<IElseStatement> _elses = new List<IElseStatement>();
 
         public RDomIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
@@ -17,51 +17,66 @@ namespace RoslynDom
         internal RDomIfStatement(RDomIfStatement oldRDom)
             : base(oldRDom)
         {
-            var newElses = RoslynDomUtilities.CopyMembers(oldRDom.ElseIfs);
+            var newElses = RoslynDomUtilities.CopyMembers(oldRDom.Elses);
             foreach (var elseItem in newElses)
-            { AddOrMoveElseIf(elseItem); }
-            var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
-            foreach (var statement in statements)
-            { AddOrMoveStatement(statement); }
-            statements = RoslynDomUtilities.CopyMembers(oldRDom.ElseStatements);
-            foreach (var statement in statements)
-            { AddOrMoveElseStatement(statement); }
+            { AddOrMoveElse(elseItem); }
             Condition = oldRDom.Condition.Copy();
-            HasBlock = oldRDom.HasBlock;
-            ElseHasBlock = oldRDom.ElseHasBlock;
         }
+
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = new List<IDom>();
+                list.Add(Condition);
+                list.AddRange(base.Children.ToList());
+                 list.AddRange(Elses); 
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = new List<IDom>();
+                list.AddRange(Condition.DescendantsAndSelf);
+                list.AddRange(base.Descendants.ToList());
+                foreach (var elseif in Elses)
+                { list.AddRange(elseif.DescendantsAndSelf); }
+                return list;
+            }
+        }
+
+        public void RemoveElse(IElseStatement elseIf)
+        { _elses.Remove(elseIf); }
+
+        public void AddOrMoveElse(IElseStatement elseIf)
+        { _elses.Add(elseIf); }
+
+        public IEnumerable<IElseStatement> Elses
+        { get { return _elses; } }
 
         public IExpression Condition { get; set; }
 
-        public bool HasBlock { get; set; }
-        public bool ElseHasBlock { get; set; }
+        public IFinalElseStatement Else
+        {
+            get
+            {
+                var candidates = Elses.OfType<IFinalElseStatement>();
+                switch (candidates.Count())
+                {
+                    case 0:
+                        return null;
+                    case 1:
+                        return candidates.First();
+                    default:
+                        throw new InvalidOperationException();
+                }
+            }
+        }
 
-        public void RemoveElseIf(IIfStatement statement)
-        { _elses.Remove(statement); }
-
-        public void AddOrMoveElseIf(IIfStatement statement)
-        { _elses.Add(statement); }
-
-        public IEnumerable<IIfStatement> ElseIfs
-        { get { return _elses; } }
-
-
-        public void RemoveStatement(IStatement statement)
-        { _statements.Remove(statement); }
-
-        public void AddOrMoveStatement(IStatement statement)
-        { _statements.Add(statement); }
-
-        public IEnumerable<IStatement> Statements
-        { get { return _statements; } }
-
-        public void RemoveElseStatement(IStatement statement)
-        { _elseStatements.Remove(statement); }
-
-        public void AddOrMoveElseStatement(IStatement statement)
-        { _elseStatements.Add(statement); }
-
-        public IEnumerable<IStatement> ElseStatements
-        { get { return _elseStatements; } }
+        public IEnumerable<IElseIfStatement> ElseIfs
+        { get { return Elses.OfType<IElseIfStatement>(); } }
     }
 }

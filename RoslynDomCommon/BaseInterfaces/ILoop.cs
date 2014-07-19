@@ -6,15 +6,11 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ILoop<T> :IStatement, IDom<T>
+    public interface ILoop<T> :IStatement, IDom<T>, IHasCondition, IStatementContainer
         where T : IDom<T>
     {
-        void RemoveStatement(IStatement statement);
-        void AddOrMoveStatement(IStatement statement);
-        IEnumerable<IStatement> Statements { get; }
+      
         bool TestAtEnd { get; set; }
-        bool HasBlock { get; set; }
 
-        IExpression Condition { get; set; }
     }
 }

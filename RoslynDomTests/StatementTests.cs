@@ -43,6 +43,7 @@ namespace RoslynDomTests
             Assert.IsInstanceOfType(statements[2], typeof(RDomAssignmentStatement));
             Assert.IsInstanceOfType(statements[3], typeof(RDomInvocationStatement));
             Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
+            Assert.AreEqual(12, root.Descendants.Count());
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        if (true)\r\n        {\r\n        }\r\n\r\n        var x = \", \";\r\n        x = lastName + x + firstName;\r\n        Foo2();\r\n        return true;\r\n    }\r\n}";
             Assert.AreEqual(expectedString, output.ToString());
         }
@@ -88,16 +89,16 @@ namespace RoslynDomTests
             {
                 public void Foo()
                 {
-                    if (z = 1)
+                    if (z == 1)
                     {
                         var x = 42;
                     }
-                    else if (z=2)
+                    else if (z==2)
                     { var x = 43;  y = x + x; }
                     else
                     { Console.WriteLine(); }
-                    if (z = 1) Console.WriteLine();
-                    if (z = 2) Console.Write();
+                    if (z == 1) Console.WriteLine();
+                    if (z == 2) Console.Write();
                 }
             }           
             ";
@@ -111,14 +112,14 @@ namespace RoslynDomTests
             Assert.IsInstanceOfType(statements[1], typeof(RDomIfStatement));
             Assert.IsInstanceOfType(statements[2], typeof(RDomIfStatement));
             var ifStatement = statements[0] as IIfStatement;
-            Assert.AreEqual(1, ifStatement.ElseIfs.Count());
+            Assert.AreEqual(2, ifStatement.Elses.Count());
             Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(ifStatement.ElseIfs.First().Statements.Last(), typeof(RDomAssignmentStatement));
-            Assert.IsInstanceOfType((statements[0] as IIfStatement).ElseStatements.First(), typeof(RDomInvocationStatement));
+            Assert.IsInstanceOfType(ifStatement.Elses.First().Statements.Last(), typeof(RDomAssignmentStatement));
+            Assert.IsInstanceOfType((statements[0] as IIfStatement).Elses.Last().Statements.Last(), typeof(RDomInvocationStatement));
 
             // TODO: Solve simplification problem.
             var actual = RoslynCSharpUtilities.Simplify(output);
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        if (z = 1)\r\n        {\r\n            var x = 42;\r\n        }\r\n        else if (z = 2)\r\n        {\r\n            var x = 43;\r\n            y = x + x;\r\n        }\r\n        else\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n\r\n        if (z = 1)\r\n            Console.WriteLine();\r\n        if (z = 2)\r\n            Console.Write();\r\n    }\r\n}";
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        if (z == 1)\r\n        {\r\n            var x = 42;\r\n        }\r\n        else if (z == 2)\r\n        {\r\n            var x = 43;\r\n            y = x + x;\r\n        }\r\n        else\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n\r\n        if (z == 1)\r\n            Console.WriteLine();\r\n        if (z == 2)\r\n            Console.Write();\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
 
@@ -300,14 +301,7 @@ namespace RoslynDomTests
             Assert.AreEqual(expectedString, actual);
         }
 
-        public void Foo()
-        {
-            foreach (var i in new int[] { 1, 2, 3, 4, 5, 6 })
-            {
-                Console.WriteLine(i);
-            }
-        }
-        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+          [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_foreach_statements_for_method()
         {
 

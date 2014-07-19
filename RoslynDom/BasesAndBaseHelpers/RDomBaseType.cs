@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
@@ -18,10 +19,10 @@ namespace RoslynDom
         internal RDomBaseType(
               SyntaxNode rawItem,
               IDom parent,
-              SemanticModel model, 
+              SemanticModel model,
               MemberKind memberKind,
               StemMemberKind stemMemberKind)
-           : base(rawItem,parent, model)
+           : base(rawItem, parent, model)
         {
             _memberKind = memberKind;
             _stemMemberKind = stemMemberKind;
@@ -34,7 +35,7 @@ namespace RoslynDom
             var oldRDom = oldIDom as RDomBaseType<T>;
             _memberKind = oldRDom._memberKind;
             _stemMemberKind = oldRDom._stemMemberKind;
-            Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
+            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             var newMembers = RoslynDomUtilities.CopyMembers(oldRDom._members);
             foreach (var member in newMembers)
@@ -44,7 +45,28 @@ namespace RoslynDom
             { AddOrMoveTypeParameter(typeParameter); }
         }
 
-         public void RemoveMember(ITypeMember member)
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = base.Children.ToList();
+                list.AddRange(_members);
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = base.Descendants.ToList();
+                foreach (var member in _members)
+                { list.AddRange(member.DescendantsAndSelf); }
+                return list;
+            }
+        }
+
+        public void RemoveMember(ITypeMember member)
         {
             if (member.Parent == null)
             { _members.Remove(member); }

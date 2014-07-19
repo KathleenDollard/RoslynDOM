@@ -20,7 +20,7 @@ namespace RoslynDom
         internal RDomMethod(RDomMethod oldRDom)
              : base(oldRDom)
         {
-                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
+            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             foreach (var parameter in newParameters)
             { AddParameter(parameter); }
@@ -29,7 +29,7 @@ namespace RoslynDom
             { AddTypeParameter(typeParameter); }
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
             foreach (var statement in newStatements)
-            { AddStatement(statement); }
+            { AddOrMoveStatement(statement); }
 
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
@@ -41,6 +41,28 @@ namespace RoslynDom
             IsExtensionMethod = oldRDom.IsExtensionMethod;
 
         }
+
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = base.Children.ToList();
+                list.AddRange(_statements);
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = base.Descendants.ToList();
+                foreach (var statement in _statements)
+                { list.AddRange(statement.DescendantsAndSelf); }
+                return list;
+            }
+        }
+
         public AttributeList Attributes
         { get { return _attributes; } }
 
@@ -75,11 +97,17 @@ namespace RoslynDom
         public void RemoveStatement(IStatement statement)
         { _statements.Remove(statement); }
 
-        public void AddStatement(IStatement statement)
+        public void AddOrMoveStatement(IStatement statement)
         { _statements.Add(statement); }
 
         public IEnumerable<IStatement> Statements
         { get { return _statements; } }
+
+        public bool HasBlock
+        {
+            get { return true; }
+            set { }
+        }
 
         public MemberKind MemberKind
         { get { return MemberKind.Method; } }

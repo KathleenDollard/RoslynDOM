@@ -6,13 +6,26 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IIfStatement : IStatement, IDom<IIfStatement >
+
+    public interface IIfBaseStatement : IStatement, IStatementContainer
+    {   }
+
+       public interface IIfStatement : IIfBaseStatement, IHasCondition, IDom<IIfStatement>
     {
-        IExpression  Condition { get; set; }
-        IEnumerable<IStatement> Statements { get; }
-        IEnumerable<IIfStatement> ElseIfs { get; }
-        IEnumerable<IStatement> ElseStatements { get; }
-        bool HasBlock { get; set; }
-        bool ElseHasBlock { get; set; }
+        void RemoveElse(IElseStatement statement);
+
+        void AddOrMoveElse(IElseStatement statement);
+        IEnumerable<IElseStatement> Elses { get; }
+        IFinalElseStatement Else { get; }
+        IEnumerable<IElseIfStatement> ElseIfs { get; }
+
     }
+
+    public interface IElseIfStatement : IDom<IElseIfStatement>, IElseStatement, IHasCondition
+    { }
+
+    public interface IFinalElseStatement : IDom<IFinalElseStatement>, IElseStatement
+    { }
+    public interface IElseStatement : IIfBaseStatement
+    { }
 }

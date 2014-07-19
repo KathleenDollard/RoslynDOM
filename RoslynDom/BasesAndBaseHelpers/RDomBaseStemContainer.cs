@@ -22,7 +22,7 @@ namespace RoslynDom
         {
             // ick. but I it avoids an FxCop error, not sure which is worse
             // also, really need to keep them in order so need to iterate entire list in order
-            var oldRDom = oldIDom as RDomBaseStemContainer<T,  TSymbol>;
+            var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;
             var newMembers = new List<IStemMember>();
             _members = new List<IStemMember>();
             foreach (var member in oldRDom.StemMembers)
@@ -59,6 +59,27 @@ namespace RoslynDom
                         }
                     }
                 }
+            }
+        }
+
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = base.Children.ToList();
+                list.AddRange(_members);
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = base.Descendants.ToList();
+                foreach (var member in _members)
+                { list.AddRange(member.DescendantsAndSelf); }
+                return list;
             }
         }
 

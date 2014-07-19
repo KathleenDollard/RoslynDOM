@@ -5,25 +5,22 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseLoop<T>
-        : RDomBase<T, ISymbol>, IStatement
-        where T : class, ILoop<T>, IStatement
+    public class RDomIfBaseStatement<T> : RDomBase<T, ISymbol>, IIfBaseStatement
+        where T : class, IIfBaseStatement, IDom<T>
     {
         private IList<IStatement> _statements = new List<IStatement>();
 
-        internal RDomBaseLoop(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        public RDomIfBaseStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { }
 
-
-        internal RDomBaseLoop(T oldRDom)
-             : base(oldRDom)
+        internal RDomIfBaseStatement(T oldRDom)
+            : base(oldRDom)
         {
-            foreach (var statement in Statements)
+            var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
+            foreach (var statement in statements)
             { AddOrMoveStatement(statement); }
-            Condition = oldRDom.Condition.Copy();
             HasBlock = oldRDom.HasBlock;
-            TestAtEnd = oldRDom.TestAtEnd;
         }
 
         public override IEnumerable<IDom> Children
@@ -31,7 +28,6 @@ namespace RoslynDom
             get
             {
                 var list = base.Children.ToList();
-                list.Add(Condition);
                 list.AddRange(Statements);
                 return list;
             }
@@ -42,17 +38,13 @@ namespace RoslynDom
             get
             {
                 var list = base.Descendants.ToList();
-                list.AddRange(Condition.DescendantsAndSelf);
                 foreach (var statement in Statements)
                 { list.AddRange(statement.DescendantsAndSelf); }
                 return list;
             }
         }
 
-        public IExpression Condition { get; set; }
-
         public bool HasBlock { get; set; }
-        public bool TestAtEnd { get; set; }
 
         public void RemoveStatement(IStatement statement)
         { _statements.Remove(statement); }
@@ -65,4 +57,3 @@ namespace RoslynDom
 
     }
 }
-

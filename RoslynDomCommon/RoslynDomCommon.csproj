@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeList.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasCondition.cs" />
     <Compile Include="Enums\AccessorType.cs" />
     <Compile Include="Enums\AttributeValueStyle.cs" />
     <Compile Include="BaseInterfaces\IMisc.cs" />
@@ -83,7 +84,6 @@
     <Compile Include="Interfaces\IAttributeValue.cs" />
     <Compile Include="Interfaces\IAttribute.cs" />
     <Compile Include="Interfaces\IClass.cs" />
-    <Compile Include="BaseInterfaces\ICodeContainer.cs" />
     <Compile Include="Interfaces\IInvalidMember.cs" />
     <Compile Include="Interfaces\IParameter.cs" />
     <Compile Include="Interfaces\IReferencedType.cs" />

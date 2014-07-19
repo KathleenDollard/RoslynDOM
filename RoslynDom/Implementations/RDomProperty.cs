@@ -35,6 +35,37 @@ namespace RoslynDom
             CanGet = oldRDom.CanGet;
             CanSet = oldRDom.CanSet;
         }
+
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = base.Children.ToList();
+                // TODO: Add accessors after switching to accessor approach. 
+                list.AddRange(_getStatements);
+                list.AddRange(_setStatements);
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = base.Descendants.ToList();
+                // TODO: Add accessors after switching to accessor approach. 
+                foreach (var statement in _getStatements)
+                {
+                    list.AddRange(statement.DescendantsAndSelf);
+                }
+                foreach (var statement in _setStatements)
+                {
+                    list.AddRange(statement.DescendantsAndSelf);
+                }
+                return list;
+            }
+        }
+
         public AttributeList Attributes
         { get { return _attributes; } }
 

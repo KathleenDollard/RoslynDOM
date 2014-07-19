@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
@@ -48,7 +49,7 @@ namespace RoslynDom
         public abstract object OriginalRawItem { get; }
 
         // TODO: Return the parent set to hidden
-        public IDom Parent { get;  set; }
+        public IDom Parent { get; set; }
 
         public void RemoveFromParent()
         {
@@ -68,7 +69,7 @@ namespace RoslynDom
                 Parent = null;
                 parentAsTypeContainer.RemoveMember(thisAsTypeMember);
             }
-            var parentAsCodeContainer = this.Parent as IRDomCodeContainer;
+            var parentAsCodeContainer = this.Parent as IStatementContainer;
             if (parentAsCodeContainer != null)
             {
                 var thisAsStatement = this as IStatement;
@@ -124,7 +125,7 @@ namespace RoslynDom
 
         public abstract object RequestValue(string propertyName);
 
-          /// <summary>
+        /// <summary>
         /// For a discussion of names <see cref="OuterName"/>
         /// </summary>
         /// <returns>The string name, same as Roslyn symbol's name</returns>
@@ -152,5 +153,39 @@ namespace RoslynDom
         public PublicAnnotationList PublicAnnotations
         { get { return _publicAnnotations; } }
 
+        public virtual IEnumerable<IDom> Descendants
+        { get { return new List<IDom>(); } }
+
+        public IEnumerable<IDom> DescendantsAndSelf
+        {
+            get
+            {
+                var list = Descendants.ToList();
+                list.Insert(0, this);
+                return list;
+            }
+        }
+
+        public virtual IEnumerable<IDom> Children
+        { get { return new List<IDom>(); } }
+
+        public virtual IEnumerable<IDom> Ancestors
+        {
+            get
+            {
+                if (Parent == null) { return null;  } // top/end of recursion
+                return Parent.AncestorsAndSelf;
+            }
+        }
+
+        public IEnumerable<IDom> AncestorsAndSelf
+        {
+            get
+            {
+                var list = Ancestors.ToList();
+                list.Insert(0, this);
+                return list;
+            }
+        }
     }
 }

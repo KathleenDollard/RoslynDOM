@@ -20,10 +20,5 @@ namespace RoslynDom
         void ClearTypeParameters();
     }
 
-    public interface IRDomCodeContainer : ICodeContainer 
-    {
-        void AddOrMoveStatement(IStatement member);
-        void RemoveStatement(IStatement member);
-        void ClearStatements();
-    }
+   
 }

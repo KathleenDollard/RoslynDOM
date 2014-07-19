@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
@@ -17,6 +18,12 @@ namespace RoslynDom
             Type = oldRDom.Type.Copy();
             Initializer = oldRDom.Initializer.Copy();
         }
+
+        public override IEnumerable<IDom> Children
+        { get { return new List<IDom>() { Initializer }; } }
+
+        public override IEnumerable<IDom> Descendants
+        { get { return new List<IDom>() { Initializer }; } }
 
         public IExpression Initializer { get; set; }
 

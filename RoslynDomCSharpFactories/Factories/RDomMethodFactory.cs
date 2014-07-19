@@ -38,7 +38,7 @@ namespace RoslynDom
             {
                 var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x, newItem, model));
                 foreach (var statement in statements)
-                { newItem.AddStatement(statement); }
+                { newItem.AddOrMoveStatement(statement); }
             }
 
             return new ITypeMember[] { newItem };

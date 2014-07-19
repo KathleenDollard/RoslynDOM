@@ -18,6 +18,28 @@ namespace RoslynDom
             Variable = oldRDom.Variable;
         }
 
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = new List<IDom>();
+                list.Add(Variable);
+                list.AddRange(base.Children);
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = new List<IDom>();
+                list.AddRange(Variable.DescendantsAndSelf);
+                list.AddRange(base.Descendants);
+                return list;
+            }
+        }
+
         public IVariableDeclaration Variable { get;set; }
           }
 }
