@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoslynDom.Common;
 
-namespace RoslynDom
+namespace RoslynDom.CSharp
 {
     public class RDomCSharpFactory
     {

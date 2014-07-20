@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
+using RoslynDom.CSharp;
 
 namespace RoslynDomTests
 {

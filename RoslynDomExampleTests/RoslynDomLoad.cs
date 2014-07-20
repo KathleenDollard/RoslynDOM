@@ -6,6 +6,7 @@ using System.Linq;
 using RoslynDom;
 using Microsoft.CodeAnalysis.CSharp;
 using RoslynDom.Common;
+using RoslynDom.CSharp;
 
 namespace RoslynDomExampleTests
 {

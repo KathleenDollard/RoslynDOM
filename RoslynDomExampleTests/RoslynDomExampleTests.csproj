@@ -73,6 +73,10 @@
     <Compile Include="TestFile.cs" />
     <Compile Include="TestUtilities.cs" />
     <Compile Include="Scenario_PatternMatchingSelection.cs" />
+    <Compile Include="Walkthroughs.cs" />
+    <Compile Include="Walkthrough_1_code.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="WorkspaceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

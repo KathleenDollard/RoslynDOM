@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom
+namespace RoslynDom.CSharp
 {
     public class RDomReturnStatementFactory
                 : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>

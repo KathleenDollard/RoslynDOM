@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom;
 using RoslynDom.Common;
 
-namespace RoslynDom
+namespace RoslynDom.CSharp
 {
     internal class LoopFactoryHelper
     {

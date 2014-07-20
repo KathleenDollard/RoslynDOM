@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 using System.Linq;
 
-namespace RoslynDom
+namespace RoslynDom.CSharp
 {
     internal static class RDomInterfaceFactoryHelper
     {

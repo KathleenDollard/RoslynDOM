@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom.CSharpFactories
+namespace RoslynDom.CSharp
 {
     // Factories are specific to the type, FactoryHelpers are specific to the level (StemMember, TypeMember, Statement, Expression)
     public abstract class RDomBaseItemFactory<T, TSyntax, TKind> : IRDomFactory<TKind>
@@ -38,7 +38,7 @@ namespace RoslynDom.CSharpFactories
             var newItem = Activator.CreateInstance(
                         typeof(T),
                         BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,
-                        new object[] { syntax }, null);
+                        new object[] { syntax, parent, model }, null);
             var itemAsT = newItem as T;
             InitializeItem(itemAsT, syntax);
             return new TKind[] { itemAsT };

@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace RoslynDom.Common
 {
-    internal static class RoslynDomSymbolUtilities
+    public static class RoslynDomSymbolUtilities
     {
 
         public static IEnumerable<ITypeParameter> TypeParametersFrom(this INamedTypeSymbol rDomType)

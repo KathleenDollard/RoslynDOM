@@ -8,20 +8,21 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom
+namespace RoslynDom.CSharp
 {
     public class RDomExpressionFactory
                  : RDomExpressionFactory<RDomExpression, ExpressionSyntax>
     {
-        public override void InitializeItem(RDomExpression newItem, ExpressionSyntax rawItem, IDom parent,SemanticModel  model)
+        public override void InitializeItem(RDomExpression newItem, ExpressionSyntax rawItem)
         {
+            base.InitializeItem(newItem, rawItem);
             newItem.Expression = rawItem.ToString();
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IExpression item)
         {
             var itemAsT = item as IExpression;
-            var node = SyntaxFactory.ParseExpression(itemAsT.Expression );
+            var node = SyntaxFactory.ParseExpression(itemAsT.Expression);
             return new SyntaxNode[] { node.NormalizeWhitespace() };
         }
     }

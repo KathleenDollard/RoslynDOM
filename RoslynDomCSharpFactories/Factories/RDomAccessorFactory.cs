@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom
+namespace RoslynDom.CSharp
 {
     public class RDomPropertyAccessorMiscFactory
           : RDomMiscFactory<RDomPropertyAccessor, AccessorDeclarationSyntax>
@@ -17,6 +17,8 @@ namespace RoslynDom
             var accessorType = (syntaxNode.CSharpKind() == SyntaxKind.GetAccessorDeclaration)
                                 ? AccessorType.Get : AccessorType.Set;
             var newItem = new RDomPropertyAccessor(syntaxNode, accessorType, parent, model);
+            var newItemName = accessorType.ToString().ToLower() + "_" + parent.Name;
+            newItem.Name = newItemName;
 
             var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
             newItem.Attributes.AddOrMoveAttributeRange(attributes);

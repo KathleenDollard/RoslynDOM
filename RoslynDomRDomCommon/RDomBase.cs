@@ -173,7 +173,7 @@ namespace RoslynDom
         {
             get
             {
-                if (Parent == null) { return null;  } // top/end of recursion
+                if (Parent == null) { return new List<IDom>();  } // top/end of recursion
                 return Parent.AncestorsAndSelf;
             }
         }

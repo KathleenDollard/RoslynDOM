@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
 using RoslynDom.Common;
+using RoslynDom.CSharp;
 
 // Common scenarios for loading the DOM are in RoslynDomLoad of this RoslynDomExampleTests project
 namespace RoslynDomExampleTests

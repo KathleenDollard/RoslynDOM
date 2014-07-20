@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RoslynDom.Common
 {
 
-    public interface IVariable
+    public interface IVariable : IDom
     {
         IExpression Initializer { get; set; }
         IReferencedType Type { get; set; }

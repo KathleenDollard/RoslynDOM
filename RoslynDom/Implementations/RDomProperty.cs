@@ -8,8 +8,6 @@ namespace RoslynDom
     public class RDomProperty : RDomBase<IProperty, IPropertySymbol>, IProperty
     {
         private IList<IParameter> _parameters = new List<IParameter>();
-        private IList<IStatement> _getStatements = new List<IStatement>();
-        private IList<IStatement> _setStatements = new List<IStatement>();
         private AttributeList _attributes = new AttributeList();
 
         public RDomProperty(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -42,8 +40,10 @@ namespace RoslynDom
             {
                 var list = base.Children.ToList();
                 // TODO: Add accessors after switching to accessor approach. 
-                list.AddRange(_getStatements);
-                list.AddRange(_setStatements);
+                if (GetAccessor != null)
+                { list.Add(GetAccessor); }
+                if (SetAccessor != null)
+                { list.Add(SetAccessor); }
                 return list;
             }
         }
@@ -53,15 +53,12 @@ namespace RoslynDom
             get
             {
                 var list = base.Descendants.ToList();
-                // TODO: Add accessors after switching to accessor approach. 
-                foreach (var statement in _getStatements)
-                {
-                    list.AddRange(statement.DescendantsAndSelf);
-                }
-                foreach (var statement in _setStatements)
-                {
-                    list.AddRange(statement.DescendantsAndSelf);
-                }
+                // TODO: Add accessors after switching to accessor approach.
+                if (GetAccessor != null)
+                { list.AddRange(GetAccessor.DescendantsAndSelf); }
+                if (SetAccessor != null)
+                { list.AddRange(SetAccessor.DescendantsAndSelf); }
+
                 return list;
             }
         }
@@ -115,23 +112,23 @@ namespace RoslynDom
         // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
         { get { return _parameters; } }
 
-        public void RemoveGetStatement(IStatement statement)
-        { _getStatements.Remove(statement); }
+        //public void RemoveGetStatement(IStatement statement)
+        //{ _getStatements.Remove(statement); }
 
-        public void AddGetStatement(IStatement statement)
-        { _getStatements.Add(statement); }
+        //public void AddGetStatement(IStatement statement)
+        //{ _getStatements.Add(statement); }
 
-        public IEnumerable<IStatement> GetStatements
-        { get { return _getStatements; } }
+        //public IEnumerable<IStatement> GetStatements
+        //{ get { return _getStatements; } }
 
-        public void RemoveSetStatement(IStatement statement)
-        { _setStatements.Remove(statement); }
+        //public void RemoveSetStatement(IStatement statement)
+        //{ _setStatements.Remove(statement); }
 
-        public void AddSetStatement(IStatement statement)
-        { _setStatements.Add(statement); }
+        //public void AddSetStatement(IStatement statement)
+        //{ _setStatements.Add(statement); }
 
-        public IEnumerable<IStatement> SetStatements
-        { get { return _setStatements; } }
+        //public IEnumerable<IStatement> SetStatements
+        //{ get { return _setStatements; } }
 
         public MemberKind MemberKind
         { get { return MemberKind.Property; } }
