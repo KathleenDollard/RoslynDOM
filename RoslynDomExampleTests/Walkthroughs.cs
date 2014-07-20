@@ -46,7 +46,7 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-        public void Walkthrogh_2_3_Navigate_and_interrogate_code()
+        public void Walkthrogh_2_3_Ask_harder_questions()
         {
             var factory = RDomCSharpFactory.Factory;
             var root = factory.GetRootFromFile(fileName);
@@ -71,7 +71,7 @@ namespace RoslynDomExampleTests
                                 containerName = cl.Name,
                                 variableName = v.Name
                             })
-                           .ToArray();
+                            .ToArray();
             Assert.AreEqual("Foo", uintCode[0].containerName);
             Assert.AreEqual("y", uintCode[0].variableName);
 
@@ -81,6 +81,29 @@ namespace RoslynDomExampleTests
             Assert.AreEqual("get_FooBar", uintCode[2].containerName);
             Assert.AreEqual("z", uintCode[2].variableName);
 
+        }
+
+        [TestMethod]
+        public void Walkthrogh_2_4_Find_implicit_variables_of_concern()
+        {
+            var factory = RDomCSharpFactory.Factory;
+            var root = factory.GetRootFromFile(fileName);
+
+var implicitlyTyped = root
+                .Descendants.OfType<IDeclarationStatement>()
+                .Where(x => x.IsImplicitlyTyped);
+
+var instantiations = implicitlyTyped
+            .Where(x => x.Initializer.ExpressionType == ExpressionType.ObjectCreation);
+
+var literals = implicitlyTyped
+            .Where(x => x.Initializer.ExpressionType == ExpressionType.Literal &&
+                            ( x.Type.Name == "String"
+                            || x.Type.Name == "Int"
+                            || x.Type.Name == "DateTime" )// for VB
+                            );
+var candidates = implicitlyTyped.Except(instantiations).Except(literals);
+            Assert.Inconclusive();
         }
     }
 }

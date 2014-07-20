@@ -51,6 +51,7 @@
     <Compile Include="CharacteristicInterfaces\IHasNamespace.cs" />
     <Compile Include="CharacteristicInterfaces\IHasTypeParameters.cs" />
     <Compile Include="CharacteristicInterfaces\ISupportsSameIntent.cs" />
+    <Compile Include="Enums\ExpressionType.cs" />
     <Compile Include="Enums\LiteralKind.cs" />
     <Compile Include="Enums\StatementKind.cs" />
     <Compile Include="Enums\MemberKind.cs" />

@@ -11,6 +11,11 @@ namespace RoslynDom.Tests.Walkthrough_1_code
         public string Foo()
         {
             var ret = lastName;
+            ret = Foo();
+            ret = "xyz";
+            var xx = new String('a', 4);
+            ret = "abc" + Foo();
+
             if (!string.IsNullOrEmpty(firstName))
             { ret = firstName + lastName; }
             var x = ", ";
