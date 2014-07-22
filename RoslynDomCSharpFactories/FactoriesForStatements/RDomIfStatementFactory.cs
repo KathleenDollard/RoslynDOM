@@ -24,14 +24,14 @@ namespace RoslynDom.CSharp
                 var newElse = new RDomElseIfStatement(elseIf, newItem, model);
                 newElse.Condition = GetCondition(newElse, elseIf.Condition, model);
                 InitializeStatements(newElse, elseIf.Statement, model);
-                newItem.AddOrMoveElse(newElse);
+                newItem.Elses.AddOrMove(newElse);
             }
             var lastElseIf = elseIfSyntaxList.Last();
             if (lastElseIf.Else != null && lastElseIf.Else.Statement != null)
             {
                 var newElse = new RDomElseStatement(syntax, newItem, model);
                 InitializeStatements(newElse,  lastElseIf.Else.Statement, model);
-                newItem.AddOrMoveElse(newElse);
+                newItem.Elses.AddOrMove(newElse);
             }
             return new IStatement[] { newItem };
         }
@@ -47,8 +47,7 @@ namespace RoslynDom.CSharp
             bool hasBlock = false;
             var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statementSytax, newItem, ref hasBlock, model);
             newItem.HasBlock = hasBlock;
-            foreach (var statement in statements)
-            { newItem.AddOrMoveStatement(statement); }
+            newItem.Statements.AddOrMoveRange(statements);
         }
 
         private IEnumerable<IfStatementSyntax> GetElseIfSyntaxList(IfStatementSyntax syntax)

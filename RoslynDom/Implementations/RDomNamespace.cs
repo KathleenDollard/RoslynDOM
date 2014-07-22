@@ -7,14 +7,11 @@ namespace RoslynDom
     {
         public RDomNamespace(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomNamespace(RDomNamespace oldRDom)
             : base(oldRDom)
-        {
-            //_outerName = oldRDom.OuterName;
-
-        }
+        { }
 
         public string Name { get; set; }
 

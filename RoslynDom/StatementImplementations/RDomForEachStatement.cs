@@ -10,13 +10,11 @@ namespace RoslynDom
 
         public RDomForEachStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomForEachStatement(RDomForEachStatement oldRDom)
             : base(oldRDom)
-        {
-            Variable = oldRDom.Variable;
-        }
+        { Variable = oldRDom.Variable; }
 
         public override IEnumerable<IDom> Children
         {
@@ -40,6 +38,6 @@ namespace RoslynDom
             }
         }
 
-        public IVariableDeclaration Variable { get;set; }
-          }
+        public IVariableDeclaration Variable { get; set; }
+    }
 }

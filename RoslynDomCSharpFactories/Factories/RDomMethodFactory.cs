@@ -21,8 +21,7 @@ namespace RoslynDom.CSharp
             //newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
             var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            foreach (var typeParameter in typeParameters)
-            { newItem.AddTypeParameter(typeParameter); }
+            newItem.TypeParameters.AddOrMoveRange(typeParameters);
 
             newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
             newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
@@ -32,14 +31,13 @@ namespace RoslynDom.CSharp
             newItem.IsSealed = newItem.Symbol.IsSealed;
             newItem.IsStatic = newItem.Symbol.IsStatic;
             newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
-            var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => RDomFactoryHelper.GetHelper<IMisc>().MakeItem(x, newItem, model));
-            foreach (var parameter in parameters)
-            { newItem.AddParameter((IParameter)parameter); }
+            var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => RDomFactoryHelper.GetHelper<IMisc>().MakeItem(x, newItem, model))
+                                .OfType<IParameter>();
+            newItem.Parameters.AddOrMoveRange(parameters);
             if (syntax.Body != null)
             {
                 var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x, newItem, model));
-                foreach (var statement in statements)
-                { newItem.AddOrMoveStatement(statement); }
+                newItem.Statements.AddOrMoveRange(statements);
             }
 
             return new ITypeMember[] { newItem };

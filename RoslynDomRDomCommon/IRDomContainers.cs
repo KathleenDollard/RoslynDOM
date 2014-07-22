@@ -3,22 +3,22 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public interface IRDomStemContainer :IStemContainer 
-    {
-        void AddOrMoveStemMember(IStemMember member);
-        void RemoveStemMember(IStemMember member);
-        void ClearStemMembers();
-    }
+    //public interface IRDomStemContainer :IStemContainer 
+    //{
+    //    void AddOrMoveStemMember(IStemMember member);
+    //    void RemoveStemMember(IStemMember member);
+    //    void ClearStemMembers();
+    //}
 
-    public interface IRDomTypeMemberContainer :ITypeMemberContainer 
-    {
-        void AddOrMoveMember(ITypeMember member);
-        void RemoveMember(ITypeMember member);
-        void ClearMembers();
-        void AddOrMoveTypeParameter(ITypeParameter typeParameter);
-        void RemoveTypeParameter(ITypeParameter typeParameter);
-        void ClearTypeParameters();
-    }
+    //public interface IRDomTypeMemberContainer :ITypeMemberContainer 
+    //{
+    //    void AddOrMoveMember(ITypeMember member);
+    //    void RemoveMember(ITypeMember member);
+    //    void ClearMembers();
+    //    void AddOrMoveTypeParameter(ITypeParameter typeParameter);
+    //    void RemoveTypeParameter(ITypeParameter typeParameter);
+    //    void ClearTypeParameters();
+    //}
 
    
 }

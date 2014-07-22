@@ -11,7 +11,7 @@ namespace RoslynDom
 
         public RDomForStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomForStatement(RDomForStatement oldRDom)
             : base(oldRDom)
@@ -36,7 +36,7 @@ namespace RoslynDom
         {
             get
             {
-                var list = new List<IDom>() ;
+                var list = new List<IDom>();
                 list.Add(Incrementor);
                 list.AddRange(Variable.DescendantsAndSelf);
                 list.AddRange(base.Descendants);
@@ -45,9 +45,9 @@ namespace RoslynDom
         }
 
         public IExpression Incrementor { get; set; }
-      
+
 
         public IVariableDeclaration Variable { get; set; }
-   
+
     }
 }

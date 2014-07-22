@@ -6,6 +6,7 @@ namespace RoslynDom.Common
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Usings")]
         IEnumerable<IUsing> Usings { get; }
+        RDomList<IStemMember> StemMembersCommentsWhite { get; }
         IEnumerable<IStemMember> StemMembers { get; }
         IEnumerable<INamespace> Namespaces { get; }
         IEnumerable<INamespace> AllChildNamespaces { get; }

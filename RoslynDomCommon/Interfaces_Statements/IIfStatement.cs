@@ -12,10 +12,7 @@ namespace RoslynDom.Common
 
        public interface IIfStatement : IIfBaseStatement, IHasCondition, IDom<IIfStatement>
     {
-        void RemoveElse(IElseStatement statement);
-
-        void AddOrMoveElse(IElseStatement statement);
-        IEnumerable<IElseStatement> Elses { get; }
+        RDomList<IElseStatement> Elses { get; }
         IFinalElseStatement Else { get; }
         IEnumerable<IElseIfStatement> ElseIfs { get; }
 

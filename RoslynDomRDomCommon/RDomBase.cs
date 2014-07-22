@@ -17,7 +17,7 @@ namespace RoslynDom
         private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase()
-            // There are two references to this, they just don't tend to show up in CodeLens
+        // There are two references to this, they just don't tend to show up in CodeLens
         { }
 
         protected RDomBase(IEnumerable<IPublicAnnotation> publicAnnotations)
@@ -28,18 +28,21 @@ namespace RoslynDom
         protected RDomBase(IDom oldIDom)
         {
             var oldRDom = (RDomBase)oldIDom;
+
             var oldAsHasName = oldIDom as IHasName;
             var thisAsHasName = oldIDom as IHasName;
-            if (oldAsHasName != null && thisAsHasName != null )
+            if (oldAsHasName != null && thisAsHasName != null)
             { thisAsHasName.Name = oldAsHasName.Name; }
+
             var newAnnotations = oldRDom._publicAnnotations.Copy();
             _publicAnnotations.Add(newAnnotations);
+
             var thisAsHasStructuredDocs = this as IHasStructuredDocumentation;
             if (thisAsHasStructuredDocs != null)
             {
                 var otherAsHasStructuredDocs = (IHasStructuredDocumentation)oldIDom;
                 thisAsHasStructuredDocs.StructuredDocumentation = otherAsHasStructuredDocs.StructuredDocumentation;
-                thisAsHasStructuredDocs.Description  = otherAsHasStructuredDocs.Description;
+                thisAsHasStructuredDocs.Description = otherAsHasStructuredDocs.Description;
             }
         }
 
@@ -62,34 +65,34 @@ namespace RoslynDom
         // TODO: Return the parent set to hidden
         public IDom Parent { get; set; }
 
-        public void RemoveFromParent()
-        {
-            var parentAsStemContainer = this.Parent as IRDomStemContainer;
-            if (parentAsStemContainer != null)
-            {
-                var thisAsStemMember = this as IStemMember;
-                if (thisAsStemMember == null) { throw new InvalidOperationException(); }
-                Parent = null;
-                parentAsStemContainer.RemoveStemMember(thisAsStemMember);
-            }
-            var parentAsTypeContainer = this.Parent as IRDomTypeMemberContainer;
-            if (parentAsTypeContainer != null)
-            {
-                var thisAsTypeMember = this as ITypeMember;
-                if (thisAsTypeMember == null) { throw new InvalidOperationException(); }
-                Parent = null;
-                parentAsTypeContainer.RemoveMember(thisAsTypeMember);
-            }
-            var parentAsCodeContainer = this.Parent as IStatementBlock;
-            if (parentAsCodeContainer != null)
-            {
-                var thisAsStatement = this as IStatement;
-                if (thisAsStatement == null) { throw new InvalidOperationException(); }
-                Parent = null;
-                parentAsCodeContainer.RemoveStatement(thisAsStatement);
-            }
-            Parent = null;
-        }
+        //public void RemoveFromParent()
+        //{
+        //    var parentAsStemContainer = this.Parent as IStemContainer;
+        //    if (parentAsStemContainer != null)
+        //    {
+        //        var thisAsStemMember = this as IStemMember;
+        //        if (thisAsStemMember == null) { throw new InvalidOperationException(); }
+        //        Parent = null;
+        //        parentAsStemContainer.StemMembersCommentsWhite.Remove(thisAsStemMember);
+        //    }
+        //    var parentAsTypeContainer = this.Parent as ITypeMemberContainer;
+        //    if (parentAsTypeContainer != null)
+        //    {
+        //        var thisAsTypeMember = this as ITypeMember;
+        //        if (thisAsTypeMember == null) { throw new InvalidOperationException(); }
+        //        Parent = null;
+        //        parentAsTypeContainer.MembersAll.Remove(thisAsTypeMember);
+        //    }
+        //    var parentAsCodeContainer = this.Parent as IStatementBlock2;
+        //    if (parentAsCodeContainer != null)
+        //    {
+        //        var thisAsStatement = this as IStatement;
+        //        if (thisAsStatement == null) { throw new InvalidOperationException(); }
+        //        Parent = null;
+        //        parentAsCodeContainer.RemoveStatement(thisAsStatement);
+        //    }
+        //    Parent = null;
+        //}
 
         /// <summary>
         /// NOTE: This documentation has not been updated to reflect changes due to @beefarino's input
@@ -190,7 +193,7 @@ namespace RoslynDom
         {
             get
             {
-                if (Parent == null) { return new List<IDom>();  } // top/end of recursion
+                if (Parent == null) { return new List<IDom>(); } // top/end of recursion
                 return Parent.AncestorsAndSelf;
             }
         }

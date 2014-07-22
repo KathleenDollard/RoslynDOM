@@ -18,8 +18,7 @@ namespace RoslynDom.CSharp
             foreach (var statementSyntax in syntax.Statements)
             {
                 var statements = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax, newItem, model);
-                foreach (var statement in statements)
-                { newItem.AddOrMoveStatement(statement); }
+                newItem.Statements.AddOrMoveRange(statements);
             }
 
             return new IStatement[] { newItem };

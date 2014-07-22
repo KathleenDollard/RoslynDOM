@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
@@ -8,7 +9,7 @@ namespace RoslynDom
   // Doesn't currently follow pattern, ie. a syntax is not passed
     public class RDomTypeParameter : RDomReferencedType, ITypeParameter
     {
-        private IList<IReferencedType> _constraintTypes = new List<IReferencedType>();
+        private RDomList<IReferencedType> _constraintTypes;
         public RDomTypeParameter(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
             : base(raw, symbol)
         {
@@ -18,14 +19,16 @@ namespace RoslynDom
         public RDomTypeParameter(RDomTypeParameter oldRDom)
              : base(oldRDom)
         {
+            _constraintTypes = new RDomList<IReferencedType>(this);
             Variance = oldRDom.Variance;
             Ordinal = oldRDom.Ordinal;
             HasConstructorConstraint = oldRDom.HasConstructorConstraint;
             HasReferenceTypeConstraint = oldRDom.HasReferenceTypeConstraint;
             HasValueTypeConstraint = oldRDom.HasValueTypeConstraint;
             var newConstraints = RoslynDomUtilities.CopyMembers(oldRDom._constraintTypes);
-            foreach (var constraint in newConstraints)
-            { AddConstraintType(constraint); }
+            ConstraintTypes.AddOrMoveRange(newConstraints);
+            //foreach (var constraint in newConstraints)
+            //{ AddConstraintType(constraint); }
         }
 
         //public virtual bool Matches(ITypeParameter other)
@@ -40,6 +43,7 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
+            _constraintTypes = new RDomList<IReferencedType>(this);
             var typeParamSymbol = Symbol as ITypeParameterSymbol;
             Variance = (Variance)typeParamSymbol.Variance;
             Ordinal = typeParamSymbol.Ordinal;
@@ -48,31 +52,31 @@ namespace RoslynDom
             HasValueTypeConstraint = typeParamSymbol.HasValueTypeConstraint;
             var constraints = typeParamSymbol.ConstraintTypes;
             foreach (var constraint in constraints)
-            { AddConstraintType(constraint); }
+            { _constraintTypes.AddOrMove(new RDomReferencedType(constraint.DeclaringSyntaxReferences, constraint)); }
         }
 
-        public IEnumerable<IReferencedType> ConstraintTypes
+        public RDomList<IReferencedType> ConstraintTypes
         { get { return _constraintTypes; } }
 
-        public void AddConstraintType(ITypeSymbol symbol)
-        {
-            _constraintTypes.Add(new RDomReferencedType(symbol.DeclaringSyntaxReferences, symbol));
-        }
+        //public void AddConstraintType(ITypeSymbol symbol)
+        //{
+        //    _constraintTypes.Add(new RDomReferencedType(symbol.DeclaringSyntaxReferences, symbol));
+        //}
 
-        public void AddConstraintType(IReferencedType refType)
-        {
-            _constraintTypes.Add(refType);
-        }
+        //public void AddConstraintType(IReferencedType refType)
+        //{
+        //    _constraintTypes.Add(refType);
+        //}
 
-        public void RemoveConstraintType(IReferencedType refType)
-        {
-            _constraintTypes.Remove(refType);
-        }
+        //public void RemoveConstraintType(IReferencedType refType)
+        //{
+        //    _constraintTypes.Remove(refType);
+        //}
 
-        public void ClearConstraintTypes()
-        {
-            _constraintTypes.Clear();
-        }
+        //public void ClearConstraintTypes()
+        //{
+        //    _constraintTypes.Clear();
+        //}
 
         public bool HasConstructorConstraint { get; set; }
 

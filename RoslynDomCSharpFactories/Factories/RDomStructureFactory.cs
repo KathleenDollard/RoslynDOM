@@ -22,12 +22,10 @@ namespace RoslynDom.CSharp
             newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            foreach (var typeParameter in newTypeParameters)
-            { newItem.AddOrMoveTypeParameter(typeParameter); }
+            newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
 
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, newItem, model));
-            foreach (var member in members)
-            { newItem.AddOrMoveMember(member); }
+            newItem.MembersAll.AddOrMoveRange(members);
 
             return  newItem ;
         }

@@ -10,11 +10,11 @@ namespace RoslynDom
         // This takes a parent because in the future there will be a rootGroup concept for multiple files
         public RDomRoot(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomRoot(RDomRoot oldRDom)
            : base(oldRDom)
-        { }
+        {  }
 
         public string Name { get; set; }
 

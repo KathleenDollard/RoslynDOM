@@ -65,7 +65,7 @@ namespace RoslynDomTests
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var statement = root.Descendants.OfType<IAssignmentStatement>().First();
             var ancestors = statement.Ancestors;
-            Assert.AreEqual(6, ancestors.Count());
+            Assert.AreEqual(5, ancestors.Count());
         }
 
 

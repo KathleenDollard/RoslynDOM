@@ -8,7 +8,7 @@ namespace RoslynDom
 {
     public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
     {
-        private IList<IStatement> _statements = new List<IStatement>();
+        private RDomList<IStatement> _statements;
         private AttributeList _attributes = new AttributeList();
         private AccessorType _accessorType;
 
@@ -16,17 +16,24 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         {
             _accessorType = accessorType;
+             Initialize(); 
         }
 
         internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
                 : base(oldRDom)
         {
+            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-            foreach (var statement in newStatements)
-            { AddOrMoveStatement(statement); }
-
+            Statements.AddOrMoveRange(newStatements);
+            
             AccessModifier = oldRDom.AccessModifier;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+            _statements = new RDomList<IStatement>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -50,11 +57,11 @@ namespace RoslynDom
             }
         }
 
-        public void RemoveStatement(IStatement statement)
-        { _statements.Remove(statement); }
+        //public void RemoveStatement(IStatement statement)
+        //{ _statements.Remove(statement); }
 
-        public void AddOrMoveStatement(IStatement statement)
-        { _statements.Add(statement); }
+        //public void AddOrMoveStatement(IStatement statement)
+        //{ _statements.Add(statement); }
 
         public string Name { get; set; }
 
@@ -70,7 +77,7 @@ namespace RoslynDom
         public bool IsStatic { get; set; }
         public bool IsExtensionMethod { get; set; }
 
-        public IEnumerable<IStatement> Statements
+        public RDomList<IStatement> Statements
         { get { return _statements; } }
 
         public MemberKind MemberKind

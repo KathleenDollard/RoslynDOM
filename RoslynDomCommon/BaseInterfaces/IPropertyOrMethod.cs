@@ -9,7 +9,7 @@ namespace RoslynDom.Common
         bool IsOverride { get; set; }
         bool IsSealed { get; set; }
 
-        IEnumerable<IParameter> Parameters { get; }
+        RDomList<IParameter> Parameters { get; }
     }
 
     public interface IPropertyOrMethod<T> : IPropertyOrMethod, ITypeMember<T>

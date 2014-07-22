@@ -61,6 +61,7 @@ namespace RoslynDom
             _symbol = oldRDom._symbol;
             //if (oldRDom._attributes != null)
             //{ _attributes = RoslynDomUtilities.CopyMembers(oldRDom._attributes); }
+            // TODO: SameIntent tests broke when I removed this, although it appears to be done in the base. 
             var thisAsHasName = this as IHasName;
             if (thisAsHasName != null)
             {

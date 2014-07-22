@@ -8,7 +8,7 @@ namespace RoslynDom
     {
         public RDomInterface(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent,model, MemberKind.Interface, StemMemberKind.Interface)
-        { }
+        { Initialize(); }
 
         internal RDomInterface(RDomInterface oldRDom)
              : base(oldRDom)
@@ -30,12 +30,5 @@ namespace RoslynDom
             }
         }
 
-        public IEnumerable<ITypeParameter> TypeParameters
-        {
-            get
-            {
-                return this.TypedSymbol.TypeParametersFrom();
-            }
-        }
     }
 }

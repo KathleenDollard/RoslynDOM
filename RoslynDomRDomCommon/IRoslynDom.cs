@@ -6,8 +6,6 @@ namespace RoslynDom
     public interface IRoslynDom : IDom
     {
         ISymbol Symbol { get; }
-        void RemoveFromParent();
-
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]

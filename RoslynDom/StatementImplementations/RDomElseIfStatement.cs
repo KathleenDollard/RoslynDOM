@@ -10,7 +10,7 @@ namespace RoslynDom
     {
         public RDomElseIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomElseIfStatement(RDomElseIfStatement oldRDom)
             : base(oldRDom)

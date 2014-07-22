@@ -8,7 +8,7 @@ namespace RoslynDom.Common
         bool HasConstructorConstraint { get; set; }
         bool HasReferenceTypeConstraint { get; set; }
         bool HasValueTypeConstraint { get; set; }
-        IEnumerable<IReferencedType > ConstraintTypes { get; }
+        RDomList<IReferencedType > ConstraintTypes { get; }
 
         int Ordinal { get; set; }
     }

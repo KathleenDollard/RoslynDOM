@@ -9,28 +9,26 @@ namespace RoslynDom
 {
     public class RDomMethod : RDomBase<IMethod, IMethodSymbol>, IMethod
     {
-        private IList<IParameter> _parameters = new List<IParameter>();
-        private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
-        private IList<IStatement> _statements = new List<IStatement>();
+        private RDomList<IParameter> _parameters;
+        private RDomList<ITypeParameter> _typeParameters;
+        private RDomList<IStatement> _statements ;
         private AttributeList _attributes = new AttributeList();
 
         public RDomMethod(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomMethod(RDomMethod oldRDom)
              : base(oldRDom)
         {
+            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
-            foreach (var parameter in newParameters)
-            { AddParameter(parameter); }
+            Parameters.AddOrMoveRange(newParameters);
             var newTypeParameters = RoslynDomUtilities.CopyMembers(oldRDom._typeParameters);
-            foreach (var typeParameter in newTypeParameters)
-            { AddTypeParameter(typeParameter); }
+            TypeParameters.AddOrMoveRange(newTypeParameters);
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-            foreach (var statement in newStatements)
-            { AddOrMoveStatement(statement); }
+            Statements.AddOrMoveRange(newStatements);
 
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
@@ -43,6 +41,13 @@ namespace RoslynDom
 
         }
 
+        protected override void Initialize()
+        {
+            base.Initialize();
+            _typeParameters = new RDomList<ITypeParameter>(this);
+            _parameters = new RDomList<IParameter>(this);
+            _statements = new RDomList<IStatement>(this);
+        }
         public override IEnumerable<IDom> Children
         {
             get
@@ -79,31 +84,31 @@ namespace RoslynDom
 
         public bool IsExtensionMethod { get; set; }
 
-        public void RemoveTypeParameter(ITypeParameter typeParameter)
-        { _typeParameters.Remove(typeParameter); }
+        //public void RemoveTypeParameter(ITypeParameter typeParameter)
+        //{ _typeParameters.Remove(typeParameter); }
 
-        public void AddTypeParameter(ITypeParameter typeParameter)
-        { _typeParameters.Add(typeParameter); }
+        //public void AddTypeParameter(ITypeParameter typeParameter)
+        //{ _typeParameters.Add(typeParameter); }
 
-        public IEnumerable<ITypeParameter> TypeParameters
+        public RDomList<ITypeParameter> TypeParameters
         { get { return _typeParameters; } }
 
-        public void RemoveParameter(IParameter parameter)
-        { _parameters.Remove(parameter); }
+        //public void RemoveParameter(IParameter parameter)
+        //{ _parameters.Remove(parameter); }
 
-        public void AddParameter(IParameter parameter)
-        { _parameters.Add(parameter); }
+        //public void AddParameter(IParameter parameter)
+        //{ _parameters.Add(parameter); }
 
-        public IEnumerable<IParameter> Parameters
+        public RDomList<IParameter> Parameters
         { get { return _parameters; } }
 
-        public void RemoveStatement(IStatement statement)
-        { _statements.Remove(statement); }
+        //public void RemoveStatement(IStatement statement)
+        //{ _statements.Remove(statement); }
 
-        public void AddOrMoveStatement(IStatement statement)
-        { _statements.Add(statement); }
+        //public void AddOrMoveStatement(IStatement statement)
+        //{ _statements.Add(statement); }
 
-        public IEnumerable<IStatement> Statements
+        public RDomList<IStatement> Statements
         { get { return _statements; } }
 
         public bool HasBlock

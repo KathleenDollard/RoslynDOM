@@ -6,27 +6,33 @@ namespace RoslynDom
 {
     public class RDomBlockStatement : RDomBase<IBlockStatement, ISymbol>, IBlockStatement
     {
-        private IList<IStatement> _statements = new List<IStatement>();
+        private RDomList<IStatement> _statements;
 
         public RDomBlockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomBlockStatement(RDomBlockStatement oldRDom)
             : base(oldRDom)
         {
+            Initialize();
             var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
-            foreach (var statement in statements)
-            { AddOrMoveStatement(statement); }
+            Statements.AddOrMoveRange(statements);
         }
 
-        public void RemoveStatement(IStatement statement)
-        { _statements.Remove(statement); }
+        protected override void Initialize()
+        {
+            base.Initialize();
+            _statements = new RDomList<IStatement>(this);
+        }
 
-        public void AddOrMoveStatement(IStatement statement)
-        { _statements.Add(statement); }
+        //public void RemoveStatement(IStatement statement)
+        //{ _statements.Remove(statement); }
 
-        public IEnumerable<IStatement> Statements
+        //public void AddOrMoveStatement(IStatement statement)
+        //{ _statements.Add(statement); }
+
+        public RDomList<IStatement> Statements
         { get { return _statements; } }
     }
 }

@@ -23,10 +23,9 @@ namespace RoslynDom.CSharp
             if (newItem.Name.StartsWith("@")) { newItem.Name = newItem.Name.Substring(1); }
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
             var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
-            foreach (var member in members)
-            { newItem.AddOrMoveStemMember(member); }
-            foreach (var member in usings)
-            { newItem.AddOrMoveStemMember(member); }
+            newItem.StemMembersCommentsWhite.AddOrMoveRange(members);
+            newItem.StemMembersCommentsWhite.AddOrMoveRange(usings);
+
 
             return new IStemMember[] { newItem };
         }

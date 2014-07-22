@@ -4,6 +4,6 @@ namespace RoslynDom.Common
 {
     public interface IHasTypeParameters 
     {
-        IEnumerable<ITypeParameter> TypeParameters { get; }
+        RDomList<ITypeParameter> TypeParameters { get; }
     }
 }

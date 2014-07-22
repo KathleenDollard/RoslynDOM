@@ -7,19 +7,19 @@ namespace RoslynDom
 {
     public class RDomProperty : RDomBase<IProperty, IPropertySymbol>, IProperty
     {
-        private IList<IParameter> _parameters = new List<IParameter>();
+        private RDomList<IParameter> _parameters;
         private AttributeList _attributes = new AttributeList();
 
         public RDomProperty(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomProperty(RDomProperty oldRDom)
             : base(oldRDom)
         {
+            Initialize();
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
-            foreach (var parameter in newParameters)
-            { AddParameter(parameter); }
+            Parameters.AddOrMoveRange(newParameters);
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             GetAccessor = oldRDom.GetAccessor == null ? null : oldRDom.GetAccessor.Copy();
@@ -32,6 +32,12 @@ namespace RoslynDom
             IsStatic = oldRDom.IsStatic;
             CanGet = oldRDom.CanGet;
             CanSet = oldRDom.CanSet;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+            _parameters = new RDomList<IParameter>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -94,11 +100,11 @@ namespace RoslynDom
 
         public bool CanSet { get; set; }
 
-        public void RemoveParameter(IParameter parameter)
-        { _parameters.Remove(parameter); }
+        //public void RemoveParameter(IParameter parameter)
+        //{ _parameters.Remove(parameter); }
 
-        public void AddParameter(IParameter parameter)
-        { _parameters.Add(parameter); }
+        //public void AddParameter(IParameter parameter)
+        //{ _parameters.Add(parameter); }
 
         /// <summary>
         /// 
@@ -110,7 +116,7 @@ namespace RoslynDom
         /// <br/>
         /// Can't test until VB is active
         /// </remarks>
-        public IEnumerable<IParameter> Parameters
+        public RDomList<IParameter> Parameters
         // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
         { get { return _parameters; } }
 

@@ -11,7 +11,7 @@ namespace RoslynDom
 
         public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomEnum(RDomEnum oldRDom)
              : base(oldRDom)

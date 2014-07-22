@@ -7,13 +7,13 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
     public abstract class RDomBaseType<T>
-        : RDomBase<T, INamedTypeSymbol>, IType<T>, IRDomTypeMemberContainer
+        : RDomBase<T, INamedTypeSymbol>, IType<T>, ITypeMemberContainer
         where T : class, IType<T>
     {
-        private IList<ITypeMember> _members = new List<ITypeMember>();
+        private RDomList<ITypeMember> _members;
         private MemberKind _memberKind;        // This should remain readonly
         private StemMemberKind _stemMemberKind;// This should remain readonly
-        private IList<ITypeParameter> _typeParameters = new List<ITypeParameter>();
+        private RDomList<ITypeParameter> _typeParameters;
         private AttributeList _attributes = new AttributeList();
 
         internal RDomBaseType(
@@ -33,16 +33,22 @@ namespace RoslynDom
              : base(oldIDom)
         {
             var oldRDom = oldIDom as RDomBaseType<T>;
+            Initialize();
             _memberKind = oldRDom._memberKind;
             _stemMemberKind = oldRDom._stemMemberKind;
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             var newMembers = RoslynDomUtilities.CopyMembers(oldRDom._members);
-            foreach (var member in newMembers)
-            { AddOrMoveMember(member); }
+            MembersAll.AddOrMoveRange(newMembers);
             var newTypeParameters = RoslynDomUtilities.CopyMembers(oldRDom._typeParameters);
-            foreach (var typeParameter in newTypeParameters)
-            { AddOrMoveTypeParameter(typeParameter); }
+            TypeParameters.AddOrMoveRange(newTypeParameters);
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+            _members = new RDomList<ITypeMember>(this);
+            _typeParameters = new RDomList<ITypeParameter>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -66,32 +72,6 @@ namespace RoslynDom
             }
         }
 
-        public void RemoveMember(ITypeMember member)
-        {
-            if (member.Parent == null)
-            { _members.Remove(member); }
-            else
-            { RoslynDomSymbolUtilities.RemoveMemberFromParent(this, member); }
-        }
-
-        public void AddOrMoveMember(ITypeMember member)
-        {
-            RoslynDomSymbolUtilities.PrepMemberForAdd(this, member);
-            _members.Add(member);
-        }
-
-        public void ClearMembers()
-        { _members.Clear(); }
-
-        public void RemoveTypeParameter(ITypeParameter typeParameter)
-        { _typeParameters.Remove(typeParameter); }
-
-        public void AddOrMoveTypeParameter(ITypeParameter typeParameter)
-        { _typeParameters.Add(typeParameter); }
-
-        public void ClearTypeParameters()
-        { _typeParameters.Clear(); }
-
         public string Name { get; set; }
 
         public string Namespace
@@ -102,13 +82,16 @@ namespace RoslynDom
         public string QualifiedName
         { get { return GetQualifiedName(); } }
 
-        public IEnumerable<ITypeParameter> TypeParameters
+        public RDomList<ITypeParameter> TypeParameters
         {
             get
             {
                 return _typeParameters;
             }
         }
+
+        public RDomList<ITypeMember> MembersAll
+        { get { return _members; } }
 
         public IEnumerable<ITypeMember> Members
         { get { return _members; } }
@@ -134,7 +117,7 @@ namespace RoslynDom
 
         public IStructuredDocumentation StructuredDocumentation { get; set; }
 
-        public string Description { get ; set;}
+        public string Description { get; set; }
     }
 }
 

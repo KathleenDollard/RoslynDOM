@@ -22,7 +22,7 @@ namespace RoslynDomTests
             var class1 = rDomRoot.RootClasses.First();
             var attribute = class1.Attributes.Attributes.First();
             var class2 = class1.Copy();
-            rDomRoot.AddOrMoveStemMember(class2);
+            rDomRoot.StemMembersCommentsWhite. AddOrMove(class2);
             var classes = rDomRoot.Classes.ToArray();
             Assert.AreEqual(2, classes.Count());
             Assert.IsFalse(classes[0] == classes[1]); // reference equality fails
@@ -43,7 +43,7 @@ namespace RoslynDomTests
             var rDomClass = root.RootClasses.First() as RDomClass;
             var method1 = rDomClass.Methods.First();
             var method2 = method1.Copy();
-            rDomClass.AddOrMoveMember(method2);
+            rDomClass.MembersAll.AddOrMove(method2);
             var methods = rDomClass.Methods.ToArray();
             Assert.AreEqual(2, methods.Count());
             Assert.IsFalse(methods[0] == methods[1]); // reference equality fails
@@ -132,7 +132,7 @@ namespace RoslynDomTests
             var method = root.RootClasses.First().Methods.First() as RDomMethod;
             var param = method.Parameters.First();
             Assert.AreEqual(2, method.Parameters.Count());
-            method.RemoveParameter(param);
+            method.Parameters.Remove(param);
             Assert.AreEqual(1, method.Parameters.Count());
         }
 
@@ -149,7 +149,7 @@ namespace RoslynDomTests
             var class1 = root.RootClasses.First() as RDomClass;
             var param = class1.TypeParameters.Skip (1).First();
             Assert.AreEqual(3, class1.TypeParameters.Count());
-            class1.RemoveTypeParameter(param);
+            class1.TypeParameters.Remove(param);
             Assert.AreEqual(2, class1.TypeParameters.Count());
             Assert.AreEqual("T1", class1.TypeParameters.First().Name);
             Assert.AreEqual("T3", class1.TypeParameters.Last().Name);
@@ -167,7 +167,7 @@ namespace RoslynDomTests
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First() as RDomClass;
             Assert.AreEqual(3, class1.TypeParameters.Count());
-            class1.ClearTypeParameters();
+            class1.TypeParameters.Clear();
             Assert.AreEqual(0, class1.TypeParameters.Count());
         }
 
@@ -184,7 +184,7 @@ namespace RoslynDomTests
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First() as RDomClass;
             Assert.AreEqual(2, class1.Members.Count());
-            class1.ClearMembers();
+            class1.MembersAll.Clear();
             Assert.AreEqual(0, class1.Members.Count());
         }
 
@@ -198,7 +198,7 @@ namespace RoslynDomTests
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode) as RDomRoot;
             Assert.AreEqual(3, root.StemMembers.Count());
             var class1 = root.Classes.First();
-            root.RemoveStemMember(class1);
+            root.StemMembersCommentsWhite. Remove(class1);
             Assert.AreEqual(2, root.StemMembers.Count());
         }
 

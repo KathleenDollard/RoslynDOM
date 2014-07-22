@@ -21,11 +21,9 @@ namespace RoslynDom.CSharp
 
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            foreach (var typeParameter in newTypeParameters)
-            { newItem.AddOrMoveTypeParameter(typeParameter); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, newItem, model));
-            foreach (var member in members)
-            { newItem.AddOrMoveMember(member); }
+            newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
+                  var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, newItem, model));
+            newItem.MembersAll.AddOrMoveRange(members);
             newItem.BaseType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.BaseType);
             newItem.IsAbstract = newItem.Symbol.IsAbstract;
             newItem.IsSealed = newItem.Symbol.IsSealed;

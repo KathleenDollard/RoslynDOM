@@ -8,19 +8,25 @@ namespace RoslynDom
 {
     public class RDomIfStatement : RDomIfBaseStatement<IIfStatement>, IIfStatement
     {
-        private IList<IElseStatement> _elses = new List<IElseStatement>();
+        private RDomList<IElseStatement> _elses;
 
         public RDomIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomIfStatement(RDomIfStatement oldRDom)
             : base(oldRDom)
         {
+            // Initialize called in base
             var newElses = RoslynDomUtilities.CopyMembers(oldRDom.Elses);
-            foreach (var elseItem in newElses)
-            { AddOrMoveElse(elseItem); }
+            Elses.AddOrMoveRange(newElses);
             Condition = oldRDom.Condition.Copy();
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+            _elses = new RDomList<IElseStatement>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -30,7 +36,7 @@ namespace RoslynDom
                 var list = new List<IDom>();
                 list.Add(Condition);
                 list.AddRange(base.Children.ToList());
-                 list.AddRange(Elses); 
+                list.AddRange(Elses);
                 return list;
             }
         }
@@ -48,13 +54,13 @@ namespace RoslynDom
             }
         }
 
-        public void RemoveElse(IElseStatement elseIf)
-        { _elses.Remove(elseIf); }
+        //public void RemoveElse(IElseStatement elseIf)
+        //{ _elses.Remove(elseIf); }
 
-        public void AddOrMoveElse(IElseStatement elseIf)
-        { _elses.Add(elseIf); }
+        //public void AddOrMoveElse(IElseStatement elseIf)
+        //{ _elses.Add(elseIf); }
 
-        public IEnumerable<IElseStatement> Elses
+        public RDomList<IElseStatement> Elses
         { get { return _elses; } }
 
         public IExpression Condition { get; set; }

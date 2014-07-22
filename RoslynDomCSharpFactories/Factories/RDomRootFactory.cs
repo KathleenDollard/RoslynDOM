@@ -18,10 +18,8 @@ namespace RoslynDom.CSharp
             newItem.Name = "Root";
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember >().MakeItem(x,newItem,  model));
             var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
-            foreach (var member in members)
-            { newItem.AddOrMoveStemMember(member); }
-            foreach (var member in usings)
-            { newItem.AddOrMoveStemMember(member); }
+            newItem.StemMembersCommentsWhite.AddOrMoveRange(members);
+            newItem.StemMembersCommentsWhite.AddOrMoveRange(usings);
 
             return new IRoot[] { newItem };
         }

@@ -9,11 +9,12 @@ namespace RoslynDom
 
         public RDomDoStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomDoStatement(RDomDoStatement oldRDom)
             : base(oldRDom)
         { }
+
 
 
         public override IEnumerable<IDom> Children

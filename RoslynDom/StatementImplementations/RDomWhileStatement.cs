@@ -12,11 +12,13 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         {
             this.TestAtEnd = true;
+            Initialize();
         }
 
         internal RDomWhileStatement(RDomWhileStatement oldRDom)
             : base(oldRDom)
         { }
+
 
         public override IEnumerable<IDom> Children
         { get { return base.Children; } }
