@@ -112,24 +112,7 @@ namespace RoslynDom
         // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
         { get { return _parameters; } }
 
-        //public void RemoveGetStatement(IStatement statement)
-        //{ _getStatements.Remove(statement); }
-
-        //public void AddGetStatement(IStatement statement)
-        //{ _getStatements.Add(statement); }
-
-        //public IEnumerable<IStatement> GetStatements
-        //{ get { return _getStatements; } }
-
-        //public void RemoveSetStatement(IStatement statement)
-        //{ _setStatements.Remove(statement); }
-
-        //public void AddSetStatement(IStatement statement)
-        //{ _setStatements.Add(statement); }
-
-        //public IEnumerable<IStatement> SetStatements
-        //{ get { return _setStatements; } }
-
+ 
         public MemberKind MemberKind
         { get { return MemberKind.Property; } }
 
@@ -139,5 +122,8 @@ namespace RoslynDom
             { return ReturnType.QualifiedName; }
             return base.RequestValue(name);
         }
+        public IStructuredDocumentation StructuredDocumentation { get; set; }
+
+        public string Description { get ; set;}
     }
 }

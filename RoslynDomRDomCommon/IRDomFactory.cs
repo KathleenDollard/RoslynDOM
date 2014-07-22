@@ -22,8 +22,11 @@ namespace RoslynDom
  
     }
 
-    public interface IPublicAnnotationFactory : IRDomFactory<PublicAnnotation >
+    public interface IPublicAnnotationFactory : IRDomFactory<IPublicAnnotation >
     {    }
+
+    public interface IStructuredDocumentationFactory : IRDomFactory<IStructuredDocumentation >
+    { }
 
     public interface IAttributeFactory : IRDomFactory<IAttribute>
     {

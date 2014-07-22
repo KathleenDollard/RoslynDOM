@@ -40,7 +40,8 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IExpression;
             var node = SyntaxFactory.ParseExpression(itemAsT.Expression);
-            return new SyntaxNode[] { node.NormalizeWhitespace() };
+            // TODO: return new SyntaxNode[] { node.Format() };
+            return new SyntaxNode[] { node };
         }
     }
 }

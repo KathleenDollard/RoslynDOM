@@ -34,6 +34,12 @@ namespace RoslynDom
             return UnityContainer.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
         }
 
+        public IStructuredDocumentationFactory GetStructuredDocumentationFactory()
+        {
+            if (!isLoaded) throw new InvalidOperationException();
+            return UnityContainer.ResolveAll<IStructuredDocumentationFactory>().FirstOrDefault();
+        }
+
         public IAttributeFactory GetAttributeFactory()
         {
             if (!isLoaded) throw new InvalidOperationException();
@@ -55,6 +61,7 @@ namespace RoslynDom
             var container = new UnityContainer();
             var types = AllClasses.FromAssembliesInBasePath();
             LoadSpecificFactoryIntoContainer<IPublicAnnotationFactory>(types, container);
+            LoadSpecificFactoryIntoContainer<IStructuredDocumentationFactory>(types, container);
             LoadSpecificFactoryIntoContainer<IAttributeFactory>(types, container);
             foreach (var registration in registrations)
             {

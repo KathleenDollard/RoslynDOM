@@ -6,9 +6,9 @@ namespace RoslynDom.Common
 {
     public class PublicAnnotationList : IHasLookupValue
     {
-        private List<PublicAnnotation> _publicAnnotations = new List<PublicAnnotation>();
+        private List<IPublicAnnotation> _publicAnnotations = new List<IPublicAnnotation>();
 
-        public void Add(IEnumerable<PublicAnnotation> publicAnnotations)
+        public void Add(IEnumerable<IPublicAnnotation> publicAnnotations)
         {
             if (publicAnnotations == null) return;
             foreach (var publicAnnotation in publicAnnotations)
@@ -61,14 +61,14 @@ namespace RoslynDom.Common
             AddValue(name, name, value);
         }
 
-        public PublicAnnotation GetPublicAnnotation(string name)
+        public IPublicAnnotation GetPublicAnnotation(string name)
         {
             return _publicAnnotations
                                 .Where(x => x.Name == name)
                                 .FirstOrDefault();
         }
 
-        public bool TryGetPublicAnnotation(string name, out PublicAnnotation publicAnnotation)
+        public bool TryGetPublicAnnotation(string name, out IPublicAnnotation publicAnnotation)
         {
             publicAnnotation = null;
             if (!HasPublicAnnotation(name)) { return false; }
@@ -146,7 +146,7 @@ namespace RoslynDom.Common
            bool IHasLookupValue.TryGetValue<T>(string key, out T value)
         {
             if (!typeof(T).IsAssignableFrom(typeof(PublicAnnotation))) { throw new InvalidOperationException(); }
-            PublicAnnotation annot;
+            IPublicAnnotation annot;
             var ret = TryGetPublicAnnotation(key, out annot);
             if (!ret) { value = default(T); return false; }
             value = (T)(annot as object);

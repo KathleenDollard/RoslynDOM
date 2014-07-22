@@ -50,8 +50,8 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IAttribute;
             var nameSyntax = SyntaxFactory.ParseName(itemAsT.Name);
             var arguments = new SeparatedSyntaxList<AttributeArgumentSyntax>();
-            var values = itemAsT.AttributeValues.SelectMany(x => BuildAttributeValueSyntax(x));
-            values = values.Select(x => x.NormalizeWhitespace());
+            var values = itemAsT.AttributeValues.Select(x => BuildAttributeValueSyntax(x));
+            //values = values.Select(x => x.Format());
             arguments = arguments.AddRange(values.OfType<AttributeArgumentSyntax>());
             var argumentList = SyntaxFactory.AttributeArgumentList(arguments);
             var node = SyntaxFactory.Attribute(nameSyntax, argumentList);
@@ -67,7 +67,7 @@ namespace RoslynDom.CSharp
             {
                 var attribList = SyntaxFactory.AttributeList();
                 var attributeSyntaxItems = attributes.SelectMany(x => BuildSyntax(x)).ToArray();
-                attributeSyntaxItems = attributeSyntaxItems.Select(x => x.NormalizeWhitespace()).ToArray();
+                // TODO: attributeSyntaxItems = attributeSyntaxItems.Select(x => x.Format()).ToArray();
                 attribList = attribList.AddAttributes(attributeSyntaxItems.OfType<AttributeSyntax>().ToArray());
                 list = list.Add(attribList);
             }
@@ -92,7 +92,7 @@ namespace RoslynDom.CSharp
 
       
         #region Private methods to support build syntax
-        private IEnumerable<SyntaxNode> BuildAttributeValueSyntax(IAttributeValue atttributeValue)
+        private AttributeArgumentSyntax BuildAttributeValueSyntax(IAttributeValue atttributeValue)
         {
             var argNameSyntax = SyntaxFactory.IdentifierName(atttributeValue.Name);
             var kind = RoslynCSharpUtilities.SyntaxKindFromLiteralKind(atttributeValue.ValueType, atttributeValue.Value);
@@ -105,7 +105,7 @@ namespace RoslynDom.CSharp
                 var token = (SyntaxToken)methodInfo.Invoke(null, new object[] { atttributeValue.Value });
                 expr = SyntaxFactory.LiteralExpression(kind, token);
             }
-            SyntaxNode node;
+            AttributeArgumentSyntax node;
             if (atttributeValue.Style == AttributeValueStyle.Colon)
             {
                 node = SyntaxFactory.AttributeArgument(
@@ -123,7 +123,7 @@ namespace RoslynDom.CSharp
                     SyntaxFactory.NameEquals(argNameSyntax),
                     null, expr);
             }
-            return new SyntaxNode[] { node };
+            return  node ;
         }
 
         #endregion

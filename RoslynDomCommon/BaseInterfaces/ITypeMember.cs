@@ -1,6 +1,10 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface ITypeMember : IDom,IMember, IHasAttributes ,  IHasAccessModifier  
+    public interface ITypeMemberOrWhitespace 
+    {
+    }
+
+    public interface ITypeMember : IDom, IMember, IHasAttributes, IHasAccessModifier, IHasStructuredDocumentation, ITypeMemberOrWhitespace 
     {
         MemberKind MemberKind { get; }
     }

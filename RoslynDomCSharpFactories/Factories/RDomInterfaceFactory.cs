@@ -46,6 +46,7 @@ namespace RoslynDom.CSharp
                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
+            node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
             // TODO: Class type members and type constraints
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }

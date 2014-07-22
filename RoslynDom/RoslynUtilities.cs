@@ -8,6 +8,7 @@ namespace RoslynDom
     {
         public static SyntaxNode Format(SyntaxNode node)
         {
+           // var formattingOptions = FormattingOptions.;
             var span = node.FullSpan;
             node = Formatter.Format(node, span, new CustomWorkspace());
             return node;

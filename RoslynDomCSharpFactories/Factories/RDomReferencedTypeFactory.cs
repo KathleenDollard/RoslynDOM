@@ -15,8 +15,9 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
         {
             var node =  SyntaxFactory.ParseTypeName(item.Name);
-            return new SyntaxNode[] { node.NormalizeWhitespace() };
-     }
+            // TODO: return new SyntaxNode[] { node.Format() };
+            return new SyntaxNode[] { node };
+        }
 
         public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {

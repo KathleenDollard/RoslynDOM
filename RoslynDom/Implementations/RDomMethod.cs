@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System.Linq;
+using System;
 
 namespace RoslynDom
 {
@@ -111,6 +112,10 @@ namespace RoslynDom
 
         public MemberKind MemberKind
         { get { return MemberKind.Method; } }
+
+        public IStructuredDocumentation StructuredDocumentation { get;set; }
+      
+        public string Description { get ; set; }
 
         public override object RequestValue(string name)
         {

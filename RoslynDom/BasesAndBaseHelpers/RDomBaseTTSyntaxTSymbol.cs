@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
@@ -17,7 +19,7 @@ namespace RoslynDom
         private string _containingTypeName;
 
         protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
-             : base(RDomFactoryHelper.GetPublicAnnotations(rawItem, parent))
+             : base(RDomFactoryHelper.GetPublicAnnotations(rawItem, parent, model))
         {
             _rawSyntax = rawItem;
             _originalRawSyntax = rawItem;
@@ -25,10 +27,28 @@ namespace RoslynDom
             if (model != null)
             {
                 _symbol = (TSymbol)model.GetDeclaredSymbol(rawItem);
-                //if (_symbol != null)
-                //{
-                //    _attributes = RDomAttribute.MakeAttributes(this, Symbol, _rawSyntax, model);
-                //}
+                if (_symbol != null)
+                {
+                    var thisAsHasStructuredDocs = this as IHasStructuredDocumentation;
+                    if (thisAsHasStructuredDocs != null)
+                    {
+                        var docsItem = RDomFactoryHelper.GetStructuredDocumentation(rawItem, parent, model).FirstOrDefault();
+                        var docs = Symbol.GetDocumentationCommentXml();
+                        if (!string.IsNullOrWhiteSpace(docs))
+                        {
+                            var xDocument = XDocument.Parse(docs);
+                            docsItem.RawItem = xDocument;
+                            var summaryNode = xDocument.DescendantNodes()
+                                                .OfType<XElement>()
+                                                .Where(x => x.Name == "summary")
+                                                .Select(x => x.Value);
+                            var description = summaryNode.FirstOrDefault().Replace("/r", "").Replace("\n", "").Trim();
+                            docsItem.Description = description;
+                            thisAsHasStructuredDocs.StructuredDocumentation = docsItem;
+                            thisAsHasStructuredDocs.Description = description;
+                        }
+                    }
+                }
             }
         }
 

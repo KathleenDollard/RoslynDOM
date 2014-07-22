@@ -40,6 +40,9 @@ namespace RoslynDom.CSharp
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
             var itemAsEnum = item as IEnum;
             if (itemAsEnum == null) { throw new InvalidOperationException(); }
+
+            node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
+            
             //var membersSyntax = itemAsEnum.Members
             //            .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x))
             //            .ToList();

@@ -10,21 +10,23 @@ namespace RoslynDom.Tests.Walkthrough_1_code
 
         public string Foo()
         {
+
             var ret = lastName;
             ret = Foo();
             ret = "xyz";
+
+            // Comment and whitespace
             var xx = new String('a', 4);
             ret = "abc" + Foo();
-
             if (!string.IsNullOrEmpty(firstName))
             { ret = firstName + lastName; }
+            // comment
             var x = ", ";
             uint y = 42;
             x = lastName + x + firstName;
             Foo2(x);
             return x;
         }
-
         private void Foo2(string dummy)
         {
             ulong x = 3;
@@ -40,6 +42,10 @@ namespace RoslynDom.Tests.Walkthrough_1_code
             }
         }
 
+        /// <summary>
+        /// This is a test
+        /// </summary>
+        /// <param name="dummy">With a dummy parameter</param>
         public void Foo3(string dummy)
         {
             Console.WriteLine("Making up silly code to evaluate");

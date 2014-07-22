@@ -62,5 +62,9 @@ namespace RoslynDom
             { return ReturnType.QualifiedName; }
             return base.RequestValue(name);
         }
+
+        public IStructuredDocumentation StructuredDocumentation { get; set; }
+
+        public string Description { get ; set;}
     }
 }

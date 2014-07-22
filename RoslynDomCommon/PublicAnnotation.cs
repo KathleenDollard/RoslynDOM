@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace RoslynDom.Common
 {
-    public class PublicAnnotation :IHasLookupValue
+    public class PublicAnnotation :  IPublicAnnotation
     {
         public PublicAnnotation (string name)
         {
@@ -36,8 +36,10 @@ namespace RoslynDom.Common
             get { return items.Select(x => x.Key); }
         }
 
-        public bool SameIntent(PublicAnnotation otherAnnotation)
+        public bool SameIntent<T>(T other)
+             where T : class
         {
+            var otherAnnotation = other as IPublicAnnotation;
             foreach (var item in items)
             {
                 var otherValue = otherAnnotation.GetValue(item.Key);
@@ -49,6 +51,13 @@ namespace RoslynDom.Common
             }
             return true;
         }
+
+        public bool SameIntent<T>(T otherAnnotation, bool ignoreValue)
+            where T : class
+        {
+            return SameIntent(otherAnnotation);
+        }
+
 
         public T GetValue<T>(string key)
         { return (T)this[key]; }

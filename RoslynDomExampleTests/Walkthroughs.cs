@@ -84,25 +84,25 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-        public void Walkthrogh_2_4_Find_implicit_variables_of_concern()
-        {
-            var factory = RDomCSharpFactory.Factory;
-            var root = factory.GetRootFromFile(fileName);
+public void Walkthrogh_2_4_Find_implicit_variables_of_concern()
+{
+    var factory = RDomCSharpFactory.Factory;
+    var root = factory.GetRootFromFile(fileName);
 
-var implicitlyTyped = root
-                .Descendants.OfType<IDeclarationStatement>()
-                .Where(x => x.IsImplicitlyTyped);
+    var implicitlyTyped = root
+                    .Descendants.OfType<IDeclarationStatement>()
+                    .Where(x => x.IsImplicitlyTyped);
 
-var instantiations = implicitlyTyped
-            .Where(x => x.Initializer.ExpressionType == ExpressionType.ObjectCreation);
+    var instantiations = implicitlyTyped
+                .Where(x => x.Initializer.ExpressionType == ExpressionType.ObjectCreation);
 
-var literals = implicitlyTyped
-            .Where(x => x.Initializer.ExpressionType == ExpressionType.Literal &&
-                            ( x.Type.Name == "String"
-                            || x.Type.Name == "Int"
-                            || x.Type.Name == "DateTime" )// for VB
-                            );
-var candidates = implicitlyTyped.Except(instantiations).Except(literals);
+    var literals = implicitlyTyped
+                .Where(x => x.Initializer.ExpressionType == ExpressionType.Literal &&
+                                (x.Type.Name == "String"
+                                || x.Type.Name == "Int"
+                                || x.Type.Name == "DateTime")// for VB
+                    );
+    var candidates = implicitlyTyped.Except(instantiations).Except(literals);
             Assert.Inconclusive();
         }
     }

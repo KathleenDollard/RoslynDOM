@@ -17,9 +17,10 @@ namespace RoslynDom
         private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase()
+            // There are two references to this, they just don't tend to show up in CodeLens
         { }
 
-        protected RDomBase(IEnumerable<PublicAnnotation> publicAnnotations)
+        protected RDomBase(IEnumerable<IPublicAnnotation> publicAnnotations)
         {
             _publicAnnotations.Add(publicAnnotations);
         }
@@ -30,6 +31,13 @@ namespace RoslynDom
             Name = oldIDom.Name;
             var newAnnotations = oldRDom._publicAnnotations.Copy();
             _publicAnnotations.Add(newAnnotations);
+            var thisAsHasStructuredDocs = this as IHasStructuredDocumentation;
+            if (thisAsHasStructuredDocs != null)
+            {
+                var otherAsHasStructuredDocs = (IHasStructuredDocumentation)oldIDom;
+                thisAsHasStructuredDocs.StructuredDocumentation = otherAsHasStructuredDocs.StructuredDocumentation;
+                thisAsHasStructuredDocs.Description  = otherAsHasStructuredDocs.Description;
+            }
         }
 
         /// <summary>

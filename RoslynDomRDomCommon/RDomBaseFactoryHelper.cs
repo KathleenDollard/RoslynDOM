@@ -13,7 +13,8 @@ namespace RoslynDom
         // WARNING: At present you must register all factories before retrieving any. 
         private static FactoryProvider factoryProvider = new FactoryProvider();
         private static IAttributeFactory attributeFactory;
-        private static IRDomFactory<PublicAnnotation> publicAnnotationFactory;
+        private static IRDomFactory<IPublicAnnotation> publicAnnotationFactory;
+        private static IRDomFactory<IStructuredDocumentation> structuredDocumentationFactory;
         private static List<Tuple<Type, RDomFactoryHelper>> registration = new List<Tuple<Type, RDomFactoryHelper>>();
         //private static RDomRootFactoryHelper rootFactoryHelper;
         //private static RDomStemMemberFactoryHelper stemMemberFactoryHelper;
@@ -48,11 +49,18 @@ namespace RoslynDom
             throw new InvalidOperationException();
         }
 
-        public static IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode, IDom parent)
+        public static IEnumerable<IPublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
             if (publicAnnotationFactory == null) { publicAnnotationFactory = factoryProvider.GetPublicAnnotationFactory(); }
-            return publicAnnotationFactory.CreateFrom(syntaxNode, parent, null);
+            return publicAnnotationFactory.CreateFrom(syntaxNode, parent, model);
+        }
+
+        public static IEnumerable<IStructuredDocumentation> GetStructuredDocumentation(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        {
+            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
+            if (structuredDocumentationFactory == null) { structuredDocumentationFactory = factoryProvider.GetStructuredDocumentationFactory(); }
+            return structuredDocumentationFactory.CreateFrom(syntaxNode, parent, model);
         }
 
         public static IEnumerable<IAttribute> GetAttributesFrom(SyntaxNode parentNode, IDom newParent, SemanticModel model)

@@ -21,7 +21,7 @@ namespace RoslynDom.CSharp
             return true;
         }
 
-        public IEnumerable<PublicAnnotation> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public IEnumerable<IPublicAnnotation> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             IEnumerable<PublicAnnotation> list;
             var syntaxRoot = syntaxNode as CompilationUnitSyntax;
@@ -35,6 +35,12 @@ namespace RoslynDom.CSharp
             return list;
         }
 
+        public IEnumerable<SyntaxNode> BuildSyntax(IPublicAnnotation item)
+        {
+            return null;
+        }
+
+       
         #region Private methods to support public annotations
         private IEnumerable<PublicAnnotation> GetPublicAnnotations(CompilationUnitSyntax syntaxRoot)
         {
@@ -125,12 +131,7 @@ namespace RoslynDom.CSharp
             return null;
         }
 
-        public IEnumerable<SyntaxNode> BuildSyntax(PublicAnnotation item)
-        {
-            return null;
-        }
-
-
+ 
         #endregion
     }
 }

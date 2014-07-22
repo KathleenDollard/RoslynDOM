@@ -129,6 +129,10 @@ namespace RoslynDom
 
         public StemMemberKind StemMemberKind
         { get { return _stemMemberKind; } }
+
+        public IStructuredDocumentation StructuredDocumentation { get; set; }
+
+        public string Description { get ; set;}
     }
 }
 

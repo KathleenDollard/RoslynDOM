@@ -41,5 +41,9 @@ namespace RoslynDom
         {
             get { return MemberKind.InvalidMember; }
         }
+
+        public IStructuredDocumentation StructuredDocumentation { get; set; }
+
+        public string Description { get ; set;}
     }
 }

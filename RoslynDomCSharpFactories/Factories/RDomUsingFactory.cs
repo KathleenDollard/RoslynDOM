@@ -25,8 +25,9 @@ namespace RoslynDom.CSharp
             // TODO: Handle using statements, that's not done
             var identifier = SyntaxFactory.IdentifierName(item.Name);
             var node = SyntaxFactory.UsingDirective(identifier);
-            
-            return new SyntaxNode[] { node.NormalizeWhitespace() };
+
+            // TODO: return new SyntaxNode[] { node.Format() };
+            return new SyntaxNode[] { node };
         }
     }
 

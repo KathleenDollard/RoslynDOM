@@ -338,8 +338,8 @@ namespace RoslynDomTests
             string value1String;
             int value2Int;
             int valueXInt;
-            PublicAnnotation annotValue;
-            PublicAnnotation annotValue2;
+            IPublicAnnotation annotValue;
+            IPublicAnnotation annotValue2;
             var publicAnnotations = root.RootClasses.First().PublicAnnotations;
             Assert.IsTrue(publicAnnotations.TryGetValue("kad_Test3","val1", out value1));
             Assert.IsTrue(publicAnnotations.TryGetValue("kad_Test3", "val2", out value2));

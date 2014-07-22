@@ -12,7 +12,7 @@ namespace RoslynDom
     {
         private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
 
-        protected RDomBase(IEnumerable<PublicAnnotation> publicAnnotations)
+        protected RDomBase(IEnumerable<IPublicAnnotation> publicAnnotations)
           : base(publicAnnotations)
         { }
 

@@ -15,6 +15,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as WhileStatementSyntax;
             var newItem = new RDomWhileStatement(syntaxNode, parent, model);
+            Initialize(newItem, syntax,  model, "<expression>");
             newItem.TestAtEnd = false; // restating the obvious
             return LoopFactoryHelper.CreateFrom<IWhileStatement>(newItem, syntax.Condition, syntax.Statement, parent, model);
         }

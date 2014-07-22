@@ -13,11 +13,12 @@ namespace RoslynDom.CSharp
         public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as MethodDeclarationSyntax;
-            var newItem = new RDomMethod(syntaxNode,parent, model);
-            newItem.Name = newItem.TypedSymbol.Name;
+            var newItem = new RDomMethod(syntaxNode, parent, model);
+            Initialize(newItem, syntax, model, newItem.TypedSymbol.Name);
+            //newItem.Name = ;
 
-            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
-            newItem.Attributes.AddOrMoveAttributeRange(attributes);
+            //var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            //newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
             var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
             foreach (var typeParameter in typeParameters)
@@ -48,25 +49,32 @@ namespace RoslynDom.CSharp
         {
             var nameSyntax = SyntaxFactory.Identifier(item.Name);
             var itemAsMethod = item as IMethod;
-            var returnTypeSyntax = (TypeSyntax)RDomCSharpFactory.Factory .BuildSyntaxGroup(itemAsMethod.ReturnType).First();
+
+            var returnTypeSyntax = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsMethod.ReturnType).First();
             var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
             var node = SyntaxFactory.MethodDeclaration(returnTypeSyntax, nameSyntax)
                             .WithModifiers(modifiers);
-            var attributes = RDomFactoryHelper.BuildAttributeSyntax (item.Attributes);
+
+            var attributes = RDomFactoryHelper.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+
             var parameterSyntaxList = itemAsMethod.Parameters
                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
                         .OfType<ParameterSyntax>()
                         .ToList();
             if (parameterSyntaxList.Any()) { node = node.WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterSyntaxList))); }
+
+            node = node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
+
             node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsMethod.Statements));
 
             // TODO: typeParameters  and constraintClauses 
 
+            // TODO: return new SyntaxNode[] { node.Format() };
             return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
 
-     }
+    }
 
 
 }

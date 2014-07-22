@@ -66,6 +66,7 @@
     <Compile Include="Implementations\RDomInterface.cs" />
     <Compile Include="Implementations\RDomInvalidTypeMember.cs" />
     <Compile Include="Implementations\RDomAccessor.cs" />
+    <Compile Include="Implementations\RDomVerticalWhitespace.cs" />
     <Compile Include="RegisterCSharpFactories.cs" />
     <Compile Include="RoslynDomSymbolUtilities.cs" />
     <Compile Include="RoslynUtilities.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatementImplementations\RDomIfStatement.cs" />
     <Compile Include="StatementImplementations\RDomBlockStatement.cs" />
+    <Compile Include="StructuredDocumentation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

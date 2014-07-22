@@ -16,7 +16,7 @@ namespace RoslynDom
         internal RDomEnum(RDomEnum oldRDom)
              : base(oldRDom)
         {
-                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
+            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             UnderlyingType = oldRDom.UnderlyingType;
         }
@@ -48,5 +48,9 @@ namespace RoslynDom
             get { return StemMemberKind.Enum; }
 
         }
+
+        public IStructuredDocumentation StructuredDocumentation { get; set; }
+
+        public string Description { get; set; }
     }
 }

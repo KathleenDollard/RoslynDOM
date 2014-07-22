@@ -65,9 +65,11 @@ namespace RoslynDom.CSharp
             var setAccessorSyntax = RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsProeprty.SetAccessor).FirstOrDefault();
             if (setAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)setAccessorSyntax); }
             if (accessors.Any()) { node = node.WithAccessorList(SyntaxFactory.AccessorList(accessors)); }
+            node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
             // TODO: parameters , typeParameters and constraintClauses 
 
-            return new SyntaxNode[] { node.NormalizeWhitespace() };
+            // TODO: return new SyntaxNode[] { node.Format() };
+            return new SyntaxNode[] { node };
         }
     }
 

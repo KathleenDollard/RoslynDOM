@@ -20,7 +20,7 @@ namespace RoslynDom.CSharp
         {
             var list = new List<ITypeMember>();
 
-            var fieldPublicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode, parent);
+            var fieldPublicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode, parent, model);
             var rawField = syntaxNode as FieldDeclarationSyntax;
             var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
@@ -36,6 +36,7 @@ namespace RoslynDom.CSharp
                 newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
                 newItem.IsStatic = newItem.Symbol.IsStatic;
                 newItem.PublicAnnotations.Add(fieldPublicAnnotations);
+
             }
             return list;
         }
@@ -56,7 +57,10 @@ namespace RoslynDom.CSharp
             var attributes = RDomFactoryHelper.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
-            return new SyntaxNode[] { node.NormalizeWhitespace() };
+            node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
+
+            // TODO: return new SyntaxNode[] { node.Format() };
+            return new SyntaxNode[] { node };
         }
 
     }

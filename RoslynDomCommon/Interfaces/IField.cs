@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface IField : ITypeMember<IField>, IHasReturnType, ICanBeStatic
+    public interface IField : ITypeMember<IField>, IHasReturnType, ICanBeStatic, IHasStructuredDocumentation 
     {
     }
 }

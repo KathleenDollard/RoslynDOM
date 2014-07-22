@@ -41,12 +41,14 @@ namespace RoslynDom.CSharp
                         .OfType<UsingDirectiveSyntax>()
                         .ToList();
             if (usingsSyntax.Count() > 0) { node = node.WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(usingsSyntax)); }
+
             var membersSyntax = itemAsNamespace.StemMembers
-                        .Select(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
                         .OfType<MemberDeclarationSyntax>()
                         .ToList();
-            if (usingsSyntax.Count() > 0) { node = node.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(membersSyntax)); }
-            return new SyntaxNode[] { node.NormalizeWhitespace() };
+            if (membersSyntax.Count() > 0) { node = node.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(membersSyntax)); }
+            // TODO: return new SyntaxNode[] { node.Format() };
+            return new SyntaxNode[] { node };
         }
     }
 

@@ -19,7 +19,7 @@ namespace RoslynDom.CSharp
         public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<IStatement>();
-
+           // LineDirectiveTriviaSyntax
             var rawDeclaration = syntaxNode as LocalDeclarationStatementSyntax;
             var rawVariableDeclaration = rawDeclaration.Declaration;
             var declarators = rawDeclaration.Declaration.Variables.OfType<VariableDeclaratorSyntax>();

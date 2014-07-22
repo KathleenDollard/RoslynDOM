@@ -325,7 +325,7 @@ namespace RoslynDomTests
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
             var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (var i in new int[]\r\n{\r\n1, 2, 3, 4, 5, 6\r\n})\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (var i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
         #endregion
