@@ -28,7 +28,7 @@ namespace RoslynDom.CSharp
             if (syntax.Body != null)
             {
                 var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x, newItem, model));
-                newItem.Statements.AddOrMoveRange(statements);
+                newItem.StatementsAll.AddOrMoveRange(statements);
             }
 
             return new IMisc[] { newItem };

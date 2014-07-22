@@ -8,7 +8,7 @@ namespace RoslynDom
 {
     public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
     {
-        private RDomList<IStatement> _statements;
+        private RDomList<IStatementCommentWhite> _statements;
         private AttributeList _attributes = new AttributeList();
         private AccessorType _accessorType;
 
@@ -25,7 +25,7 @@ namespace RoslynDom
             Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-            Statements.AddOrMoveRange(newStatements);
+            StatementsAll.AddOrMoveRange(newStatements);
             
             AccessModifier = oldRDom.AccessModifier;
         }
@@ -33,7 +33,7 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            _statements = new RDomList<IStatement>(this);
+            _statements = new RDomList<IStatementCommentWhite>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -71,8 +71,11 @@ namespace RoslynDom
         public bool IsStatic { get; set; }
         public bool IsExtensionMethod { get; set; }
 
-        public RDomList<IStatement> Statements
+        public RDomList<IStatementCommentWhite > StatementsAll
         { get { return _statements; } }
+
+        public IEnumerable <IStatement> Statements
+        { get { return _statements.OfType<IStatement>().ToList(); } }
 
         public MemberKind MemberKind
         { get { return MemberKind.Method; } }

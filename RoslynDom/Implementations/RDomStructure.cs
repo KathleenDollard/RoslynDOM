@@ -16,7 +16,7 @@ namespace RoslynDom
         { }
 
          public IEnumerable<IClass> Classes
-        { get { return Members.OfType<IClass>(); } }
+        { get { return Members.OfType<IClass>().ToList(); } }
 
         public IEnumerable<IType> Types
         {
@@ -28,13 +28,13 @@ namespace RoslynDom
         }
 
         public IEnumerable<IStructure> Structures
-        { get { return Members.OfType<IStructure>(); } }
+        { get { return Members.OfType<IStructure>().ToList(); } }
 
         public IEnumerable<IInterface> Interfaces
-        { get { return Members.OfType<IInterface>(); } }
+        { get { return Members.OfType<IInterface>().ToList(); } }
 
         public IEnumerable<IEnum> Enums
-        { get { return Members.OfType<IEnum>(); } }
+        { get { return Members.OfType<IEnum>().ToList(); } }
 
              public IEnumerable<IReferencedType> ImplementedInterfaces
         { get { return this.ImpementedInterfacesFrom(false); } }

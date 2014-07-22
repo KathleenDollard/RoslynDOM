@@ -9,17 +9,16 @@ namespace RoslynDom
         : RDomBase<T, ISymbol>, IStatement
         where T : class, ILoop<T>, IStatement
     {
-        private RDomList<IStatement> _statements ;
+        private RDomList<IStatementCommentWhite> _statements ;
 
         internal RDomBaseLoop(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         {  }
 
-
         internal RDomBaseLoop(T oldRDom)
              : base(oldRDom)
         {
-            Statements.AddOrMoveRange(oldRDom.Statements);
+            StatementsAll.AddOrMoveRange(oldRDom.Statements);
             Condition = oldRDom.Condition.Copy();
             HasBlock = oldRDom.HasBlock;
             TestAtEnd = oldRDom.TestAtEnd;
@@ -28,7 +27,7 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            _statements = new RDomList<IStatement>(this);
+            _statements = new RDomList<IStatementCommentWhite>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -59,9 +58,11 @@ namespace RoslynDom
         public bool HasBlock { get; set; }
         public bool TestAtEnd { get; set; }
 
-        public RDomList<IStatement> Statements
-        { get { return _statements; } }
+        public IEnumerable <IStatement> Statements
+        { get { return _statements.OfType<IStatement>().ToList(); } }
 
+        public RDomList<IStatementCommentWhite> StatementsAll
+        { get { return _statements; } }
     }
 }
 

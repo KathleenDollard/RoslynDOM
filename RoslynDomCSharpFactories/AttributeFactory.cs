@@ -51,7 +51,7 @@ namespace RoslynDom.CSharp
             var nameSyntax = SyntaxFactory.ParseName(itemAsT.Name);
             var arguments = new SeparatedSyntaxList<AttributeArgumentSyntax>();
             var values = itemAsT.AttributeValues.Select(x => BuildAttributeValueSyntax(x));
-            arguments = arguments.AddRange(values.OfType<AttributeArgumentSyntax>());
+            arguments = arguments.AddRange(values.OfType<AttributeArgumentSyntax>().ToList());
             var argumentList = SyntaxFactory.AttributeArgumentList(arguments);
             var node = SyntaxFactory.Attribute(nameSyntax, argumentList);
 

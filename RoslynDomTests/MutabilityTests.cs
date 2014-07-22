@@ -22,7 +22,7 @@ namespace RoslynDomTests
             var class1 = rDomRoot.RootClasses.First();
             var attribute = class1.Attributes.Attributes.First();
             var class2 = class1.Copy();
-            rDomRoot.StemMembersCommentsWhite. AddOrMove(class2);
+            rDomRoot.StemMembersAll. AddOrMove(class2);
             var classes = rDomRoot.Classes.ToArray();
             Assert.AreEqual(2, classes.Count());
             Assert.IsFalse(classes[0] == classes[1]); // reference equality fails
@@ -198,7 +198,7 @@ namespace RoslynDomTests
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode) as RDomRoot;
             Assert.AreEqual(3, root.StemMembers.Count());
             var class1 = root.Classes.First();
-            root.StemMembersCommentsWhite. Remove(class1);
+            root.StemMembersAll. Remove(class1);
             Assert.AreEqual(2, root.StemMembers.Count());
         }
 

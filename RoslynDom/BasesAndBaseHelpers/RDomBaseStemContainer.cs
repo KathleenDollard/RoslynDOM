@@ -11,7 +11,7 @@ namespace RoslynDom
         where TSymbol : ISymbol
         where T : class, IDom<T>
     {
-        private RDomList<IStemMember> _members;
+        private RDomList<IStemMemberCommentWhite> _members;
 
         internal RDomBaseStemContainer(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
@@ -20,10 +20,10 @@ namespace RoslynDom
         internal RDomBaseStemContainer(T oldIDom)
              : base(oldIDom)
         {
+            Initialize();
             // Really need to keep them in order so need to iterate entire list in order
             var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;
             var newMembers = new List<IStemMember>();
-            _members = new RDomList<IStemMember>(this);
             foreach (var member in oldRDom.StemMembers)
             {
                 //ordered in approx expectation of frequency
@@ -44,7 +44,7 @@ namespace RoslynDom
             if (memberAsT != null)
             {
                 var newMember = constructDelegate(memberAsT);
-                StemMembersCommentsWhite.AddOrMove(newMember);
+                StemMembersAll.AddOrMove(newMember);
                 return true;
             }
             return false;
@@ -52,7 +52,7 @@ namespace RoslynDom
 
         protected override void Initialize()
         {
-            _members = new RDomList<IStemMember>(this);
+            _members = new RDomList<IStemMemberCommentWhite>(this);
             base.Initialize();
         }
 
@@ -88,7 +88,7 @@ namespace RoslynDom
         public void ClearStemMembers()
         { _members.Clear(); }
 
-        public RDomList<IStemMember> StemMembersCommentsWhite
+        public RDomList<IStemMemberCommentWhite > StemMembersAll
         { get { return _members; } }
 
         public IEnumerable<INamespace> AllChildNamespaces
@@ -98,29 +98,29 @@ namespace RoslynDom
         { get { return RoslynDomUtilities.GetNonEmptyNamespaces(this); } }
 
         public IEnumerable<IStemMember> StemMembers
-        { get { return _members; } }
+        { get { return _members.OfType<IStemMember>().ToList(); } }
 
         public IEnumerable<INamespace> Namespaces
-        { get { return StemMembers.OfType<INamespace>(); } }
+        { get { return StemMembers.OfType<INamespace>().ToList(); } }
 
         public IEnumerable<IClass> Classes
-        { get { return StemMembers.OfType<IClass>(); } }
+        { get { return StemMembers.OfType<IClass>().ToList(); } }
 
         public IEnumerable<IInterface> Interfaces
-        { get { return StemMembers.OfType<IInterface>(); } }
+        { get { return StemMembers.OfType<IInterface>().ToList(); } }
 
         public IEnumerable<IStructure> Structures
-        { get { return StemMembers.OfType<IStructure>(); } }
+        { get { return StemMembers.OfType<IStructure>().ToList(); } }
 
         public IEnumerable<IEnum> Enums
-        { get { return StemMembers.OfType<IEnum>(); } }
+        { get { return StemMembers.OfType<IEnum>().ToList().ToList(); } }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Usings")]
         public IEnumerable<IUsing> Usings
-        { get { return StemMembers.OfType<IUsing>().ToList(); } }
+        { get { return StemMembers.OfType<IUsing>().ToList().ToList(); } }
 
         public IEnumerable<IType> Types
-        { get { return StemMembers.OfType<IType>(); } }
+        { get { return StemMembers.OfType<IType>().ToList().ToList(); } }
 
 
     }

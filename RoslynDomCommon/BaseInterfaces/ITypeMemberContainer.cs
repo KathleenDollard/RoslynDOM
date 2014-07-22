@@ -4,7 +4,7 @@ namespace RoslynDom.Common
 {
     public interface ITypeMemberContainer 
     {
-        RDomList<ITypeMember> MembersAll { get; }
+        RDomList<ITypeMemberCommentWhite> MembersAll { get; }
         IEnumerable<ITypeMember> Members { get; }
         IEnumerable<IProperty> Properties { get; }
         IEnumerable<IMethod> Methods { get; }

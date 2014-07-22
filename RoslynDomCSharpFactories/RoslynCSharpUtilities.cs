@@ -19,7 +19,8 @@ namespace RoslynDom.CSharp
                                       .OfType<QualifiedNameSyntax>()
                                       .SingleOrDefault();
             var identifierNameNodes = node.ChildNodes()
-                               .OfType<IdentifierNameSyntax>();
+                               .OfType<IdentifierNameSyntax>()
+                               .ToList();
             var name = "";
             if (qualifiedNameNode != null)
             {

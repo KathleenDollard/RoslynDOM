@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
             bool hasBlock = false;
             var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statementSytax, newItem, ref hasBlock, model);
             newItem.HasBlock = hasBlock;
-            newItem.Statements.AddOrMoveRange(statements);
+            newItem.StatementsAll.AddOrMoveRange(statements);
         }
 
         private IEnumerable<IfStatementSyntax> GetElseIfSyntaxList(IfStatementSyntax syntax)

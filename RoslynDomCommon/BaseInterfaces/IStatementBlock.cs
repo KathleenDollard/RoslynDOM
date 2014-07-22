@@ -4,7 +4,8 @@ namespace RoslynDom.Common
 {
      public interface IStatementBlock : IDom
     {
-        RDomList<IStatement> Statements { get; }
+        RDomList<IStatementCommentWhite> StatementsAll { get; }
+        IEnumerable <IStatement> Statements { get; }
         bool HasBlock { get; set; }
     }
 }

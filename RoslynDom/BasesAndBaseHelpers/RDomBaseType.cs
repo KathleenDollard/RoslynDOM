@@ -10,7 +10,7 @@ namespace RoslynDom
         : RDomBase<T, INamedTypeSymbol>, IType<T>, ITypeMemberContainer
         where T : class, IType<T>
     {
-        private RDomList<ITypeMember> _members;
+        private RDomList<ITypeMemberCommentWhite> _members;
         private MemberKind _memberKind;        // This should remain readonly
         private StemMemberKind _stemMemberKind;// This should remain readonly
         private RDomList<ITypeParameter> _typeParameters;
@@ -47,7 +47,7 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            _members = new RDomList<ITypeMember>(this);
+            _members = new RDomList<ITypeMemberCommentWhite>(this);
             _typeParameters = new RDomList<ITypeParameter>(this);
         }
 
@@ -90,20 +90,20 @@ namespace RoslynDom
             }
         }
 
-        public RDomList<ITypeMember> MembersAll
+        public RDomList<ITypeMemberCommentWhite > MembersAll
         { get { return _members; } }
 
         public IEnumerable<ITypeMember> Members
-        { get { return _members; } }
+        { get { return _members.OfType<ITypeMember>().ToList(); } }
 
         public IEnumerable<IMethod> Methods
-        { get { return Members.OfType<IMethod>(); } }
+        { get { return Members.OfType<IMethod>().ToList(); } }
 
         public IEnumerable<IProperty> Properties
-        { get { return Members.OfType<IProperty>(); } }
+        { get { return Members.OfType<IProperty>().ToList(); } }
 
         public IEnumerable<IField> Fields
-        { get { return Members.OfType<IField>(); } }
+        { get { return Members.OfType<IField>().ToList(); } }
         public AttributeList Attributes
         { get { return _attributes; } }
 

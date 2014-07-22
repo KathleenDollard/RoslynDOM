@@ -77,6 +77,6 @@ namespace RoslynDom
         }
 
         public IEnumerable<IElseIfStatement> ElseIfs
-        { get { return Elses.OfType<IElseIfStatement>(); } }
+        { get { return Elses.OfType<IElseIfStatement>().ToList(); } }
     }
 }

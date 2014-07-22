@@ -11,7 +11,7 @@ namespace RoslynDom
     {
         private RDomList<IParameter> _parameters;
         private RDomList<ITypeParameter> _typeParameters;
-        private RDomList<IStatement> _statements;
+        private RDomList<IStatementCommentWhite> _statements;
         private AttributeList _attributes = new AttributeList();
 
         public RDomMethod(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -28,7 +28,7 @@ namespace RoslynDom
             var newTypeParameters = RoslynDomUtilities.CopyMembers(oldRDom._typeParameters);
             TypeParameters.AddOrMoveRange(newTypeParameters);
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-            Statements.AddOrMoveRange(newStatements);
+            StatementsAll.AddOrMoveRange(newStatements);
 
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
@@ -46,7 +46,7 @@ namespace RoslynDom
             base.Initialize();
             _typeParameters = new RDomList<ITypeParameter>(this);
             _parameters = new RDomList<IParameter>(this);
-            _statements = new RDomList<IStatement>(this);
+            _statements = new RDomList<IStatementCommentWhite>(this);
         }
         public override IEnumerable<IDom> Children
         {
@@ -90,8 +90,11 @@ namespace RoslynDom
         public RDomList<IParameter> Parameters
         { get { return _parameters; } }
 
-        public RDomList<IStatement> Statements
+        public RDomList<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
+
+        public IEnumerable <IStatement> Statements
+        { get { return _statements.OfType<IStatement>().ToList(); } }
 
         public bool HasBlock
         {
