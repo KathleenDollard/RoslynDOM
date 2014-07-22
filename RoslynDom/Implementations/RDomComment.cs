@@ -8,10 +8,12 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomVerticalWhitespace : RDomBase, IVerticalWhitespace
+    public class RDomComment : RDomBase, IComment
     {
-        public int Count { get; set; }
-      
+        public string Text { get; set; }
+
+        public bool IsMultiline { get; set; }
+
         public MemberKind MemberKind
         { get { return MemberKind.Whitespace; } }
 
@@ -20,7 +22,6 @@ namespace RoslynDom
 
         public override string OuterName
         { get { return null; } }
-
 
         public override object RawItem
         { get { return null; } }
@@ -37,9 +38,11 @@ namespace RoslynDom
 
         protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
-            var otherAsT = other as IVerticalWhitespace;
+            var otherAsT = other as IComment;
             if (otherAsT == null) return false;
-            return (Count == otherAsT.Count);
+            if (Text == otherAsT.Text) return false;
+            // Don't test multi-line, if that's the only difference, it's the same intent
+            return true;
         }
     }
 }

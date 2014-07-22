@@ -38,8 +38,11 @@
   <ItemGroup>
     <Compile Include="AttributeList.cs" />
     <Compile Include="BaseInterfaces\IComment.cs" />
+    <Compile Include="BaseInterfaces\IStatementCommentWhite.cs" />
     <Compile Include="BaseInterfaces\IStatementContainer.cs" />
+    <Compile Include="BaseInterfaces\IStemMember.cs" />
     <Compile Include="BaseInterfaces\IStructuredDocumentation.cs" />
+    <Compile Include="BaseInterfaces\ITypeMemberCommentWhite.cs" />
     <Compile Include="BaseInterfaces\IVerticalWhitespace.cs" />
     <Compile Include="CharacteristicInterfaces\IHasName.cs" />
     <Compile Include="CharacteristicInterfaces\IHasStructuredDocumentation.cs" />
@@ -108,7 +111,7 @@
     <Compile Include="Interfaces\IRoot.cs" />
     <Compile Include="BaseInterfaces\IDom.cs" />
     <Compile Include="BaseInterfaces\IStemContainer.cs" />
-    <Compile Include="BaseInterfaces\IStemMember.cs" />
+    <Compile Include="BaseInterfaces\IStemMemberCommentWhite.cs" />
     <Compile Include="BaseInterfaces\IStatement.cs" />
     <Compile Include="Interfaces\IStructure.cs" />
     <Compile Include="BaseInterfaces\ITypeMember.cs" />

@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoslynDomCommon.BaseInterfaces
+namespace RoslynDom.Common
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface IComment
+    public interface IComment : IStemMemberCommentWhite, ITypeMemberCommentWhite, IStatementCommentWhite
     {
         string Text { get; set; }
+        bool IsMultiline { get; set; }
     }
 }

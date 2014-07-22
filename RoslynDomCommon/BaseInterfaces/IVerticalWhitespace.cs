@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoslynDomCommon.BaseInterfaces
+namespace RoslynDom.Common
 {
-   public interface IVerticalWhitespace
+   public interface IVerticalWhitespace : IStemMemberCommentWhite, ITypeMemberCommentWhite, IStatementCommentWhite
     {
         int Count { get; set; }
     }

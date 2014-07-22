@@ -11,6 +11,8 @@
         Property,
         Field,
         EnumItem,
-        InvalidMember
+        InvalidMember,
+        Whitespace,
+        Comment
     }
 }

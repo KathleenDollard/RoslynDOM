@@ -66,6 +66,7 @@
     <Compile Include="Implementations\RDomInterface.cs" />
     <Compile Include="Implementations\RDomInvalidTypeMember.cs" />
     <Compile Include="Implementations\RDomAccessor.cs" />
+    <Compile Include="Implementations\RDomComment.cs" />
     <Compile Include="Implementations\RDomVerticalWhitespace.cs" />
     <Compile Include="RegisterCSharpFactories.cs" />
     <Compile Include="RoslynDomSymbolUtilities.cs" />

@@ -8,6 +8,8 @@
         Class,
         Structure,
         Enum,
-        Interface
+        Interface,
+        Whitespace,
+        Comment
     }
 }
