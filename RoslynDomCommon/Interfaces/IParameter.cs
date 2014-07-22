@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface IParameter : IMisc, IHasAttributes, IDom<IParameter >
+    public interface IParameter : IMisc, IHasAttributes, IDom<IParameter>, IHasName
     {
         IReferencedType Type { get; set; }
         bool IsOut { get; set; }

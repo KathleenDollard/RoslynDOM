@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
             return RDomFactoryHelper.GetHelper<IExpression>().MakeItem(condition, newItem, model).FirstOrDefault();
         }
 
-        public void InitializeStatements(IStatementContainer  newItem,  StatementSyntax statementSytax, SemanticModel model)
+        public void InitializeStatements(IStatementBlock  newItem,  StatementSyntax statementSytax, SemanticModel model)
         {
             bool hasBlock = false;
             var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statementSytax, newItem, ref hasBlock, model);
@@ -103,7 +103,7 @@ namespace RoslynDom.CSharp
         private static ExpressionSyntax GetCondition(IHasCondition itemAsT)
         { return (ExpressionSyntax)RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Condition); }
 
-        private static StatementSyntax GetStatement(IStatementContainer itemAsT)
+        private static StatementSyntax GetStatement(IStatementBlock itemAsT)
         { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock); }
     }
 }

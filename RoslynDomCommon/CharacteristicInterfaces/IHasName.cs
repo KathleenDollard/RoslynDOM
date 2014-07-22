@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ILoop<T> :IStatement, IDom<T>, IHasCondition, IStatementBlock
-        where T : IDom<T>
+    public interface IHasName
     {
-      
-        bool TestAtEnd { get; set; }
-
+        string Name { get; set; }
+        string OuterName { get; }
     }
 }

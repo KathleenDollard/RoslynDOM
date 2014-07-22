@@ -13,6 +13,8 @@ namespace RoslynDom
             : base(oldRDom)
         { }
 
+        public string Name { get; set; }
+
         public StemMemberKind StemMemberKind
         { get { return StemMemberKind.Using; } }
     }

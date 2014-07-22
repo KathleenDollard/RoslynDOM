@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IAccessor : IMisc, IStatementContainer , IHasAttributes, IHasAccessModifier, IDom<IAccessor >
+    public interface IAccessor : IMisc, IStatementContainer , IHasAttributes, IHasAccessModifier, IDom<IAccessor >, IHasName 
     {
         AccessorType AccessorType { get;  }
     }

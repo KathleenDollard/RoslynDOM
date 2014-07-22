@@ -14,7 +14,8 @@ namespace RoslynDom.CSharp
         // I'm still evolving how types are handled.
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
         {
-            var node =  SyntaxFactory.ParseTypeName(item.Name);
+            var itemAsT = item as IReferencedType;
+            var node =  SyntaxFactory.ParseTypeName(itemAsT.Name);
             // TODO: return new SyntaxNode[] { node.Format() };
             return new SyntaxNode[] { node };
         }

@@ -51,14 +51,14 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
         {
             var itemAsT = item as IVariableDeclaration;
-            var nameSyntax = SyntaxFactory.Identifier(item.Name);
+            var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
             TypeSyntax typeSyntax;
             // TODO: Type alias are not currently being used. Could be brute forced here, but I'd rather run a simplifier for real world scenarios
             if (itemAsT.IsImplicitlyTyped)
             { typeSyntax = SyntaxFactory.IdentifierName("var"); }
             else
             { typeSyntax = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Type)); }
-            var nodeDeclarator = SyntaxFactory.VariableDeclarator(item.Name);
+            var nodeDeclarator = SyntaxFactory.VariableDeclarator(itemAsT.Name);
             if (itemAsT.Initializer != null)
             {
                 var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Initializer);

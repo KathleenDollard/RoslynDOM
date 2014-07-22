@@ -32,7 +32,9 @@ namespace RoslynDom
             AccessModifier = GetAccessibility();
         }
 
-         public AttributeList Attributes
+        public string Name { get; set; }
+
+        public AttributeList Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }

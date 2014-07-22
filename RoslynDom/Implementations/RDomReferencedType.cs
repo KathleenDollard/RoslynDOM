@@ -75,6 +75,7 @@ namespace RoslynDom
             get
             { throw new NotImplementedException(); }
         }
+
         public override object OriginalRawItem
         {
             // I want to understand how people are using this before exposing it
@@ -84,6 +85,8 @@ namespace RoslynDom
 
         public override ISymbol Symbol
         { get { return _symbol; } }
+
+        public string Name { get; set; }
 
         public override string OuterName
         {

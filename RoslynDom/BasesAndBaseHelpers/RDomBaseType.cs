@@ -92,6 +92,8 @@ namespace RoslynDom
         public void ClearTypeParameters()
         { _typeParameters.Clear(); }
 
+        public string Name { get; set; }
+
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 

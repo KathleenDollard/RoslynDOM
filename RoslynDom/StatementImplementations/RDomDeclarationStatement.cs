@@ -25,6 +25,8 @@ namespace RoslynDom
         public override IEnumerable<IDom> Descendants
         { get { return new List<IDom>() { Initializer }; } }
 
+        public string Name { get; set; }
+
         public IExpression Initializer { get; set; }
 
         public IReferencedType Type { get; set; }

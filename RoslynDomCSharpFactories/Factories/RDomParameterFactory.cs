@@ -31,8 +31,8 @@ namespace RoslynDom.CSharp
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
         {
-            var nameSyntax = SyntaxFactory.Identifier(item.Name);
             var itemAsT = item as IParameter;
+            var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
             var syntaxType = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Type));
 
             var node = SyntaxFactory.Parameter(nameSyntax)

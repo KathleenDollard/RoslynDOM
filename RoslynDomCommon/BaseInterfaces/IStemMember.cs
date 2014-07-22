@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface IStemMember : IMember,  IDom
+    public interface IStemMember : IMember,  IDom, IHasName
     {
         StemMemberKind StemMemberKind { get; }
     }

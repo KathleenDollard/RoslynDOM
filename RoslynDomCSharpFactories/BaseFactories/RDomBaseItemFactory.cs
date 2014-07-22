@@ -48,7 +48,9 @@ namespace RoslynDom.CSharp
 
         public virtual void Initialize(T newItem, TSyntax syntaxNode, SemanticModel model, string name)
         {
-            newItem.Name = name;
+            var itemAsHasName = newItem as IHasName;
+            if (itemAsHasName != null)
+            { itemAsHasName.Name = name; }
 
             var itemHasAttributes = newItem as IHasAttributes;
             if (itemHasAttributes != null)

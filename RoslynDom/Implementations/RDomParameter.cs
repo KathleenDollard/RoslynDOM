@@ -24,6 +24,8 @@ namespace RoslynDom
             IsOptional = oldRDom.IsOptional;
             Ordinal = oldRDom.Ordinal;
         }
+        public string Name { get; set; }
+
         public AttributeList Attributes
         { get { return _attributes; } }
 

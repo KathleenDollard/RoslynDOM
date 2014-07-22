@@ -64,6 +64,8 @@ namespace RoslynDom
             }
         }
 
+        public string Name { get; set; }
+
         public AttributeList Attributes
         { get { return _attributes; } }
 

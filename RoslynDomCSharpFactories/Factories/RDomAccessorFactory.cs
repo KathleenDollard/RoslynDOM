@@ -14,10 +14,11 @@ namespace RoslynDom.CSharp
         public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as AccessorDeclarationSyntax;
+            var parentProperty = parent as IProperty;
             var accessorType = (syntaxNode.CSharpKind() == SyntaxKind.GetAccessorDeclaration)
                                 ? AccessorType.Get : AccessorType.Set;
             var newItem = new RDomPropertyAccessor(syntaxNode, accessorType, parent, model);
-            var newItemName = accessorType.ToString().ToLower() + "_" + parent.Name;
+            var newItemName = accessorType.ToString().ToLower() + "_" + parentProperty.Name;
             newItem.Name = newItemName;
 
             var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);

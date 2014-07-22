@@ -26,5 +26,6 @@ namespace RoslynDom.Common
             }
             return true;
         }
+
     }
 }

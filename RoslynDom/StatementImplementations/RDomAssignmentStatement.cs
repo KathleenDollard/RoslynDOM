@@ -14,7 +14,7 @@ namespace RoslynDom
         internal RDomAssignmentStatement(RDomAssignmentStatement oldRDom)
              : base(oldRDom)
         {
-            VarName = oldRDom.VarName;
+            Name = oldRDom.Name;
             Expression = oldRDom.Expression;
         }
 
@@ -24,7 +24,7 @@ namespace RoslynDom
         public override IEnumerable<IDom> Descendants
         { get { return new List<IDom>() { Expression }; } }
 
-        public string VarName { get; set; }
+        public string Name { get; set; }
         public IExpression Expression { get; set; }
     }
 }

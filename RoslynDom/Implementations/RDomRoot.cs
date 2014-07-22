@@ -16,6 +16,8 @@ namespace RoslynDom
            : base(oldRDom)
         { }
 
+        public string Name { get; set; }
+
         public bool HasSyntaxErrors
         {
             get

@@ -16,6 +16,7 @@ namespace RoslynDom
 
         }
 
+        public string Name { get; set; }
 
         public override string OuterName
         { get { return QualifiedName; } }

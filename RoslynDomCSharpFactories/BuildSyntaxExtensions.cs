@@ -204,7 +204,7 @@ namespace RoslynDom
             {
                 //  statementSyntaxList.Add(RDomStatement statement.BuildSyntax());
             }
-            //f (statementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
+            //if (statementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
             var ret = SyntaxFactory.Block(statementSyntaxList);
             return ret;
         }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RoslynDom.Common
 {
 
-    public interface IIfBaseStatement : IStatement, IStatementContainer
+    public interface IIfBaseStatement : IStatement, IStatementBlock
     {   }
 
        public interface IIfStatement : IIfBaseStatement, IHasCondition, IDom<IIfStatement>

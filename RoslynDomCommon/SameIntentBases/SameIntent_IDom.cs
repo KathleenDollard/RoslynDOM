@@ -6,8 +6,13 @@ namespace RoslynDom.Common
     {
         public bool SameIntent(IDom one, IDom other, bool includePublicAnnotations)
         {
+            if (one.GetType() != other.GetType()) { return false; }
             // Explicitly do not compare RawItems or OuterName
-            if (one.Name != other.Name) { return false; }
+            var oneAsHasName = one as IHasName;
+            if (oneAsHasName != null)
+            {
+                if (oneAsHasName.Name != ((IHasName)other).Name) { return false; }
+            }
             if (!one.PublicAnnotations.SameIntent( other.PublicAnnotations, includePublicAnnotations)) { return false; }
             return true;
         }

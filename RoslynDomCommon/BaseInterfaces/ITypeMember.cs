@@ -4,7 +4,7 @@
     {
     }
 
-    public interface ITypeMember : IDom, IMember, IHasAttributes, IHasAccessModifier, IHasStructuredDocumentation, ITypeMemberOrWhitespace 
+    public interface ITypeMember : IDom, IMember, IHasAttributes, IHasAccessModifier, IHasStructuredDocumentation, ITypeMemberOrWhitespace, IHasName
     {
         MemberKind MemberKind { get; }
     }

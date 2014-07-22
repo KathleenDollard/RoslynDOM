@@ -42,6 +42,9 @@ namespace RoslynDom
             if (IsStatic != other.IsStatic) return false;
             return true;
         }
+
+        public string Name { get; set; }
+
         public AttributeList Attributes
         { get { return _attributes; } }
 

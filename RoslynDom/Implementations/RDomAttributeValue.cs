@@ -33,6 +33,8 @@ namespace RoslynDom
             Style = oldRDom.Style;
         }
 
+        public string Name { get; set; }
+
         //protected void Initialize(SemanticModel model)
         //{
         //    base.Initialize();

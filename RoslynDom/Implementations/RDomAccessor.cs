@@ -56,6 +56,8 @@ namespace RoslynDom
         public void AddOrMoveStatement(IStatement statement)
         { _statements.Add(statement); }
 
+        public string Name { get; set; }
+
         public AttributeList Attributes
         { get { return _attributes; } }
 

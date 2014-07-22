@@ -38,8 +38,10 @@
   <ItemGroup>
     <Compile Include="AttributeList.cs" />
     <Compile Include="BaseInterfaces\IComment.cs" />
+    <Compile Include="BaseInterfaces\IStatementContainer.cs" />
     <Compile Include="BaseInterfaces\IStructuredDocumentation.cs" />
     <Compile Include="BaseInterfaces\IVerticalWhitespace.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasName.cs" />
     <Compile Include="CharacteristicInterfaces\IHasStructuredDocumentation.cs" />
     <Compile Include="CharacteristicInterfaces\IHasCondition.cs" />
     <Compile Include="Enums\AccessorType.cs" />
@@ -47,7 +49,7 @@
     <Compile Include="BaseInterfaces\IMisc.cs" />
     <Compile Include="BaseInterfaces\ILoop.cs" />
     <Compile Include="BaseInterfaces\IPropertyOrMethod.cs" />
-    <Compile Include="BaseInterfaces\IStatementContainer.cs" />
+    <Compile Include="BaseInterfaces\IStatementBlock.cs" />
     <Compile Include="CharacteristicInterfaces\ICanBeNested.cs" />
     <Compile Include="CharacteristicInterfaces\ICanBeStatic.cs" />
     <Compile Include="CharacteristicInterfaces\IHasAccessModifier.cs" />
@@ -118,6 +120,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublicAnnotation.cs" />
     <Compile Include="PublicAnnotationList.cs" />
+    <Compile Include="RDomList.cs" />
     <Compile Include="SameIntentBases\SameIntentHelpers.cs" />
     <Compile Include="SameIntentCharacteristics\SameIntent_ICanBeStatic.cs" />
     <Compile Include="SameIntentCharacteristics\SameIntent_IHasAccessModifier.cs" />

@@ -61,7 +61,11 @@ namespace RoslynDom
             _symbol = oldRDom._symbol;
             //if (oldRDom._attributes != null)
             //{ _attributes = RoslynDomUtilities.CopyMembers(oldRDom._attributes); }
-            Name = oldRDom.Name;
+            var thisAsHasName = this as IHasName;
+            if (thisAsHasName != null)
+            {
+                thisAsHasName.Name = ((IHasName)oldRDom).Name;
+            }
             //_symbol = default(TSymbol); // this should be reset, this line is to remind us
         }
 
@@ -101,8 +105,14 @@ namespace RoslynDom
         {
             get
             {
-                return (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
-                       Name;
+                // TODO: Fix OuterName and all those broken tests
+                var thisAsHasName = this as IHasName;
+                if (thisAsHasName != null)
+                {
+                    return (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
+                          thisAsHasName.Name;
+                }
+                return "";
             }
         }
 
@@ -112,7 +122,7 @@ namespace RoslynDom
             if (item != null)
             {
                 var outerName = (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
-                       Name;
+                       item.Name;
                 // There are probably slightly cleaner ways to do this, but with some override scenarios
                 // directly calling OuterName will result in a StackOverflowException
                 return (string.IsNullOrWhiteSpace(item.Namespace) ? "" : item.Namespace + ".")

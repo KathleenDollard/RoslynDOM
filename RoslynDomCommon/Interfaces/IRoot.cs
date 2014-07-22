@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface IRoot : IDom<IRoot>, IStemContainer
+    public interface IRoot : IDom<IRoot>, IStemContainer, IHasName
     {
         IEnumerable<IClass> RootClasses { get; }
         IEnumerable<IInterface > RootInterfaces { get; }

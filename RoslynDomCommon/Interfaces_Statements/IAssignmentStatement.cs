@@ -2,8 +2,9 @@
 
 namespace RoslynDom.Common
 {
-    public interface IAssignmentStatement : IStatement, IDom<IAssignmentStatement >
+    public interface IAssignmentStatement : IStatement, IDom<IAssignmentStatement >, IHasName
     {
         IExpression Expression { get; set; }
+
     }
 }

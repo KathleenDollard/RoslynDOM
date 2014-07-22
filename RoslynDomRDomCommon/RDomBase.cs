@@ -28,7 +28,10 @@ namespace RoslynDom
         protected RDomBase(IDom oldIDom)
         {
             var oldRDom = (RDomBase)oldIDom;
-            Name = oldIDom.Name;
+            var oldAsHasName = oldIDom as IHasName;
+            var thisAsHasName = oldIDom as IHasName;
+            if (oldAsHasName != null && thisAsHasName != null )
+            { thisAsHasName.Name = oldAsHasName.Name; }
             var newAnnotations = oldRDom._publicAnnotations.Copy();
             _publicAnnotations.Add(newAnnotations);
             var thisAsHasStructuredDocs = this as IHasStructuredDocumentation;
@@ -77,7 +80,7 @@ namespace RoslynDom
                 Parent = null;
                 parentAsTypeContainer.RemoveMember(thisAsTypeMember);
             }
-            var parentAsCodeContainer = this.Parent as IStatementContainer;
+            var parentAsCodeContainer = this.Parent as IStatementBlock;
             if (parentAsCodeContainer != null)
             {
                 var thisAsStatement = this as IStatement;
@@ -137,10 +140,16 @@ namespace RoslynDom
         /// For a discussion of names <see cref="OuterName"/>
         /// </summary>
         /// <returns>The string name, same as Roslyn symbol's name</returns>
-        public string Name { get; set; }
+      //  public string Name { get; set; }
 
         public virtual bool Matches(IDom other)
-        { return this.Name == other.Name; }
+        {
+            var thisAsHasName = this as IHasName;
+            var otherAsHasName = other as IHasName;
+            if (thisAsHasName != null && otherAsHasName != null)
+            { return thisAsHasName.Name == otherAsHasName.Name; }
+            return false; // we can't test here
+        }
 
         public bool SameIntent<TLocal>(TLocal other)
                where TLocal : class

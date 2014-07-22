@@ -22,6 +22,8 @@ namespace RoslynDom
             { AddOrMoveAttributeValue(value); }
         }
 
+        public string Name { get; set; }
+
         //protected override void Initialize()
         //{
         //    Name = ((AttributeSyntax)TypedSyntax).Name.ToString();

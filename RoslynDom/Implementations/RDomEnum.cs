@@ -23,6 +23,8 @@ namespace RoslynDom
         public AttributeList Attributes
         { get { return _attributes; } }
 
+        public string Name { get; set; }
+
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 

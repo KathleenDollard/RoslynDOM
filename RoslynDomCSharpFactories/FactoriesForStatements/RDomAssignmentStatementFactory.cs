@@ -33,8 +33,8 @@ namespace RoslynDom.CSharp
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
         {
-            var nameSyntax = SyntaxFactory.IdentifierName(item.Name);
             var itemAsT = item as IAssignmentStatement;
+            var nameSyntax = SyntaxFactory.IdentifierName(itemAsT.Name);
             var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Expression );
 
             var assignmentSyntax = SyntaxFactory.BinaryExpression(SyntaxKind.SimpleAssignmentExpression, nameSyntax, (ExpressionSyntax)expressionSyntax);
