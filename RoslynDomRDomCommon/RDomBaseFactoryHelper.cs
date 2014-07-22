@@ -16,28 +16,12 @@ namespace RoslynDom
         private static IRDomFactory<IPublicAnnotation> publicAnnotationFactory;
         private static IRDomFactory<IStructuredDocumentation> structuredDocumentationFactory;
         private static List<Tuple<Type, RDomFactoryHelper>> registration = new List<Tuple<Type, RDomFactoryHelper>>();
-        //private static RDomRootFactoryHelper rootFactoryHelper;
-        //private static RDomStemMemberFactoryHelper stemMemberFactoryHelper;
-        //private static RDomTypeMemberFactoryHelper typeMemberFactoryHelper;
-        //private static RDomStatementFactoryHelper statementFactoryHelper;
-        //private static RDomExpressionFactoryHelper expressionFactoryHelper;
-        //private static RDomMiscFactoryHelper miscFactoryHelper;
-
-        //public static void Initialize()
-        //{
-        //    publicAnnotationFactory = factoryProvider.GetPublicAnnotationFactory();
-        //}
 
         public static void Register<TKind>(RDomFactoryHelper<TKind> factoryHelper)
             where TKind : class, IDom
         {
             registration.Add(new Tuple<Type, RDomFactoryHelper>(typeof(TKind), factoryHelper));
         }
-
-        //public static void RegisterPublicAnnotationFactory(IRDomFactory<PublicAnnotation> factory)
-        //{
-        //    publicAnnotationFactory = factory;
-        //}
 
         public static RDomFactoryHelper<TKind> GetHelper<TKind>()
             where TKind : class, IDom

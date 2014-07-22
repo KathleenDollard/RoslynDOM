@@ -15,11 +15,7 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as MethodDeclarationSyntax;
             var newItem = new RDomMethod(syntaxNode, parent, model);
             Initialize(newItem, syntax, model, newItem.TypedSymbol.Name);
-            //newItem.Name = ;
-
-            //var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
-            //newItem.Attributes.AddOrMoveAttributeRange(attributes);
-
+   
             var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
             newItem.TypeParameters.AddOrMoveRange(typeParameters);
 

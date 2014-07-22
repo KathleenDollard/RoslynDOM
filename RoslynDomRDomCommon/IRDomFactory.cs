@@ -8,7 +8,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public interface IRDomFactory<TKind> :IRDomFactory 
+    public interface IRDomFactory<TKind> : IRDomFactory
     {
         bool CanCreateFrom(SyntaxNode syntaxNode);
         IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
@@ -19,30 +19,20 @@ namespace RoslynDom
 
     public interface IRDomFactory
     {
- 
+
     }
 
-    public interface IPublicAnnotationFactory : IRDomFactory<IPublicAnnotation >
-    {    }
+    public interface IPublicAnnotationFactory : IRDomFactory<IPublicAnnotation>
+    { }
 
-    public interface IStructuredDocumentationFactory : IRDomFactory<IStructuredDocumentation >
+    public interface IStructuredDocumentationFactory : IRDomFactory<IStructuredDocumentation>
     { }
 
     public interface IAttributeFactory : IRDomFactory<IAttribute>
     {
-        IEnumerable<IAttribute > ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model);
+        IEnumerable<IAttribute> ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model);
         IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributes);
     }
-    //public class RDomFactory<TSyntax, TCreate, TFactory>
-    //    (CandidatePriority candidatePriority, CandidateKind candidateKind)
-    //    where TFactory : IRDomStatementFactory< TCreate >
-    //    where TCreate : IDom
-    //{
-    //    // TCandidate should be IStatement, IExpression, IStemMember or ITypeMember, but this isn't currently enforced
-    //    public CandidatePriority CandidatePriority { get; } = candidatePriority;
-    //    public CandidateKind CandidateKind { get;  } = candidateKind;
-    //}
-
 
     /// <summary>
     /// Priority for candidate selection. These are for clarity. Please add your
@@ -51,18 +41,9 @@ namespace RoslynDom
     public enum FactoryPriority
     {
         None = 0,
-        Fallback =100,
+        Fallback = 100,
         Normal = 200,
         Top = 300
     }
-
-    //public enum CandidateKind
-    //{
-    //    Unknown = 0,
-    //    StemMember,
-    //    TypeMember,
-    //    Statement,
-    //    Expression
-    //}
 
 }

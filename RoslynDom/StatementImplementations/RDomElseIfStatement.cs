@@ -42,11 +42,5 @@ namespace RoslynDom
 
         public IExpression Condition { get; set; }
 
-
-        //IElseStatement IDom<IElseStatement>.Copy()
-        //{
-        //    // The current interface implementation - where ElseIf is also an Else - means we need this, even though it probably will never be callsed
-        //    return ((IElseIfStatement)this).Copy();
-        //}
     }
 }

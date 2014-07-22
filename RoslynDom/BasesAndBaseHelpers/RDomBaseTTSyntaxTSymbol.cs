@@ -15,7 +15,6 @@ namespace RoslynDom
         private SyntaxNode _originalRawSyntax;
         private SyntaxNode _rawSyntax;
         private TSymbol _symbol;
-        //private AttributeList _attributes = new AttributeList();
         private string _containingTypeName;
 
         protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -59,30 +58,13 @@ namespace RoslynDom
             _rawSyntax = oldRDom._rawSyntax;
             _originalRawSyntax = oldRDom._originalRawSyntax;
             _symbol = oldRDom._symbol;
-            //if (oldRDom._attributes != null)
-            //{ _attributes = RoslynDomUtilities.CopyMembers(oldRDom._attributes); }
             // TODO: SameIntent tests broke when I removed this, although it appears to be done in the base. 
             var thisAsHasName = this as IHasName;
             if (thisAsHasName != null)
             {
                 thisAsHasName.Name = ((IHasName)oldRDom).Name;
             }
-            //_symbol = default(TSymbol); // this should be reset, this line is to remind us
         }
-
-        //protected SyntaxList<AttributeListSyntax> BuildAttributeListSyntax()
-        //{
-        //    var list = SyntaxFactory.List<AttributeListSyntax>();
-        //    if (GetAttributes().Any())
-        //    {
-        //        var attribList = SyntaxFactory.AttributeList();
-        //        var attributes = _attributes.Select(x => ((RDomAttribute)x).BuildSyntax());
-        //        attribList = attribList.AddAttributes(attributes.ToArray());
-        //        list = list.Add(attribList);
-        //    }
-        //    return list;
-        //}
-
 
         public SyntaxNode TypedSyntax
         { get { return _rawSyntax; } }
@@ -148,50 +130,7 @@ namespace RoslynDom
                 typeSymbol.Name;
         }
 
-        //private SemanticModel GetModel()
-        //{
-        //    var tree = _rawSyntax.SyntaxTree;
-        //    var compilation = CSharpCompilation.Create("MyCompilation",
-        //                                   options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-        //                                   syntaxTrees: new[] { tree },
-        //                                   references: new[] { Mscorlib });
-        //    var model = compilation.GetSemanticModel(tree);
-        //    return model;
-
-        //}
-
-        //private MetadataReference mscorlib;
-        //private MetadataReference Mscorlib
-        //{
-        //    get
-        //    {
-        //        if (mscorlib == null)
-        //        {
-        //            mscorlib = new MetadataFileReference(typeof(object).Assembly.Location);
-        //        }
-
-        //        return mscorlib;
-        //    }
-        //}
-
-        //protected override ISymbol GetSymbol(SyntaxNode node)
-        //{
-        //    var model = GetModel();
-        //    var symbol = (TSymbol)model.GetDeclaredSymbol(node);
-        //    return symbol;
-        //}
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        //protected IEnumerable<IAttribute> GetAttributes()
-        //{ return _attributes; }
-
-        //protected Microsoft.CodeAnalysis.TypeInfo GetTypeInfo(SyntaxNode node)
-        //{
-        //    var model = GetModel();
-        //    var tyypeInfo = model.GetTypeInfo(node);
-        //    return tyypeInfo;
-        //}
-
+ 
         /// <summary>
         /// Fallback for getting requested values. 
         /// <br/>

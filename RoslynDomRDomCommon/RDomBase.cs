@@ -65,34 +65,6 @@ namespace RoslynDom
         // TODO: Return the parent set to hidden
         public IDom Parent { get; set; }
 
-        //public void RemoveFromParent()
-        //{
-        //    var parentAsStemContainer = this.Parent as IStemContainer;
-        //    if (parentAsStemContainer != null)
-        //    {
-        //        var thisAsStemMember = this as IStemMember;
-        //        if (thisAsStemMember == null) { throw new InvalidOperationException(); }
-        //        Parent = null;
-        //        parentAsStemContainer.StemMembersCommentsWhite.Remove(thisAsStemMember);
-        //    }
-        //    var parentAsTypeContainer = this.Parent as ITypeMemberContainer;
-        //    if (parentAsTypeContainer != null)
-        //    {
-        //        var thisAsTypeMember = this as ITypeMember;
-        //        if (thisAsTypeMember == null) { throw new InvalidOperationException(); }
-        //        Parent = null;
-        //        parentAsTypeContainer.MembersAll.Remove(thisAsTypeMember);
-        //    }
-        //    var parentAsCodeContainer = this.Parent as IStatementBlock2;
-        //    if (parentAsCodeContainer != null)
-        //    {
-        //        var thisAsStatement = this as IStatement;
-        //        if (thisAsStatement == null) { throw new InvalidOperationException(); }
-        //        Parent = null;
-        //        parentAsCodeContainer.RemoveStatement(thisAsStatement);
-        //    }
-        //    Parent = null;
-        //}
 
         /// <summary>
         /// NOTE: This documentation has not been updated to reflect changes due to @beefarino's input
@@ -138,12 +110,6 @@ namespace RoslynDom
         public abstract ISymbol Symbol { get; }
 
         public abstract object RequestValue(string propertyName);
-
-        /// <summary>
-        /// For a discussion of names <see cref="OuterName"/>
-        /// </summary>
-        /// <returns>The string name, same as Roslyn symbol's name</returns>
-      //  public string Name { get; set; }
 
         public virtual bool Matches(IDom other)
         {

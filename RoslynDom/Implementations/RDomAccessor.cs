@@ -57,12 +57,6 @@ namespace RoslynDom
             }
         }
 
-        //public void RemoveStatement(IStatement statement)
-        //{ _statements.Remove(statement); }
-
-        //public void AddOrMoveStatement(IStatement statement)
-        //{ _statements.Add(statement); }
-
         public string Name { get; set; }
 
         public AttributeList Attributes

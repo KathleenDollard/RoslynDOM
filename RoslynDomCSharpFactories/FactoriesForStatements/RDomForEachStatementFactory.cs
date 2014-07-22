@@ -22,7 +22,6 @@ namespace RoslynDom.CSharp
             var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type; // not sure this is valid at all
             variable.Type = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
             variable.Name =syntax.Identifier.ToString();
-            // variable.Type = new RDomReferencedType(syntax.Type, typeSymbol);
             newItem.Variable = variable;
             return LoopFactoryHelper.CreateFrom<IForEachStatement>(newItem, syntax.Expression, syntax.Statement, parent, model);
         }

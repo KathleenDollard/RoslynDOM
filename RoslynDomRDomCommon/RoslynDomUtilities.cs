@@ -88,19 +88,11 @@ namespace RoslynDom
         public static Type FindFirstSyntaxNodeType(Type type)
         {
             return FindFirstCastableType<SyntaxNode>(type);
-            //if (type == typeof(object)) return null;
-            //var syntaxType = type.GenericTypeArguments.Where(x => typeof(SyntaxNode).IsAssignableFrom(x)).FirstOrDefault();
-            //if (syntaxType != null) { return syntaxType; }
-            //return FindFirstSyntaxNode(syntaxType.BaseType);
         }
 
         public static Type FindFirstIDomType(Type type)
         {
             return FindFirstCastableType<IDom>(type);
-            //if (type == typeof(object)) return null;
-            //var syntaxType = type.GenericTypeArguments.Where(x => typeof(SyntaxNode).IsAssignableFrom(x)).FirstOrDefault();
-            //if (syntaxType != null) { return syntaxType; }
-            //return FindFirstSyntaxNode(syntaxType.BaseType);
         }
 
         public static Type FindFirstCastableType<T>(Type type)

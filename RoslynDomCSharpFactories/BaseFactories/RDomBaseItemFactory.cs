@@ -64,51 +64,34 @@ namespace RoslynDom.CSharp
     public abstract class RDomRootContainerFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IRoot>
              where T : class, IRoot
              where TSyntax : SyntaxNode
-    {
-        //public override IEnumerable<SyntaxNode> BuildSyntax(IRoot item)
-        //{
-        //    throw new NotImplementedException();
-        //}
-    }
+    { }
 
     public abstract class RDomStemMemberFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IStemMember>
             where T : class, IStemMember
             where TSyntax : SyntaxNode
-    {
+    { }
 
-        //public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
-        //{ throw new NotImplementedException(); }
-    }
 
     public abstract class RDomTypeMemberFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, ITypeMember>
             where T : class, ITypeMember
             where TSyntax : SyntaxNode
-    {
-        //public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
-        //{ throw new NotImplementedException(); }
-    }
+    { }
+
 
     public abstract class RDomStatementFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IStatement>
             where T : class, IStatement
             where TSyntax : SyntaxNode
-    {
-        //public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
-        //{ throw new NotImplementedException(); }
-    }
+    { }
+
 
     public abstract class RDomExpressionFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IExpression>
              where T : class, IExpression
              where TSyntax : SyntaxNode
-    {
-        //public override IEnumerable<SyntaxNode> BuildSyntax(IExpression item)
-        //{ throw new NotImplementedException(); }
-    }
+    { }
+
 
     public abstract class RDomMiscFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IMisc>
              where T : class, IMisc
              where TSyntax : SyntaxNode
-    {
-        //public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
-        //{ throw new NotImplementedException(); }
-    }
+    { }
 }

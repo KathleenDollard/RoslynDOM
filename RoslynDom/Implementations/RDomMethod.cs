@@ -11,7 +11,7 @@ namespace RoslynDom
     {
         private RDomList<IParameter> _parameters;
         private RDomList<ITypeParameter> _typeParameters;
-        private RDomList<IStatement> _statements ;
+        private RDomList<IStatement> _statements;
         private AttributeList _attributes = new AttributeList();
 
         public RDomMethod(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -84,29 +84,11 @@ namespace RoslynDom
 
         public bool IsExtensionMethod { get; set; }
 
-        //public void RemoveTypeParameter(ITypeParameter typeParameter)
-        //{ _typeParameters.Remove(typeParameter); }
-
-        //public void AddTypeParameter(ITypeParameter typeParameter)
-        //{ _typeParameters.Add(typeParameter); }
-
         public RDomList<ITypeParameter> TypeParameters
         { get { return _typeParameters; } }
 
-        //public void RemoveParameter(IParameter parameter)
-        //{ _parameters.Remove(parameter); }
-
-        //public void AddParameter(IParameter parameter)
-        //{ _parameters.Add(parameter); }
-
         public RDomList<IParameter> Parameters
         { get { return _parameters; } }
-
-        //public void RemoveStatement(IStatement statement)
-        //{ _statements.Remove(statement); }
-
-        //public void AddOrMoveStatement(IStatement statement)
-        //{ _statements.Add(statement); }
 
         public RDomList<IStatement> Statements
         { get { return _statements; } }
@@ -120,9 +102,9 @@ namespace RoslynDom
         public MemberKind MemberKind
         { get { return MemberKind.Method; } }
 
-        public IStructuredDocumentation StructuredDocumentation { get;set; }
-      
-        public string Description { get ; set; }
+        public IStructuredDocumentation StructuredDocumentation { get; set; }
+
+        public string Description { get; set; }
 
         public override object RequestValue(string name)
         {

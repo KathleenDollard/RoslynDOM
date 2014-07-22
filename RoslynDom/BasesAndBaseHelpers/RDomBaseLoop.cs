@@ -59,12 +59,6 @@ namespace RoslynDom
         public bool HasBlock { get; set; }
         public bool TestAtEnd { get; set; }
 
-        //public void RemoveStatement(IStatement statement)
-        //{ _statements.Remove(statement); }
-
-        //public void AddOrMoveStatement(IStatement statement)
-        //{ _statements.Add(statement); }
-
         public RDomList<IStatement> Statements
         { get { return _statements; } }
 

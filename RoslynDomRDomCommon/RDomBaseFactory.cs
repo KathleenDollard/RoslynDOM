@@ -26,54 +26,41 @@ namespace RoslynDom
         }
 
         public abstract IEnumerable<SyntaxNode> BuildSyntax(TKind item);
-       
+
         public virtual bool CanCreateFrom(SyntaxNode syntaxNode)
         {
             return (syntaxNode is TSyntax);
         }
 
         public abstract IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
-          
-        //public virtual IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, SemanticModel model)
-        //{
-        //    var syntax = syntaxNode as TSyntax;
-        //    //var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode);
-        //    var newItem = Activator.CreateInstance(
-        //                typeof(T),
-        //                BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,
-        //                new object[] { syntax }, null);
-        //    var itemAsT = newItem as T;
-        //    InitializeItem(itemAsT, syntax);
-        //    return new TKind[] { itemAsT };
-        //}
 
         public virtual void InitializeItem(T newItem, TSyntax syntax, IDom parent, SemanticModel model)
         { return; }
     }
 
     public abstract class RDomRootContainerFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IRoot>
-             where T :class, IRoot
+             where T : class, IRoot
              where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IRoot item)
-        {            throw new NotImplementedException();        }
+        { throw new NotImplementedException(); }
     }
 
     public abstract class RDomStemMemberFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IStemMember>
             where T : class, IStemMember
             where TSyntax : SyntaxNode
     {
-        
+
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
-        {            throw new NotImplementedException();        }
+        { throw new NotImplementedException(); }
     }
 
     public abstract class RDomTypeMemberFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, ITypeMember>
             where T : class, ITypeMember
             where TSyntax : SyntaxNode
     {
-          public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
-        {            throw new NotImplementedException();        }
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        { throw new NotImplementedException(); }
     }
 
     public abstract class RDomStatementFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IStatement>
@@ -81,7 +68,7 @@ namespace RoslynDom
             where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
-        {            throw new NotImplementedException();        }
+        { throw new NotImplementedException(); }
     }
 
     public class RDomExpressionFactory<T, TSyntax> : RDomFactoryBase<T, TSyntax, IExpression>
@@ -89,18 +76,18 @@ namespace RoslynDom
              where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IExpression item)
-        {            throw new NotImplementedException();        }
+        { throw new NotImplementedException(); }
 
-        public override IEnumerable<IExpression> CreateFrom(SyntaxNode syntaxNode,IDom parent, SemanticModel model)
+        public override IEnumerable<IExpression> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as TSyntax;
             //var publicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode);
             var newItem = Activator.CreateInstance(
                         typeof(T),
                         BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,
-                        new object[] { syntax , parent, model}, null);
+                        new object[] { syntax, parent, model }, null);
             var itemAsT = newItem as T;
-            InitializeItem(itemAsT, syntax, parent,model);
+            InitializeItem(itemAsT, syntax, parent, model);
             return new IExpression[] { itemAsT };
         }
     }
@@ -110,6 +97,6 @@ namespace RoslynDom
              where TSyntax : SyntaxNode
     {
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
-        {            throw new NotImplementedException();        }
+        { throw new NotImplementedException(); }
     }
 }

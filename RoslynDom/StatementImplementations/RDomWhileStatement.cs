@@ -6,8 +6,6 @@ namespace RoslynDom
 {
     public class RDomWhileStatement : RDomBaseLoop<IWhileStatement>, IWhileStatement
     {
-        //private IList<IStatement> _statements = new List<IStatement>();
-
         public RDomWhileStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         {

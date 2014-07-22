@@ -6,7 +6,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-  // Doesn't currently follow pattern, ie. a syntax is not passed
+    // Doesn't currently follow pattern, ie. a syntax is not passed
     public class RDomTypeParameter : RDomReferencedType, ITypeParameter
     {
         private RDomList<IReferencedType> _constraintTypes;
@@ -31,9 +31,6 @@ namespace RoslynDom
             //{ AddConstraintType(constraint); }
         }
 
-        //public virtual bool Matches(ITypeParameter other)
-        //{ return base.Matches(other); }
-
         // new here feels wrong, so I am currently leaving the warning
         public ITypeParameter Copy()
         {
@@ -57,26 +54,6 @@ namespace RoslynDom
 
         public RDomList<IReferencedType> ConstraintTypes
         { get { return _constraintTypes; } }
-
-        //public void AddConstraintType(ITypeSymbol symbol)
-        //{
-        //    _constraintTypes.Add(new RDomReferencedType(symbol.DeclaringSyntaxReferences, symbol));
-        //}
-
-        //public void AddConstraintType(IReferencedType refType)
-        //{
-        //    _constraintTypes.Add(refType);
-        //}
-
-        //public void RemoveConstraintType(IReferencedType refType)
-        //{
-        //    _constraintTypes.Remove(refType);
-        //}
-
-        //public void ClearConstraintTypes()
-        //{
-        //    _constraintTypes.Clear();
-        //}
 
         public bool HasConstructorConstraint { get; set; }
 

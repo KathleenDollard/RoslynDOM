@@ -38,7 +38,6 @@ namespace RoslynDom.CSharp
 
         public IRoot GetRootFromSyntaxTree(SyntaxTree tree)
         {
-            //var root2 = RDomFactory2.MakeRoot(tree);
             CSharpFactory.Register();
             var compilation = CSharpCompilation.Create("MyCompilation",
                                            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),

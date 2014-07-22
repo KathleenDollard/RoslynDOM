@@ -20,23 +20,6 @@ namespace RoslynDom.Common
         {
             return list.GetEnumerator();
         }
-
-        //public void AddOrMoveItem(T item, IDom parent)
-        //{
-        //    if (item.Parent != null)
-        //    {
-        //        var removeMethodInfo = ReflectionUtilities.FindMethod(item.GetType(), "RemoveChild", new Type[] { typeof(IDom) });
-        //        item.Parent.RemoveChild(item);
-        //    }
-        //    list.Add(item);
-        //    var methodInfo = ReflectionUtilities.FindMethod(item.GetType(), "SetParent", new Type[] { typeof(IDom) });
-        //    if (methodInfo == null) throw new InvalidOperationException();
-        //}
-
-        //public void RemoveMember(T item)
-        //{
-        //    item.Parent = null;
-        //    list.Remove(item);
-        //}
+        
     }
 }

@@ -100,12 +100,6 @@ namespace RoslynDom
 
         public bool CanSet { get; set; }
 
-        //public void RemoveParameter(IParameter parameter)
-        //{ _parameters.Remove(parameter); }
-
-        //public void AddParameter(IParameter parameter)
-        //{ _parameters.Add(parameter); }
-
         /// <summary>
         /// 
         /// </summary>
@@ -120,7 +114,7 @@ namespace RoslynDom
         // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
         { get { return _parameters; } }
 
- 
+
         public MemberKind MemberKind
         { get { return MemberKind.Property; } }
 
@@ -132,6 +126,6 @@ namespace RoslynDom
         }
         public IStructuredDocumentation StructuredDocumentation { get; set; }
 
-        public string Description { get ; set;}
+        public string Description { get; set; }
     }
 }

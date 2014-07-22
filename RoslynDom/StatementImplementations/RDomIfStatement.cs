@@ -54,12 +54,6 @@ namespace RoslynDom
             }
         }
 
-        //public void RemoveElse(IElseStatement elseIf)
-        //{ _elses.Remove(elseIf); }
-
-        //public void AddOrMoveElse(IElseStatement elseIf)
-        //{ _elses.Add(elseIf); }
-
         public RDomList<IElseStatement> Elses
         { get { return _elses; } }
 

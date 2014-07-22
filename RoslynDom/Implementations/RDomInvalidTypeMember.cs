@@ -5,16 +5,9 @@ using System.Linq;
 
 namespace RoslynDom
 {
-    //public class RDomInvalidTypeMemberFactory
-    //       : RDomTypeMemberFactory<RDomInvalidTypeMember, SyntaxNode>
-    //{
-    //    public override FactoryPriority Priority
-    //    { get { return FactoryPriority.Normal - 1; } }
-    //}
-
     public class RDomInvalidTypeMember : RDomBase<IInvalidTypeMember, ISymbol>, IInvalidTypeMember
     {
-        private AttributeList  _attributes = new AttributeList();
+        private AttributeList _attributes = new AttributeList();
 
         public RDomInvalidTypeMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
@@ -23,7 +16,7 @@ namespace RoslynDom
         internal RDomInvalidTypeMember(RDomInvalidTypeMember oldRDom)
              : base(oldRDom)
         {
-                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
+            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
         }
         protected override void Initialize()
@@ -46,6 +39,6 @@ namespace RoslynDom
 
         public IStructuredDocumentation StructuredDocumentation { get; set; }
 
-        public string Description { get ; set;}
+        public string Description { get; set; }
     }
 }

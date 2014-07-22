@@ -45,20 +45,15 @@ namespace RoslynDom
             _outerTypeName = GetContainingTypeName();
         }
 
-        //public virtual TypeSyntax  BuildSyntax()
-        //{
-        //    return SyntaxFactory.ParseTypeName(Name);
-        //}
-
-        public virtual bool Matches(IReferencedType  other)
+        public virtual bool Matches(IReferencedType other)
         { return this.Name == other.Name; }
 
-          public IReferencedType Copy()
+        public IReferencedType Copy()
         {
             return new RDomReferencedType(this);
         }
 
-         protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+        protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {
             if (!CheckSameIntent(other as IReferencedType, includePublicAnnotations)) { return false; }
             return sameIntent.SameIntent(this as IReferencedType, other as IReferencedType, includePublicAnnotations);
@@ -69,7 +64,7 @@ namespace RoslynDom
             return true;
         }
 
-         public override object RawItem
+        public override object RawItem
         {
             // I want to understand how people are using this before exposing it
             get
@@ -108,18 +103,13 @@ namespace RoslynDom
         }
 
         public string Namespace { get; set; }
-     
+
         public override object RequestValue(string name)
         {  // This is temporary so I know how this is used. Probably can just be removed and fallback to base
             throw new NotImplementedException();
         }
 
-        //protected override ISymbol GetSymbol(SyntaxNode node)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-          private string GetName()
+        private string GetName()
         {
             if (Symbol == null && (_typeInfo.Type != null)) { return _typeInfo.Type.ToString(); }
             var arraySymbol = Symbol as IArrayTypeSymbol;

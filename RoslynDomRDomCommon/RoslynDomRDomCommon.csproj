@@ -58,7 +58,6 @@
   <ItemGroup>
     <Compile Include="FactoryProvider.cs" />
     <Compile Include="IRDomCanLoad.cs" />
-    <Compile Include="IRDomContainers.cs" />
     <Compile Include="IRDomFactory.cs" />
     <Compile Include="IRoslynDom.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -85,20 +85,6 @@ namespace RoslynDom
         public string QualifiedName
         { get { return GetQualifiedName(); } }
 
-        //public void RemoveStemMember(IStemMember member)
-        //{
-        //    if (member.Parent == null)
-        //    { _members.Remove(member); }
-        //    else
-        //    { RoslynDomSymbolUtilities.RemoveMemberFromParent(this, member); }
-        //}
-
-        //public void AddOrMoveStemMember(IStemMember member)
-        //{
-        //    RoslynDomSymbolUtilities.PrepMemberForAdd(this, member);
-        //    _members.Add(member);
-        //}
-
         public void ClearStemMembers()
         { _members.Clear(); }
 

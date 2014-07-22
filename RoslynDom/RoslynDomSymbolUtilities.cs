@@ -46,24 +46,5 @@ namespace RoslynDom.Common
 
         }
 
-        //public static void RemoveMemberFromParent(IDom parent, IDom member)
-        //{
-        //    if (member.Parent != parent) { throw new InvalidOperationException(); }
-        //    var memberAsRDom = member as RDomBase;
-        //    if (memberAsRDom == null) { throw new InvalidOperationException(); }
-        //    memberAsRDom.RemoveFromParent();
-        //}
-
-        //public static void PrepMemberForAdd(IDom parent, IDom member)
-        //{
-        //    var memberAsRDom = member as RDomBase;
-        //    if (memberAsRDom == null) throw new InvalidOperationException();
-        //    if (member.Parent != null)
-        //    {
-        //        memberAsRDom.RemoveFromParent();
-        //    }
-        //    memberAsRDom.Parent = parent;
-        //}
-
     }
 }
