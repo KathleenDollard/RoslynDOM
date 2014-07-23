@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommentWhiteFactory.cs" />
     <Compile Include="BaseFactories\RDomExpressionFactory.cs" />
     <Compile Include="BuildSyntaxExtensions.cs" />
     <Compile Include="FactoriesForStatements\LoopFactoryHelper.cs" />

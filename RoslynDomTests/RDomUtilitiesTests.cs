@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,7 +11,10 @@ namespace RoslynDomTests
     [TestClass]
     public class RDomUtilitiesTests
     {
-        [TestMethod]
+        private const string RDomListTestCategory = "RDomListTests";
+
+
+        [TestMethod, TestCategory(RDomListTestCategory)]
         public void Can_create_navigate_and_modify_list()
         {
             var csharpCode = @"
@@ -91,8 +95,98 @@ namespace RoslynDomTests
             expected = "Foo\r\nFoo0\r\nFooA\r\nFoo3\r\nFooB\r\nFoo1\r\nFoo2\r\nFoo4\r\nFooC\r\nFooD\r\nFooE\r\nFooF\r\n";
             Assert.AreEqual(expected, sb.ToString());
 
+        }
+        [TestMethod, TestCategory(RDomListTestCategory)]
+        public void Can_get_previous_and_following_siblings()
+        {
+            var csharpCode = @"
+                        public class FooB{}
+                        public class FooC{}
+                        public class FooA{}
+                        public class FooF{}
+                        public class FooC{}
+                        public class FooI{}
+                        public class FooH{}
+                        public class FooE{}
+                        public class FooG{}
+                        ";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var classes = root.Classes.ToArray();
+
+            // Basic functionality
+            var test = root.Classes.PreviousSiblings(classes[3]);
+            var expected = "FooB\r\nFooC\r\nFooA";
+            Assert.AreEqual(expected, GetNames(test));
+
+            test = root.Classes.FollowingSiblings(classes[3]);
+            expected = "FooC\r\nFooI\r\nFooH\r\nFooE\r\nFooG";
+            Assert.AreEqual(expected, GetNames(test));
+
+            // Testing bounds (empty arrays should appear)
+            test = root.Classes.PreviousSiblings(classes[0]);
+            expected = "";
+            Assert.AreEqual(expected, GetNames(test));
+
+            test = root.Classes.FollowingSiblings(classes.Last());
+            expected = "";
+            Assert.AreEqual(expected, GetNames(test));
+
+            // Until functionality 
+            test = root.Classes.PreviousSiblingsUntil(classes[3], x=>x == classes[1]);
+            expected = "FooA";
+            Assert.AreEqual(expected, GetNames(test));
+
+            test = root.Classes.FollowingSiblingsUntil(classes[3], x => x == classes[6]);
+            expected = "FooC\r\nFooI";
+            Assert.AreEqual(expected, GetNames(test));
+
+            // Until functionality when test never met 
+            test = root.Classes.PreviousSiblingsUntil(classes[3], x => false);
+            expected = "FooB\r\nFooC\r\nFooA";
+            Assert.AreEqual(expected, GetNames(test));
+
+            test = root.Classes.FollowingSiblingsUntil(classes[3], x => false);
+            expected = "FooC\r\nFooI\r\nFooH\r\nFooE\r\nFooG";
+            Assert.AreEqual(expected, GetNames(test));
+
+            // Until functionality when test always met 
+            test = root.Classes.PreviousSiblingsUntil(classes[3], x => true);
+            expected = "";
+            Assert.AreEqual(expected, GetNames(test));
+
+            test = root.Classes.FollowingSiblingsUntil(classes[3], x => true);
+            expected = "";
+            Assert.AreEqual(expected, GetNames(test));
+
+            // When item not in list
+            root.StemMembersAll.Remove(classes[3]);
+            test = root.Classes.PreviousSiblings(classes[3]);
+            expected = "";
+            Assert.AreEqual(expected, GetNames(test));
+
+            test = root.Classes.PreviousSiblings(classes[3]);
+            expected = "";
+            Assert.AreEqual(expected, GetNames(test));
+
+            test = root.Classes.PreviousSiblingsUntil(classes[3], x => true);
+            expected = "";
+            Assert.AreEqual(expected, GetNames(test));
+
+            test = root.Classes.FollowingSiblingsUntil(classes[3], x => true);
+            expected = "";
+            Assert.AreEqual(expected, GetNames(test));
 
         }
 
+        private string GetNames<T>(IEnumerable<T> list)
+            where T : IHasName 
+        {
+            var sb = new StringBuilder();
+            foreach (var foo in list)
+            { sb.AppendLine(foo.Name); }
+            var ret = sb.ToString();
+            if (ret.Length == 0) return ret;
+            return ret.Substring(0,ret.Length-2);
+        }
     }
 }

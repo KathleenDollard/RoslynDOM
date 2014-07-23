@@ -11,19 +11,19 @@ namespace RoslynDom.CSharp
     public class RDomForStatementFactory
          : RDomStatementFactory<RDomForStatement, ForStatementSyntax>
     {
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ForStatementSyntax;
             var newItem = new RDomForStatement(syntaxNode, parent, model);
             newItem.TestAtEnd = false;
             var decl = syntax.Declaration.Variables.First();
-            var newVariable = RDomFactoryHelper.GetHelper<IMisc>().MakeItem(syntax.Declaration, newItem, model).FirstOrDefault();
+            var newVariable = RDomFactoryHelper.GetHelperForMisc().MakeItems(syntax.Declaration, newItem, model).FirstOrDefault();
             newItem.Variable = (IVariableDeclaration)newVariable;
-            newItem.Incrementor = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(syntax.Incrementors.First(), newItem, model).FirstOrDefault();
-            return LoopFactoryHelper.CreateFrom<IForStatement>(newItem, syntax.Condition, syntax.Statement, parent, model);
+            newItem.Incrementor = RDomFactoryHelper.GetHelperForExpression().MakeItems(syntax.Incrementors.First(), newItem, model).FirstOrDefault();
+            return LoopFactoryHelper.CreateItemFrom<IForStatement>(newItem, syntax.Condition, syntax.Statement, parent, model);
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IForStatement;
             var node = LoopFactoryHelper.BuildSyntax<IForStatement>(itemAsT, (c, s) => SyntaxFactory.ForStatement(s).WithCondition(c)).First() as ForStatementSyntax ;

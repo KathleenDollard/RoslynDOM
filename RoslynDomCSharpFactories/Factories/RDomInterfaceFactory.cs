@@ -16,7 +16,7 @@ namespace RoslynDom.CSharp
             var newItem = new RDomInterface(syntaxNode, parent,model);
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
             newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
@@ -24,7 +24,7 @@ namespace RoslynDom.CSharp
             var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
             newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
 
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<ITypeMember>().MakeItem(x, newItem, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelperForTypeMember().MakeItems(x, newItem, model));
             newItem.MembersAll.AddOrMoveRange(members);
             
             return newItem;
@@ -53,12 +53,11 @@ namespace RoslynDom.CSharp
     public class RDomInterfaceTypeMemberFactory
        : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
     {
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomInterfaceFactoryHelper.CreateFrom(syntaxNode,parent, model);
-            return new ITypeMember[] { ret };
+            return RDomInterfaceFactoryHelper.CreateFrom(syntaxNode,parent, model);
         }
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)
         {
             return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item);
         }
@@ -68,12 +67,11 @@ namespace RoslynDom.CSharp
     public class RDomInterfaceStemMemberFactory
            : RDomStemMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
     {
-        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent,model);
-            return new IStemMember[] { ret };
+            return RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model);
         }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMemberCommentWhite item)
         {
             return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item);
         }

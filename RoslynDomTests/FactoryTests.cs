@@ -515,8 +515,7 @@ public string Bar3() {};
         #endregion
 
         #region typedSyntax tests
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_namespace()
         {
             var csharpCode = @"
@@ -529,8 +528,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is NamespaceDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_class()
         {
             var csharpCode = @"
@@ -543,8 +541,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is ClassDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_enum()
         {
             var csharpCode = @"
@@ -557,8 +554,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is EnumDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_struct()
         {
             var csharpCode = @"
@@ -571,8 +567,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is StructDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_interface()
         {
             var csharpCode = @"
@@ -586,8 +581,7 @@ public string Bar3() {};
         }
 
 
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_field()
         {
             var csharpCode = @"
@@ -599,8 +593,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is VariableDeclaratorSyntax );
         }
 
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_property()
         {
             var csharpCode = @"
@@ -612,8 +605,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is PropertyDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_method()
         {
             var csharpCode = @"
@@ -625,8 +617,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is MethodDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSyntaxCategory)]
+        [TestMethod,TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_nestedType()
         {
             var csharpCode = @"
@@ -640,8 +631,7 @@ public string Bar3() {};
         #endregion
 
         #region stemContainer
-        [TestMethod]
-        [TestCategory(StemContainerCategory)]
+        [TestMethod,TestCategory(StemContainerCategory)]
         public void Can_get_namespaces()
         {
             var csharpCode = @"
@@ -655,8 +645,7 @@ public string Bar3() {};
             Assert.AreEqual(2, root.Namespaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(StemContainerCategory)]
+        [TestMethod,TestCategory(StemContainerCategory)]
         public void Can_get_classes()
         {
             var csharpCode = @"
@@ -671,8 +660,7 @@ class Class3
             Assert.AreEqual(3, root.Classes.Count());
         }
 
-        [TestMethod]
-        [TestCategory(StemContainerCategory)]
+        [TestMethod,TestCategory(StemContainerCategory)]
         public void Can_get_interfaces()
         {
             var csharpCode = @"
@@ -699,8 +687,7 @@ private string Foo{get;}}
         //            Assert.AreEqual(1, root.Interfaces.First().Members.Count());
         //        }
 
-        [TestMethod]
-        [TestCategory(StemContainerCategory)]
+        [TestMethod,TestCategory(StemContainerCategory)]
         public void Can_get_structures()
         {
             var csharpCode = @"
@@ -714,8 +701,7 @@ string Foo{get;}}
             Assert.AreEqual(2, root.Structures.Count());
         }
 
-        [TestMethod]
-        [TestCategory(StemContainerCategory)]
+        [TestMethod,TestCategory(StemContainerCategory)]
         public void Can_get_enums()
         {
             var csharpCode = @"
@@ -728,8 +714,7 @@ string Foo{get;}}
             Assert.AreEqual(2, root.Enums.Count());
         }
 
-        [TestMethod]
-        [TestCategory(StemContainerCategory)]
+        [TestMethod,TestCategory(StemContainerCategory)]
         public void Can_get_usings()
         {
             var csharpCode = @"
@@ -755,8 +740,7 @@ namespace Foo
             Assert.AreEqual(2, root.Namespaces.First().Usings.Count());
         }
 
-        [TestMethod]
-        [TestCategory(StemContainerCategory)]
+        [TestMethod,TestCategory(StemContainerCategory)]
         public void Can_get_types()
         {
             var csharpCode = @"
@@ -785,7 +769,133 @@ namespace Foo
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual(11, root.Types.Count());
         }
+
+        [TestMethod, TestCategory(StemContainerCategory)]
+        public void Can_get_members_with_comments_and_whitespace_from_stemContainer()
+        {
+            // This test is sensitive to whitespace changes on the multiline comment 
+            var csharpCode =
+                      @"enum A
+                            { }
+
+                        enum B
+                            { }
+
+                        // Single line comment with whitespace
+                        class C
+                            { }
+                        interface D
+                            { }
+                        // Single line comment without whitespace
+                        interface E
+                            { }
+                        /* Multiline comment on single line */
+                        interface F
+                            { }
+                        struct G
+                            { }
+                        /* Multiline comment 
+                       on multiple line */
+                      struct H
+                            { }
+                      struct I
+                            { }
+                      struct J
+                            { }
+                      struct K
+                            { }";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            Assert.AreEqual(11, root.Types.Count());
+            Assert.AreEqual(17, root.StemMembersAll.Count());
+            var members = root.StemMembersAll.ToArray();
+            Assert.IsInstanceOfType(members[3], typeof(IVerticalWhitespace ));
+            Assert.IsInstanceOfType(members[4], typeof(IComment));
+            Assert.IsInstanceOfType(members[7], typeof(IComment));
+            Assert.IsInstanceOfType(members[9], typeof(IComment));
+            Assert.IsInstanceOfType(members[12], typeof(IComment));
+            Assert.AreEqual(1, ((IVerticalWhitespace)members[3]).Count);
+            Assert.IsFalse(((IVerticalWhitespace)members[3]).IsElastic );
+            var expected = "Single line comment with whitespace";
+            Assert.AreEqual(expected, ((IComment)members[4]).Text);
+            Assert.IsFalse(((IComment)members[4]).IsMultiline);
+            expected = "Single line comment without whitespace";
+            Assert.AreEqual(expected, ((IComment)members[7]).Text);
+            Assert.IsFalse(((IComment)members[7]).IsMultiline);
+            expected = "Multiline comment on single line";
+            Assert.AreEqual(expected, ((IComment)members[9]).Text);
+            Assert.IsTrue(((IComment)members[9]).IsMultiline);
+            expected = "Multiline comment \r\n                       on multiple line";
+            Assert.AreEqual(expected, ((IComment)members[12]).Text);
+            Assert.IsTrue(((IComment)members[12]).IsMultiline);
+        }
         #endregion
 
+        [TestMethod, TestCategory(StemContainerCategory)]
+        public void Can_get_members_with_comments_and_whitespace_from_typeContainer()
+        {
+            var csharpCode = @"
+                public class Bar
+                {
+                    private string firstName;
+                    private string lastName;
+   
+                    public string Foo()
+                    {
+
+                        var ret = lastName;
+                        ret = Foo();
+                        ret = ""xyz"";
+
+                        // Comment and whitespace
+                        var xx = new String('a', 4);
+                        ret = ""abc"" + Foo();
+                        if (!string.IsNullOrEmpty(firstName))
+                        { ret = firstName + lastName; }
+                        // comment
+                        var x = "", "";
+                        uint y = 42;
+                        x = lastName + x + firstName;
+                        Foo2(x);
+                        return x;
+                    }
+                }";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            Assert.AreEqual(11, root.Types.Count());
+        }
+
+        [TestMethod, TestCategory(StemContainerCategory)]
+        public void Can_get_members_with_comments_and_whitespace_from_statementContainer()
+        {
+            var csharpCode = @"
+                public class Bar
+                {
+                    private string firstName;
+                    private string lastName;
+   
+                    public string Foo()
+                    {
+
+                        var ret = lastName;
+                        ret = Foo();
+                        ret = ""xyz"";
+
+                        // Comment and whitespace
+                        var xx = new String('a', 4);
+                        ret = ""abc"" + Foo();
+                        if (!string.IsNullOrEmpty(firstName))
+                        { ret = firstName + lastName; }
+                        // comment
+                        var x = "", "";
+                        uint y = 42;
+                        x = lastName + x + firstName;
+                        Foo2(x);
+                        return x;
+                    }
+                }";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var statements = root.Classes.First().Methods.First().StatementsAll.ToArray();
+            Assert.AreEqual(15, statements.Count());
+            Assert.Fail();
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace RoslynDom.CSharp
     public class RDomIfStatementFactory
          : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
     {
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as IfStatementSyntax;
             var newItem = new RDomIfStatement(syntaxNode, parent, model);
@@ -33,13 +33,13 @@ namespace RoslynDom.CSharp
                 InitializeStatements(newElse,  lastElseIf.Else.Statement, model);
                 newItem.Elses.AddOrMove(newElse);
             }
-            return new IStatement[] { newItem };
+            return  newItem ;
         }
 
         public IExpression GetCondition(IIfBaseStatement newItem, ExpressionSyntax condition, SemanticModel model)
         {
             if (condition == null) { return null; }
-            return RDomFactoryHelper.GetHelper<IExpression>().MakeItem(condition, newItem, model).FirstOrDefault();
+            return RDomFactoryHelper.GetHelperForExpression().MakeItems(condition, newItem, model).FirstOrDefault();
         }
 
         public void InitializeStatements(IStatementBlock  newItem,  StatementSyntax statementSytax, SemanticModel model)
@@ -68,7 +68,7 @@ namespace RoslynDom.CSharp
             return list;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IIfStatement;
             var elseSyntax = BuildElseSyntax(itemAsT.Elses);

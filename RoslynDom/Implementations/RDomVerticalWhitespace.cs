@@ -8,32 +8,16 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomVerticalWhitespace : RDomBase, IVerticalWhitespace
+    public class RDomVerticalWhitespace : RDomCommentWhite, IVerticalWhitespace
     {
+        public RDomVerticalWhitespace (int count, bool isElastic)
+        {
+            Count = count;
+            IsElastic = isElastic;
+        }
+
         public int Count { get; set; }
-      
-        public MemberKind MemberKind
-        { get { return MemberKind.Whitespace; } }
-
-        public override object OriginalRawItem
-        { get { return null; } }
-
-        public override string OuterName
-        { get { return null; } }
-
-
-        public override object RawItem
-        { get { return null; } }
-
-        public StemMemberKind StemMemberKind
-        { get { return StemMemberKind.Whitespace; } }
-
-        public override ISymbol Symbol
-        { get { return null; } }
-
-        public override object RequestValue(string propertyName)
-        {  return null; } 
-
+        public bool IsElastic { get; set; }
 
         protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {

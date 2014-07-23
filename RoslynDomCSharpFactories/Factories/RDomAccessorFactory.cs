@@ -11,7 +11,7 @@ namespace RoslynDom.CSharp
     public class RDomPropertyAccessorMiscFactory
           : RDomMiscFactory<RDomPropertyAccessor, AccessorDeclarationSyntax>
     {
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as AccessorDeclarationSyntax;
             var parentProperty = parent as IProperty;
@@ -21,17 +21,17 @@ namespace RoslynDom.CSharp
             var newItemName = accessorType.ToString().ToLower() + "_" + parentProperty.Name;
             newItem.Name = newItemName;
 
-            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
             newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             if (syntax.Body != null)
             {
-                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelper<IStatement>().MakeItem(x, newItem, model));
+                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelperForStatement().MakeItems(x, newItem, model));
                 newItem.StatementsAll.AddOrMoveRange(statements);
             }
 
-            return new IMisc[] { newItem };
+            return  newItem ;
 
         }
 

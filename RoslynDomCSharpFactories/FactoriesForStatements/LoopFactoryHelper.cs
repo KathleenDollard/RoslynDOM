@@ -13,19 +13,19 @@ namespace RoslynDom.CSharp
 {
     internal class LoopFactoryHelper
     {
-        public static IEnumerable<IStatement> CreateFrom<T>(
+        public static IStatement CreateItemFrom<T>(
             T newItem, ExpressionSyntax condition, StatementSyntax statement, IDom parent, SemanticModel model)
             where T : ILoop<T>
         {
 
-            newItem.Condition = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(condition, newItem, model).FirstOrDefault();
+            newItem.Condition = RDomFactoryHelper.GetHelperForExpression().MakeItems(condition, newItem, model).FirstOrDefault();
             if (condition == null) { throw new InvalidOperationException(); }
             bool hasBlock = false;
             var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statement, newItem, ref hasBlock, model);
             newItem.HasBlock = hasBlock;
             newItem.StatementsAll.AddOrMoveRange(statements);
 
-            return new IStatement[] { newItem };
+            return  newItem ;
         }
 
         public static IEnumerable<SyntaxNode> BuildSyntax<T>

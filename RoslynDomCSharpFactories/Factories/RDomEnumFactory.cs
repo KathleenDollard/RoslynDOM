@@ -16,7 +16,7 @@ namespace RoslynDom.CSharp
             var newItem = new RDomEnum(syntaxNode, parent, model);
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
             newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
@@ -55,13 +55,13 @@ namespace RoslynDom.CSharp
     public class RDomEnumTypeMemberFactory
         : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model);
-            return new ITypeMember[] { ret };
+            return  ret ;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)
         {
             return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item);
         }
@@ -71,12 +71,12 @@ namespace RoslynDom.CSharp
     public class RDomEnumStemMemberFactory
            : RDomStemMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
-        public override IEnumerable<IStemMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode,parent, model);
-            return new IStemMember[] { ret };
+            return RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model);
         }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMemberCommentWhite item)
         {
             return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item);
         }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace RoslynDom.Common
 {
     public class RDomList<T> : IEnumerable<T>
-        where T : IDom
+        where T : class, IDom
     {
         private List<T> _list = new List<T>();
 
@@ -18,7 +18,7 @@ namespace RoslynDom.Common
         public IDom Parent { get; private set; }
         public IEnumerator<T> GetEnumerator()
         {
-            return _list .GetEnumerator();
+            return _list.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -35,11 +35,11 @@ namespace RoslynDom.Common
         public void AddOrMoveRange(IEnumerable<T> items)
         {
             // Don't use AddRange because we need to manage parents
-           foreach (var item in items)
+            foreach (var item in items)
             { AddOrMove(item); }
         }
 
-        public void InsertOrMove(int index, T item )
+        public void InsertOrMove(int index, T item)
         {
             UpdateParent(item);
             if (index >= _list.Count() - 1)
@@ -48,7 +48,7 @@ namespace RoslynDom.Common
             { _list.Insert(index, item); }
         }
 
-        public void InsertOrMoveAfter(T existing,T itemToInsert )
+        public void InsertOrMoveAfter(T existing, T itemToInsert)
         {
             var pos = _list.IndexOf(existing);
             InsertOrMove(pos + 1, itemToInsert);
@@ -72,7 +72,7 @@ namespace RoslynDom.Common
             foreach (var item in items)
             { _list.Remove(item); }
         }
-
+ 
         private void UpdateParent(T item)
         {
             // TODO: Remove item from the other list

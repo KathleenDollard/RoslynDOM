@@ -68,9 +68,12 @@ namespace RoslynDomTests
             attribute2.Name = "Foo2";
             Assert.IsFalse(attribute1.SameIntent(attribute2));
             Assert.AreEqual("Foo2", attribute2.Name);
-            var expected = "Foo2(\"Fred\", bar: 3, bar2 = 3.14, bar3 = true)";
+            var expected = "[Foo2(\"Fred\", bar: 3, bar2 = 3.14, bar3 = true)]";
             var actual = RDomCSharpFactory.Factory.BuildSyntax(attribute2).ToString();
+            var expectedClass = "[Foo(\"Fred\", bar: 3, bar2 = 3.14, bar3 = true)]\r\npublic class Bar\r\n{\r\n    public String FooBar()\r\n    {\r\n    }\r\n}";
+            var actualClass = RDomCSharpFactory.Factory.BuildSyntax(class1).ToString();
             Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expectedClass, actualClass);
         }
 
         [TestMethod, TestCategory(MutabilityCategory)]

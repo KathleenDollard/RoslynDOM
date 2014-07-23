@@ -12,7 +12,7 @@ namespace RoslynDom.CSharp
     public class RDomNamespaceStemMemberFactory
            : RDomStemMemberFactory<RDomNamespace, NamespaceDeclarationSyntax>
     {
-        public override IEnumerable<IStemMember > CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as NamespaceDeclarationSyntax;
             var newItem = new RDomNamespace(syntaxNode, parent,model);
@@ -21,19 +21,19 @@ namespace RoslynDom.CSharp
             // Thus, this replaces hte base Initialize name with the correct one
             newItem.Name = newItem.TypedSyntax.NameFrom();
             if (newItem.Name.StartsWith("@")) { newItem.Name = newItem.Name.Substring(1); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
-            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, newItem, model));
+            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, newItem, model));
             newItem.StemMembersAll.AddOrMoveRange(members);
             newItem.StemMembersAll.AddOrMoveRange(usings);
 
 
-            return new IStemMember[] { newItem };
+            return  newItem ;
         }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMember item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMemberCommentWhite item)
         {
-            var identifier = SyntaxFactory.IdentifierName(item.Name);
-            var node = SyntaxFactory.NamespaceDeclaration (identifier);
             var itemAsNamespace = item as INamespace;
+            var identifier = SyntaxFactory.IdentifierName(itemAsNamespace.Name);
+            var node = SyntaxFactory.NamespaceDeclaration (identifier);
             if (itemAsNamespace == null) { throw new InvalidOperationException(); }
             var usingsSyntax = itemAsNamespace.Usings
                         .Select(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))

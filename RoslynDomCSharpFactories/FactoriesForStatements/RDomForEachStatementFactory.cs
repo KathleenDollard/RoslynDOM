@@ -11,7 +11,7 @@ namespace RoslynDom.CSharp
     public class RDomForEachStatementFactory
          : RDomStatementFactory<RDomForEachStatement, ForEachStatementSyntax>
     {
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ForEachStatementSyntax;
             var newItem = new RDomForEachStatement(syntaxNode, parent, model);
@@ -23,10 +23,10 @@ namespace RoslynDom.CSharp
             variable.Type = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
             variable.Name =syntax.Identifier.ToString();
             newItem.Variable = variable;
-            return LoopFactoryHelper.CreateFrom<IForEachStatement>(newItem, syntax.Expression, syntax.Statement, parent, model);
+            return LoopFactoryHelper.CreateItemFrom<IForEachStatement>(newItem, syntax.Expression, syntax.Statement, parent, model);
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IForEachStatement;
 

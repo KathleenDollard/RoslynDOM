@@ -11,18 +11,18 @@ namespace RoslynDom.CSharp
     public class RDomInvocationStatementFactory
          : RDomStatementFactory<RDomInvocationStatement, ExpressionStatementSyntax>
     {
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ExpressionStatementSyntax;
             var newItem = new RDomInvocationStatement(syntaxNode, parent, model);
 
             var expression = syntax.Expression;
-            newItem.Invocation = RDomFactoryHelper.GetHelper<IExpression>().MakeItem(expression, newItem, model).FirstOrDefault();
+            newItem.Invocation = RDomFactoryHelper.GetHelperForExpression().MakeItems(expression, newItem, model).FirstOrDefault();
 
-            return new IStatement[] { newItem };
+            return  newItem ;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IInvocationStatement;
             var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Invocation);

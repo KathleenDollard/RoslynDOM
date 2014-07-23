@@ -28,23 +28,35 @@ namespace RoslynDom
             return UnityContainer.ResolveAll<IRDomFactory<TKind>>();
         }
 
-        public IPublicAnnotationFactory GetPublicAnnotationFactory()
+        public IRDomFactory<TKind> GetFactory<TKind>()
         {
             if (!isLoaded) throw new InvalidOperationException();
-            return UnityContainer.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
+            return UnityContainer.ResolveAll<IRDomFactory<TKind>>().FirstOrDefault();
         }
 
-        public IStructuredDocumentationFactory GetStructuredDocumentationFactory()
-        {
-            if (!isLoaded) throw new InvalidOperationException();
-            return UnityContainer.ResolveAll<IStructuredDocumentationFactory>().FirstOrDefault();
-        }
+        //public IPublicAnnotationFactory GetPublicAnnotationFactory()
+        //{
+        //    if (!isLoaded) throw new InvalidOperationException();
+        //    return UnityContainer.ResolveAll<IPublicAnnotationFactory>().FirstOrDefault();
+        //}
 
-        public IAttributeFactory GetAttributeFactory()
-        {
-            if (!isLoaded) throw new InvalidOperationException();
-            return UnityContainer.ResolveAll<IAttributeFactory>().FirstOrDefault();
-        }
+        //public IStructuredDocumentationFactory GetStructuredDocumentationFactory()
+        //{
+        //    if (!isLoaded) throw new InvalidOperationException();
+        //    return UnityContainer.ResolveAll<IStructuredDocumentationFactory>().FirstOrDefault();
+        //}
+
+        //public IAttributeFactory GetAttributeFactory()
+        //{
+        //    if (!isLoaded) throw new InvalidOperationException();
+        //    return UnityContainer.ResolveAll<IAttributeFactory>().FirstOrDefault();
+        //}
+
+        //public ICommentWhiteFactory GetCommentWhiteFactory()
+        //{
+        //    if (!isLoaded) throw new InvalidOperationException();
+        //    return UnityContainer.ResolveAll<ICommentWhiteFactory>().FirstOrDefault();
+        //}
 
         private IUnityContainer UnityContainer
         {
@@ -60,9 +72,10 @@ namespace RoslynDom
             // TODO: Work out a mechanism for people to add configuration
             var container = new UnityContainer();
             var types = AllClasses.FromAssembliesInBasePath();
-            LoadSpecificFactoryIntoContainer<IPublicAnnotationFactory>(types, container);
-            LoadSpecificFactoryIntoContainer<IStructuredDocumentationFactory>(types, container);
-            LoadSpecificFactoryIntoContainer<IAttributeFactory>(types, container);
+            LoadSpecificFactoryIntoContainer<IRDomFactory<IPublicAnnotation>>(types, container);
+            LoadSpecificFactoryIntoContainer< IRDomFactory<IStructuredDocumentation>>(types, container);
+            LoadSpecificFactoryIntoContainer<IRDomFactory<IAttribute>>(types, container);
+            LoadSpecificFactoryIntoContainer<IRDomFactory<ICommentWhite >>(types, container);
             foreach (var registration in registrations)
             {
                 var methodInfo = ReflectionUtilities.MakeGenericMethod(this.GetType(),
@@ -77,15 +90,25 @@ namespace RoslynDom
 
         private void CheckContainer()
         {
-            Contract.Assert(null != GetPublicAnnotationFactory()
-                        && null != GetAttributeFactory()
+            Contract.Assert(null != GetFactory<IPublicAnnotation>()
+                        && null != GetFactory<IAttribute>()
+                        && null != GetFactory<ICommentWhite>()
                         && 2 <= GetFactories<IMisc>().Count()
                         && 1 <= GetFactories<IExpression>().Count()
-                        && 3 <= GetFactories<IStatement>().Count()
-                        && 6 <= GetFactories<ITypeMember>().Count()
-                        && 6 <= GetFactories<IStemMember>().Count()
+                        && 3 <= GetFactories<IStatementCommentWhite>().Count()
+                        && 6 <= GetFactories<ITypeMemberCommentWhite>().Count()
+                        && 6 <= GetFactories<IStemMemberCommentWhite>().Count()
                         && 1 <= GetFactories<IRoot>().Count());
 
+            //Contract.Assert(null != GetPublicAnnotationFactory()
+            //            && null != GetAttributeFactory()
+            //            && null != GetCommentWhiteFactory()
+            //            && 2 <= GetFactories<IMisc>().Count()
+            //            && 1 <= GetFactories<IExpression>().Count()
+            //            && 3 <= GetFactories<IStatement>().Count()
+            //            && 6 <= GetFactories<ITypeMember>().Count()
+            //            && 6 <= GetFactories<IStemMember>().Count()
+            //            && 1 <= GetFactories<IRoot>().Count());
         }
         private void LoadSpecificFactoryIntoContainer<T>(
                      IEnumerable<Type> types,

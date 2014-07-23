@@ -16,8 +16,8 @@ namespace RoslynDomTests
         [TestMethod ]
         public void Can_retrieve_if_descendants()
         {
-            var csharpCode = @"
-            public class Bar
+            var csharpCode =
+          @"public class Bar
             {
                 public void Foo()
                 {
@@ -72,8 +72,8 @@ namespace RoslynDomTests
         [TestMethod]
         public void Can_retrieve_property_descendants()
         {
-            var csharpCode = @"
-                public class Bar
+            var csharpCode = 
+              @"public class Bar
                 {
                     public string FooBar
                     {

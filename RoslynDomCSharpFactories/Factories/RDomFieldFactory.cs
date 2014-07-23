@@ -16,7 +16,7 @@ namespace RoslynDom.CSharp
             return syntaxNode is FieldDeclarationSyntax;
         }
 
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IEnumerable<ITypeMemberCommentWhite> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<ITypeMember>();
 
@@ -25,11 +25,11 @@ namespace RoslynDom.CSharp
             var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                var newItem = new RDomField(decl,parent, model);
+                var newItem = new RDomField(decl, parent, model);
                 list.Add(newItem);
                 newItem.Name = newItem.TypedSymbol.Name;
 
-                var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+                var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
                 newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
                 newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
@@ -41,12 +41,12 @@ namespace RoslynDom.CSharp
             return list;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)
         {
-            var nameSyntax = SyntaxFactory.Identifier(item.Name);
             var itemAsField = item as IField;
+            var nameSyntax = SyntaxFactory.Identifier(itemAsField.Name);
             var returnType = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsField.ReturnType).First();
-            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
+            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(itemAsField);
             var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
             var variableNode = SyntaxFactory.VariableDeclaration(returnType)
                .WithVariables(
@@ -54,7 +54,7 @@ namespace RoslynDom.CSharp
                             SyntaxFactory.VariableDeclarator(nameSyntax)));
             var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
-            var attributes = RDomFactoryHelper.BuildAttributeSyntax(item.Attributes);
+            var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsField.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));

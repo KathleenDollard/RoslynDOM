@@ -10,18 +10,18 @@ namespace RoslynDom.CSharp
     public class RDomRootFactory
           : RDomRootContainerFactory<RDomRoot, CompilationUnitSyntax>
     {
-        public override IEnumerable<IRoot> CreateFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
+        protected  override IRoot CreateItemFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
         {
             var syntax = syntaxNode as CompilationUnitSyntax;
             var newItem = new RDomRoot(syntaxNode, parent,model);
 
             newItem.Name = "Root";
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelper<IStemMember >().MakeItem(x,newItem,  model));
-            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelper<IStemMember>().MakeItem(x, newItem, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x,newItem,  model));
+            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, newItem, model));
             newItem.StemMembersAll.AddOrMoveRange(members);
             newItem.StemMembersAll.AddOrMoveRange(usings);
 
-            return new IRoot[] { newItem };
+            return newItem ;
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IRoot item)

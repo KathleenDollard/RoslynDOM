@@ -20,7 +20,7 @@ namespace RoslynDom.CSharp
             return new SyntaxNode[] { node };
         }
 
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             // Not currently used
             throw new NotImplementedException();

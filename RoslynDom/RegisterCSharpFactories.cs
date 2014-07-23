@@ -13,9 +13,9 @@ namespace RoslynDom
         public static void Register()
         {
             RDomFactoryHelper.Register<IRoot>(new RDomRootFactoryHelper());
-            RDomFactoryHelper.Register<IStemMember>(new RDomStemMemberFactoryHelper());
-            RDomFactoryHelper.Register<ITypeMember>(new RDomTypeMemberFactoryHelper());
-            RDomFactoryHelper.Register<IStatement>(new RDomStatementFactoryHelper());
+            RDomFactoryHelper.Register<IStemMemberCommentWhite>(new RDomStemMemberFactoryHelper());
+            RDomFactoryHelper.Register<ITypeMemberCommentWhite>(new RDomTypeMemberFactoryHelper());
+            RDomFactoryHelper.Register<IStatementCommentWhite>(new RDomStatementFactoryHelper());
             RDomFactoryHelper.Register<IExpression>(new RDomExpressionFactoryHelper());
             RDomFactoryHelper.Register<IMisc>(new RDomMiscFactoryHelper());
         }
@@ -24,13 +24,13 @@ namespace RoslynDom
     public class RDomRootFactoryHelper : RDomFactoryHelper<IRoot>
     { internal RDomRootFactoryHelper() { } }
 
-    public class RDomStemMemberFactoryHelper : RDomFactoryHelper<IStemMember>
+    public class RDomStemMemberFactoryHelper : RDomFactoryHelper<IStemMemberCommentWhite >
     { internal RDomStemMemberFactoryHelper() { } }
 
-    public class RDomTypeMemberFactoryHelper : RDomFactoryHelper<ITypeMember>
+    public class RDomTypeMemberFactoryHelper : RDomFactoryHelper<ITypeMemberCommentWhite>
     { internal RDomTypeMemberFactoryHelper() { } }
 
-    public class RDomStatementFactoryHelper : RDomFactoryHelper<IStatement>
+    public class RDomStatementFactoryHelper : RDomFactoryHelper<IStatementCommentWhite>
     { internal RDomStatementFactoryHelper() { } }
 
     public class RDomExpressionFactoryHelper : RDomFactoryHelper<IExpression>

@@ -10,13 +10,13 @@ namespace RoslynDom.CSharp
     public class RDomParameterMiscFactory
             : RDomMiscFactory<RDomParameter, ParameterSyntax>
     {
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ParameterSyntax;
             var newItem = new RDomParameter(syntaxNode, parent,model);
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
             newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
             newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
@@ -26,7 +26,7 @@ namespace RoslynDom.CSharp
             newItem.IsOptional = newItem.TypedSymbol.IsOptional;
             newItem.Ordinal = newItem.TypedSymbol.Ordinal;
 
-            return new IMisc[] { newItem };
+            return newItem ;
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)

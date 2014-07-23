@@ -30,9 +30,13 @@ namespace RoslynDom
 
     public interface IAttributeFactory : IRDomFactory<IAttribute>
     {
-        IEnumerable<IAttribute> ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model);
-        IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributes);
+        //IEnumerable<IAttribute> ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model);
+        //IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributes);
     }
+
+    public interface ICommentWhiteFactory : IRDomFactory<ICommentWhite>
+    {    }
+
 
     /// <summary>
     /// Priority for candidate selection. These are for clarity. Please add your

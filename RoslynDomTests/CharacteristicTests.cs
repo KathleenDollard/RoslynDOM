@@ -178,6 +178,7 @@ enum Foo6{}
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var enums = root.Enums.ToArray();
+            Assert.AreEqual(6, enums.Count());
             Assert.AreEqual(AccessModifier.Public, enums[0].AccessModifier);
             Assert.AreEqual(AccessModifier.Private, enums[1].AccessModifier);
             Assert.AreEqual(AccessModifier.Protected, enums[2].AccessModifier);

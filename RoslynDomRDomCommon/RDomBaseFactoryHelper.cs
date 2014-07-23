@@ -12,9 +12,11 @@ namespace RoslynDom
     {
         // WARNING: At present you must register all factories before retrieving any. 
         private static FactoryProvider factoryProvider = new FactoryProvider();
-        private static IAttributeFactory attributeFactory;
-        private static IRDomFactory<IPublicAnnotation> publicAnnotationFactory;
-        private static IRDomFactory<IStructuredDocumentation> structuredDocumentationFactory;
+        // TODO: Determine whether we need to use a caching strategy 
+        //private static IRDomFactory<IAttributeFactory> attributeFactory;
+        //private static IRDomFactory<ICommentWhiteFactory> commentWhiteFactory;
+        //private static IRDomFactory<IPublicAnnotation> publicAnnotationFactory;
+        //private static IRDomFactory<IStructuredDocumentation> structuredDocumentationFactory;
         private static List<Tuple<Type, RDomFactoryHelper>> registration = new List<Tuple<Type, RDomFactoryHelper>>();
 
         public static void Register<TKind>(RDomFactoryHelper<TKind> factoryHelper)
@@ -23,7 +25,7 @@ namespace RoslynDom
             registration.Add(new Tuple<Type, RDomFactoryHelper>(typeof(TKind), factoryHelper));
         }
 
-        public static RDomFactoryHelper<TKind> GetHelper<TKind>()
+        private static RDomFactoryHelper<TKind> GetHelper<TKind>()
             where TKind : class, IDom
         {
             foreach (var tuple in registration)
@@ -33,39 +35,66 @@ namespace RoslynDom
             throw new InvalidOperationException();
         }
 
+        // Added these because of bugs with random TKind - wrong or without CommentWhite - causing missing factories - which is hard to recover from
+        public static RDomFactoryHelper<IRoot> GetHelperForRoot()
+        { return GetHelper<IRoot>(); }
+        public static RDomFactoryHelper<IStemMemberCommentWhite> GetHelperForStemMember()
+        { return GetHelper<IStemMemberCommentWhite>(); }
+        public static RDomFactoryHelper<ITypeMemberCommentWhite> GetHelperForTypeMember()
+        { return GetHelper<ITypeMemberCommentWhite>(); }
+
+        public static RDomFactoryHelper<IStatementCommentWhite> GetHelperForStatement()
+        { return GetHelper<IStatementCommentWhite>(); }
+        public static RDomFactoryHelper<IExpression> GetHelperForExpression()
+        { return GetHelper<IExpression>(); }
+        public static RDomFactoryHelper<IMisc> GetHelperForMisc()
+        { return GetHelper<IMisc>(); }
+
+        // I have not proven this cache to be necessary or useful, and I don't think we can get around a cast 
+        private static IDictionary<Type, object> factoryCache = new Dictionary<Type, object>();
+        public static IEnumerable<TKind> GetFromFactory<TKind>(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        {
+            object testFactory;
+            IRDomFactory<TKind> factory;
+            var type = typeof(TKind);
+            if (factoryCache.TryGetValue(type, out testFactory))
+            { factory = (IRDomFactory<TKind>)testFactory; }
+            else
+            {
+                if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
+                factory = factoryProvider.GetFactory<TKind>();
+                factoryCache.Add(type, factory);
+            }
+            return factory.CreateFrom(syntaxNode, parent, model);
+        }
+
         public static IEnumerable<IPublicAnnotation> GetPublicAnnotations(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
-            if (publicAnnotationFactory == null) { publicAnnotationFactory = factoryProvider.GetPublicAnnotationFactory(); }
-            return publicAnnotationFactory.CreateFrom(syntaxNode, parent, model);
-        }
-
+        {            return GetFromFactory<IPublicAnnotation>(syntaxNode, parent, model);        }
         public static IEnumerable<IStructuredDocumentation> GetStructuredDocumentation(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
-            if (structuredDocumentationFactory == null) { structuredDocumentationFactory = factoryProvider.GetStructuredDocumentationFactory(); }
-            return structuredDocumentationFactory.CreateFrom(syntaxNode, parent, model);
-        }
+        { return GetFromFactory<IStructuredDocumentation>(syntaxNode, parent, model); }
+        public static IEnumerable<ICommentWhite> GetCommentWhite(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        { return GetFromFactory<ICommentWhite>(syntaxNode, parent, model); }
+        public static IEnumerable<IAttribute> CreateAttributeFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        { return GetFromFactory<IAttribute>(syntaxNode, parent, model); }
 
-        public static IEnumerable<IAttribute> GetAttributesFrom(SyntaxNode parentNode, IDom newParent, SemanticModel model)
-        {
-            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
-            if (attributeFactory == null) { attributeFactory = factoryProvider.GetAttributeFactory(); }
-            return attributeFactory.ExtractAttributes(parentNode, newParent, model);
-        }
-
-        public static IEnumerable<IAttribute> CreateAttributeFrom(SyntaxNode attributeNode, IDom parent, SemanticModel model)
-        {
-            if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
-            if (attributeFactory == null) { attributeFactory = factoryProvider.GetAttributeFactory(); }
-            return attributeFactory.CreateFrom(attributeNode, parent, model);
-        }
+        //    public static IEnumerable<IAttribute> CreateAttributeFrom(SyntaxNode attributeNode, IDom parent, SemanticModel model)
+        //{
+        //    if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
+        //    var factory = factoryProvider.GetFactory<IAttribute>();
+        //    return factory.CreateFrom(attributeNode, parent, model);
+        //}
 
         public static IEnumerable<SyntaxNode> BuildAttributeSyntax(AttributeList attributes)
         {
             if (!factoryProvider.isLoaded) { factoryProvider.Initialize(registration); }
-            if (attributeFactory == null) { attributeFactory = factoryProvider.GetAttributeFactory(); }
-            return attributeFactory.BuildSyntax(attributes);
+            var factory = factoryProvider.GetFactory<IAttribute>();
+            var ret = new List<SyntaxNode>();
+            foreach (var attr in attributes)
+            {
+                var node = factory.BuildSyntax(attr);
+                ret.AddRange(node);
+            }
+            return ret;
         }
 
         protected static IEnumerable<IRDomFactory<T>> GetFactories<T>()
@@ -136,7 +165,7 @@ namespace RoslynDom
             return found.Item1;
         }
 
-        public IEnumerable<T> MakeItem(SyntaxNode rawStatement, IDom parent, SemanticModel model)
+        public IEnumerable<T> MakeItems(SyntaxNode rawStatement, IDom parent, SemanticModel model)
         {
             var factories = Factories.OrderByDescending(x => x.Priority).ToArray();
             foreach (var factory in factories)
@@ -155,7 +184,8 @@ namespace RoslynDom
             var itemAsT = item as T;
             if (itemAsT == null) throw new InvalidOperationException();
             var factory = GetFactory(itemAsT);
-            return factory.BuildSyntax(itemAsT);
+            var ret = factory.BuildSyntax(itemAsT);
+            return ret;
         }
 
         public override SyntaxNode BuildSyntax(IDom item)

@@ -16,7 +16,7 @@ namespace RoslynDom.CSharp
             return syntaxNode is LocalDeclarationStatementSyntax;
         }
 
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IEnumerable<IStatementCommentWhite> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<IStatement>();
            // LineDirectiveTriviaSyntax
@@ -43,13 +43,13 @@ namespace RoslynDom.CSharp
             if (syntax.Initializer != null)
             {
                 var equalsClause = syntax.Initializer;
-                newItem.Initializer = RDomFactoryHelper.GetHelper<IExpression>()
-                                .MakeItem(equalsClause.Value, newItem, model).FirstOrDefault();
+                newItem.Initializer = RDomFactoryHelper.GetHelperForExpression()
+                                .MakeItems(equalsClause.Value, newItem, model).FirstOrDefault();
             }
 
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IDeclarationStatement;
             var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);

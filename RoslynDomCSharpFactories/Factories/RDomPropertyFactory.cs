@@ -11,7 +11,7 @@ namespace RoslynDom.CSharp
     public class RDomPropertyTypeMemberFactory
           : RDomTypeMemberFactory<RDomProperty, PropertyDeclarationSyntax>
     {
-        public override IEnumerable<ITypeMember> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as PropertyDeclarationSyntax;
             var newItem = new RDomProperty(syntaxNode, parent, model);
@@ -19,7 +19,7 @@ namespace RoslynDom.CSharp
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
 
-            var attributes = RDomFactoryHelper.GetAttributesFrom(syntaxNode, newItem, model);
+            var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
             newItem.Attributes.AddOrMoveAttributeRange(attributes);
 
             // TODO: Get and set accessibility
@@ -37,32 +37,32 @@ namespace RoslynDom.CSharp
             newItem.CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
             var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
             var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
-            var accessorFactory = RDomFactoryHelper.GetHelper<IMisc>();
+            var accessorFactory = RDomFactoryHelper.GetHelperForMisc();
             if (accessorFactory == null) { throw new InvalidOperationException(); }
             if (getAccessorSyntax != null)
-            { newItem.GetAccessor = (IAccessor)accessorFactory.MakeItem(getAccessorSyntax, newItem, model).FirstOrDefault(); }
+            { newItem.GetAccessor = (IAccessor)accessorFactory.MakeItems(getAccessorSyntax, newItem, model).FirstOrDefault(); }
             if (setAccessorSyntax != null)
-            { newItem.SetAccessor = (IAccessor)accessorFactory.MakeItem(setAccessorSyntax, newItem, model).FirstOrDefault(); }
+            { newItem.SetAccessor = (IAccessor)accessorFactory.MakeItems(setAccessorSyntax, newItem, model).FirstOrDefault(); }
 
-            return new ITypeMember[] { newItem };
+            return newItem ;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMember item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)
         {
-            var nameSyntax = SyntaxFactory.Identifier(item.Name);
-            var itemAsProeprty = item as IProperty;
-            var returnType = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntax(itemAsProeprty.ReturnType);
-            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(item);
+            var itemAsProperty = item as IProperty;
+            var nameSyntax = SyntaxFactory.Identifier(itemAsProperty.Name);
+            var returnType = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntax(itemAsProperty.ReturnType);
+            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(itemAsProperty);
             var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
                             .WithModifiers(modifiers);
 
-            var attributes = RDomFactoryHelper.BuildAttributeSyntax(item.Attributes);
+            var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsProperty.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             var accessors = SyntaxFactory.List<AccessorDeclarationSyntax>();
-            var getAccessorSyntax = RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsProeprty.GetAccessor).FirstOrDefault();
+            var getAccessorSyntax = RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsProperty.GetAccessor).FirstOrDefault();
             if (getAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)getAccessorSyntax); }
-            var setAccessorSyntax = RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsProeprty.SetAccessor).FirstOrDefault();
+            var setAccessorSyntax = RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsProperty.SetAccessor).FirstOrDefault();
             if (setAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)setAccessorSyntax); }
             if (accessors.Any()) { node = node.WithAccessorList(SyntaxFactory.AccessorList(accessors)); }
             node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));

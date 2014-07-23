@@ -119,10 +119,10 @@ namespace RoslynDom.CSharp
             return ret;
         }
 
-        public static IEnumerable<IStatement> GetStatementsFromSyntax(StatementSyntax statementSyntax, IDom parent, ref bool hasBlock, SemanticModel model)
+        public static IEnumerable<IStatementCommentWhite> GetStatementsFromSyntax(StatementSyntax statementSyntax, IDom parent, ref bool hasBlock, SemanticModel model)
         {
-            var statement = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax, parent, model).First();
-            var list = new List<IStatement>();
+            var statement = RDomFactoryHelper.GetHelperForStatement().MakeItems(statementSyntax, parent, model).First();
+            var list = new List<IStatementCommentWhite>();
             var blockStatement = statement as IBlockStatement;
             if (blockStatement != null)
             {

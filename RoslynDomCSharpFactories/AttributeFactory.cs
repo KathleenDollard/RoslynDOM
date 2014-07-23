@@ -10,26 +10,25 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class AttributeFactory :  RDomMiscFactory<RDomAttribute , AttributeSyntax>, IAttributeFactory
+    public class AttributeFactory : RDomMiscFactory<RDomAttribute, AttributeSyntax>, IAttributeFactory
     {
-        public FactoryPriority Priority
-        { get { return FactoryPriority.Normal; } }
+        //public override FactoryPriority Priority
+        //{ get { return FactoryPriority.Normal; } }
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
-            // Always tries
             return (syntaxNode is AttributeListSyntax || syntaxNode is AttributeSyntax);
         }
 
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            return InternalCreateFrom(syntaxNode,parent, model);
+            return InternalCreateFrom(syntaxNode, parent, model);
         }
 
         IEnumerable<IAttribute> IRDomFactory<IAttribute>.CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             return InternalCreateFrom(syntaxNode, parent, model);
-         }
+        }
 
         private IEnumerable<IAttribute> InternalCreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
@@ -37,7 +36,7 @@ namespace RoslynDom.CSharp
             if (syntaxAsList != null) { return CreateFromList(syntaxAsList, parent, model); }
             var attributeSyntax = syntaxNode as AttributeSyntax;
             if (attributeSyntax != null) { return new IAttribute[] { CreateFromItem(attributeSyntax, parent, model) }; }
-            return new List<IAttribute>();
+            return ExtractAttributes(syntaxNode, parent, model);
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
@@ -54,8 +53,11 @@ namespace RoslynDom.CSharp
             arguments = arguments.AddRange(values.OfType<AttributeArgumentSyntax>().ToList());
             var argumentList = SyntaxFactory.AttributeArgumentList(arguments);
             var node = SyntaxFactory.Attribute(nameSyntax, argumentList);
+            var nodeList = SyntaxFactory.AttributeList(
+                                SyntaxFactory.SeparatedList(
+                                    new AttributeSyntax[] {(AttributeSyntax) RoslynUtilities.Format(node) }));
 
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return new SyntaxNode[] { nodeList };
         }
 
         public IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributeList)
@@ -89,7 +91,7 @@ namespace RoslynDom.CSharp
             return list;
         }
 
-      
+
         #region Private methods to support build syntax
         private AttributeArgumentSyntax BuildAttributeValueSyntax(IAttributeValue atttributeValue)
         {
@@ -122,7 +124,7 @@ namespace RoslynDom.CSharp
                     SyntaxFactory.NameEquals(argNameSyntax),
                     null, expr);
             }
-            return  node ;
+            return node;
         }
 
         #endregion
@@ -142,7 +144,7 @@ namespace RoslynDom.CSharp
         {
             var list = new List<IAttribute>();
             foreach (var attSyntax in syntaxAsList.Attributes)
-            { list.Add(CreateFromItem(attSyntax,parent,  model)); }
+            { list.Add(CreateFromItem(attSyntax, parent, model)); }
             return list;
         }
 
@@ -252,7 +254,7 @@ namespace RoslynDom.CSharp
             return literalExpression.Token.Value;
         }
 
-     
+
     }
     #endregion
 }

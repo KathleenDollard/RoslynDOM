@@ -13,7 +13,7 @@ namespace RoslynDom.CSharp
     public class RDomExpressionFactory
                  : RDomExpressionFactory<RDomExpression, ExpressionSyntax>
     {
-        public override IEnumerable<IExpression> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IExpression CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ExpressionSyntax;
            
@@ -21,7 +21,7 @@ namespace RoslynDom.CSharp
             newItem.Expression = syntax.ToString();
             newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);
 
-            return new IExpression[] { newItem };
+            return newItem ;
 
         }
 

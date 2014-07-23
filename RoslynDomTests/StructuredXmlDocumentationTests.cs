@@ -35,7 +35,7 @@ namespace RoslynDomTests
             Assert.AreEqual(expected, method.Description);
             Assert.AreEqual(expected, method2.Description);
             Assert.IsTrue(method.SameIntent(method2));
-            var expectedOutput = "public class Foo\r\n{\r\n    /// <summary>\r\n    /// This is a test\r\n    /// </summary>\r\n /// params    public Void Foo3(String dummy)\r\n    {\r\n        Console.WriteLine(42);\r\n    }\r\n}";
+            var expectedOutput = "public class Foo\r\n{\r\n    /// <summary>\r\n    /// This is a test\r\n    /// </summary>\r\n    /// <param name=\"dummy\">With a dummy parameter</param>\r\n    public Void Foo3(String dummy)\r\n    {\r\n        Console.WriteLine(42);\r\n    }\r\n}";
             var actual1 = RDomCSharpFactory.Factory.BuildSyntax(root).ToString();
             var actual2 = RDomCSharpFactory.Factory.BuildSyntax(root2).ToString();
             Assert.AreEqual(expectedOutput, actual1);

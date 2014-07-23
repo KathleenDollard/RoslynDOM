@@ -31,24 +31,61 @@ namespace RoslynDom
         public static SyntaxTriviaList LeadingTrivia(IDom item)
         {
             var leadingTrivia = new List<SyntaxTrivia>();
-            var xmlComments = BuildSyntaxExtensions.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation);
-            if (xmlComments != null) leadingTrivia.Add(SyntaxFactory.Trivia(xmlComments));
+
+            leadingTrivia.AddRange(BuildSyntaxExtensions.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation));
+
+            leadingTrivia.AddRange(BuildCommentWhite(item));
+
             return SyntaxFactory.TriviaList(leadingTrivia);
         }
 
-        public static DocumentationCommentTriviaSyntax BuildStructuredDocumentationSyntax(IHasStructuredDocumentation hasStructuredDocumentation)
+        private static IEnumerable<SyntaxTrivia> BuildCommentWhite(IDom item)
         {
+            var ret = new List<SyntaxTrivia>();
+            if (item is IStemMember)
+            {
+                var parentAsStem = item.Parent as IStemContainer;
+                if (parentAsStem == null) throw new InvalidOperationException();
+                var commentWhites = parentAsStem.StemMembersAll
+                                    .PreviousSiblingsUntil(item, x => !(x is IComment || x is IVerticalWhitespace))
+                                    .OfType<ICommentWhite>();
+                ret.AddRange( MakeWhiteCommentTrivia(commentWhites));
+            }
+            return ret;
+        }
 
-            if (hasStructuredDocumentation == null) return null;
-            var description = hasStructuredDocumentation.Description;
+        private static IEnumerable<SyntaxTrivia> MakeWhiteCommentTrivia(IEnumerable<ICommentWhite> commentWhites)
+        {
+            var ret = new List<SyntaxTrivia>();
+            foreach (var item in commentWhites)
+            {
+                if (item is IVerticalWhitespace) { ret.Add(SyntaxFactory.EndOfLine("")); }
+                else
+                {
+                    var itemAsComment = item as IComment;
+                    if (itemAsComment == null) throw new InvalidOperationException();
+                    var comment = "";
+                    if (itemAsComment.IsMultiline) { comment = "/* " + itemAsComment.Text + "*/"; }
+                    else { comment = "// " + itemAsComment.Text; }
+                    ret.Add(SyntaxFactory.Comment(comment));
+                }
+            }
+            return ret;
+        }
+
+        public static SyntaxTriviaList BuildStructuredDocumentationSyntax(IHasStructuredDocumentation itemHasStructDoc)
+        {
+            var ret = SyntaxFactory.TriviaList ();
+            if (itemHasStructDoc == null || string.IsNullOrWhiteSpace(itemHasStructDoc.Description)) return ret;
+            var description = "\r\n" +  itemHasStructDoc.Description + "\r\n";
             XDocument xDoc = null;
-            if (hasStructuredDocumentation.StructuredDocumentation == null)
+            if (itemHasStructDoc.StructuredDocumentation == null)
             {
                 xDoc = new XDocument();
             }
             else
             {
-                xDoc = hasStructuredDocumentation.StructuredDocumentation.RawItem as XDocument;
+                xDoc = itemHasStructDoc.StructuredDocumentation.RawItem as XDocument;
             }
             var oldParent = xDoc.DescendantNodes().OfType<XElement>().Where(x => x.Name == "member").FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(description))
@@ -67,18 +104,18 @@ namespace RoslynDom
             }
             // No doubt I'll feel dirty in the morning, but the manual alternative is awful
             var oldDocsAsString = xDoc.ToString();
-            var lines = oldDocsAsString.Split(new string[] { "\r\n"}, StringSplitOptions.None);
+            var lines = oldDocsAsString.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             var newDocAsString = ""; // these are short, so decided not to use StringBuilder
             foreach (var line in lines)
             {
-                var useLine =  line.Trim();
+                var useLine = line.Trim();
                 if (useLine.StartsWith("<member") || useLine.StartsWith("</member")) continue;
                 newDocAsString += "/// " + useLine + "\r\n";
             }
             var triviaList = SyntaxFactory.ParseLeadingTrivia(newDocAsString);
-            //if (triviaList.Any())
-            //{ return (DocumentationCommentTriviaSyntax)((object)triviaList.First()); }
-            return null;
+            if (triviaList.Any())
+            { return triviaList; }
+            return ret;
         }
 
         //private static IEnumerable<XmlNodeSyntax> GetXmlNodes(IHasStructuredDocumentation item, string description)

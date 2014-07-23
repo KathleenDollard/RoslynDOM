@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeList.cs" />
+    <Compile Include="BaseInterfaces\ICommentWhite.cs" />
     <Compile Include="BaseInterfaces\IComment.cs" />
     <Compile Include="BaseInterfaces\IStatementCommentWhite.cs" />
     <Compile Include="BaseInterfaces\IStatementContainer.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Enums\StemMemberKind.cs" />
     <Compile Include="Enums\Variance.cs" />
     <Compile Include="Enums\AccessModifier.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IHasLookupValue.cs" />
     <Compile Include="Interfaces_Statements\IAssignmentStatement.cs" />
     <Compile Include="Interfaces_Statements\IBlockStatement.cs" />

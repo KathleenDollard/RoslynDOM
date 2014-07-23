@@ -10,20 +10,20 @@ namespace RoslynDom.CSharp
     public class RDomBlockStatementFactory
              : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
     {
-        public override IEnumerable<IStatement> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as BlockSyntax;
             var newItem = new RDomBlockStatement(syntaxNode, parent, model);
 
             foreach (var statementSyntax in syntax.Statements)
             {
-                var statements = RDomFactoryHelper.GetHelper<IStatement>().MakeItem(statementSyntax, newItem, model);
+                var statements = RDomFactoryHelper.GetHelperForStatement().MakeItems(statementSyntax, newItem, model);
                 newItem.Statements.AddOrMoveRange(statements);
             }
 
-            return new IStatement[] { newItem };
+            return newItem ;
         }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatement item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IBlockStatement;
 

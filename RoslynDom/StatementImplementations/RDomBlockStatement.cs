@@ -6,7 +6,7 @@ namespace RoslynDom
 {
     public class RDomBlockStatement : RDomBase<IBlockStatement, ISymbol>, IBlockStatement
     {
-        private RDomList<IStatement> _statements;
+        private RDomList<IStatementCommentWhite> _statements;
 
         public RDomBlockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
@@ -23,10 +23,10 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            _statements = new RDomList<IStatement>(this);
+            _statements = new RDomList<IStatementCommentWhite>(this);
         }
 
-        public RDomList<IStatement> Statements
+        public RDomList<IStatementCommentWhite> Statements
         { get { return _statements; } }
     }
 }

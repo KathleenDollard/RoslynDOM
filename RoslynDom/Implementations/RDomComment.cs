@@ -8,33 +8,17 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomComment : RDomBase, IComment
+    public class RDomComment : RDomCommentWhite, IComment
     {
+        public RDomComment (string text, bool isMultiline)
+        {
+            Text = text;
+            IsMultiline = isMultiline;
+        }
+
         public string Text { get; set; }
 
         public bool IsMultiline { get; set; }
-
-        public MemberKind MemberKind
-        { get { return MemberKind.Whitespace; } }
-
-        public override object OriginalRawItem
-        { get { return null; } }
-
-        public override string OuterName
-        { get { return null; } }
-
-        public override object RawItem
-        { get { return null; } }
-
-        public StemMemberKind StemMemberKind
-        { get { return StemMemberKind.Whitespace; } }
-
-        public override ISymbol Symbol
-        { get { return null; } }
-
-        public override object RequestValue(string propertyName)
-        {  return null; } 
-
 
         protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
         {

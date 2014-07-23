@@ -16,7 +16,7 @@ namespace RoslynDom.CSharp
             return syntaxNode is VariableDeclarationSyntax;
         }
 
-        public override IEnumerable<IMisc> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected  override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<IMisc>();
 
@@ -42,8 +42,8 @@ namespace RoslynDom.CSharp
             if (syntax.Initializer != null)
             {
                 var equalsClause = syntax.Initializer;
-                newItem.Initializer = RDomFactoryHelper.GetHelper<IExpression>()
-                                .MakeItem(equalsClause.Value, newItem, model).FirstOrDefault();
+                newItem.Initializer = RDomFactoryHelper.GetHelperForExpression()
+                                .MakeItems(equalsClause.Value, newItem, model).FirstOrDefault();
             }
 
         }

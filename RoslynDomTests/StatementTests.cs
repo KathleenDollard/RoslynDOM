@@ -21,8 +21,8 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_misc_statements_for_method()
         {
-            var csharpCode = @"
-            public class Bar
+            var csharpCode = 
+          @"public class Bar
             {
                 public void Foo()
                 {
@@ -52,8 +52,8 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_declaration_statements_for_method()
         {
-            var csharpCode = @"
-            public class Bar
+            var csharpCode =
+          @"public class Bar
             {
                 public void Foo()
                 {
