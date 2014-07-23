@@ -48,11 +48,9 @@ namespace RoslynDom.CSharp
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
 
-            var leadingTrivia = BuildSyntaxExtensions.LeadingTrivia(item);
-            node = node.WithLeadingTrivia(leadingTrivia);
-
             // TODO: Class type members and type constraints
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+
+            return item.PrepareForBuildSyntaxOutput(node);
         }
     }
     public class RDomClassTypeMemberFactory
@@ -60,7 +58,7 @@ namespace RoslynDom.CSharp
     {
         protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            return  RDomClassFactoryHelper.CreateFromInternal(syntaxNode, parent, model);
+            return RDomClassFactoryHelper.CreateFromInternal(syntaxNode, parent, model);
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)

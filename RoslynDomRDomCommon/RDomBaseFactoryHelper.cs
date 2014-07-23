@@ -12,11 +12,6 @@ namespace RoslynDom
     {
         // WARNING: At present you must register all factories before retrieving any. 
         private static FactoryProvider factoryProvider = new FactoryProvider();
-        // TODO: Determine whether we need to use a caching strategy 
-        //private static IRDomFactory<IAttributeFactory> attributeFactory;
-        //private static IRDomFactory<ICommentWhiteFactory> commentWhiteFactory;
-        //private static IRDomFactory<IPublicAnnotation> publicAnnotationFactory;
-        //private static IRDomFactory<IStructuredDocumentation> structuredDocumentationFactory;
         private static List<Tuple<Type, RDomFactoryHelper>> registration = new List<Tuple<Type, RDomFactoryHelper>>();
 
         public static void Register<TKind>(RDomFactoryHelper<TKind> factoryHelper)

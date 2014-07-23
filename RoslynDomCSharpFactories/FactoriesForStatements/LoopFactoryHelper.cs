@@ -42,7 +42,11 @@ namespace RoslynDom.CSharp
                 var condition = RDomCSharpFactory.Factory.BuildSyntax(item.Condition);
                 node = makeSyntaxDelegate((ExpressionSyntax)condition, statement);
             }
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+
+            var leadingTrivia = BuildSyntaxExtensions.LeadingTrivia(item);
+            node = node.WithLeadingTrivia(leadingTrivia);
+
+            return item.PrepareForBuildSyntaxOutput(node);
         }
     }
 }

@@ -47,8 +47,8 @@ namespace RoslynDom.CSharp
             if (itemAsT.IsParamArray) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ParamsKeyword)); }
             if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
             if (modifiers.Any()) { node = node.WithModifiers(modifiers); }
-            // TODO:return new SyntaxNode[] { node.Format() };
-            return new SyntaxNode[] { node };
+
+            return item.PrepareForBuildSyntaxOutput(node);
 
         }
     }

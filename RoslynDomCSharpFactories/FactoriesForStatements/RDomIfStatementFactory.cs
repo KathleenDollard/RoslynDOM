@@ -75,7 +75,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.IfStatement(GetCondition(itemAsT), GetStatement(itemAsT));
             if (elseSyntax != null) { node = node.WithElse(elseSyntax); }
 
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return item.PrepareForBuildSyntaxOutput(node);
         }
 
         private ElseClauseSyntax BuildElseSyntax(IEnumerable<IElseStatement> elses)

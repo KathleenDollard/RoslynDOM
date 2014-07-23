@@ -84,14 +84,7 @@ namespace RoslynDom.CSharp
             }
         }
 
-        public static SyntaxNode Format(SyntaxNode node)
-        {
-            var span = node.FullSpan;
-            node = Formatter.Format(node, span, new CustomWorkspace());
-            return node;
-        }
-
-        public static string Simplify(SyntaxNode node)
+           public static string Simplify(SyntaxNode node)
         {
             var source = node.ToString();
             var projectId = ProjectId.CreateNewId();

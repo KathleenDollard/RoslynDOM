@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
             var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsAccessor.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return item.PrepareForBuildSyntaxOutput(node);
         }
 
     }

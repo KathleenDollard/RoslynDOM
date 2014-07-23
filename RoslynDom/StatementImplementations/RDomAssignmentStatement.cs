@@ -14,8 +14,8 @@ namespace RoslynDom
         internal RDomAssignmentStatement(RDomAssignmentStatement oldRDom)
              : base(oldRDom)
         {
-            Name = oldRDom.Name;
-            Expression = oldRDom.Expression;
+            Left = oldRDom.Left.Copy();
+            Expression = oldRDom.Expression.Copy();
         }
 
         public override IEnumerable<IDom> Children
@@ -24,7 +24,7 @@ namespace RoslynDom
         public override IEnumerable<IDom> Descendants
         { get { return new List<IDom>() { Expression }; } }
 
-        public string Name { get; set; }
+        public IExpression Left { get; set; }
         public IExpression Expression { get; set; }
     }
 }

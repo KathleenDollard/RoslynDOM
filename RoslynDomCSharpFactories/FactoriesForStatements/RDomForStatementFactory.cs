@@ -11,7 +11,7 @@ namespace RoslynDom.CSharp
     public class RDomForStatementFactory
          : RDomStatementFactory<RDomForStatement, ForStatementSyntax>
     {
-        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ForStatementSyntax;
             var newItem = new RDomForStatement(syntaxNode, parent, model);
@@ -26,7 +26,7 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IForStatement;
-            var node = LoopFactoryHelper.BuildSyntax<IForStatement>(itemAsT, (c, s) => SyntaxFactory.ForStatement(s).WithCondition(c)).First() as ForStatementSyntax ;
+            var node = LoopFactoryHelper.BuildSyntax<IForStatement>(itemAsT, (c, s) => SyntaxFactory.ForStatement(s).WithCondition(c)).First() as ForStatementSyntax;
 
             // TODO: Try to share this code with DeclarationSyntaxStatementFactory
             TypeSyntax typeSyntax;
@@ -41,10 +41,10 @@ namespace RoslynDom.CSharp
             var nodeDeclaration = SyntaxFactory.VariableDeclaration(typeSyntax, nodeDeclaratorInList);
             node = node.WithDeclaration(nodeDeclaration);
 
-            var incrementorSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Incrementor );
-           node = node.WithIncrementors(SyntaxFactory.SeparatedList<ExpressionSyntax>(new ExpressionSyntax[] {(ExpressionSyntax) incrementorSyntax }));
+            var incrementorSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Incrementor);
+            node = node.WithIncrementors(SyntaxFactory.SeparatedList<ExpressionSyntax>(new ExpressionSyntax[] { (ExpressionSyntax)incrementorSyntax }));
 
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return item.PrepareForBuildSyntaxOutput(node);
         }
 
 

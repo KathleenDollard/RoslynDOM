@@ -75,37 +75,12 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
         {
             return null;
-            //return BuildSyntax((IAttribute)item);
         }
 
         public IEnumerable<SyntaxNode> BuildSyntax(ICommentWhite item)
         {
             return null;
-            //var itemAsT = item as IAttribute;
-            //var nameSyntax = SyntaxFactory.ParseName(itemAsT.Name);
-            //var arguments = new SeparatedSyntaxList<AttributeArgumentSyntax>();
-            //var values = itemAsT.AttributeValues.Select(x => BuildAttributeValueSyntax(x));
-            //arguments = arguments.AddRange(values.OfType<AttributeArgumentSyntax>().ToList());
-            //var argumentList = SyntaxFactory.AttributeArgumentList(arguments);
-            //var node = SyntaxFactory.Attribute(nameSyntax, argumentList);
-
-            //return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
-
-        //public IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributeList)
-        //{
-        //    var list = SyntaxFactory.List<SyntaxNode>();
-        //    var attributes = attributeList.Attributes;
-        //    if (attributes.Any())
-        //    {
-        //        var attribList = SyntaxFactory.AttributeList();
-        //        var attributeSyntaxItems = attributes.SelectMany(x => BuildSyntax(x)).ToArray();
-        //        // TODO: attributeSyntaxItems = attributeSyntaxItems.Select(x => x.Format()).ToArray();
-        //        attribList = attribList.AddAttributes(attributeSyntaxItems.OfType<AttributeSyntax>().ToArray());
-        //        list = list.Add(attribList);
-        //    }
-        //    return list;
-        //}
 
     }
 }

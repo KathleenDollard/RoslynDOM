@@ -10,9 +10,21 @@ namespace RoslynDom
 {
     public abstract class RDomCommentWhite : RDomBase, ICommentWhite 
     {
-    
-        public MemberKind MemberKind
-        { get { return MemberKind.Whitespace; } }
+        internal RDomCommentWhite(StemMemberKind stemMemberKind, MemberKind memberKind)
+        {
+            StemMemberKind = stemMemberKind;
+            MemberKind = memberKind;
+        }
+
+        internal RDomCommentWhite(RDomCommentWhite oldRDom)
+            : base(oldRDom)
+        {
+            StemMemberKind = oldRDom.StemMemberKind;
+            MemberKind = oldRDom.MemberKind;
+        }
+
+        public StemMemberKind StemMemberKind { get; set; }
+        public MemberKind MemberKind { get; set; }
 
         public override object OriginalRawItem
         { get { return null; } }
@@ -22,9 +34,6 @@ namespace RoslynDom
 
         public override object RawItem
         { get { return null; } }
-
-        public StemMemberKind StemMemberKind
-        { get { return StemMemberKind.Whitespace; } }
 
         public override ISymbol Symbol
         { get { return null; } }

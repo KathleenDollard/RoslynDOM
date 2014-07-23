@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
             node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
             // TODO: Class type members and type constraints
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return item.PrepareForBuildSyntaxOutput(node);
         }
     }
     public class RDomStructureTypeMemberFactory

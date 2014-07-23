@@ -36,10 +36,9 @@ namespace RoslynDom.CSharp
             else
             { typeSyntax = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Variable.Type)); }
 
-            var node = LoopFactoryHelper.BuildSyntax<IForEachStatement>
-                (itemAsT, (c, s) => SyntaxFactory.ForEachStatement(typeSyntax, itemAsT.Variable.Name, c,s)).First() as ForEachStatementSyntax ;
+            return LoopFactoryHelper.BuildSyntax<IForEachStatement>
+                (itemAsT, (c, s) => SyntaxFactory.ForEachStatement(typeSyntax, itemAsT.Variable.Name, c,s)) ;
 
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
         }
 
 

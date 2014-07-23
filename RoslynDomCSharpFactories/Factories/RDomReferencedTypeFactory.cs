@@ -16,8 +16,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IReferencedType;
             var node =  SyntaxFactory.ParseTypeName(itemAsT.Name);
-            // TODO: return new SyntaxNode[] { node.Format() };
-            return new SyntaxNode[] { node };
+            return item.PrepareForBuildSyntaxOutput(node);
         }
 
         protected  override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)

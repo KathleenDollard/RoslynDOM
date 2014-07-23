@@ -31,8 +31,8 @@ namespace RoslynDom.CSharp
               .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
               .ToList();
             var node = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
-           // TODO: return new SyntaxNode[] { node.Format() };
-            return new SyntaxNode[] { node };
+
+            return item.PrepareForBuildSyntaxOutput(node);
 
         }
     }

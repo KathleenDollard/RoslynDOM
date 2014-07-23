@@ -27,8 +27,7 @@ namespace RoslynDom.CSharp
             var identifier = SyntaxFactory.IdentifierName(itemAsT.Name);
             var node = SyntaxFactory.UsingDirective(identifier);
 
-            // TODO: return new SyntaxNode[] { node.Format() };
-            return new SyntaxNode[] { node };
+            return item.PrepareForBuildSyntaxOutput(node);
         }
     }
 

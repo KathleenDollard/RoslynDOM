@@ -96,7 +96,7 @@ namespace RoslynDomTests
             Assert.IsNotNull(root);
             Assert.AreEqual(1, root.Namespaces.Count());
         }
-#endregion 
+        #endregion
 
         #region symbol tests
         [TestMethod]
@@ -245,7 +245,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var symbol = ((RDomNamespace)root.Namespaces.First()).TypedSymbol as INamespaceSymbol ;
+            var symbol = ((RDomNamespace)root.Namespaces.First()).TypedSymbol as INamespaceSymbol;
             Assert.AreEqual("Namespace1", symbol.Name);
             Assert.IsNotNull(symbol);
         }
@@ -273,7 +273,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var symbol = ((RDomEnum )root.Enums.First()).TypedSymbol as INamedTypeSymbol ;
+            var symbol = ((RDomEnum)root.Enums.First()).TypedSymbol as INamedTypeSymbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyEnum", symbol.Name);
         }
@@ -287,7 +287,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var symbol = ((RDomStructure )root.Structures.First()).TypedSymbol as INamedTypeSymbol;
+            var symbol = ((RDomStructure)root.Structures.First()).TypedSymbol as INamedTypeSymbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyStruct", symbol.Name);
         }
@@ -301,21 +301,21 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var symbol = ((RDomInterface )root.Interfaces.First()).TypedSymbol as INamedTypeSymbol;
+            var symbol = ((RDomInterface)root.Interfaces.First()).TypedSymbol as INamedTypeSymbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("MyInterface", symbol.Name);
         }
 
 
         [TestMethod]
-       [TestCategory(TypedSymbolCategory)]
+        [TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_field()
         {
             var csharpCode = @"
                         public class MyClass
                         { public int myField; }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var symbol = ((RDomField)root.Classes.First().Fields.First()).TypedSymbol as IFieldSymbol ;
+            var symbol = ((RDomField)root.Classes.First().Fields.First()).TypedSymbol as IFieldSymbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("myField", symbol.Name);
         }
@@ -515,7 +515,7 @@ public string Bar3() {};
         #endregion
 
         #region typedSyntax tests
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_namespace()
         {
             var csharpCode = @"
@@ -528,7 +528,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is NamespaceDeclarationSyntax);
         }
 
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_class()
         {
             var csharpCode = @"
@@ -541,7 +541,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is ClassDeclarationSyntax);
         }
 
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_enum()
         {
             var csharpCode = @"
@@ -554,7 +554,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is EnumDeclarationSyntax);
         }
 
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_struct()
         {
             var csharpCode = @"
@@ -567,7 +567,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is StructDeclarationSyntax);
         }
 
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_interface()
         {
             var csharpCode = @"
@@ -581,7 +581,7 @@ public string Bar3() {};
         }
 
 
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_field()
         {
             var csharpCode = @"
@@ -590,10 +590,10 @@ public string Bar3() {};
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var typedSyntax = ((RDomField)root.Classes.First().Fields.First()).TypedSyntax;
             Assert.IsNotNull(typedSyntax);
-            Assert.IsTrue(typedSyntax is VariableDeclaratorSyntax );
+            Assert.IsTrue(typedSyntax is VariableDeclaratorSyntax);
         }
 
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_property()
         {
             var csharpCode = @"
@@ -605,7 +605,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is PropertyDeclarationSyntax);
         }
 
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_method()
         {
             var csharpCode = @"
@@ -617,7 +617,7 @@ public string Bar3() {};
             Assert.IsTrue(typedSyntax is MethodDeclarationSyntax);
         }
 
-        [TestMethod,TestCategory(TypedSyntaxCategory)]
+        [TestMethod, TestCategory(TypedSyntaxCategory)]
         public void Can_get_typedSyntax_for_nestedType()
         {
             var csharpCode = @"
@@ -631,7 +631,7 @@ public string Bar3() {};
         #endregion
 
         #region stemContainer
-        [TestMethod,TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_namespaces()
         {
             var csharpCode = @"
@@ -645,7 +645,7 @@ public string Bar3() {};
             Assert.AreEqual(2, root.Namespaces.Count());
         }
 
-        [TestMethod,TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_classes()
         {
             var csharpCode = @"
@@ -660,7 +660,7 @@ class Class3
             Assert.AreEqual(3, root.Classes.Count());
         }
 
-        [TestMethod,TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_interfaces()
         {
             var csharpCode = @"
@@ -687,7 +687,7 @@ private string Foo{get;}}
         //            Assert.AreEqual(1, root.Interfaces.First().Members.Count());
         //        }
 
-        [TestMethod,TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_structures()
         {
             var csharpCode = @"
@@ -701,7 +701,7 @@ string Foo{get;}}
             Assert.AreEqual(2, root.Structures.Count());
         }
 
-        [TestMethod,TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_enums()
         {
             var csharpCode = @"
@@ -714,7 +714,7 @@ string Foo{get;}}
             Assert.AreEqual(2, root.Enums.Count());
         }
 
-        [TestMethod,TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_usings()
         {
             var csharpCode = @"
@@ -740,7 +740,7 @@ namespace Foo
             Assert.AreEqual(2, root.Namespaces.First().Usings.Count());
         }
 
-        [TestMethod,TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_types()
         {
             var csharpCode = @"
@@ -806,15 +806,19 @@ namespace Foo
                             { }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual(11, root.Types.Count());
-            Assert.AreEqual(17, root.StemMembersAll.Count());
+
+            // Check that all were found
             var members = root.StemMembersAll.ToArray();
-            Assert.IsInstanceOfType(members[3], typeof(IVerticalWhitespace ));
+            Assert.AreEqual(17, members.Count());
+
+            // Check some reality stuff
+            Assert.IsInstanceOfType(members[3], typeof(IVerticalWhitespace));
             Assert.IsInstanceOfType(members[4], typeof(IComment));
             Assert.IsInstanceOfType(members[7], typeof(IComment));
             Assert.IsInstanceOfType(members[9], typeof(IComment));
             Assert.IsInstanceOfType(members[12], typeof(IComment));
             Assert.AreEqual(1, ((IVerticalWhitespace)members[3]).Count);
-            Assert.IsFalse(((IVerticalWhitespace)members[3]).IsElastic );
+            Assert.IsFalse(((IVerticalWhitespace)members[3]).IsElastic);
             var expected = "Single line comment with whitespace";
             Assert.AreEqual(expected, ((IComment)members[4]).Text);
             Assert.IsFalse(((IComment)members[4]).IsMultiline);
@@ -827,6 +831,11 @@ namespace Foo
             expected = "Multiline comment \r\n                       on multiple line";
             Assert.AreEqual(expected, ((IComment)members[12]).Text);
             Assert.IsTrue(((IComment)members[12]).IsMultiline);
+
+            // Check output
+            expected = "";
+            var actual = RDomCSharpFactory.Factory.BuildSyntax(root);
+            Assert.AreEqual(expected, actual);
         }
         #endregion
 
@@ -837,30 +846,32 @@ namespace Foo
                 public class Bar
                 {
                     private string firstName;
-                    private string lastName;
-   
-                    public string Foo()
-                    {
-
-                        var ret = lastName;
-                        ret = Foo();
-                        ret = ""xyz"";
 
                         // Comment and whitespace
-                        var xx = new String('a', 4);
-                        ret = ""abc"" + Foo();
-                        if (!string.IsNullOrEmpty(firstName))
-                        { ret = firstName + lastName; }
+                    private string lastName;
+   
                         // comment
-                        var x = "", "";
-                        uint y = 42;
-                        x = lastName + x + firstName;
-                        Foo2(x);
-                        return x;
-                    }
+                    public string Foo()
+                    {}
                 }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual(11, root.Types.Count());
+
+            // Check that all were found
+            var members = root.Classes.First().MembersAll.ToArray();
+            Assert.AreEqual(7, members.Count());
+
+            // Check some reality stuff
+            Assert.AreEqual(1, ((IVerticalWhitespace)members[1]).Count);
+            Assert.IsFalse(((IVerticalWhitespace)members[1]).IsElastic);
+            var expected = "Comment and whitespace";
+            Assert.AreEqual(expected, ((IComment)members[2]).Text);
+            Assert.IsFalse(((IComment)members[2]).IsMultiline);
+
+            // Check output
+            expected = "";
+            var actual = RDomCSharpFactory.Factory.BuildSyntax(root);
+            Assert.AreEqual(expected, actual);
+            Assert.Fail();
         }
 
         [TestMethod, TestCategory(StemContainerCategory)]
@@ -893,9 +904,22 @@ namespace Foo
                     }
                 }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+
+            // Check that all were found
             var statements = root.Classes.First().Methods.First().StatementsAll.ToArray();
             Assert.AreEqual(15, statements.Count());
-            Assert.Fail();
+
+            // Check some reality stuff
+            Assert.AreEqual(1, ((IVerticalWhitespace)statements[4]).Count);
+            Assert.IsFalse(((IVerticalWhitespace)statements[4]).IsElastic);
+            var expected = "Comment and whitespace";
+            Assert.AreEqual(expected, ((IComment)statements[5]).Text);
+            Assert.IsFalse(((IComment)statements[5]).IsMultiline);
+
+            // Check output
+            expected = "";
+            var actual = RDomCSharpFactory.Factory.BuildSyntax(root);
+            Assert.AreEqual(expected, actual);
         }
     }
 }

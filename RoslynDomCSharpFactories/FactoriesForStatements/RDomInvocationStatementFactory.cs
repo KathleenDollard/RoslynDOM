@@ -11,7 +11,7 @@ namespace RoslynDom.CSharp
     public class RDomInvocationStatementFactory
          : RDomStatementFactory<RDomInvocationStatement, ExpressionStatementSyntax>
     {
-        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ExpressionStatementSyntax;
             var newItem = new RDomInvocationStatement(syntaxNode, parent, model);
@@ -19,7 +19,7 @@ namespace RoslynDom.CSharp
             var expression = syntax.Expression;
             newItem.Invocation = RDomFactoryHelper.GetHelperForExpression().MakeItems(expression, newItem, model).FirstOrDefault();
 
-            return  newItem ;
+            return newItem;
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
@@ -27,8 +27,8 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IInvocationStatement;
             var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Invocation);
             var node = SyntaxFactory.ExpressionStatement((ExpressionSyntax)expressionSyntax);
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
 
+            return item.PrepareForBuildSyntaxOutput(node);
         }
 
         public override FactoryPriority Priority

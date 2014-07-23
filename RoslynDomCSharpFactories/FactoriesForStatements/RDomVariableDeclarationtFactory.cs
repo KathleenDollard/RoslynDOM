@@ -67,7 +67,8 @@ namespace RoslynDom.CSharp
             var nodeDeclaratorInList = SyntaxFactory.SeparatedList(SyntaxFactory.List<VariableDeclaratorSyntax>(new VariableDeclaratorSyntax[] { (VariableDeclaratorSyntax)nodeDeclarator }));
             var nodeDeclaration = SyntaxFactory.VariableDeclaration(typeSyntax, nodeDeclaratorInList);
             var node = SyntaxFactory.LocalDeclarationStatement(nodeDeclaration);
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+
+            return item.PrepareForBuildSyntaxOutput(node);
         }
     }
 }

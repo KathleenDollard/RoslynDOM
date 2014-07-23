@@ -36,7 +36,7 @@ namespace RoslynDom.CSharp
                         .ToList();
             node = node.WithUsings(SyntaxFactory.List(usingsSyntax));
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return item.PrepareForBuildSyntaxOutput(node);
         }
     }
 

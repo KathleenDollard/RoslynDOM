@@ -64,8 +64,7 @@ namespace RoslynDom.CSharp
 
             // TODO: typeParameters  and constraintClauses 
 
-            // TODO: return new SyntaxNode[] { node.Format() };
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return item.PrepareForBuildSyntaxOutput(node);
         }
 
     }
