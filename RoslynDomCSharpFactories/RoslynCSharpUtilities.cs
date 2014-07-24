@@ -48,43 +48,22 @@ namespace RoslynDom.CSharp
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
         }
 
-        public static LiteralKind LiteralKindFromSyntaxKind(SyntaxKind kind)
+         public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, bool hasBlock)
         {
-            switch (kind)
-            {
-                case SyntaxKind.StringLiteralToken:
-                    return LiteralKind.String;
-                case SyntaxKind.NumericLiteralToken:
-                    return LiteralKind.Numeric;
-                case SyntaxKind.TrueKeyword:
-                case SyntaxKind.FalseKeyword:
-                    return LiteralKind.Boolean;
-                default:
-                    // I don't know how to get here, but if I get here, I want to know it :)
-                    throw new NotImplementedException();
-            }
+            StatementSyntax statement;
+            var statementSyntaxList = statements
+                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                         .ToList();
+            if (hasBlock || statements.Count() > 1)
+            { statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); }
+            else if (statements.Count() == 1)
+            { statement = (StatementSyntax)statementSyntaxList.First(); }
+            else
+            { statement = SyntaxFactory.EmptyStatement(); }
+            return statement;
         }
 
-        public static SyntaxKind SyntaxKindFromLiteralKind(LiteralKind literalKind, object value)
-        {
-            switch (literalKind)
-            {
-                case LiteralKind.String:
-                    return SyntaxKind.StringLiteralExpression;
-                case LiteralKind.Numeric:
-                    return SyntaxKind.NumericLiteralExpression;
-                case LiteralKind.Boolean:
-                    if ((bool)value) { return SyntaxKind.TrueLiteralExpression; }
-                    return SyntaxKind.FalseLiteralExpression;
-                case LiteralKind.Type:
-                    return SyntaxKind.TypeOfExpression;
-                default:
-                    // I don't know how to get here, but if I get here, I want to know it :)
-                    throw new NotImplementedException();
-            }
-        }
-
-           public static string Simplify(SyntaxNode node)
+        public static string Simplify(SyntaxNode node)
         {
             var source = node.ToString();
             var projectId = ProjectId.CreateNewId();
@@ -110,40 +89,6 @@ namespace RoslynDom.CSharp
             document = Simplifier.ReduceAsync(document).Result;
             var ret = document.GetSyntaxRootAsync().Result.ToString();
             return ret;
-        }
-
-        public static IEnumerable<IStatementCommentWhite> GetStatementsFromSyntax(StatementSyntax statementSyntax, IDom parent, ref bool hasBlock, SemanticModel model)
-        {
-            var statement = RDomFactoryHelper.GetHelperForStatement().MakeItems(statementSyntax, parent, model).First();
-            var list = new List<IStatementCommentWhite>();
-            var blockStatement = statement as IBlockStatement;
-            if (blockStatement != null)
-            {
-                hasBlock = true;
-                foreach (var state in blockStatement.Statements)
-                {
-                    // Don't need to copy because abandoning block
-                    list.Add(state);
-                }
-            }
-            else
-            { list.Add(statement); }
-            return list;
-        }
-
-        public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, bool hasBlock)
-        {
-            StatementSyntax statement;
-            var statementSyntaxList = statements
-                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
-                         .ToList();
-            if (hasBlock || statements.Count() > 1)
-            { statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); }
-            else if (statements.Count() == 1)
-            { statement = (StatementSyntax)statementSyntaxList.First(); }
-            else
-            { statement = SyntaxFactory.EmptyStatement(); }
-            return statement;
         }
 
         private class SimplifyNamesAnnotionRewriter : CSharpSyntaxRewriter

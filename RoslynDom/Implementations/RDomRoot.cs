@@ -18,6 +18,10 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
+
+        public string OuterName
+        { get { return RoslynUtilities.GetOuterName(this); } }
+
         public bool HasSyntaxErrors
         {
             get

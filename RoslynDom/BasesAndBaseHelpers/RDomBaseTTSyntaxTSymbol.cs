@@ -84,20 +84,20 @@ namespace RoslynDom
         public virtual TSymbol TypedSymbol
         { get { return _symbol; } }
 
-        public override string OuterName
-        {
-            get
-            {
-                // TODO: Fix OuterName and all those broken tests
-                var thisAsHasName = this as IHasName;
-                if (thisAsHasName != null)
-                {
-                    return (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
-                          thisAsHasName.Name;
-                }
-                return "";
-            }
-        }
+        //public override string OuterName
+        //{
+        //    get
+        //    {
+        //        // TODO: Fix OuterName and all those broken tests
+        //        var thisAsHasName = this as IHasName;
+        //        if (thisAsHasName != null)
+        //        {
+        //            return (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
+        //                  thisAsHasName.Name;
+        //        }
+        //        return "";
+        //    }
+        //}
 
         protected virtual string GetQualifiedName()
         {

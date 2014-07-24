@@ -16,7 +16,7 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         {
             _accessorType = accessorType;
-             Initialize(); 
+            Initialize();
         }
 
         internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
@@ -26,7 +26,7 @@ namespace RoslynDom
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
             StatementsAll.AddOrMoveRange(newStatements);
-            
+
             AccessModifier = oldRDom.AccessModifier;
         }
 
@@ -71,10 +71,10 @@ namespace RoslynDom
         public bool IsStatic { get; set; }
         public bool IsExtensionMethod { get; set; }
 
-        public RDomList<IStatementCommentWhite > StatementsAll
+        public RDomList<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
-        public IEnumerable <IStatement> Statements
+        public IEnumerable<IStatement> Statements
         { get { return _statements.OfType<IStatement>().ToList(); } }
 
         public MemberKind MemberKind
@@ -88,6 +88,9 @@ namespace RoslynDom
             get { return true; }
             set { }
         }
+
+        public string OuterName
+        { get { return RoslynUtilities.GetOuterName(this); } }
 
         public override object RequestValue(string name)
         {

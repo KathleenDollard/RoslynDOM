@@ -59,7 +59,8 @@
   <ItemGroup>
     <Compile Include="CommentWhiteFactory.cs" />
     <Compile Include="BaseFactories\RDomExpressionFactory.cs" />
-    <Compile Include="BuildSyntaxExtensions.cs" />
+    <Compile Include="BuildSyntaxHelpers.cs" />
+    <Compile Include="CreateFromHelpers.cs" />
     <Compile Include="FactoriesForStatements\LoopFactoryHelper.cs" />
     <Compile Include="FactoriesForStatements\RDomAssignmentStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomBlockStatementFactory.cs" />
@@ -67,6 +68,9 @@
     <Compile Include="FactoriesForStatements\RDomContinueStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomBreakStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomEmptyStatementFactory.cs" />
+    <Compile Include="FactoriesForStatements\RDomTryStatementFactory.cs" />
+    <Compile Include="FactoriesForStatements\RDomCheckedStatementFactory.cs" />
+    <Compile Include="FactoriesForStatements\RDomLockStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomUsingStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomThrowStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomVariableDeclarationtFactory.cs" />
@@ -90,6 +94,7 @@
     <Compile Include="Factories\RDomRootFactory.cs" />
     <Compile Include="Factories\RDomStructureFactory.cs" />
     <Compile Include="Factories\RDomUsingDirectiveFactory.cs" />
+    <Compile Include="Mappings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AttributeFactory.cs" />
     <Compile Include="Factories\RDomStructuredDocumentationFactory.cs" />

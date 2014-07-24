@@ -6,7 +6,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomIfStatement : RDomIfBaseStatement<IIfStatement>, IIfStatement
+    public class RDomIfStatement : RDomStatementBlockBase<IIfStatement>, IIfStatement
     {
         private RDomList<IElseStatement> _elses;
 

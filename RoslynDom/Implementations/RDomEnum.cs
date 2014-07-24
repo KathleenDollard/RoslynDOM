@@ -25,6 +25,10 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
+        public string OuterName
+        { get { return RoslynUtilities.GetOuterName(this); } }
+
+
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 

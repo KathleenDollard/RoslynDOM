@@ -46,7 +46,7 @@ namespace RoslynDom.CSharp
             var itemAsField = item as IField;
             var nameSyntax = SyntaxFactory.Identifier(itemAsField.Name);
             var returnType = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsField.ReturnType).First();
-            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(itemAsField);
+            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsField);
             var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
             var variableNode = SyntaxFactory.VariableDeclaration(returnType)
                .WithVariables(
@@ -57,7 +57,7 @@ namespace RoslynDom.CSharp
             var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsField.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
-            node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
+            node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             return item.PrepareForBuildSyntaxOutput(node);
         }

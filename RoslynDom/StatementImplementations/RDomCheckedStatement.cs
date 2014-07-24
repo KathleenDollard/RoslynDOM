@@ -1,26 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomIfBaseStatement<T> : RDomBase<T, ISymbol>, IIfBaseStatement
-        where T : class, IIfBaseStatement, IDom<T>
+    public class RDomCheckedStatement : RDomBase<ICheckedStatement, ISymbol>, ICheckedStatement
     {
         private RDomList<IStatementCommentWhite> _statements;
 
-        public RDomIfBaseStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        public RDomCheckedStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
-        internal RDomIfBaseStatement(T oldRDom)
+        internal RDomCheckedStatement(RDomCheckedStatement oldRDom)
             : base(oldRDom)
         {
-            Initialize();
             var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
             StatementsAll.AddOrMoveRange(statements);
             HasBlock = oldRDom.HasBlock;
+            Unchecked  = oldRDom.Unchecked;
         }
 
         protected override void Initialize()
@@ -52,11 +52,12 @@ namespace RoslynDom
 
         public bool HasBlock { get; set; }
 
+        public IEnumerable<IStatement> Statements
+        { get { return _statements.OfType<IStatement>().ToList(); } }
+         
         public RDomList<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
-        public IEnumerable <IStatement> Statements
-        { get { return _statements.OfType<IStatement>().ToList(); } }
-
+        public bool Unchecked { get; set; }
     }
 }

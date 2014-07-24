@@ -45,7 +45,7 @@ namespace RoslynDom.CSharp
             var nameSyntax = SyntaxFactory.Identifier(itemAsMethod.Name);
 
             var returnTypeSyntax = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsMethod.ReturnType).First();
-            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(itemAsMethod);
+            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsMethod);
             var node = SyntaxFactory.MethodDeclaration(returnTypeSyntax, nameSyntax)
                             .WithModifiers(modifiers);
 
@@ -58,7 +58,7 @@ namespace RoslynDom.CSharp
                         .ToList();
             if (parameterSyntaxList.Any()) { node = node.WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterSyntaxList))); }
 
-            node = node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
+            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsMethod.Statements));
 

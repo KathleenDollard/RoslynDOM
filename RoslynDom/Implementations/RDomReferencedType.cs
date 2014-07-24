@@ -83,7 +83,7 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
-        public override string OuterName
+        public string OuterName
         {
             get
             {

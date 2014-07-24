@@ -63,6 +63,7 @@
     <Compile Include="CharacteristicInterfaces\ISupportsSameIntent.cs" />
     <Compile Include="Enums\ExpressionType.cs" />
     <Compile Include="Enums\LiteralKind.cs" />
+    <Compile Include="Enums\Operator.cs" />
     <Compile Include="Enums\StatementKind.cs" />
     <Compile Include="Enums\MemberKind.cs" />
     <Compile Include="Enums\StemMemberKind.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Enums\AccessModifier.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IHasLookupValue.cs" />
+    <Compile Include="Interfaces\IEnumValue.cs" />
     <Compile Include="Interfaces_Statements\IAssignmentStatement.cs" />
     <Compile Include="Interfaces_Statements\IBlockStatement.cs" />
     <Compile Include="Interfaces_Statements\IArgument.cs" />
@@ -78,15 +80,15 @@
     <Compile Include="Interfaces_Statements\IBreakStatement.cs" />
     <Compile Include="Interfaces_Statements\IDeclarationStatement.cs" />
     <Compile Include="Interfaces_Statements\IDoStatement.cs" />
+    <Compile Include="Interfaces_Statements\ICheckedStatement.cs" />
+    <Compile Include="Interfaces_Statements\ILockStatement.cs" />
     <Compile Include="Interfaces_Statements\IUsingStatement.cs" />
     <Compile Include="Interfaces_Statements\IVariableDeclaration.cs" />
     <Compile Include="Interfaces_Statements\IWhileStatement.cs" />
     <Compile Include="BaseInterfaces\IExpression.cs" />
-    <Compile Include="Interfaces_Statements\ICatch.cs" />
     <Compile Include="Interfaces_Statements\IForEachStatement.cs" />
     <Compile Include="Interfaces_Statements\IForStatement.cs" />
     <Compile Include="Interfaces_Statements\IInvocationStatement.cs" />
-    <Compile Include="Interfaces_Statements\ICastExpression.cs" />
     <Compile Include="Interfaces_Statements\IObjectCreationExpression.cs" />
     <Compile Include="Interfaces_Statements\IReturnStatement.cs" />
     <Compile Include="Interfaces_Statements\IThrowStatement.cs" />

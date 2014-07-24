@@ -105,7 +105,7 @@ namespace RoslynDom
         /// NOTE: Naming for generics is not yet included. 
         ///  </para> 
         /// </remarks>
-        public abstract string OuterName { get; }
+        //public abstract string OuterName { get; }
 
         public abstract ISymbol Symbol { get; }
 

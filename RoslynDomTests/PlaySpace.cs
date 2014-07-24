@@ -10,7 +10,25 @@ namespace RoslynDom
 {
     namespace Common.Test
     {
-                public class Foo { }
+        public class Foo
+        {
+            int z;
+            public void Bar()
+            {
+                var x = 3;
+                try
+                {
+                    var y = 42;
+                    z = x + y;
+                }
+                catch (InvalidOperationException ex) if (z == 45)
+                { Console.WriteLine(ex + " " + z); }
+                catch
+                { }
+              
+
+            }
+        }
     }
 }
 
@@ -21,7 +39,7 @@ namespace RoslynDom
     {
         namespace Test
         {
-          //  public class Foo { }
+            //  public class Foo { }
         }
     }
 }

@@ -70,5 +70,19 @@ namespace RoslynDom.Common
             return ret;
         }
 
+        public static bool IsInteger(object value)
+          {
+            return value is sbyte
+                    || value is byte
+                    || value is short
+                    || value is ushort
+                    || value is int;
+        }
+
+        public static bool IsFloatingPint(object value)
+        {
+            return  value is float
+                    || value is double;
+        }
     }
 }

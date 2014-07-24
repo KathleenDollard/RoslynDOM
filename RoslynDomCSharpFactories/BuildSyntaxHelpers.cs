@@ -9,16 +9,19 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
-namespace RoslynDom
+namespace RoslynDom.CSharp
 {
-    public static class BuildSyntaxExtensions
+    public static class BuildSyntaxHelpers
     {
         public static IEnumerable<SyntaxNode> PrepareForBuildSyntaxOutput(this IDom item, SyntaxNode node)
         {
-            var leadingTrivia = BuildSyntaxExtensions.LeadingTrivia(item);
+            var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(item);
             node = node.WithLeadingTrivia(leadingTrivia);
+            if (!(node is StatementSyntax || node is ExpressionSyntax))
+            { node = RoslynUtilities.Format(node); }
 
-            return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            //return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            return new SyntaxNode[] { node };
         }
 
         public static SyntaxList<AttributeListSyntax> WrapInAttributeList(this IEnumerable<SyntaxNode> attributes)
@@ -40,7 +43,7 @@ namespace RoslynDom
         {
             var leadingTrivia = new List<SyntaxTrivia>();
 
-            leadingTrivia.AddRange(BuildSyntaxExtensions.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation));
+            leadingTrivia.AddRange(BuildSyntaxHelpers.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation));
 
             leadingTrivia.AddRange(BuildCommentWhite(item));
 
@@ -113,6 +116,35 @@ namespace RoslynDom
                 }
             }
             return ret;
+        }
+
+        internal static SyntaxToken GetTokenFromKind(LiteralKind kind, object value)
+        {
+            switch (kind)
+            {
+                case LiteralKind.String:
+                case LiteralKind.Unknown:
+                    return SyntaxFactory.Literal(value.ToString());
+                case LiteralKind.Numeric:
+                    if (ExtensionMethods.IsInteger(value))
+                    { return SyntaxFactory.Literal(Convert.ToInt32(value)); }
+                    if (ExtensionMethods.IsFloatingPint (value))
+                    { return SyntaxFactory.Literal(Convert.ToDouble(value)); }
+                    if (value is uint)
+                    { return SyntaxFactory.Literal(Convert.ToUInt32(value)); }
+                    if (value is long)
+                    { return SyntaxFactory.Literal(Convert.ToInt64(value)); }
+                    if (value is ulong)
+                    { return SyntaxFactory.Literal(Convert.ToUInt64(value)); }
+                    else
+                    { return SyntaxFactory.Literal(Convert.ToDecimal (value)); }
+                case LiteralKind.Boolean:
+                case LiteralKind.Type:
+                // Need to create an expression so handled separately and should not call this
+                default:
+                    break;
+            }
+            throw new NotImplementedException();
         }
 
         public static SyntaxTriviaList BuildStructuredDocumentationSyntax(IHasStructuredDocumentation itemHasStructDoc)
@@ -301,5 +333,10 @@ namespace RoslynDom
         //    return list;
         //}
 
+        public static ExpressionSyntax GetCondition(IHasCondition itemAsT)
+        { return (ExpressionSyntax)RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Condition); }
+
+        public static StatementSyntax GetStatement(IStatementBlock itemAsT)
+        { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock); }
     }
 }

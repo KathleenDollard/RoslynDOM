@@ -24,6 +24,10 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
+
+        public string OuterName
+        { get { return RoslynUtilities.GetOuterName(this); } }
+
         public void RemoveAttributeValue(IAttributeValue attributeValue)
         { _attributeValues.Remove(attributeValue); }
 

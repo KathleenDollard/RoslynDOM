@@ -15,8 +15,11 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
-        public override string OuterName
-        { get { return QualifiedName; } }
+
+        public string OuterName
+        { get { return RoslynUtilities.GetOuterName(this); } }
+
+
 
         public StemMemberKind StemMemberKind
         { get { return StemMemberKind.Namespace; } }

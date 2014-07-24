@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
             var itemAsProperty = item as IProperty;
             var nameSyntax = SyntaxFactory.Identifier(itemAsProperty.Name);
             var returnType = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntax(itemAsProperty.ReturnType);
-            var modifiers = BuildSyntaxExtensions.BuildModfierSyntax(itemAsProperty);
+            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsProperty);
             var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
                             .WithModifiers(modifiers);
 
@@ -65,7 +65,7 @@ namespace RoslynDom.CSharp
             var setAccessorSyntax = RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsProperty.SetAccessor).FirstOrDefault();
             if (setAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)setAccessorSyntax); }
             if (accessors.Any()) { node = node.WithAccessorList(SyntaxFactory.AccessorList(accessors)); }
-            node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
+            node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
             // TODO: parameters , typeParameters and constraintClauses 
 
             return item.PrepareForBuildSyntaxOutput(node);

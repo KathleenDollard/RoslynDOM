@@ -3,10 +3,20 @@ using RoslynDom.Common;
 
 namespace RoslynDom.Common
 {
-    public interface ITryStatement : IStatement
+    public interface ITryStatement : IStatement, IDom<ITryStatement>, IStatementBlock
     {
-        IEnumerable<IStatement> Statements { get; }
-        IEnumerable<ICatch> Catches { get; }
-        IEnumerable<IStatement > Finally { get; }
+        IEnumerable<ICatchStatement> Catches { get; }
+        IFinallyStatement Finally { get; }
+    }
+
+    public interface ICatchStatement : IStatement, IHasCondition, IStatementBlock, IDom<ICatchStatement >
+    {
+        IVariableDeclaration ExceptionVariable { get; set; }
+    }
+
+    public interface IFinallyStatement : IStatement, IDom<IFinallyStatement>, IStatementBlock
+    {
     }
 }
+
+

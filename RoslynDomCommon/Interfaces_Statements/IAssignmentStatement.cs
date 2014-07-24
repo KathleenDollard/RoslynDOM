@@ -6,6 +6,7 @@ namespace RoslynDom.Common
     {
         IExpression Expression { get; set; }
         IExpression Left { get; set; }
+        Operator Operator { get; set; }
 
     }
 }

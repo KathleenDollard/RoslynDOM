@@ -27,6 +27,10 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
+        public string OuterName
+        { get { return RoslynUtilities.GetOuterName(this); } }
+
+
         public IExpression Initializer { get; set; }
 
         public IReferencedType Type { get; set; }

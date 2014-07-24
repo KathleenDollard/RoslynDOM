@@ -15,40 +15,40 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as IfStatementSyntax;
             var newItem = new RDomIfStatement(syntaxNode, parent, model);
-            newItem.Condition = GetCondition(newItem, syntax.Condition, model);
+            newItem.Condition = CreateFromHelpers.GetExpression(newItem, syntax.Condition, model);
 
-            InitializeStatements(newItem,  syntax.Statement, model);
+            CreateFromHelpers.InitializeStatements(newItem,  syntax.Statement, model);
             var elseIfSyntaxList = GetElseIfSyntaxList(syntax);
             foreach (var elseIf in elseIfSyntaxList.Skip(1))  // The first is the root if
             {
                 var newElse = new RDomElseIfStatement(elseIf, newItem, model);
-                newElse.Condition = GetCondition(newElse, elseIf.Condition, model);
-                InitializeStatements(newElse, elseIf.Statement, model);
+                newElse.Condition = CreateFromHelpers.GetExpression(newElse, elseIf.Condition, model);
+                CreateFromHelpers.InitializeStatements(newElse, elseIf.Statement, model);
                 newItem.Elses.AddOrMove(newElse);
             }
             var lastElseIf = elseIfSyntaxList.Last();
             if (lastElseIf.Else != null && lastElseIf.Else.Statement != null)
             {
                 var newElse = new RDomElseStatement(syntax, newItem, model);
-                InitializeStatements(newElse,  lastElseIf.Else.Statement, model);
+                CreateFromHelpers.InitializeStatements(newElse,  lastElseIf.Else.Statement, model);
                 newItem.Elses.AddOrMove(newElse);
             }
             return  newItem ;
         }
 
-        public IExpression GetCondition(IIfBaseStatement newItem, ExpressionSyntax condition, SemanticModel model)
-        {
-            if (condition == null) { return null; }
-            return RDomFactoryHelper.GetHelperForExpression().MakeItems(condition, newItem, model).FirstOrDefault();
-        }
+        //public IExpression GetCondition(IStatementBlock newItem, ExpressionSyntax condition, SemanticModel model)
+        //{
+        //    if (condition == null) { return null; }
+        //    return RDomFactoryHelper.GetHelperForExpression().MakeItems(condition, newItem, model).FirstOrDefault();
+        //}
 
-        public void InitializeStatements(IStatementBlock  newItem,  StatementSyntax statementSytax, SemanticModel model)
-        {
-            bool hasBlock = false;
-            var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statementSytax, newItem, ref hasBlock, model);
-            newItem.HasBlock = hasBlock;
-            newItem.StatementsAll.AddOrMoveRange(statements);
-        }
+        //public void InitializeStatements(IStatementBlock  newItem,  StatementSyntax statementSytax, SemanticModel model)
+        //{
+        //    bool hasBlock = false;
+        //    var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statementSytax, newItem, ref hasBlock, model);
+        //    newItem.HasBlock = hasBlock;
+        //    newItem.StatementsAll.AddOrMoveRange(statements);
+        //}
 
         private IEnumerable<IfStatementSyntax> GetElseIfSyntaxList(IfStatementSyntax syntax)
         {

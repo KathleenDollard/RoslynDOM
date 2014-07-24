@@ -21,7 +21,7 @@ namespace RoslynDom.CSharp
             newItem.Condition = RDomFactoryHelper.GetHelperForExpression().MakeItems(condition, newItem, model).FirstOrDefault();
             if (condition == null) { throw new InvalidOperationException(); }
             bool hasBlock = false;
-            var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statement, newItem, ref hasBlock, model);
+            var statements = CreateFromHelpers.GetStatementsFromSyntax(statement, newItem, ref hasBlock, model);
             newItem.HasBlock = hasBlock;
             newItem.StatementsAll.AddOrMoveRange(statements);
 
@@ -44,7 +44,7 @@ namespace RoslynDom.CSharp
                 node = makeSyntaxDelegate((ExpressionSyntax)condition, statement);
             }
 
-            var leadingTrivia = BuildSyntaxExtensions.LeadingTrivia(item);
+            var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(item);
             node = node.WithLeadingTrivia(leadingTrivia);
 
             return item.PrepareForBuildSyntaxOutput(node);

@@ -6,16 +6,17 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomElseIfStatement : RDomStatementBlockBase<IElseIfStatement>, IElseIfStatement
+    public class RDomCatchStatement : RDomStatementBlockBase<ICatchStatement>, ICatchStatement
     {
-        public RDomElseIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        public RDomCatchStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
-        internal RDomElseIfStatement(RDomElseIfStatement oldRDom)
+        internal RDomCatchStatement(RDomCatchStatement oldRDom)
             : base(oldRDom)
         {
             Condition = oldRDom.Condition.Copy();
+            ExceptionVariable = oldRDom.ExceptionVariable.Copy();
         }
 
         public override IEnumerable<IDom> Children
@@ -41,6 +42,7 @@ namespace RoslynDom
         }
 
         public IExpression Condition { get; set; }
+        public IVariableDeclaration  ExceptionVariable { get; set; }
 
     }
 }

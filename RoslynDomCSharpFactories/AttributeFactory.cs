@@ -55,7 +55,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.Attribute(nameSyntax, argumentList);
             var nodeList = SyntaxFactory.AttributeList(
                                 SyntaxFactory.SeparatedList(
-                                    new AttributeSyntax[] {(AttributeSyntax) RoslynUtilities.Format(node) }));
+                                    new AttributeSyntax[] { (AttributeSyntax)RoslynUtilities.Format(node) }));
 
             return new SyntaxNode[] { nodeList };
         }
@@ -96,35 +96,30 @@ namespace RoslynDom.CSharp
         private AttributeArgumentSyntax BuildAttributeValueSyntax(IAttributeValue atttributeValue)
         {
             var argNameSyntax = SyntaxFactory.IdentifierName(atttributeValue.Name);
-            var kind = RoslynCSharpUtilities.SyntaxKindFromLiteralKind(atttributeValue.ValueType, atttributeValue.Value);
-            ExpressionSyntax expr = null;
-            if (atttributeValue.ValueType == LiteralKind.Boolean) { expr = SyntaxFactory.LiteralExpression(kind); }
-            else
-            {
-                var methodInfo = ReflectionUtilities.FindMethod(typeof(SyntaxFactory), "Literal", atttributeValue.Type);
-                if (methodInfo == null) throw new InvalidOperationException();
-                var token = (SyntaxToken)methodInfo.Invoke(null, new object[] { atttributeValue.Value });
-                expr = SyntaxFactory.LiteralExpression(kind, token);
-            }
-            AttributeArgumentSyntax node;
+            var kind = Mappings.SyntaxKindFromLiteralKind(atttributeValue.ValueType, atttributeValue.Value);
+            ExpressionSyntax expr = BuildArgValueExpression(atttributeValue, kind);
+            var node = SyntaxFactory.AttributeArgument(expr);
             if (atttributeValue.Style == AttributeValueStyle.Colon)
-            {
-                node = SyntaxFactory.AttributeArgument(
-                    null,
-                    SyntaxFactory.NameColon(argNameSyntax),
-                    expr);
-            }
-            else if (atttributeValue.Style == AttributeValueStyle.Positional)
-            {
-                node = SyntaxFactory.AttributeArgument(expr);
-            }
+            { node = node.WithNameColon(SyntaxFactory.NameColon(argNameSyntax)); }
+            else if (atttributeValue.Style == AttributeValueStyle.Equals)
+            { node = node.WithNameEquals(SyntaxFactory.NameEquals(argNameSyntax)); }
+            return node;
+        }
+
+        private static ExpressionSyntax BuildArgValueExpression(IAttributeValue atttributeValue, SyntaxKind kind)
+        {
+            ExpressionSyntax expr = null;
+            if (atttributeValue.ValueType == LiteralKind.Boolean)
+            { expr = SyntaxFactory.LiteralExpression(kind); }
+            else if (atttributeValue.ValueType == LiteralKind.Type)
+            { expr = SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(atttributeValue.Value.ToString())); }
             else
             {
-                node = SyntaxFactory.AttributeArgument(
-                    SyntaxFactory.NameEquals(argNameSyntax),
-                    null, expr);
+                var token = BuildSyntaxHelpers.GetTokenFromKind(atttributeValue.ValueType, atttributeValue.Value);
+                expr = SyntaxFactory.LiteralExpression((SyntaxKind)kind, token);
             }
-            return node;
+
+            return expr;
         }
 
         #endregion
@@ -250,7 +245,7 @@ namespace RoslynDom.CSharp
 
         private object GetLiteralValue(LiteralExpressionSyntax literalExpression, ref LiteralKind literalKind)
         {
-            literalKind = RoslynCSharpUtilities.LiteralKindFromSyntaxKind(literalExpression.Token.CSharpKind());
+            literalKind = Mappings.LiteralKindFromSyntaxKind(literalExpression.Token.CSharpKind());
             return literalExpression.Token.Value;
         }
 

@@ -71,6 +71,7 @@ namespace RoslynDom.CSharp
         public SyntaxNode BuildSyntax(IDom item)
         {
             return BuildSyntaxGroup(item).Single();
+            //return RoslynUtilities.Format(BuildSyntaxGroup(item).Single());
         }
 
         private bool TryBuildSyntax<TKind>(IDom item, RDomFactoryHelper helper, out IEnumerable<SyntaxNode> syntaxNode)

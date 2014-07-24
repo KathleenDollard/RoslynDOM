@@ -16,6 +16,7 @@ namespace RoslynDom
         {
             Left = oldRDom.Left.Copy();
             Expression = oldRDom.Expression.Copy();
+            Operator = oldRDom.Operator;
         }
 
         public override IEnumerable<IDom> Children
@@ -26,5 +27,6 @@ namespace RoslynDom
 
         public IExpression Left { get; set; }
         public IExpression Expression { get; set; }
+        public Operator Operator { get; set; }
     }
 }

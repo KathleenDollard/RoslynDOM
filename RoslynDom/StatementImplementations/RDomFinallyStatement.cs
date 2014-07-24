@@ -5,13 +5,13 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomElseStatement : RDomStatementBlockBase<IFinalElseStatement>, IFinalElseStatement
+    public class RDomFinallyStatement : RDomStatementBlockBase<IFinallyStatement>, IFinallyStatement
     {
-        public RDomElseStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        public RDomFinallyStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
-        internal RDomElseStatement(RDomElseStatement oldRDom)
+        internal RDomFinallyStatement(RDomFinallyStatement oldRDom)
             : base(oldRDom)
         { }
 

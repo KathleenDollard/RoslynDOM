@@ -27,6 +27,15 @@ namespace RoslynDom.CSharp
                 newItem.UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
             }
 
+            foreach (var member in syntax.Members)
+            {
+                var newEnumValue = new RDomEnumValue(member, newItem, model);
+                if (member.EqualsValue != null)
+                { newEnumValue.Expression = CreateFromHelpers.GetExpression(newItem, member.EqualsValue.Value, model); }
+                attributes = RDomFactoryHelper.CreateAttributeFrom(member, newEnumValue, model);
+                newItem.Attributes.AddOrMoveAttributeRange(attributes);
+            }
+
             return newItem;
         }
 
@@ -41,7 +50,7 @@ namespace RoslynDom.CSharp
             var itemAsEnum = item as IEnum;
             if (itemAsEnum == null) { throw new InvalidOperationException(); }
 
-            node.WithLeadingTrivia(BuildSyntaxExtensions.LeadingTrivia(item));
+            node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             //var membersSyntax = itemAsEnum.Members
             //            .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x))
@@ -55,10 +64,10 @@ namespace RoslynDom.CSharp
     public class RDomEnumTypeMemberFactory
         : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
-        protected  override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model);
-            return  ret ;
+            return ret;
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)

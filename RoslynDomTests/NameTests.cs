@@ -563,8 +563,6 @@ namespace Namespace1
         [TestCategory(QualifiedNameCategory)]
         public void Get_nestedType_qualified_name()
         {
-            // Leaving this test broken until I finish the removal of syntax from RDomBase
-            Assert.Inconclusive();
             var csharpCode = @"
 namespace Namespace1
 {
@@ -624,15 +622,13 @@ namespace Namespace1
                         
 }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass", root.Namespaces.First().Classes.First().OuterName);
+            Assert.AreEqual("Namespace1.MyClass", root.Namespaces.First().Classes.First().OuterName);
         }
 
         [TestMethod]
         [TestCategory(OuterNameCategory)]
         public void Can_get_outer_enums_name()
         {
-            // Leaving this test broken until I finish the removal of syntax from RDomBase
-            Assert.Inconclusive();
             var csharpCode = @"
                         public class MyClass
                         { 
@@ -640,15 +636,14 @@ namespace Namespace1
                             { }
                         }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass.MyEnum", root.Classes.First().Enums.First().OuterName);
+            Assert.AreEqual("MyClass+MyEnum", root.Classes.First().Enums.First().OuterName);
         }
 
         [TestMethod]
         [TestCategory(OuterNameCategory)]
         public void Can_get_outer_struct_name()
         {
-            // Leaving this test broken until I finish the removal of syntax from RDomBase
-            Assert.Inconclusive();
+
             var csharpCode = @"
                         public class MyClass
                         { 
@@ -656,15 +651,13 @@ namespace Namespace1
                             { }
                         }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass.MyStruct", root.Classes.First().Structures.First().OuterName);
+            Assert.AreEqual("MyClass+MyStruct", root.Classes.First().Structures.First().OuterName);
         }
 
         [TestMethod]
         [TestCategory(OuterNameCategory)]
         public void Can_get_outer_interface_name()
         {
-            // Leaving this test broken until I finish the removal of syntax from RDomBase
-            Assert.Inconclusive();
             var csharpCode = @"
                         public class MyClass
                         { 
@@ -672,15 +665,13 @@ namespace Namespace1
                             { }
                         }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass.MyInterface", root.Classes.First().Interfaces.First().OuterName);
+            Assert.AreEqual("MyClass+MyInterface", root.Classes.First().Interfaces.First().OuterName);
         }
 
         [TestMethod]
         [TestCategory(OuterNameCategory)]
         public void Can_get_outer_field_name()
         {
-            // Leaving this test broken until I finish the removal of syntax from RDomBase
-            Assert.Inconclusive();
             var csharpCode = @"
                         public class MyClass
                         { 
@@ -690,15 +681,13 @@ namespace Namespace1
                             }
                         }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass.MyNestedClass.myField", root.Classes.First().Classes.First().Fields.First().OuterName);
+            Assert.AreEqual("MyClass+MyNestedClass.myField", root.Classes.First().Classes.First().Fields.First().OuterName);
         }
 
         [TestMethod]
         [TestCategory(OuterNameCategory)]
         public void Can_get_outer_property_name()
         {
-            // Leaving this test broken until I finish the removal of syntax from RDomBase
-            Assert.Inconclusive();
             var csharpCode = @"
                         public class MyClass
                         { 
@@ -708,15 +697,13 @@ namespace Namespace1
                             }
                         }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass.MyNestedClass.myProperty", root.Classes.First().Classes.First().Properties.First().OuterName);
+            Assert.AreEqual("MyClass+MyNestedClass.myProperty", root.Classes.First().Classes.First().Properties.First().OuterName);
         }
 
         [TestMethod]
         [TestCategory(OuterNameCategory)]
         public void Can_get_outer_method_name()
         {
-            // Leaving this test broken until I finish the removal of syntax from RDomBase
-            Assert.Inconclusive();
             var csharpCode = @"
                         public class MyClass
                         { 
@@ -726,15 +713,13 @@ namespace Namespace1
                             }
                         }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass.MyNestedClass.myMethod", root.Classes.First().Classes.First().Methods.First().OuterName);
+            Assert.AreEqual("MyClass+MyNestedClass.myMethod", root.Classes.First().Classes.First().Methods.First().OuterName);
         }
 
         [TestMethod]
         [TestCategory(OuterNameCategory)]
         public void Can_get_outer_nestedType_name()
         {
-            // Leaving this test broken until I finish the removal of syntax from RDomBase
-            Assert.Inconclusive();
             var csharpCode = @"
                         public class MyClass
                         { 
@@ -744,7 +729,7 @@ namespace Namespace1
                             }
                         }";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("MyClass.MyNestedClass.MyNestedNestedClass", root.Classes.First().Classes.First().Classes.First().OuterName);
+            Assert.AreEqual("MyClass+MyNestedClass+MyNestedNestedClass", root.Classes.First().Classes.First().Classes.First().OuterName);
         }
 
         #endregion

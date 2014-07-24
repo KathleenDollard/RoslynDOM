@@ -11,10 +11,20 @@ namespace RoslynDom.CSharp
     public class RDomAssignmentStatementFactory
          : RDomStatementFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
     {
-        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public override FactoryPriority Priority
+        { get { return FactoryPriority.Normal + 1; } }
+
+        public override bool CanCreateFrom(SyntaxNode syntaxNode)
+        {
+            var statement = syntaxNode as ExpressionStatementSyntax;
+            if (statement == null) { return false; }
+            return (statement.Expression is BinaryExpressionSyntax);
+        }
+
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ExpressionStatementSyntax;
-            var newItem = new RDomAssignmentStatement(syntaxNode, parent,model);
+            var newItem = new RDomAssignmentStatement(syntaxNode, parent, model);
 
             var binary = syntax.Expression as BinaryExpressionSyntax;
             if (binary == null) throw new InvalidOperationException();
@@ -29,27 +39,24 @@ namespace RoslynDom.CSharp
             if (expression == null) throw new InvalidOperationException();
             newItem.Left = RDomFactoryHelper.GetHelperForExpression().MakeItems(left, newItem, model).FirstOrDefault();
             newItem.Expression = RDomFactoryHelper.GetHelperForExpression().MakeItems(expression, newItem, model).FirstOrDefault();
-
-            return newItem ;
+            newItem.Operator = Mappings.GetOperatorFromCSharpKind (binary.CSharpKind());
+            return newItem;
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IAssignmentStatement;
             var leftSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Left);
-            var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Expression );
-
-            var assignmentSyntax = SyntaxFactory.BinaryExpression(SyntaxKind.SimpleAssignmentExpression, 
+            var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Expression);
+            var syntaxKind =Mappings. GetSyntaxKindFromOperator (itemAsT.Operator);
+            var assignmentSyntax = SyntaxFactory.BinaryExpression(syntaxKind,
                             (ExpressionSyntax)leftSyntax, (ExpressionSyntax)expressionSyntax);
-            var node = SyntaxFactory.ExpressionStatement(assignmentSyntax );
+            var node = SyntaxFactory.ExpressionStatement(assignmentSyntax);
 
             return item.PrepareForBuildSyntaxOutput(node);
 
         }
-        public override bool CanCreateFrom(SyntaxNode syntaxNode)
-        {
-            var statement = syntaxNode as ExpressionStatementSyntax;
-            if (statement == null) { return false; }
-            return statement.Expression.CSharpKind() == SyntaxKind.SimpleAssignmentExpression;
-        }
+
+    
+
     }
 }
