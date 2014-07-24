@@ -92,7 +92,7 @@ namespace RoslynDomTests
 
         #region public annotation on other nodes
         [TestMethod,TestCategory(PublicAnnotationsOnOtherNodesCategory)]
-        public void Get_public_annotations_on_using()
+        public void Get_public_annotations_on_using_directive()
         {
             var csharpCode = @"
             //[[ root:kad_Test1() ]]
@@ -108,8 +108,8 @@ namespace RoslynDomTests
             { }
             ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var using1 = root.Usings.First();
-            var using2 = root.Usings.Last();
+            var using1 = root.UsingDirectives.First();
+            var using2 = root.UsingDirectives.Last();
             Assert.IsTrue(using1.PublicAnnotations.HasPublicAnnotation("kad_Test3"));
             Assert.IsTrue(using2.PublicAnnotations.HasPublicAnnotation("kad_Test4"));
             Assert.IsTrue(using2.PublicAnnotations.HasPublicAnnotation("kad_Test5"));

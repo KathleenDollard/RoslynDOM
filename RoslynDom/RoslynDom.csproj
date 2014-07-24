@@ -76,6 +76,11 @@
     <Compile Include="StatementImplementations\RDomForEachStatement.cs" />
     <Compile Include="StatementImplementations\RDomElseIfStatement.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomIfBaseStatement.cs" />
+    <Compile Include="StatementImplementations\RDomBreakStatement.cs" />
+    <Compile Include="StatementImplementations\RDomContinueStatement.cs" />
+    <Compile Include="StatementImplementations\RDomEmptyStatement.cs" />
+    <Compile Include="StatementImplementations\RDomThrowStatement.cs" />
+    <Compile Include="StatementImplementations\RDomUsingStatement.cs" />
     <Compile Include="StatementImplementations\RDomVariableDeclaration.cs" />
     <Compile Include="StatementImplementations\RDomForStatement.cs" />
     <Compile Include="StatementImplementations\RDomDoStatement.cs" />
@@ -92,7 +97,7 @@
     <Compile Include="Implementations\RDomRoot.cs" />
     <Compile Include="Implementations\RDomStructure.cs" />
     <Compile Include="Implementations\RDomTypeParameter.cs" />
-    <Compile Include="Implementations\RDomUsing.cs" />
+    <Compile Include="Implementations\RDomUsingDirective.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatementImplementations\RDomIfStatement.cs" />
     <Compile Include="StatementImplementations\RDomBlockStatement.cs" />

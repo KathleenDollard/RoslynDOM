@@ -25,7 +25,7 @@ namespace RoslynDom.CSharp
             newItem.HasBlock = hasBlock;
             newItem.StatementsAll.AddOrMoveRange(statements);
 
-            return  newItem ;
+            return newItem;
         }
 
         public static IEnumerable<SyntaxNode> BuildSyntax<T>
@@ -35,6 +35,7 @@ namespace RoslynDom.CSharp
 
             SyntaxNode node;
             if (item.Condition == null)
+            // TODO: Isn't conditin null in a ForEach?
             { node = SyntaxFactory.EmptyStatement(); }// This shold not happen 
             else
             {

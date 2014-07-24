@@ -26,7 +26,7 @@ namespace RoslynDom.Common
                 { typeof(IRoot), typeof(SameIntent_IRoot) },
                 { typeof(IStructure), typeof(SameIntent_IStructure) },
                 { typeof(ITypeParameter), typeof(SameIntent_ITypeParameter) } ,
-                { typeof(IUsing), typeof(SameIntent_IUsing) }
+                { typeof(IUsingDirective), typeof(SameIntent_IUsingDirective) }
              };
 
         public static  ISameIntent<T> SameIntent<T>()

@@ -16,7 +16,7 @@ namespace RoslynDomExampleTests
         public void Interrogate_using_statements()
         {
             IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
-            var usings = root.Usings.ToArray();
+            var usings = root.UsingDirectives.ToArray();
             Assert.AreEqual(4, usings.Count());
             Assert.AreEqual("System", usings[0].Name);
             Assert.AreEqual("System.Diagnostics.CodeAnalysis", usings[1].Name);

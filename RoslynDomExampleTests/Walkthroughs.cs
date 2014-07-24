@@ -26,8 +26,8 @@ namespace RoslynDomExampleTests
         {
             var factory = RDomCSharpFactory.Factory;
             var root = factory.GetRootFromFile(fileName);
-            Assert.AreEqual(1, root.Usings.Count());
-            Assert.AreEqual("System", root.Usings.First().Name);
+            Assert.AreEqual(1, root.UsingDirectives.Count());
+            Assert.AreEqual("System", root.UsingDirectives.First().Name);
             Assert.AreEqual(1, root.Namespaces.Count());
             Assert.AreEqual(1, root.RootClasses.Count());
             var methods = root.RootClasses.First().Methods.ToArray();

@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using RoslynDom.Common;
 
-namespace RoslynDomCommon.InterfacesForStatements
+namespace RoslynDom.Common
 {
-    public interface IThrowStatement : IStatement
+    public interface IThrowStatement : IStatement, IDom<IThrowStatement >
     {
-        string ExceptionVarName { get; set; }
-        IReferencedType ExceptionType { get; }
-        IEnumerable<IArgument> Arguments { get; }
+        IExpression  ExceptionExpression { get; set; }
     }
 }

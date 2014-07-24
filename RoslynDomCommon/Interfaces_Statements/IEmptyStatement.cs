@@ -1,8 +1,8 @@
 ﻿using RoslynDom.Common;
 
-namespace RoslynDomCommon.InterfacesForStatements
+namespace RoslynDom.Common
 {
-    public interface IEmptyStatement : IStatement
+    public interface IEmptyStatement : IStatement, IDom<IEmptyStatement>
     {
 
     }

@@ -1,27 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBaseLoop<T>
-        : RDomBase<T, ISymbol>, IStatement
-        where T : class, ILoop<T>, IStatement
+    public class RDomUsingStatement : RDomBase<IUsingStatement, ISymbol>, IUsingStatement
     {
         private RDomList<IStatementCommentWhite> _statements;
 
-        internal RDomBaseLoop(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        public RDomUsingStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
-        internal RDomBaseLoop(T oldRDom)
-             : base(oldRDom)
+        internal RDomUsingStatement(RDomUsingStatement oldRDom)
+            : base(oldRDom)
         {
-            StatementsAll.AddOrMoveRange(oldRDom.Statements);
-            Condition = oldRDom.Condition.Copy();
+            var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
+            StatementsAll.AddOrMoveRange(statements);
             HasBlock = oldRDom.HasBlock;
-            TestAtEnd = oldRDom.TestAtEnd;
+            Expression = oldRDom.Expression.Copy();
+            Variable = oldRDom.Variable.Copy();
         }
 
         protected override void Initialize()
@@ -35,7 +35,6 @@ namespace RoslynDom
             get
             {
                 var list = base.Children.ToList();
-                list.Add(Condition);
                 list.AddRange(Statements);
                 return list;
             }
@@ -46,16 +45,11 @@ namespace RoslynDom
             get
             {
                 var list = base.Descendants.ToList();
-                list.AddRange(Condition.DescendantsAndSelf);
                 foreach (var statement in Statements)
                 { list.AddRange(statement.DescendantsAndSelf); }
                 return list;
             }
         }
-
-        public IExpression Condition { get; set; }
-
-        public bool TestAtEnd { get; set; }
 
         public bool HasBlock { get; set; }
 
@@ -64,6 +58,9 @@ namespace RoslynDom
 
         public RDomList<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
+
+        public IExpression Expression { get; set; }
+
+        public IVariableDeclaration Variable { get; set; }
     }
 }
-

@@ -27,11 +27,11 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IRoot item)
         {
             var node = SyntaxFactory.CompilationUnit();
-            var usingsSyntax = item.Usings
+            var usingsSyntax = item.UsingDirectives
                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
                         .ToList();
             var membersSyntax = item.StemMembers
-                        .Where(x=>!(x is IUsing))
+                        .Where(x=>!(x is IUsingDirective))
                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithUsings(SyntaxFactory.List(usingsSyntax));

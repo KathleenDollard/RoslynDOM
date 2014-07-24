@@ -41,7 +41,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("System.Diagnostics.Tracing", root.Usings.First().Name);
+            Assert.AreEqual("System.Diagnostics.Tracing", root.UsingDirectives.First().Name);
         }
 
         [TestMethod]
@@ -54,7 +54,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("System", root.Usings.First().Name);
+            Assert.AreEqual("System", root.UsingDirectives.First().Name);
         }
 
         [TestMethod]

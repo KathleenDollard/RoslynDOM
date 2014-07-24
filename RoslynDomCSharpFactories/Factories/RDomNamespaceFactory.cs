@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
             var identifier = SyntaxFactory.IdentifierName(itemAsNamespace.Name);
             var node = SyntaxFactory.NamespaceDeclaration (identifier);
             if (itemAsNamespace == null) { throw new InvalidOperationException(); }
-            var usingsSyntax = itemAsNamespace.Usings
+            var usingsSyntax = itemAsNamespace.UsingDirectives
                         .Select(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
                         .OfType<UsingDirectiveSyntax>()
                         .ToList();

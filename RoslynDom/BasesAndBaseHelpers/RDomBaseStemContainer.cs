@@ -32,7 +32,7 @@ namespace RoslynDom
                 if (TryCopyMember<RDomInterface>(member, m => new RDomInterface(m))) continue;
                 if (TryCopyMember<RDomEnum>(member, m => new RDomEnum(m))) continue;
                 if (TryCopyMember<RDomNamespace>(member, m => new RDomNamespace(m))) continue;
-                if (TryCopyMember<RDomUsing>(member, m => new RDomUsing(m))) continue;
+                if (TryCopyMember<RDomUsingDirective>(member, m => new RDomUsingDirective(m))) continue;
                 throw new InvalidOperationException();
             }
         }
@@ -115,9 +115,8 @@ namespace RoslynDom
         public IEnumerable<IEnum> Enums
         { get { return StemMembers.OfType<IEnum>().ToList().ToList(); } }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Usings")]
-        public IEnumerable<IUsing> Usings
-        { get { return StemMembers.OfType<IUsing>().ToList().ToList(); } }
+        public IEnumerable<IUsingDirective> UsingDirectives
+        { get { return StemMembers.OfType<IUsingDirective>().ToList().ToList(); } }
 
         public IEnumerable<IType> Types
         { get { return StemMembers.OfType<IType>().ToList().ToList(); } }

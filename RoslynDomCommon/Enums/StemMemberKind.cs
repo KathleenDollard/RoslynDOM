@@ -3,7 +3,7 @@
     public enum StemMemberKind
     {
         Unknown = 0,
-        Using,
+        UsingDirective,
         Namespace,
         Class,
         Structure,

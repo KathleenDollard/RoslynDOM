@@ -211,4 +211,10 @@ namespace RoslynDomTests
                                         SyntaxKind.SemicolonToken))})))))));
         }
     }
+    public enum DD : int
+    {
+        blue = 1,
+        green = 2,
+        yello
+    }
 }

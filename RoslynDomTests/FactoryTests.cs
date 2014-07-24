@@ -715,19 +715,19 @@ string Foo{get;}}
         }
 
         [TestMethod, TestCategory(StemContainerCategory)]
-        public void Can_get_usings()
+        public void Can_get_using_directives()
         {
             var csharpCode = @"
                         using A;
                         using B;
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual(2, root.Usings.Count());
+            Assert.AreEqual(2, root.UsingDirectives.Count());
         }
 
         [TestMethod]
         [TestCategory(StemContainerCategory)]
-        public void Can_get_usings_in_namespaces()
+        public void Can_get_usingdirectives_in_namespaces()
         {
             var csharpCode = @"
 namespace Foo
@@ -737,7 +737,7 @@ namespace Foo
 }
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual(2, root.Namespaces.First().Usings.Count());
+            Assert.AreEqual(2, root.Namespaces.First().UsingDirectives.Count());
         }
 
         [TestMethod, TestCategory(StemContainerCategory)]

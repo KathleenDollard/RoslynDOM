@@ -1,8 +1,8 @@
 ﻿using RoslynDom.Common;
 
-namespace RoslynDomCommon.InterfacesForStatements
+namespace RoslynDom.Common
 {
-    public interface IBreakStatement : IStatement
+    public interface IBreakStatement : IStatement, IDom<IBreakStatement>
     {
 
     }

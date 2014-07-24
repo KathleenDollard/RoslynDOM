@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IArgument
+    public interface IArgument : IDom<IArgument >
     {
         string Name { get; set; }
         bool IsRef { get; set; }

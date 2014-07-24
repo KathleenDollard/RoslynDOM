@@ -94,7 +94,7 @@ var classAttributeNames = from x in root.RootClasses
             ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
 
-            var using1 = root.Usings.First();
+            var using1 = root.UsingDirectives.First();
             Assert.AreEqual("Fred",using1.PublicAnnotations.GetValue <string>("kad_Test1","val1"));
             Assert.AreEqual("Fred",using1.PublicAnnotations.GetValue("kad_Test1","val1"));
             Assert.AreEqual(40,    using1.PublicAnnotations.GetValue <int>("kad_Test1","val2"));

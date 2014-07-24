@@ -6,7 +6,7 @@ namespace RoslynDom.Common
     {
         public bool SameIntent(IStemContainer one, IStemContainer other, bool includePublicAnnotations)
         {
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.Usings, other.Usings, includePublicAnnotations)) { return false; }
+            if (!SameIntentHelpers.CheckSameIntentChildList(one.UsingDirectives, other.UsingDirectives, includePublicAnnotations)) { return false; }
             // TODO: Take another look at this
             if (!SameIntentHelpers.CheckSameIntentChildList(one.StemMembers, other.StemMembers, includePublicAnnotations)) { return false; }
             if (!SameIntentHelpers.CheckSameIntentChildList(one.AllChildNamespaces, other.AllChildNamespaces, includePublicAnnotations)) { return false; }

@@ -1,8 +1,8 @@
 ﻿using RoslynDom.Common;
 
-namespace RoslynDomCommon.InterfacesForStatements
+namespace RoslynDom.Common
 {
-    public interface IContinueStatement : IStatement
+    public interface IContinueStatement : IStatement, IDom<IContinueStatement>
     {
 
     }

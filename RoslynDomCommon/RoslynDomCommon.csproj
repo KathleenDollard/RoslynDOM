@@ -78,6 +78,7 @@
     <Compile Include="Interfaces_Statements\IBreakStatement.cs" />
     <Compile Include="Interfaces_Statements\IDeclarationStatement.cs" />
     <Compile Include="Interfaces_Statements\IDoStatement.cs" />
+    <Compile Include="Interfaces_Statements\IUsingStatement.cs" />
     <Compile Include="Interfaces_Statements\IVariableDeclaration.cs" />
     <Compile Include="Interfaces_Statements\IWhileStatement.cs" />
     <Compile Include="BaseInterfaces\IExpression.cs" />
@@ -119,7 +120,7 @@
     <Compile Include="BaseInterfaces\ITypeMember.cs" />
     <Compile Include="BaseInterfaces\ITypeMemberContainer.cs" />
     <Compile Include="Interfaces\ITypeParameter.cs" />
-    <Compile Include="Interfaces\IUsing.cs" />
+    <Compile Include="Interfaces\IUsingDirective.cs" />
     <Compile Include="BaseInterfaces\IPublicAnnotation.cs" />
     <Compile Include="ISameIntent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
