@@ -1,17 +1,19 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.Common
 {
     public class SameIntent_IStemContainer : ISameIntent<IStemContainer>
     {
-        public bool SameIntent(IStemContainer one, IStemContainer other, bool includePublicAnnotations)
+        public bool SameIntent(IStemContainer one, IStemContainer other, bool skipPublicAnnotations)
         {
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.UsingDirectives, other.UsingDirectives, includePublicAnnotations)) { return false; }
-            // TODO: Take another look at this
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.StemMembers, other.StemMembers, includePublicAnnotations)) { return false; }
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.AllChildNamespaces, other.AllChildNamespaces, includePublicAnnotations)) { return false; }
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.NonemptyNamespaces, other.NonemptyNamespaces, includePublicAnnotations)) { return false; }
+            if (!SameIntentHelpers.CheckSameIntentChildList(one.UsingDirectives, other.UsingDirectives, skipPublicAnnotations)) { return false; }
+            // Skip whitespace , but not comments on comparison.
+            var oneMembers = one.StemMembersAll.Where(x => !(x is IVerticalWhitespace));
+            var otherMembers = other.StemMembersAll.Where(x => !(x is IVerticalWhitespace));
+            if (!SameIntentHelpers.CheckSameIntentChildList(oneMembers, otherMembers, skipPublicAnnotations)) { return false; }
             return true;
+
         }
     }
 }

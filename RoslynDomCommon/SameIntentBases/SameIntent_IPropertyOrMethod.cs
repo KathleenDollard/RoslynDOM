@@ -9,16 +9,16 @@ namespace RoslynDom.Common
         private ISameIntent<ICanBeStatic > sameIntent_ICanBeStatic = new SameIntent_ICanBeStatic();
         private ISameIntent<IHasReturnType> sameIntent_IHasReturnType = new SameIntent_IHasReturnType();
 
-        public bool SameIntent(IPropertyOrMethod one, IPropertyOrMethod other, bool includePublicAnnotations)
+        public bool SameIntent(IPropertyOrMethod one, IPropertyOrMethod other, bool skipPublicAnnotations)
         {
             if (one.IsAbstract != other.IsAbstract) { return false; }
             if (one.IsVirtual != other.IsVirtual) { return false; }
             if (one.IsOverride != other.IsOverride) { return false; }
             if (one.IsSealed != other.IsSealed) { return false; }
-            if (!sameIntent_ITypeMember.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_ICanBeStatic.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IHasReturnType.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.Parameters, other.Parameters, includePublicAnnotations)) { return false; }
+            if (!sameIntent_ITypeMember.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_ICanBeStatic.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IHasReturnType.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!SameIntentHelpers.CheckSameIntentChildList(one.Parameters, other.Parameters, skipPublicAnnotations)) { return false; }
             return true;
         }
     }

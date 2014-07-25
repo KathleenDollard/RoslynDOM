@@ -45,6 +45,7 @@
     <Compile Include="BaseInterfaces\IStructuredDocumentation.cs" />
     <Compile Include="BaseInterfaces\ITypeMemberCommentWhite.cs" />
     <Compile Include="BaseInterfaces\IVerticalWhitespace.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasGroup.cs" />
     <Compile Include="CharacteristicInterfaces\IHasName.cs" />
     <Compile Include="CharacteristicInterfaces\IHasStructuredDocumentation.cs" />
     <Compile Include="CharacteristicInterfaces\IHasCondition.cs" />

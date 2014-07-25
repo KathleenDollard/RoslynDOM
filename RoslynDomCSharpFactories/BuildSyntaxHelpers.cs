@@ -126,9 +126,9 @@ namespace RoslynDom.CSharp
                 case LiteralKind.Unknown:
                     return SyntaxFactory.Literal(value.ToString());
                 case LiteralKind.Numeric:
-                    if (ExtensionMethods.IsInteger(value))
+                    if (GeneralUtilities .IsInteger(value))
                     { return SyntaxFactory.Literal(Convert.ToInt32(value)); }
-                    if (ExtensionMethods.IsFloatingPint (value))
+                    if (GeneralUtilities.IsFloatingPint (value))
                     { return SyntaxFactory.Literal(Convert.ToDouble(value)); }
                     if (value is uint)
                     { return SyntaxFactory.Literal(Convert.ToUInt32(value)); }

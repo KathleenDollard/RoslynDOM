@@ -8,13 +8,13 @@ namespace RoslynDom.Common
         private ISameIntent<IHasTypeParameters> sameIntent_IHasTypeParameters = new SameIntent_IHasTypeParameters();
         private ISameIntent<IHasImplementedInterfaces> sameIntent_IHasImplementedInterfaces = new SameIntent_IHasImplementedInterfaces();
 
-        public bool SameIntent(IInterface one, IInterface other, bool includePublicAnnotations)
+        public bool SameIntent(IInterface one, IInterface other, bool skipPublicAnnotations)
         {
-            if (!sameIntent_IDom.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IType.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_ITypeMemberContainer.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IHasTypeParameters.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IHasImplementedInterfaces.SameIntent(one, other, includePublicAnnotations)) { return false; }
+            if (!sameIntent_IDom.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IType.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_ITypeMemberContainer.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IHasTypeParameters.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IHasImplementedInterfaces.SameIntent(one, other, skipPublicAnnotations)) { return false; }
             return true;
         }
     }

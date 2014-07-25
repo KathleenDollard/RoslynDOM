@@ -14,10 +14,10 @@ namespace RoslynDom.Common
                     bool publicAnnotations)
              where TChild : class, IDom
         {
-            if (thisList == null) return (otherList == null);
-            if (otherList == null) return false;
+            if (thisList == null) return (otherList == null);   // TESTCOVERAGE: Not testable
+            if (otherList == null) return false;                // TESTCOVERAGE: Not testable
             if (thisList.Count() != otherList.Count()) return false;
-            if (thisList == null) return false; // can't happen, suppresse FxCop error
+            if (thisList == null) return false;                 // TESTCOVERAGE: Not testable (suppresses FxCop)
             foreach (var item in thisList)
             {
                 var otherItem = otherList.Where(x => item.Matches(x)).FirstOrDefault();

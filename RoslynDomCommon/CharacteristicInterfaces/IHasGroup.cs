@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ISameIntent<T>
+  public   interface IHasGroup
     {
-        bool SameIntent(T one, T other, bool skipPublicAnnotations);
+        Guid Group { get;  }
     }
 }

@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="FileSupport.cs" />
     <Compile Include="GeneralUtilities.cs" />
+    <Compile Include="Guardian.cs" />
     <Compile Include="ListUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReflectionUtilities.cs" />

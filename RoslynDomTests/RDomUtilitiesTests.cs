@@ -162,6 +162,8 @@ namespace RoslynDomTests
             root.StemMembersAll.Remove(classes[3]);
             test = root.Classes.PreviousSiblings(classes[3]);
             expected = "";
+            Assert.AreEqual(expected, GetNames(test)); 
+            test = root.Classes.FollowingSiblings(classes[3]);
             Assert.AreEqual(expected, GetNames(test));
 
             test = root.Classes.PreviousSiblings(classes[3]);

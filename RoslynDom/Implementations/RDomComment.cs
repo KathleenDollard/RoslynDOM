@@ -27,7 +27,7 @@ namespace RoslynDom
 
         public bool IsMultiline { get; set; }
 
-        protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+        protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
         {
             var otherAsT = other as IComment;
             if (otherAsT == null) return false;

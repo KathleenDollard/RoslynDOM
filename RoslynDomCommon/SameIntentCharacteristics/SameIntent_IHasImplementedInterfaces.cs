@@ -4,9 +4,9 @@ namespace RoslynDom.Common
 {
   public class SameIntent_IHasImplementedInterfaces : ISameIntent<IHasImplementedInterfaces>
     {
-        public bool SameIntent(IHasImplementedInterfaces one, IHasImplementedInterfaces other, bool includePublicAnnotations)
+        public bool SameIntent(IHasImplementedInterfaces one, IHasImplementedInterfaces other, bool skipPublicAnnotations)
         {
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.AllImplementedInterfaces, other.AllImplementedInterfaces, includePublicAnnotations)) { return false; }
+            if (!SameIntentHelpers.CheckSameIntentChildList(one.AllImplementedInterfaces, other.AllImplementedInterfaces, skipPublicAnnotations)) { return false; }
             return true;
         }
     }}

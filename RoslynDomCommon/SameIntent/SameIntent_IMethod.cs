@@ -7,12 +7,12 @@ namespace RoslynDom.Common
         private ISameIntent<IPropertyOrMethod> sameIntent_IPropertyOrMethod = new SameIntent_IPropertyOrMethod();
         private ISameIntent<IHasTypeParameters> sameIntent_IIHasTypeParameters = new SameIntent_IHasTypeParameters();
 
-        public bool SameIntent(IMethod one, IMethod other, bool includePublicAnnotations)
+        public bool SameIntent(IMethod one, IMethod other, bool skipPublicAnnotations)
         {
             if (one.IsExtensionMethod != other.IsExtensionMethod) { return false; }
-            if (!sameIntent_IDom.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IPropertyOrMethod.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IIHasTypeParameters.SameIntent(one, other, includePublicAnnotations)) { return false; }
+            if (!sameIntent_IDom.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IPropertyOrMethod.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IIHasTypeParameters.SameIntent(one, other, skipPublicAnnotations)) { return false; }
             return true;
         }
     }

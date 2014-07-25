@@ -15,25 +15,40 @@ namespace RoslynDom.CSharp
         protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as NamespaceDeclarationSyntax;
-            var newItem = new RDomNamespace(syntaxNode, parent,model);
+            // TODO: I think there is a better way to do this, but I can't find it right now
+            var names = syntax.Name.ToString().Split(new char[] { '.' });
+            var group = Guid.Empty;
+            if (names.Count() > 1) group = Guid.NewGuid();
+            RDomNamespace item = null;
+            RDomNamespace outerNamespace = null;
+            foreach (var name in names)
+            {
+                var newItem = new RDomNamespace(syntaxNode, parent, model, name, group);
+                // At this point, item is the last newItem
+                if (item != null) item.StemMembersAll.AddOrMove(newItem);
+                item = newItem;
+                if (outerNamespace == null) { outerNamespace = item; }
+                if (name != names.Last()) { parent = item; }
+            }
 
             // Qualified name unbundles namespaces, and if it's defined together, we want it together here. 
             // Thus, this replaces hte base Initialize name with the correct one
-            newItem.Name = newItem.TypedSyntax.NameFrom();
-            if (newItem.Name.StartsWith("@")) { newItem.Name = newItem.Name.Substring(1); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, newItem, model));
-            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, newItem, model));
-            newItem.StemMembersAll.AddOrMoveRange(members);
-            newItem.StemMembersAll.AddOrMoveRange(usings);
+            if (item.Name.StartsWith("@")) { item.Name = item.Name.Substring(1); }
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, item, model));
+            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, item, model));
+            item.StemMembersAll.AddOrMoveRange(members);
+            item.StemMembersAll.AddOrMoveRange(usings);
 
-
-            return  newItem ;
+            // This will return the outer namespace, which in the form N is the only one. 
+            // In the form N1.N2.. there is a nested level for each part (N1, N2).
+            // The inner holds the children, the outer is returned.  
+            return outerNamespace;
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IStemMemberCommentWhite item)
         {
             var itemAsNamespace = item as INamespace;
             var identifier = SyntaxFactory.IdentifierName(itemAsNamespace.Name);
-            var node = SyntaxFactory.NamespaceDeclaration (identifier);
+            var node = SyntaxFactory.NamespaceDeclaration(identifier);
             if (itemAsNamespace == null) { throw new InvalidOperationException(); }
             var usingsSyntax = itemAsNamespace.UsingDirectives
                         .Select(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))

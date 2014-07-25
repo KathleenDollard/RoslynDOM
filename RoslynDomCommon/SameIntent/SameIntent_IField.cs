@@ -7,12 +7,12 @@ namespace RoslynDom.Common
         private ISameIntent<ICanBeStatic> sameIntent_ICanBeStatic = new SameIntent_ICanBeStatic();
         private ISameIntent<IHasReturnType > sameIntent_IHasReturnType = new SameIntent_IHasReturnType();
 
-        public bool SameIntent(IField one, IField other, bool includePublicAnnotations)
+        public bool SameIntent(IField one, IField other, bool skipPublicAnnotations)
         {
-            if (!sameIntent_IDom.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_ITypeMember.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_ICanBeStatic.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IHasReturnType.SameIntent(one, other, includePublicAnnotations)) { return false; }
+            if (!sameIntent_IDom.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_ITypeMember.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_ICanBeStatic.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IHasReturnType.SameIntent(one, other, skipPublicAnnotations)) { return false; }
             return true;
         }
     }

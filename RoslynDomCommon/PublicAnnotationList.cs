@@ -87,11 +87,12 @@ namespace RoslynDom.Common
 
 
         public bool SameIntent(PublicAnnotationList otherAnnotations)
-        { return SameIntent(otherAnnotations, true); }
+        { return SameIntent(otherAnnotations, false); }
 
-        public bool SameIntent(PublicAnnotationList otherAnnotations, bool includePublicAnnotations)
+        public bool SameIntent(PublicAnnotationList otherAnnotations, bool skipPublicAnnotations)
         {
-            if (!includePublicAnnotations) return true;
+            if (skipPublicAnnotations) return true;
+            if (this._publicAnnotations.Count != otherAnnotations._publicAnnotations.Count) return false;
             foreach (var annotation in _publicAnnotations)
             {
                 var otherAnnotation = otherAnnotations.GetPublicAnnotation(annotation.Name);

@@ -4,9 +4,9 @@ namespace RoslynDom.Common
 {
     public class SameIntent_IHasTypeParameters : ISameIntent<IHasTypeParameters>
     {
-        public bool SameIntent(IHasTypeParameters one, IHasTypeParameters other, bool includePublicAnnotations)
+        public bool SameIntent(IHasTypeParameters one, IHasTypeParameters other, bool skipPublicAnnotations)
         {
-            if (!SameIntentHelpers.CheckSameIntentChildList(one.TypeParameters, other.TypeParameters, includePublicAnnotations)) { return false; }
+            if (!SameIntentHelpers.CheckSameIntentChildList(one.TypeParameters, other.TypeParameters, skipPublicAnnotations)) { return false; }
             return true;
         }
     }

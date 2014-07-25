@@ -53,13 +53,13 @@ namespace RoslynDom
             return new RDomReferencedType(this);
         }
 
-        protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+        protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
         {
-            if (!CheckSameIntent(other as IReferencedType, includePublicAnnotations)) { return false; }
-            return sameIntent.SameIntent(this as IReferencedType, other as IReferencedType, includePublicAnnotations);
+            if (!CheckSameIntent(other as IReferencedType, skipPublicAnnotations)) { return false; }
+            return sameIntent.SameIntent(this as IReferencedType, other as IReferencedType, skipPublicAnnotations);
         }
 
-        protected virtual bool CheckSameIntent(IReferencedType other, bool includePublicAnnotations)
+        protected virtual bool CheckSameIntent(IReferencedType other, bool skipPublicAnnotations)
         {
             return true;
         }

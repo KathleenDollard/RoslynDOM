@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
@@ -109,6 +110,39 @@ namespace RoslynDom
 
         public abstract ISymbol Symbol { get; }
 
+        public override string ToString()
+        {
+            var ret = base.ToString() + " : ";
+            if (this is IHasNamespace) return ret + ((IHasNamespace)this).QualifiedName;
+            if (this is IHasName) return ret + ((IHasName)this).Name;
+            if (this is IStatement)
+            {
+                var expr = this.Descendants.OfType<IExpression>().First();
+            }
+            return ret;
+        }
+
+        public virtual string ReportHierarchy()
+        {
+            var sb = new StringBuilder();
+            var spaces = 2;
+            var indentToAdd = new string(' ', spaces);
+            var indent = "";
+            var reversedAncestors = this.Ancestors.Reverse();
+            foreach (var ancestor in reversedAncestors)
+            {
+                sb.AppendLine(indent + ancestor.ToString());
+                indent += indentToAdd;
+            }
+            sb.AppendLine(indent + this.ToString());
+            foreach (var descendant in Descendants )
+            {
+                indent += indentToAdd;
+                sb.AppendLine(indent + descendant.ToString());
+            }
+            return sb.ToString();
+        }
+
         public abstract object RequestValue(string propertyName);
 
         public virtual bool Matches(IDom other)
@@ -123,16 +157,16 @@ namespace RoslynDom
         public bool SameIntent<TLocal>(TLocal other)
                where TLocal : class
         {
-            return SameIntent(other, true);
+            return SameIntent(other, false);
         }
 
-        public bool SameIntent<TLocal>(TLocal other, bool includePublicAnnotations)
+        public bool SameIntent<TLocal>(TLocal other, bool skipPublicAnnotations)
          where TLocal : class
         {
-            return SameIntentInternal(other, includePublicAnnotations);
+            return SameIntentInternal(other, skipPublicAnnotations);
         }
 
-        protected abstract bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+        protected abstract bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
                          where TLocal : class;
 
 

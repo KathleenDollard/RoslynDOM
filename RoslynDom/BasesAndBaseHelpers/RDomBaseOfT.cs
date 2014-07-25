@@ -33,19 +33,22 @@ namespace RoslynDom
             return (T)newItem;
         }
 
-        protected override bool SameIntentInternal<TLocal>(TLocal other, bool includePublicAnnotations)
+        protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
         {
-            if (!CheckSameIntent(other as T, includePublicAnnotations)) { return false; }
-            return sameIntent.SameIntent(this as T, other as T, includePublicAnnotations);
+            var otherAsT = other as T;
+            if (otherAsT == null) return false;
+            if (!CheckSameIntent(otherAsT, skipPublicAnnotations)) { return false; }
+            return sameIntent.SameIntent(this as T, other as T, skipPublicAnnotations);
         }
 
         /// <summary>
-        /// Derived classes can override this if the RoslynDom.Common implementations aren't working
+        /// Derived classes can override this if the RoslynDom.Common implementations aren't working. 
+        /// Do NOT override if the problem can be solved in the RoslynDom.Common implementations (SameIntent_xxx)
         /// </summary>
         /// <param name="other"></param>
-        /// <param name="includePublicAnnotations"></param>
+        /// <param name="skipPublicAnnotations"></param>
         /// <returns></returns>
-        protected virtual bool CheckSameIntent(T other, bool includePublicAnnotations)
+        protected virtual bool CheckSameIntent(T other, bool skipPublicAnnotations)
         {
             return true;
         }

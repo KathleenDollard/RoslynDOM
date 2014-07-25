@@ -16,6 +16,8 @@ namespace RoslynDom.Common
         IEnumerable<IDom> Descendants { get; }
         IEnumerable<IDom> DescendantsAndSelf { get; }
 
+        string ReportHierarchy();
+
         object RequestValue(string propertyName);
 
         PublicAnnotationList PublicAnnotations { get; }

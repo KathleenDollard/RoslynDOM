@@ -388,6 +388,27 @@ namespace RoslynDomTests
         }
 
         [TestMethod, TestCategory(PublicAnnotationValuesCategory)]
+        public void Same_intent_returns_true_if_public_annotations_check_not_requested()
+        {
+            var csharpCode = @"
+            using Foo;
+                     
+            //[[ kad_Test3(val1 = ""Fred"", val2 : 42) ]]
+            public class MyClass
+            { }
+            ";
+            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root2 = root.Copy();
+            var class1 =root.Classes.First();
+            var class2 = root2.Classes.First();
+             class2.PublicAnnotations.AddValue("kad_Test4", "George");
+            Assert.IsFalse(class1.PublicAnnotations.SameIntent(class2.PublicAnnotations, false));
+            Assert.IsTrue(class1.PublicAnnotations.SameIntent(class2.PublicAnnotations,true));
+
+
+        }
+
+        [TestMethod, TestCategory(PublicAnnotationValuesCategory)]
         public void HasValue_public_annotations()
         {
             var csharpCode = @"

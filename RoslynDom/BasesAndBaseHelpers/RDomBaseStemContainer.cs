@@ -24,7 +24,7 @@ namespace RoslynDom
             // Really need to keep them in order so need to iterate entire list in order
             var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;
             var newMembers = new List<IStemMember>();
-            foreach (var member in oldRDom.StemMembers)
+            foreach (var member in oldRDom.StemMembersAll)
             {
                 //ordered in approx expectation of frequency
                 if (TryCopyMember<RDomClass>(member, m => new RDomClass(m))) continue;
@@ -33,12 +33,14 @@ namespace RoslynDom
                 if (TryCopyMember<RDomEnum>(member, m => new RDomEnum(m))) continue;
                 if (TryCopyMember<RDomNamespace>(member, m => new RDomNamespace(m))) continue;
                 if (TryCopyMember<RDomUsingDirective>(member, m => new RDomUsingDirective(m))) continue;
+                if (TryCopyMember<RDomVerticalWhitespace >(member, m => new RDomVerticalWhitespace(m))) continue;
+                if (TryCopyMember<RDomComment>(member, m => new RDomComment(m))) continue;
                 throw new InvalidOperationException();
             }
         }
 
-        private bool TryCopyMember<TLocal>(IStemMember member, Func<TLocal, TLocal> constructDelegate)
-            where TLocal : class, IStemMember
+        private bool TryCopyMember<TLocal>(IStemMemberCommentWhite member, Func<TLocal, TLocal> constructDelegate)
+            where TLocal : class, IStemMemberCommentWhite
         {
             var memberAsT = member as TLocal;
             if (memberAsT != null)

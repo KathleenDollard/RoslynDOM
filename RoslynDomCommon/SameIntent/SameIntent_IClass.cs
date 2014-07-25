@@ -12,18 +12,18 @@ namespace RoslynDom.Common
         private ISameIntent<IHasImplementedInterfaces> sameIntent_IHasImplementedInterfaces = new SameIntent_IHasImplementedInterfaces();
         private ISameIntent<ICanBeStatic> sameIntent_ICanBeStatic = new SameIntent_ICanBeStatic();
 
-        public bool SameIntent(IClass one, IClass other, bool includePublicAnnotations)
+        public bool SameIntent(IClass one, IClass other, bool skipPublicAnnotations)
         {
             if (!one.BaseType.SameIntent(other.BaseType)) { return false; }
             if (one.IsAbstract != other.IsAbstract) { return false; }
             if (one.IsSealed != other.IsSealed) { return false; }
-            if (!sameIntent_IDom.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IType.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_INestedContainer.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_ITypeMemberContainer.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IHasTypeParameters.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_IHasImplementedInterfaces.SameIntent(one, other, includePublicAnnotations)) { return false; }
-            if (!sameIntent_ICanBeStatic.SameIntent(one, other, includePublicAnnotations)) { return false; }
+            if (!sameIntent_IDom.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IType.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_INestedContainer.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_ITypeMemberContainer.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IHasTypeParameters.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_IHasImplementedInterfaces.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!sameIntent_ICanBeStatic.SameIntent(one, other, skipPublicAnnotations)) { return false; }
             return true;
         }
     }

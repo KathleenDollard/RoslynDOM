@@ -4,7 +4,7 @@ namespace RoslynDom.Common
 {
     public class SameIntent_IDom : ISameIntent<IDom>
     {
-        public bool SameIntent(IDom one, IDom other, bool includePublicAnnotations)
+        public bool SameIntent(IDom one, IDom other, bool skipPublicAnnotations)
         {
             if (one.GetType() != other.GetType()) { return false; }
             // Explicitly do not compare RawItems or OuterName
@@ -13,7 +13,7 @@ namespace RoslynDom.Common
             {
                 if (oneAsHasName.Name != ((IHasName)other).Name) { return false; }
             }
-            if (!one.PublicAnnotations.SameIntent( other.PublicAnnotations, includePublicAnnotations)) { return false; }
+            if (!one.PublicAnnotations.SameIntent( other.PublicAnnotations, skipPublicAnnotations)) { return false; }
             return true;
         }
     }
