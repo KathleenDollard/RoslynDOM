@@ -83,7 +83,7 @@ namespace RoslynDom
 
 
         public string QualifiedName
-        { get { return GetQualifiedName(); } }
+        { get { return RoslynUtilities.GetQualifiedName(this); } }
 
         public void ClearStemMembers()
         { _members.Clear(); }

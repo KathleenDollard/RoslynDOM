@@ -22,7 +22,12 @@ namespace TestRoslyn
             public string TestFoo() { return ""; }
 
             public int TestFoo2(int x) { return x; }
+
+            private void TestFoo3() { }
         }
+
+        private class B<T>
+        { }
 
         [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
         public void Can_determine_if_property_can_be_read()
@@ -74,6 +79,16 @@ namespace TestRoslyn
         }
 
         [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
+        public void Can_set_proeprty_value()
+        {
+            var obj = new A();
+            obj.Bar = "31";
+            Assert.AreEqual("31", ReflectionUtilities.GetPropertyValue(obj, "Bar"));
+            ReflectionUtilities.SetPropertyValue(obj, "Bar", "42");
+            Assert.AreEqual("42", ReflectionUtilities.GetPropertyValue(obj, "Bar"));
+        }
+
+        [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
         public void Can_make_generic_method()
         {
             var methodInfo = ReflectionUtilities.MakeGenericMethod(typeof(A), "Test", typeof(string));
@@ -89,11 +104,25 @@ namespace TestRoslyn
         }
 
         [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
-        public void Can_find_methodwith_parameters()
+        public void Can_find_method_with_parameters()
         {
             var methodInfo = ReflectionUtilities.FindMethod(typeof(A), "TestFoo2", typeof(int));
             Assert.AreEqual("TestFoo2", methodInfo.Name);
         }
 
+        [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
+        public void Can_find_private_method_with()
+        {
+            var methodInfo = ReflectionUtilities.FindMethod(typeof(A), "TestFoo3", true);
+            Assert.AreEqual("TestFoo3", methodInfo.Name);
+        }
+
+        [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
+        public void Can_make_generic_type()
+        {
+            var newType = ReflectionUtilities.MakeGenericType (typeof(B<>), typeof(int));
+            Assert.AreEqual("B`1", newType.Name);
+            Assert.AreEqual("Int32", newType.GenericTypeArguments.First().Name);
+        }
     }
 }

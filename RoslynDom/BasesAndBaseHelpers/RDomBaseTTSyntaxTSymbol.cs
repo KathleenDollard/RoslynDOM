@@ -99,21 +99,21 @@ namespace RoslynDom
         //    }
         //}
 
-        protected virtual string GetQualifiedName()
-        {
-            var item = this as IHasNamespace;
-            if (item != null)
-            {
-                var outerName = (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
-                       item.Name;
-                // There are probably slightly cleaner ways to do this, but with some override scenarios
-                // directly calling OuterName will result in a StackOverflowException
-                return (string.IsNullOrWhiteSpace(item.Namespace) ? "" : item.Namespace + ".")
-                          + outerName;
-            }
-            // The following line should not be reachable, so is not tested
-            throw new InvalidOperationException();
-        }
+        //protected virtual string GetQualifiedName()
+        //{
+        //    var item = this as IHasNamespace;
+        //    if (item != null)
+        //    {
+        //        var outerName = (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
+        //               item.Name;
+        //        // There are probably slightly cleaner ways to do this, but with some override scenarios
+        //        // directly calling OuterName will result in a StackOverflowException
+        //        return (string.IsNullOrWhiteSpace(item.Namespace) ? "" : item.Namespace + ".")
+        //                  + outerName;
+        //    }
+        //    // The following line should not be reachable, so is not tested
+        //    throw new InvalidOperationException();
+        //}
 
 
         protected virtual AccessModifier GetAccessibility()

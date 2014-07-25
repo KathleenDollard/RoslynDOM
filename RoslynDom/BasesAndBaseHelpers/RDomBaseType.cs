@@ -78,13 +78,16 @@ namespace RoslynDom
         { get { return RoslynUtilities.GetOuterName(this); } }
 
 
+        public string QualifiedName
+        { get { return RoslynUtilities.GetQualifiedName(this); } }
+
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 
-        public IType ContainingType { get; set; }
-
-        public string QualifiedName
-        { get { return GetQualifiedName(); } }
+        public bool IsNested
+        { get { return (Parent is IType); } }
+        public IType ContainingType
+        { get { return Parent as IType; } }
 
         public RDomList<ITypeParameter> TypeParameters
         {
@@ -94,7 +97,7 @@ namespace RoslynDom
             }
         }
 
-        public RDomList<ITypeMemberCommentWhite > MembersAll
+        public RDomList<ITypeMemberCommentWhite> MembersAll
         { get { return _members; } }
 
         public IEnumerable<ITypeMember> Members

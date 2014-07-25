@@ -28,16 +28,17 @@ namespace RoslynDom
         public string OuterName
         { get { return RoslynUtilities.GetOuterName(this); } }
 
+        public string QualifiedName
+        { get { return RoslynUtilities.GetQualifiedName(this); } }
 
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 
-        public IType ContainingType { get; set; }
+        public bool IsNested
+        { get { return (Parent is IType); } }
+        public IType ContainingType
+        { get { return Parent as IType; } }
 
-        public string QualifiedName
-        {
-            get { return GetQualifiedName(); }
-        }
 
         public AccessModifier AccessModifier { get; set; }
 

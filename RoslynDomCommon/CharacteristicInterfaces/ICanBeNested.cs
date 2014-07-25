@@ -8,6 +8,7 @@ namespace RoslynDom.Common
 {
     public interface ICanBeNested
     {
-        IType ContainingType { get; set; }
+        bool IsNested { get; }
+        IType ContainingType { get; }
     }
 }
