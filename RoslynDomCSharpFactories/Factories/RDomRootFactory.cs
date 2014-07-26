@@ -16,10 +16,7 @@ namespace RoslynDom.CSharp
             var newItem = new RDomRoot(syntaxNode, parent,model);
 
             newItem.Name = "Root";
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x,newItem,  model));
-            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, newItem, model));
-            newItem.StemMembersAll.AddOrMoveRange(members);
-            newItem.StemMembersAll.AddOrMoveRange(usings);
+            CreateFromHelpers.LoadStemMembers(newItem, syntax.Members, syntax.Usings,model);
 
             return newItem ;
         }

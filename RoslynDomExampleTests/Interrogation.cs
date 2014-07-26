@@ -25,15 +25,26 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-        public void Interrogate_namespaces()
+        public void Interrogate_non_empty_namespaces()
+        {
+             // Nonempty namespaces are anticipated to be the primary namespace access mechanism. 
+           IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            var nspaces = root.Namespaces.ToArray();
+            Assert.AreEqual(2, nspaces.Count());
+            Assert.AreEqual("testing", nspaces[0].Name);
+            Assert.AreEqual("testing.Namespace3.testing", nspaces[0].QualifiedName);
+            Assert.AreEqual("Namespace2", nspaces[1].Name);
+        }
+
+        [TestMethod]
+        public void Interrogate_child_namespaces()
         {
             IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
-            var nspaces = root.Namespaces.ToArray();
+            var nspaces = root.ChildNamespaces.ToArray();
             Assert.AreEqual(3, nspaces.Count());
-            // TODO: Rework namespaces to reflect nesting, not current syntax. Below illustrate problem
             Assert.AreEqual("testing", nspaces[0].Name);
-            Assert.AreEqual("testing.Namespace1", nspaces[1].Name);
-            Assert.AreEqual("testing.Namespace1", nspaces[1].QualifiedName);
+            Assert.AreEqual("testing", nspaces[1].Name);
+            Assert.AreEqual("testing.Namespace1", nspaces[1].ChildNamespaces.First().QualifiedName);
             Assert.AreEqual("Namespace2", nspaces[2].Name);
         }
 
@@ -41,29 +52,17 @@ namespace RoslynDomExampleTests
         public void Interrogate_all_namespaces()
         {
             IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
-            // All Namespaces are designed to return all creatable qualified syntax names, 
-            // and is not anticipated to be very useful. Order of namespaces is linear out to in.
-            var nspaces = root.AllChildNamespaces.ToArray();
-            Assert.AreEqual(4, nspaces.Count());
+            var nspaces = root.DescendantNamespaces.ToArray();
+            Assert.AreEqual(6, nspaces.Count());
             Assert.AreEqual("testing", nspaces[0].Name);
-            Assert.AreEqual("Namespace3.testing", nspaces[1].Name);
-            Assert.AreEqual("testing.Namespace3.testing", nspaces[1].QualifiedName);
-            Assert.AreEqual("testing.Namespace1", nspaces[2].QualifiedName);
-            Assert.AreEqual("Namespace2", nspaces[3].Name);
+            Assert.AreEqual("Namespace3", nspaces[1].Name);
+            Assert.AreEqual("testing.Namespace3.testing", nspaces[2].QualifiedName);
+            Assert.AreEqual("testing", nspaces[3].QualifiedName);
+            Assert.AreEqual("testing.Namespace1", nspaces[4].QualifiedName);
+            Assert.AreEqual("Namespace2", nspaces[5].Name);
         }
 
-        [TestMethod]
-        public void Interrogate_non_empty_namespaces()
-        {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
-            // Nonempty namespaces are anticipated to be the primary namespace access mechanism. 
-            var nspaces = root.NonemptyNamespaces.ToArray();
-            Assert.AreEqual(2, nspaces.Count());
-            Assert.AreEqual("Namespace3.testing", nspaces[0].Name);
-            Assert.AreEqual("testing.Namespace3.testing", nspaces[0].QualifiedName);
-            Assert.AreEqual("Namespace2", nspaces[1].Name);
-        }
-
+  
         [TestMethod]
         public void Interrogate_classes_in_namespaces()
         {

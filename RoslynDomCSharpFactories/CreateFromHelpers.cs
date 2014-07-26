@@ -28,6 +28,16 @@ namespace RoslynDom.CSharp
             newItem.StatementsAll.AddOrMoveRange(statements);
         }
 
+        public static void LoadStemMembers(IStemContainer newItem, 
+                    IEnumerable<MemberDeclarationSyntax > memberSyntaxes, 
+                    IEnumerable<UsingDirectiveSyntax > usingSyntaxes,
+                    SemanticModel model)
+        {
+            var usings = ListUtilities.CreateFromList(usingSyntaxes, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, newItem, model));
+            var members = ListUtilities.CreateFromList (memberSyntaxes, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, newItem, model));
+            newItem.StemMembersAll.AddOrMoveRange(usings);
+            newItem.StemMembersAll.AddOrMoveRange(members);
+        }
 
         //public static void InitializeStatements(IStatementBlock newItem,
         //   BlockSyntax  blockSytax, SemanticModel model)

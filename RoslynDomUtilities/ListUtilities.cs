@@ -15,9 +15,18 @@ namespace RoslynDom.Common
             var ret = new List<T>();
             if (input == null) return ret;
             if (getItemsDelegate == null) throw new InvalidOperationException();
+            var rawItems = getItemsDelegate(input);
+            return CreateFromList(rawItems, makeNewItems);
+            return ret;
+        }
+
+        public static IEnumerable<T> CreateFromList<T, TRaw>(
+               IEnumerable<TRaw> rawItems,
+               Func<TRaw, IEnumerable<T>> makeNewItems)
+        {
+            var ret = new List<T>();
             if (makeNewItems == null) throw new InvalidOperationException();
-            var newItems = getItemsDelegate(input);
-            foreach (var rawItem in newItems)
+            foreach (var rawItem in rawItems)
             {
                 var items = makeNewItems(rawItem);
                 if (items != null)

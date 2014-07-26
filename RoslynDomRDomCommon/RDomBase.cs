@@ -115,14 +115,17 @@ namespace RoslynDom
             var ret = base.ToString() + " : ";
             if (this is IHasNamespace) return ret + ((IHasNamespace)this).QualifiedName;
             if (this is IHasName) return ret + ((IHasName)this).Name;
-            if (this is IStatement)
-            {
-                var expr = this.Descendants.OfType<IExpression>().First();
-            }
+            if (this is IStatement) return ret;
+            if (this is IExpression) return ret + this.RawItem.ToString();
+
             return ret;
         }
 
         public virtual string ReportHierarchy()
+        { return ReportHierarchy(false);
+        }
+
+        public virtual string ReportHierarchy(bool includeWhitespace)
         {
             var sb = new StringBuilder();
             var spaces = 2;
@@ -135,12 +138,17 @@ namespace RoslynDom
                 indent += indentToAdd;
             }
             sb.AppendLine(indent + this.ToString());
-            foreach (var descendant in Descendants )
-            {
-                indent += indentToAdd;
-                sb.AppendLine(indent + descendant.ToString());
-            }
+            AppendChildHierarchy(this, sb, indent + indentToAdd, indentToAdd);
             return sb.ToString();
+        }
+
+        private static void AppendChildHierarchy(IDom item, StringBuilder sb, string indent, string indentToAdd)
+        {
+            foreach (var child in item.Children)
+            {
+                sb.AppendLine(indent + child.ToString());
+                AppendChildHierarchy(child, sb, indent + indentToAdd, indentToAdd);
+            }
         }
 
         public abstract object RequestValue(string propertyName);

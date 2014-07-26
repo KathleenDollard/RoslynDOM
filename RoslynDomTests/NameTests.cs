@@ -66,11 +66,12 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var ns = root.Namespaces.First();
+            var ns = root.DescendantNamespaces.Last();
             var symbol = ((IRoslynDom)ns).Symbol;
-            Assert.AreEqual("testing.Namespace1", ns.Name);
+            Assert.AreEqual("testing", ns.Namespace);
+            Assert.AreEqual("testing.Namespace1", ns.QualifiedName);
             Assert.AreEqual("Namespace1", symbol.MetadataName, "meta");
-            Assert.AreEqual("Namespace1", symbol.Name);
+            Assert.AreEqual("Namespace1", ns.Name);
         }
 
         [TestMethod]
@@ -216,7 +217,7 @@ namespace RoslynDomTests
                         }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Namespace2.testing.Namespace1", root.Namespaces.First().Namespaces.First().QualifiedName);
+            Assert.AreEqual("Namespace2.testing.Namespace1", root.DescendantNamespaces.Last().QualifiedName);
         }
 
         #endregion
@@ -249,9 +250,10 @@ namespace RoslynDomTests
                         }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var ns = root.Namespaces.First().Namespaces.First();
+            var ns = root.ChildNamespaces.First();
             var symbol = ((IRoslynDom)ns).Symbol;
-            Assert.AreEqual("testing.Namespace1", root.Namespaces.First().Namespaces.First().Name);
+            Assert.AreEqual("Namespace1", root.DescendantNamespaces.Last().Name);
+            Assert.AreEqual("Namespace2.testing.Namespace1", root.DescendantNamespaces.Last().QualifiedName);
         }
 
         [TestMethod]
@@ -391,7 +393,7 @@ namespace Namespace1
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("class", root.Namespaces.First().Name);
+            Assert.AreEqual("class", root.ChildNamespaces.First().Name);
         }
 
         [TestMethod]
@@ -594,7 +596,8 @@ namespace Namespace1
                         }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Namespace2.testing.Namespace1", root.Namespaces.First().Namespaces.First().OuterName);
+            Assert.AreEqual("Namespace2.testing.Namespace1", 
+                root.ChildNamespaces.First().ChildNamespaces.First().ChildNamespaces.First().OuterName);
         }
 
         [TestMethod]
@@ -606,7 +609,7 @@ namespace Namespace1
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("Namespace1", root.Namespaces.First().OuterName);
+            Assert.AreEqual("Namespace1", root.ChildNamespaces.First().OuterName);
         }
 
 
@@ -748,7 +751,7 @@ namespace NamespaceOuter
                         
 }}";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Classes.First().Namespace);
+            Assert.AreEqual("NamespaceOuter.Namespace1", root.ChildNamespaces.First().ChildNamespaces.First().Classes.First().Namespace);
         }
 
         [TestMethod]
@@ -792,7 +795,7 @@ namespace NamespaceOuter
                             { }
   } }                     ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Enums.First().Namespace);
+            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Enums.First().Namespace);
         }
 
 
@@ -807,7 +810,7 @@ namespace NamespaceOuter
                             { }
  }   }                    ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Structures.First().Namespace);
+            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Structures.First().Namespace);
         }
 
 
@@ -822,7 +825,7 @@ namespace NamespaceOuter
                             { }
 }   }                     ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Namespaces.First().Interfaces.First().Namespace);
+            Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Interfaces.First().Namespace);
         }
 
         [TestMethod]
@@ -842,7 +845,7 @@ namespace NamespaceOuter
 }}";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("NamespaceOuter.Namespace1",
-                root.Namespaces.First().Namespaces.First().Classes.First().Classes.First().Classes.First()
+                root.Namespaces.First().Classes.First().Classes.First().Classes.First()
                 .Namespace);
         }
         #endregion

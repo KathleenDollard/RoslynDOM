@@ -1016,12 +1016,12 @@ namespace Foo
 }
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var namespaces = root.Namespaces;
-            var allNamespaces = root.AllChildNamespaces;
-            var nonEmptyNamespaces = root.NonemptyNamespaces;
+            var namespaces = root.ChildNamespaces;
+            var allNamespaces = root.DescendantNamespaces;
+            var nonEmptyNamespaces = root.Namespaces;
             Assert.AreEqual(1, namespaces.Count());
             Assert.AreEqual(4, allNamespaces.Count());
-            Assert.AreEqual(3, allNamespaces.First().AllChildNamespaces.Count());
+            Assert.AreEqual(3, allNamespaces.First().DescendantNamespaces.Count());
             Assert.AreEqual(1, nonEmptyNamespaces.Count());
             Assert.AreEqual("FooBar", nonEmptyNamespaces.First().Name);
             Assert.AreEqual("Foo.Bar1.FooBar", nonEmptyNamespaces.First().QualifiedName);
@@ -1043,12 +1043,12 @@ namespace Foo
 }
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var namespaces = root.Namespaces;
-            var allNamespaces = root.AllChildNamespaces;
-            var nonEmptyNamespaces = root.NonemptyNamespaces;
+            var namespaces = root.ChildNamespaces;
+            var allNamespaces = root.DescendantNamespaces;
+            var nonEmptyNamespaces = root.Namespaces;
             Assert.AreEqual(1, namespaces.Count());
             Assert.AreEqual(4, allNamespaces.Count());
-            Assert.AreEqual(3, allNamespaces.First().AllChildNamespaces.Count());
+            Assert.AreEqual(3, allNamespaces.First().DescendantNamespaces.Count());
             Assert.AreEqual(0, nonEmptyNamespaces.Count());
         }
 
@@ -1060,9 +1060,9 @@ namespace Foo
 public enum Foo1 : byte {}
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var namespaces = root.Namespaces;
-            var allNamespaces = root.AllChildNamespaces;
-            var nonEmptyNamespaces = root.NonemptyNamespaces;
+            var namespaces = root.ChildNamespaces;
+            var allNamespaces = root.DescendantNamespaces;
+            var nonEmptyNamespaces = root.Namespaces;
             Assert.AreEqual(0, namespaces.Count());
             Assert.AreEqual(0, allNamespaces.Count());
             Assert.AreEqual(0, nonEmptyNamespaces.Count());
@@ -1084,16 +1084,16 @@ namespace Foo
 }
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var topNamespace = root.Namespaces.First();
+            var topNamespace = root.ChildNamespaces.First();
             var namespaces = topNamespace.Namespaces;
-            var allNamespaces = topNamespace.AllChildNamespaces;
-            var nonEmptyNamespaces = topNamespace.NonemptyNamespaces;
-            Assert.AreEqual(2, namespaces.Count());
+            var allNamespaces = topNamespace.DescendantNamespaces;
+            var childNamespaces = topNamespace.ChildNamespaces;
+            Assert.AreEqual(1, namespaces.Count());
             Assert.AreEqual(3, allNamespaces.Count());
-            Assert.AreEqual(1, allNamespaces.First().AllChildNamespaces.Count());
-            Assert.AreEqual(1, nonEmptyNamespaces.Count());
-            Assert.AreEqual("FooBar", nonEmptyNamespaces.First().Name);
-            Assert.AreEqual("Foo.Bar1.FooBar", nonEmptyNamespaces.First().QualifiedName);
+            Assert.AreEqual(1, allNamespaces.First().Namespaces.Count());
+            Assert.AreEqual(2, childNamespaces.Count());
+            Assert.AreEqual("FooBar", namespaces.First().Name);
+            Assert.AreEqual("Foo.Bar1.FooBar", namespaces.First().QualifiedName);
         }
 
         [TestMethod]
@@ -1112,13 +1112,13 @@ namespace Foo
 }
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var topNamespace = root.Namespaces.First();
-            var namespaces = topNamespace.Namespaces;
-            var allNamespaces = topNamespace.AllChildNamespaces;
-            var nonEmptyNamespaces = topNamespace.NonemptyNamespaces;
+            var topNamespace = root.DescendantNamespaces.First();
+            var namespaces = topNamespace.ChildNamespaces;
+            var allNamespaces = topNamespace.DescendantNamespaces;
+            var nonEmptyNamespaces = topNamespace.Namespaces;
             Assert.AreEqual(2, namespaces.Count());
             Assert.AreEqual(3, allNamespaces.Count());
-            Assert.AreEqual(1, allNamespaces.First().AllChildNamespaces.Count());
+            Assert.AreEqual(1, allNamespaces.First().ChildNamespaces.Count());
             Assert.AreEqual(0, nonEmptyNamespaces.Count());
         }
 
@@ -1135,8 +1135,8 @@ namespace Namespace1
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var topNamespace = root.Namespaces.First();
             var namespaces = topNamespace.Namespaces;
-            var allNamespaces = topNamespace.AllChildNamespaces;
-            var nonEmptyNamespaces = topNamespace.NonemptyNamespaces;
+            var allNamespaces = topNamespace.Namespaces;
+            var nonEmptyNamespaces = topNamespace.DescendantNamespaces;
             Assert.AreEqual(0, namespaces.Count());
             Assert.AreEqual(0, allNamespaces.Count());
             Assert.AreEqual(0, nonEmptyNamespaces.Count());

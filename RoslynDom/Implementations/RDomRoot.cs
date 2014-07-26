@@ -34,7 +34,7 @@ namespace RoslynDom
         {
             get
             {
-                var rootclasses = from x in NonemptyNamespaces
+                var rootclasses = from x in DescendantNamespaces
                                   from y in x.Classes
                                   select y;
                 return Classes.Union(rootclasses);
@@ -45,7 +45,7 @@ namespace RoslynDom
         {
             get
             {
-                var rootenums = from x in NonemptyNamespaces
+                var rootenums = from x in DescendantNamespaces
                                 from y in x.Enums
                                 select y;
                 return Enums.Union(rootenums);
@@ -56,7 +56,7 @@ namespace RoslynDom
         {
             get
             {
-                var rootinterfaces = from x in NonemptyNamespaces
+                var rootinterfaces = from x in DescendantNamespaces
                                      from y in x.Interfaces
                                      select y;
                 return Interfaces.Union(rootinterfaces);
@@ -67,7 +67,7 @@ namespace RoslynDom
         {
             get
             {
-                var rootstructures = from x in NonemptyNamespaces
+                var rootstructures = from x in DescendantNamespaces
                                      from y in x.Structures
                                      select y;
                 return Structures.Union(rootstructures);

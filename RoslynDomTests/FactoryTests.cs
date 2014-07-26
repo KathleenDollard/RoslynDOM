@@ -31,7 +31,7 @@ namespace RoslynDomTests
         {
             IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             Assert.IsNotNull(root);
-            Assert.AreEqual(1, root.Namespaces.Count());
+            Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace RoslynDomTests
                         ";
             IRoot root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.IsNotNull(root);
-            Assert.AreEqual(1, root.Namespaces.Count());
+            Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace RoslynDomTests
             var tree = CSharpSyntaxTree.ParseText(csharpCode);
             var root = RDomCSharpFactory.Factory.GetRootFromSyntaxTree(tree);
             Assert.IsNotNull(root);
-            Assert.AreEqual(1, root.Namespaces.Count());
+            Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace RoslynDomTests
             Assert.IsNotNull(document);
             var root = RDomCSharpFactory.Factory.GetRootFromDocument(document);
             Assert.IsNotNull(root);
-            Assert.AreEqual(1, root.Namespaces.Count());
+            Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
 
 
@@ -94,7 +94,7 @@ namespace RoslynDomTests
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             Assert.IsNotNull(root);
-            Assert.AreEqual(1, root.Namespaces.Count());
+            Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
         #endregion
 
@@ -108,7 +108,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var symbol = ((IRoslynDom)root.Namespaces.First()).Symbol;
+            var symbol = ((IRoslynDom)root.ChildNamespaces.First()).Symbol;
             Assert.IsNotNull(symbol);
         }
 
@@ -245,7 +245,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var symbol = ((RDomNamespace)root.Namespaces.First()).TypedSymbol as INamespaceSymbol;
+            var symbol = ((RDomNamespace)root.ChildNamespaces.First()).TypedSymbol as INamespaceSymbol;
             Assert.AreEqual("Namespace1", symbol.Name);
             Assert.IsNotNull(symbol);
         }
@@ -370,7 +370,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var RawItem = ((IRoslynDom)root.Namespaces.First()).RawItem;
+            var RawItem = ((IRoslynDom)root.ChildNamespaces.First()).RawItem;
             Assert.IsNotNull(RawItem);
         }
 
@@ -523,7 +523,7 @@ public string Bar3() {};
                             { }
                         ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var typedSyntax = ((RDomNamespace)root.Namespaces.First()).TypedSyntax;
+            var typedSyntax = ((RDomNamespace)root.ChildNamespaces.First()).TypedSyntax;
             Assert.IsNotNull(typedSyntax);
             Assert.IsTrue(typedSyntax is NamespaceDeclarationSyntax);
         }
@@ -642,7 +642,7 @@ public string Bar3() {};
                             { }
 ";
             var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual(2, root.Namespaces.Count());
+            Assert.AreEqual(2, root.ChildNamespaces.Count());
         }
 
         [TestMethod, TestCategory(StemContainerCategory)]

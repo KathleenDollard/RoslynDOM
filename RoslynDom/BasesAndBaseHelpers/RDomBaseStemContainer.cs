@@ -33,7 +33,7 @@ namespace RoslynDom
                 if (TryCopyMember<RDomEnum>(member, m => new RDomEnum(m))) continue;
                 if (TryCopyMember<RDomNamespace>(member, m => new RDomNamespace(m))) continue;
                 if (TryCopyMember<RDomUsingDirective>(member, m => new RDomUsingDirective(m))) continue;
-                if (TryCopyMember<RDomVerticalWhitespace >(member, m => new RDomVerticalWhitespace(m))) continue;
+                if (TryCopyMember<RDomVerticalWhitespace>(member, m => new RDomVerticalWhitespace(m))) continue;
                 if (TryCopyMember<RDomComment>(member, m => new RDomComment(m))) continue;
                 throw new InvalidOperationException();
             }
@@ -90,19 +90,19 @@ namespace RoslynDom
         public void ClearStemMembers()
         { _members.Clear(); }
 
-        public RDomList<IStemMemberCommentWhite > StemMembersAll
+        public RDomList<IStemMemberCommentWhite> StemMembersAll
         { get { return _members; } }
-
-        public IEnumerable<INamespace> AllChildNamespaces
-        { get { return RoslynDomUtilities.GetAllChildNamespaces(this); } }
-
-        public IEnumerable<INamespace> NonemptyNamespaces
-        { get { return RoslynDomUtilities.GetNonEmptyNamespaces(this); } }
 
         public IEnumerable<IStemMember> StemMembers
         { get { return _members.OfType<IStemMember>().ToList(); } }
 
+        public IEnumerable<INamespace> DescendantNamespaces
+        { get { return RoslynDomUtilities.GetDescendantNamespaces(this); } }
+
         public IEnumerable<INamespace> Namespaces
+        { get { return RoslynDomUtilities.GetNonEmptyNamespaces(this); } }
+
+        public IEnumerable<INamespace> ChildNamespaces
         { get { return StemMembers.OfType<INamespace>().ToList(); } }
 
         public IEnumerable<IClass> Classes

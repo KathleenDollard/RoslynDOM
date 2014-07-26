@@ -34,10 +34,7 @@ namespace RoslynDom.CSharp
             // Qualified name unbundles namespaces, and if it's defined together, we want it together here. 
             // Thus, this replaces hte base Initialize name with the correct one
             if (item.Name.StartsWith("@")) { item.Name = item.Name.Substring(1); }
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, item, model));
-            var usings = ListUtilities.MakeList(syntax, x => x.Usings, x => RDomFactoryHelper.GetHelperForStemMember().MakeItems(x, item, model));
-            item.StemMembersAll.AddOrMoveRange(members);
-            item.StemMembersAll.AddOrMoveRange(usings);
+            CreateFromHelpers.LoadStemMembers(item, syntax.Members, syntax.Usings, model);
 
             // This will return the outer namespace, which in the form N is the only one. 
             // In the form N1.N2.. there is a nested level for each part (N1, N2).

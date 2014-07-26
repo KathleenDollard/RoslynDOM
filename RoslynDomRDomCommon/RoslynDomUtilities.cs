@@ -10,7 +10,7 @@ namespace RoslynDom
     public static class RoslynDomUtilities
     {
 
-        public static IEnumerable<INamespace> GetAllChildNamespaces(
+        public static IEnumerable<INamespace> GetDescendantNamespaces(
             IStemContainer stemContainer,
             bool includeSelf = false)
         {
@@ -20,9 +20,9 @@ namespace RoslynDom
                 var nspace = stemContainer as INamespace;
                 if (nspace != null) ret.Add(nspace);
             }
-            foreach (var child in stemContainer.Namespaces)
+            foreach (var child in stemContainer.ChildNamespaces)
             {
-                ret.AddRange(GetAllChildNamespaces(child, true));
+                ret.AddRange(GetDescendantNamespaces(child, true));
             }
             return ret;
         }
@@ -30,7 +30,7 @@ namespace RoslynDom
         public static IEnumerable<INamespace> GetNonEmptyNamespaces(
             IStemContainer stemContainer)
         {
-            return GetAllChildNamespaces(stemContainer)
+            return GetDescendantNamespaces(stemContainer)
                 .Where(x => x.StemMembers.Where(y => y.StemMemberKind != StemMemberKind.Namespace).Count() != 0);
         }
 

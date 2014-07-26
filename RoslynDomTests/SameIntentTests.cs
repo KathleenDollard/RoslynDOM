@@ -1377,40 +1377,6 @@ namespace RoslynDomTests
         #region same intent namespace
 
         [TestMethod, TestCategory(SameIntentNamespaceCategory)]
-        public void Same_intent_false_with_same_namespace_declaration_in_different_contexts()
-        {
-            // THis test clarifies behavior. While context is not important in determining
-            // same intent, the namespace itself differs here beuase it is named differently
-            var csharpCode1 = @"
-                namespace Namespace0
-                {
-                    namespace Namespace1
-                    {
-                        namespace Namespace2
-                        {
-                            public interface Interface1
-                            { string Foo{get;} }
-                        }
-                    }
-                 }
-            ";
-            var csharpCode2 = @"
-                namespace Namespace0.Namespace1.Namespace2
-                {
-                    public interface Interface1 
-                    {
-                        string Foo{get;}
-                    }
-                }
-            ";
-            var root1 = RDomCSharpFactory.Factory.GetRootFromString(csharpCode1);
-            var root2 = RDomCSharpFactory.Factory.GetRootFromString(csharpCode2);
-            var namespace1 = root1.NonemptyNamespaces.First();
-            var namespace2 = root2.NonemptyNamespaces.First();
-            Assert.IsFalse(namespace1.SameIntent(namespace2));
-        }
-
-        [TestMethod, TestCategory(SameIntentNamespaceCategory)]
         public void Same_intent_false_with_different_namespace_member()
         {
             var csharpCode = @"
@@ -1424,12 +1390,12 @@ namespace RoslynDomTests
             ";
             var root1 = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var root2 = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var namespace1 = root1.NonemptyNamespaces .First();
-            var namespace2 = root2.NonemptyNamespaces.First();
+            var namespace1 = root1.DescendantNamespaces .First();
+            var namespace2 = root2.DescendantNamespaces.First();
             Assert.IsTrue(namespace1.SameIntent(namespace2));
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "private");
             root2 = RDomCSharpFactory.Factory.GetRootFromString(csharpCodeChanged);
-            namespace2 = root2.NonemptyNamespaces.First();
+            namespace2 = root2.DescendantNamespaces.First();
             Assert.IsFalse(namespace1.SameIntent(namespace2));
         }
 
@@ -1447,12 +1413,12 @@ namespace RoslynDomTests
             ";
             var root1 = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
             var root2 = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var namespace1 = root1.NonemptyNamespaces.First();
-            var namespace2 = root2.NonemptyNamespaces.First();
+            var namespace1 = root1.DescendantNamespaces.First();
+            var namespace2 = root2.DescendantNamespaces.First();
             Assert.IsTrue(namespace1.SameIntent(namespace2));
             var csharpCodeChanged = csharpCode.ReplaceFirst("void", "int");
             root2 = RDomCSharpFactory.Factory.GetRootFromString(csharpCodeChanged);
-            namespace2 = root2.NonemptyNamespaces.First();
+            namespace2 = root2.DescendantNamespaces.First();
             Assert.IsFalse(namespace1.SameIntent(namespace2));
         }
 
@@ -1590,7 +1556,7 @@ namespace RoslynDomTests
             ";
             var root1 = RDomCSharpFactory.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharpFactory.Factory.GetRootFromString(csharpCode2);
-            var nspace = root1.Namespaces.First();
+            var nspace = root1.ChildNamespaces.First();
             var class2 = root2.Interfaces.First();
             Assert.IsFalse(nspace.SameIntent(class2));
             var sameIntent = new SameIntent_IDom();
