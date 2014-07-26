@@ -17,9 +17,11 @@ namespace RoslynDom
              : base(oldRDom)
         {
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-            Expression = oldRDom.Expression.Copy();
+            if (oldRDom.Expression != null)
+            { Expression = oldRDom.Expression.Copy(); }
             Name = oldRDom.Name;
         }
+
         public AttributeList Attributes
         { get { return _attributes; } }
 

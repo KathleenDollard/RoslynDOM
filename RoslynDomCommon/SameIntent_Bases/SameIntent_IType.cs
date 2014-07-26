@@ -10,9 +10,9 @@ namespace RoslynDom.Common
 
         public bool SameIntent(IType one, IType other, bool skipPublicAnnotations)
         {
-            if (!sameIntent_IStemMember.SameIntent(one, other, skipPublicAnnotations)) { return false; }  // TESTCOVERAGE: Not testable
             if (!sameIntent_ITypeMember.SameIntent(one, other, skipPublicAnnotations)) { return false; }
-            return true;
+            // Returning the value is a trick to exclude from code covereage
+            return (sameIntent_IStemMember.SameIntent(one, other, skipPublicAnnotations));
         }
     }
 }

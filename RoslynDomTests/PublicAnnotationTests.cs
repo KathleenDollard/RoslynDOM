@@ -527,6 +527,8 @@ namespace RoslynDomTests
             var classes = root.RootClasses.ToArray();
             Assert.IsFalse(classes[0].PublicAnnotations.SameIntent(classes[1].PublicAnnotations));
             Assert.IsFalse(classes[0].PublicAnnotations.SameIntent(classes[2].PublicAnnotations));
+            Assert.IsFalse(classes[0].PublicAnnotations.SameIntent(classes[2].PublicAnnotations, false));
+            Assert.IsTrue(classes[0].PublicAnnotations.SameIntent(classes[2].PublicAnnotations, true));
         }
 
         [TestMethod, TestCategory(SameIntentPublicAnnotationCategory)]

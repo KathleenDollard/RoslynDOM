@@ -7,6 +7,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+
     /// <summary>
     /// Base class for Roslyn Dom navigation tree
     /// </summary>
@@ -15,6 +16,9 @@ namespace RoslynDom
     /// </remarks>
     public abstract class RDomBase : IRoslynDom
     {
+        // until move to C# 6 - I want to support name of as soon as possible
+        protected static string nameof<T>(T value) { return ""; }
+
         private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase()
@@ -122,7 +126,8 @@ namespace RoslynDom
         }
 
         public virtual string ReportHierarchy()
-        { return ReportHierarchy(false);
+        {
+            return ReportHierarchy(false);
         }
 
         public virtual string ReportHierarchy(bool includeWhitespace)

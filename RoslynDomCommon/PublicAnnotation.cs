@@ -52,9 +52,10 @@ namespace RoslynDom.Common
             return true;
         }
 
-        public bool SameIntent<T>(T otherAnnotation, bool ignoreValue)
+        public bool SameIntent<T>(T otherAnnotation, bool ignorePublicAnnotations)
             where T : class
         {
+            if (ignorePublicAnnotations) return true; 
             return SameIntent(otherAnnotation);
         }
 
@@ -65,15 +66,7 @@ namespace RoslynDom.Common
         public object GetValue(string key)
         { return this[key]; }
 
-        public bool TryGetValue(string key, out object value)
-        {
-            value = null;
-            if (!HasValue(key)) { return false; }
-            value  = GetValue(key);
-            return true;
-        }
-
-        public bool TryGetValue<T>(string key, out T value)
+            public bool TryGetValue<T>(string key, out T value)
         {
             value = default(T);
             if (!HasValue(key)) { return false; }

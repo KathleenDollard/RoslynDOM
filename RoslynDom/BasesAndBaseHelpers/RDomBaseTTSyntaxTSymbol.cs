@@ -122,13 +122,13 @@ namespace RoslynDom
             return (AccessModifier)Symbol.DeclaredAccessibility;
         }
 
-        private static string GetContainingTypeName(ITypeSymbol typeSymbol)
-        {
-            if (typeSymbol == null) return "";
-            var parentName = GetContainingTypeName(typeSymbol.ContainingType);
-            return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
-                typeSymbol.Name;
-        }
+        //private static string GetContainingTypeName(ITypeSymbol typeSymbol)
+        //{
+        //    if (typeSymbol == null) return "";
+        //    var parentName = GetContainingTypeName(typeSymbol.ContainingType);
+        //    return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
+        //        typeSymbol.Name;
+        //}
 
  
         /// <summary>

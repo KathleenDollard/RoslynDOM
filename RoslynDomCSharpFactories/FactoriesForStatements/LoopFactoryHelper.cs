@@ -11,7 +11,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    internal class LoopFactoryHelper
+    internal static class LoopFactoryHelper
     {
         public static IStatement CreateItemFrom<T>(
             T newItem, ExpressionSyntax condition, StatementSyntax statement, IDom parent, SemanticModel model)

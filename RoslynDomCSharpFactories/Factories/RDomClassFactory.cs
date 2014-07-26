@@ -8,7 +8,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public static class RDomClassFactoryHelper
+    internal static class RDomClassFactoryHelper
     {
         internal static RDomClass CreateFromInternal(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {

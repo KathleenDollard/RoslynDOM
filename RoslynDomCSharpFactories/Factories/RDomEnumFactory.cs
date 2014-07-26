@@ -30,10 +30,12 @@ namespace RoslynDom.CSharp
             foreach (var member in syntax.Members)
             {
                 var newEnumValue = new RDomEnumValue(member, newItem, model);
+                newEnumValue.Name = member.Identifier.ToString();
                 if (member.EqualsValue != null)
                 { newEnumValue.Expression = CreateFromHelpers.GetExpression(newItem, member.EqualsValue.Value, model); }
                 attributes = RDomFactoryHelper.CreateAttributeFrom(member, newEnumValue, model);
-                newItem.Attributes.AddOrMoveAttributeRange(attributes);
+                newEnumValue.Attributes.AddOrMoveAttributeRange(attributes);
+                newItem.Values.AddOrMove(newEnumValue);
             }
 
             return newItem;

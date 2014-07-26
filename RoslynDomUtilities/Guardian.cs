@@ -13,7 +13,7 @@ namespace RoslynDom.Common
 
         private Guardian() { }
 
-        public static Guardian Inform
+        public static Guardian Assert
         {
             get
             {
@@ -23,20 +23,35 @@ namespace RoslynDom.Common
             }
         }
 
-        /// <summary>
-        /// Call to inform of an unexpected null. 
-        /// </summary>
-        /// <param name="value"></param>
-        /// <remarks>
-        /// Please do not call on non-null values because this results in boxing
-        /// </remarks>
-        public void UnexpectedNull<T>(
-            T value,
+
+        public void IsTrue(bool test,
             [CallerMemberName] string callerName = "",
             [CallerLineNumber] int callerLineNumber = 0)
-            where T : class
         {
+            IsTrue(test, "", callerName, callerLineNumber);
         }
+
+        public void IsTrue(bool test, string message,
+            [CallerMemberName] string callerName = "",
+            [CallerLineNumber] int callerLineNumber = 0)
+        {
+            if (!test) throw new NotImplementedException();
+        }
+
+        ///// <summary>
+        ///// Call to inform of an unexpected null. 
+        ///// </summary>
+        ///// <param name="value"></param>
+        ///// <remarks>
+        ///// Please do not call on non-null values because this results in boxing
+        ///// </remarks>
+        //public void IsNotNull<T>(
+        //    T value,
+        //    [CallerMemberName] string callerName = "",
+        //    [CallerLineNumber] int callerLineNumber = 0)
+        //    where T : class
+        //{
+        //}
 
         /// <summary>
         /// Call to inform of an unexpected null. 
@@ -46,13 +61,14 @@ namespace RoslynDom.Common
         /// <remarks>
         /// Please do not call on non-null values because this results in boxing
         /// </remarks>
-        public void UnexpectedNull<T>(
+        public void IsNotNull<T>(
             T value,
             string name,
             [CallerMemberName] string callerName = "",
             [CallerLineNumber] int callerLineNumber = 0)
             where T : class
         {
+            if (value == null) throw new NotImplementedException();
         }
 
 

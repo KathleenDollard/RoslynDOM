@@ -7,9 +7,11 @@
 
         public bool SameIntent(IUsingDirective one, IUsingDirective other, bool skipPublicAnnotations)
         {
-            if (!sameIntent_IDom.SameIntent(one, other, skipPublicAnnotations)) { return false; }
-            if (!sameIntent_IStemMember.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (one.Alias != other.Alias) { return false; }
+            Guardian.Assert.IsTrue(sameIntent_IStemMember.SameIntent(one, other, skipPublicAnnotations));
+            Guardian.Assert.IsTrue(sameIntent_IDom.SameIntent(one, other, skipPublicAnnotations));
             return true;
+        
         }
     }
 }

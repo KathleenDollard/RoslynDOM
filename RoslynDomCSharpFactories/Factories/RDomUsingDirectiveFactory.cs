@@ -15,6 +15,8 @@ namespace RoslynDom.CSharp
             var newItem = new RDomUsingDirective(syntaxNode,parent, model);
 
             newItem. Name = syntax.Name.NameFrom();
+            if (syntax.Alias != null)
+            { newItem.Alias = syntax.Alias.ToString().Replace("=", "").Trim(); }
 
             return  newItem ;
         }
@@ -26,7 +28,8 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IUsingDirective;
             var identifier = SyntaxFactory.IdentifierName(itemAsT.Name);
             var node = SyntaxFactory.UsingDirective(identifier);
-
+            if (!string.IsNullOrWhiteSpace(itemAsT.Alias))
+            { node.WithAlias(SyntaxFactory.NameEquals(itemAsT.Alias)); }
             return item.PrepareForBuildSyntaxOutput(node);
         }
     }

@@ -10,6 +10,7 @@ namespace RoslynDom.Common
             if (!one.UnderlyingType.SameIntent(other.UnderlyingType)) { return false; }
             if (!sameIntent_IDom.SameIntent(one, other, skipPublicAnnotations)) { return false; }
             if (!sameIntent_IType.SameIntent(one, other, skipPublicAnnotations)) { return false; }
+            if (!SameIntentHelpers.CheckSameIntentChildList(one.Values, other.Values, skipPublicAnnotations)) { return false; }
             return true;
         }
     }

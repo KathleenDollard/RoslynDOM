@@ -8,6 +8,7 @@ namespace RoslynDom
     public class RDomEnum : RDomBase<IEnum, ISymbol>, IEnum
     {
         private AttributeList _attributes = new AttributeList();
+        private RDomList<IEnumValue> _values;
 
         public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
@@ -16,10 +17,20 @@ namespace RoslynDom
         internal RDomEnum(RDomEnum oldRDom)
              : base(oldRDom)
         {
+            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
+            var newValues = RoslynDomUtilities.CopyMembers(oldRDom._values);
+            Values.AddOrMoveRange(newValues);
             AccessModifier = oldRDom.AccessModifier;
             UnderlyingType = oldRDom.UnderlyingType;
         }
+
+        protected override void Initialize()
+        {
+            _values = new RDomList<IEnumValue>(this);
+            base.Initialize();
+        }
+
         public AttributeList Attributes
         { get { return _attributes; } }
 
@@ -39,6 +50,8 @@ namespace RoslynDom
         public IType ContainingType
         { get { return Parent as IType; } }
 
+        public RDomList<IEnumValue> Values
+        { get { return _values; } }
 
         public AccessModifier AccessModifier { get; set; }
 
