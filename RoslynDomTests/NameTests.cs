@@ -27,7 +27,7 @@ namespace RoslynDomTests
                         namespace testing.Namespace1
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Root", root.Name);
         }
 
@@ -40,7 +40,7 @@ namespace RoslynDomTests
                         namespace testing.Namespace1
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("System.Diagnostics.Tracing", root.UsingDirectives.First().Name);
         }
 
@@ -53,7 +53,7 @@ namespace RoslynDomTests
                         namespace testing.Namespace1
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("System", root.UsingDirectives.First().Name);
         }
 
@@ -65,7 +65,7 @@ namespace RoslynDomTests
                         namespace testing.Namespace1
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var ns = root.DescendantNamespaces.Last();
             var symbol = ((IRoslynDom)ns).Symbol;
             Assert.AreEqual("testing", ns.Namespace);
@@ -82,7 +82,7 @@ namespace RoslynDomTests
                         public class MyClass
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var cl = root.Classes.First();
             var symbol = ((IRoslynDom)cl).Symbol;
             Assert.AreEqual("MyClass", cl.Name);
@@ -98,7 +98,7 @@ namespace RoslynDomTests
                         public enum MyEnum
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var en = root.Enums.First();
             var symbol = ((IRoslynDom)en).Symbol;
             Assert.AreEqual("MyEnum", en.Name);
@@ -115,7 +115,7 @@ namespace RoslynDomTests
                         public struct MyStruct
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var st = root.Structures.First();
             var symbol = ((IRoslynDom)st).Symbol;
             Assert.AreEqual("MyStruct", st.Name);
@@ -132,7 +132,7 @@ namespace RoslynDomTests
                         public interface MyInterface
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var inter = root.Interfaces.First();
             var symbol = ((IRoslynDom)inter).Symbol;
             Assert.AreEqual("MyInterface", inter.Name);
@@ -147,7 +147,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { public int myField; }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var fld = root.Classes.First().Fields.First();
             var symbol = ((IRoslynDom)fld).Symbol;
             Assert.AreEqual("myField", fld.Name);
@@ -162,7 +162,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { public int myField, myField2; }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var fld = root.Classes.First().Fields.First();
             var fld2 = root.Classes.First().Fields.Last();
             var symbol = ((IRoslynDom)fld).Symbol;
@@ -182,7 +182,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { public int myProperty { get; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var pr = root.Classes.First().Properties.First();
             var symbol = ((IRoslynDom)pr).Symbol;
             Assert.AreEqual("myProperty", pr.Name);
@@ -197,7 +197,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { public int myMethod(int x) { return x; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var me = root.Classes.First().Methods.First();
             var symbol = ((IRoslynDom)me).Symbol;
             Assert.AreEqual("myMethod", me.Name);
@@ -216,7 +216,7 @@ namespace RoslynDomTests
                             { }
                         }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace2.testing.Namespace1", root.DescendantNamespaces.Last().QualifiedName);
         }
 
@@ -230,7 +230,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { public class MyNestedClass {  } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var nestedType = root.Classes.First().Classes.First();
             var symbol = ((IRoslynDom)nestedType).Symbol;
             Assert.AreEqual("MyNestedClass", nestedType.Name);
@@ -249,7 +249,7 @@ namespace RoslynDomTests
                         { }
                         }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var ns = root.ChildNamespaces.First();
             var symbol = ((IRoslynDom)ns).Symbol;
             Assert.AreEqual("Namespace1", root.DescendantNamespaces.Last().Name);
@@ -267,7 +267,7 @@ namespace Namespace1
                             { }
                         
 }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass", root.Namespaces.First().Classes.First().Name);
         }
 
@@ -281,7 +281,7 @@ namespace Namespace1
                         public enum MyEnum
                             { }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyEnum", root.Classes.First().Enums.First().Name);
         }
 
@@ -295,7 +295,7 @@ namespace Namespace1
                         public struct MyStruct
                             { }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyStruct", root.Classes.First().Structures.First().Name);
         }
 
@@ -310,7 +310,7 @@ namespace Namespace1
                         public interface MyInterface
                             { }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyInterface", root.Classes.First().Interfaces.First().Name);
         }
 
@@ -326,7 +326,7 @@ namespace Namespace1
                                 public int myField; 
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("myField", root.Classes.First().Classes.First().Fields.First().Name);
         }
 
@@ -342,7 +342,7 @@ namespace Namespace1
                                 public int myProperty { get; } 
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("myProperty", root.Classes.First().Classes.First().Properties.First().Name);
         }
 
@@ -358,7 +358,7 @@ namespace Namespace1
                                 public int myMethod(int x) { return x; } 
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("myMethod", root.Classes.First().Classes.First().Methods.First().Name);
         }
 
@@ -374,7 +374,7 @@ namespace Namespace1
                                 public class MyNestedNestedClass {}
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyNestedNestedClass", root.Classes.First().Classes.First().Classes.First().Name);
         }
 
@@ -392,7 +392,7 @@ namespace Namespace1
                         namespace @class
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("class", root.ChildNamespaces.First().Name);
         }
 
@@ -404,7 +404,7 @@ namespace Namespace1
                         public class @namespace
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("namespace", root.Classes.First().Name);
         }
 
@@ -416,7 +416,7 @@ namespace Namespace1
                         public enum @class
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("class", root.Enums.First().Name);
         }
 
@@ -429,7 +429,7 @@ namespace Namespace1
                         public struct @class
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("class", root.Structures.First().Name);
         }
 
@@ -441,7 +441,7 @@ namespace Namespace1
                         public interface @class
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("class", root.Interfaces.First().Name);
         }
 
@@ -452,7 +452,7 @@ namespace Namespace1
             var csharpCode = @"
                         public class MyClass
                         { public int @class; }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("class", root.Classes.First().Fields.First().Name);
         }
 
@@ -463,7 +463,7 @@ namespace Namespace1
             var csharpCode = @"
                         public class MyClass
                         { public int @class { get; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("class", root.Classes.First().Properties.First().Name);
         }
 
@@ -474,7 +474,7 @@ namespace Namespace1
             var csharpCode = @"
                         public class MyClass
                         { public int @class(int x) { return x; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("class", root.Classes.First().Methods.First().Name);
         }
 
@@ -485,7 +485,7 @@ namespace Namespace1
             var csharpCode = @"
                         public class MyClass
                         { public class @public {  } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("public", root.Classes.First().Classes.First().Name);
         }
 
@@ -505,7 +505,7 @@ namespace Namespace1
                             { }
                         
 }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1.MyClass", root.Namespaces.First().Classes.First().QualifiedName);
         }
 
@@ -516,7 +516,7 @@ namespace Namespace1
             var csharpCode = @"
                         public class MyClass
                             { }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass", root.Classes.First().QualifiedName);
         }
 
@@ -529,7 +529,7 @@ namespace Namespace1
 {                       public enum MyEnum
                             { }
   }                      ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1.MyEnum", root.Namespaces.First().Enums.First().QualifiedName);
         }
 
@@ -543,7 +543,7 @@ namespace Namespace1
 {                        public struct MyStruct
                             { }
  }                       ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1.MyStruct", root.Namespaces.First().Structures.First().QualifiedName);
         }
 
@@ -557,7 +557,7 @@ namespace Namespace1
 {                        public interface MyInterface
                             { }
 }                        ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1.MyInterface", root.Namespaces.First().Interfaces.First().QualifiedName);
         }
 
@@ -576,7 +576,7 @@ namespace Namespace1
                             }
                         }
 }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1.MyClass.MyNestedClass.MyNestedNestedClass",
                 root.Namespaces.First().Classes.First().Classes.First().Classes.First()
                 .QualifiedName);
@@ -595,7 +595,7 @@ namespace Namespace1
                             { }
                         }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace2.testing.Namespace1", 
                 root.ChildNamespaces.First().ChildNamespaces.First().ChildNamespaces.First().OuterName);
         }
@@ -608,7 +608,7 @@ namespace Namespace1
                         namespace Namespace1
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1", root.ChildNamespaces.First().OuterName);
         }
 
@@ -624,7 +624,7 @@ namespace Namespace1
                             { }
                         
 }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1.MyClass", root.Namespaces.First().Classes.First().OuterName);
         }
 
@@ -638,7 +638,7 @@ namespace Namespace1
                         public enum MyEnum
                             { }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass+MyEnum", root.Classes.First().Enums.First().OuterName);
         }
 
@@ -653,7 +653,7 @@ namespace Namespace1
                         public struct MyStruct
                             { }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass+MyStruct", root.Classes.First().Structures.First().OuterName);
         }
 
@@ -667,7 +667,7 @@ namespace Namespace1
                         public interface MyInterface
                             { }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass+MyInterface", root.Classes.First().Interfaces.First().OuterName);
         }
 
@@ -683,7 +683,7 @@ namespace Namespace1
                                 public int myField; 
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass+MyNestedClass.myField", root.Classes.First().Classes.First().Fields.First().OuterName);
         }
 
@@ -699,7 +699,7 @@ namespace Namespace1
                                 public int myProperty { get; } 
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass+MyNestedClass.myProperty", root.Classes.First().Classes.First().Properties.First().OuterName);
         }
 
@@ -715,7 +715,7 @@ namespace Namespace1
                                 public int myMethod(int x) { return x; } 
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass+MyNestedClass.myMethod", root.Classes.First().Classes.First().Methods.First().OuterName);
         }
 
@@ -731,7 +731,7 @@ namespace Namespace1
                                 public class MyNestedNestedClass {}
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("MyClass+MyNestedClass+MyNestedNestedClass", root.Classes.First().Classes.First().Classes.First().OuterName);
         }
 
@@ -750,7 +750,7 @@ namespace NamespaceOuter
                             { }
                         
 }}";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("NamespaceOuter.Namespace1", root.ChildNamespaces.First().ChildNamespaces.First().Classes.First().Namespace);
         }
 
@@ -765,7 +765,7 @@ namespace Namespace1
                             { }
                         
 }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("Namespace1", root.Namespaces.First().Classes.First().Namespace);
         }
 
@@ -780,7 +780,7 @@ namespace Namespace1
                             { }
                         
 }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("", root.Namespaces.First().Namespace);
         }
 
@@ -794,7 +794,7 @@ namespace NamespaceOuter
 {                       public enum MyEnum
                             { }
   } }                     ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Enums.First().Namespace);
         }
 
@@ -809,7 +809,7 @@ namespace NamespaceOuter
 {                        public struct MyStruct
                             { }
  }   }                    ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Structures.First().Namespace);
         }
 
@@ -824,7 +824,7 @@ namespace NamespaceOuter
 {                        public interface MyInterface
                             { }
 }   }                     ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("NamespaceOuter.Namespace1", root.Namespaces.First().Interfaces.First().Namespace);
         }
 
@@ -843,7 +843,7 @@ namespace NamespaceOuter
                             }
                         }
 }}";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.AreEqual("NamespaceOuter.Namespace1",
                 root.Namespaces.First().Classes.First().Classes.First().Classes.First()
                 .Namespace);
@@ -869,7 +869,7 @@ namespace MyNamespace
 }
 public class C   { }
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var methods = root.Namespaces.First().Classes.First().Methods.ToArray();
             var method = methods[0];
             var retTypeA = method.ReturnType;

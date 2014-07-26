@@ -58,11 +58,11 @@ namespace RoslynDom.CSharp
             if (itemAsT.IsImplicitlyTyped)
             { typeSyntax = SyntaxFactory.IdentifierName("var"); }
             else
-            { typeSyntax = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Type)); }
+            { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Type)); }
             var nodeDeclarator = SyntaxFactory.VariableDeclarator(itemAsT.Name);
             if (itemAsT.Initializer != null)
             {
-                var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Initializer);
+                var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Initializer);
                 nodeDeclarator = nodeDeclarator.WithInitializer(SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax));
             }
             var nodeDeclaratorInList = SyntaxFactory.SeparatedList(SyntaxFactory.List<VariableDeclaratorSyntax>(new VariableDeclaratorSyntax[] { (VariableDeclaratorSyntax)nodeDeclarator }));

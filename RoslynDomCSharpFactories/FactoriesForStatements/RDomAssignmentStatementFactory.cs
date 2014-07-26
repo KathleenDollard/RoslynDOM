@@ -45,8 +45,8 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IAssignmentStatement;
-            var leftSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Left);
-            var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Expression);
+            var leftSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Left);
+            var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression);
             var syntaxKind =Mappings. GetSyntaxKindFromOperator (itemAsT.Operator);
             var assignmentSyntax = SyntaxFactory.BinaryExpression(syntaxKind,
                             (ExpressionSyntax)leftSyntax, (ExpressionSyntax)expressionSyntax);

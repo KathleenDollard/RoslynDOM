@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
             else
             {
                 var statement = RoslynCSharpUtilities.BuildStatement(item.Statements, item.HasBlock);
-                var condition = RDomCSharpFactory.Factory.BuildSyntax(item.Condition);
+                var condition = RDomCSharp.Factory.BuildSyntax(item.Condition);
                 node = makeSyntaxDelegate((ExpressionSyntax)condition, statement);
             }
 

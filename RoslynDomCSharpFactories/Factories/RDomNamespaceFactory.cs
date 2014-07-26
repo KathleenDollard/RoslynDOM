@@ -48,13 +48,13 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.NamespaceDeclaration(identifier);
             if (itemAsNamespace == null) { throw new InvalidOperationException(); }
             var usingsSyntax = itemAsNamespace.UsingDirectives
-                        .Select(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                        .Select(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .OfType<UsingDirectiveSyntax>()
                         .ToList();
             if (usingsSyntax.Count() > 0) { node = node.WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(usingsSyntax)); }
 
             var membersSyntax = itemAsNamespace.StemMembers
-                        .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .OfType<MemberDeclarationSyntax>()
                         .ToList();
             if (membersSyntax.Count() > 0) { node = node.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(membersSyntax)); }

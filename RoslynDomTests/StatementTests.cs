@@ -34,8 +34,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(5, statements.Count());
@@ -65,8 +65,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(5, statements.Count());
@@ -104,8 +104,8 @@ namespace RoslynDomTests
             }           
             ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(3, statements.Count());
@@ -148,8 +148,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(3, statements.Count());
@@ -178,8 +178,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(2, statements.Count());
@@ -208,8 +208,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
@@ -237,8 +237,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
@@ -264,8 +264,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
@@ -291,8 +291,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
@@ -318,8 +318,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
@@ -356,8 +356,8 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharpFactory.Factory.BuildSyntax(root);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
             var property = root.RootClasses.First().Properties .First();
             var statements = property.GetAccessor.Statements.ToArray();
             Assert.AreEqual(5, statements.Count());

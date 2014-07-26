@@ -32,7 +32,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.ReturnStatement();
             if (itemAsT.Return != null)
             {
-                var returnExpressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Return);
+                var returnExpressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Return);
                 node = node.WithExpression((ExpressionSyntax)returnExpressionSyntax);
             }
 

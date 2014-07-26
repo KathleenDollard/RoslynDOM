@@ -45,7 +45,7 @@ namespace Namespace1
 }
 ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var rootAttributes = GetRootAttributeNames(root).ToArray();
             Assert.AreEqual(5, rootAttributes.Count());
             Assert.AreEqual("A", rootAttributes[0]);
@@ -92,7 +92,7 @@ var classAttributeNames = from x in root.RootClasses
             public class MyClass
             { }
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
 
             var using1 = root.UsingDirectives.First();
             Assert.AreEqual("Fred",using1.PublicAnnotations.GetValue <string>("kad_Test1","val1"));

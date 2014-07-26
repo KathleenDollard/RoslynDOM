@@ -8,13 +8,13 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class RDomCSharpFactory
+    public class RDomCSharp
     {
-        private static RDomCSharpFactory _factory = new RDomCSharpFactory();
+        private static RDomCSharp _factory = new RDomCSharp();
 
-        private RDomCSharpFactory() { }
+        private RDomCSharp() { }
 
-        public static RDomCSharpFactory Factory
+        public static RDomCSharp Factory
         { get { return _factory; } }
 
         public IRoot GetRootFromFile(string fileName)

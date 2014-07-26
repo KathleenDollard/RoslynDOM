@@ -18,7 +18,7 @@ namespace RoslynDomTests
             [Foo(""Fred"", bar:3, bar2:""George"")] 
             public class Bar{}           
             ";
-            var rDomRoot = RDomCSharpFactory.Factory.GetRootFromString(csharpCode) as RDomRoot;
+            var rDomRoot = RDomCSharp.Factory.GetRootFromString(csharpCode) as RDomRoot;
             var class1 = rDomRoot.RootClasses.First();
             var attribute = class1.Attributes.Attributes.First();
             var class2 = class1.Copy();
@@ -39,7 +39,7 @@ namespace RoslynDomTests
                 public string FooBar() {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var rDomClass = root.RootClasses.First() as RDomClass;
             var method1 = rDomClass.Methods.First();
             var method2 = method1.Copy();
@@ -60,7 +60,7 @@ namespace RoslynDomTests
                 public string FooBar() {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var attribute1 = class1.Attributes.Attributes.First();
             var attribute2 = class1.Attributes.Attributes.First().Copy() as RDomAttribute;
@@ -69,9 +69,9 @@ namespace RoslynDomTests
             Assert.IsFalse(attribute1.SameIntent(attribute2));
             Assert.AreEqual("Foo2", attribute2.Name);
             var expected = "[Foo2(\"Fred\", bar: 3, bar2 = 3.14, bar3 = true)]";
-            var actual = RDomCSharpFactory.Factory.BuildSyntax(attribute2).ToString();
+            var actual = RDomCSharp.Factory.BuildSyntax(attribute2).ToString();
             var expectedClass = "[Foo(\"Fred\", bar: 3, bar2 = 3.14, bar3 = true)]\r\npublic class Bar\r\n{\r\n    public String FooBar()\r\n    {\r\n    }\r\n}";
-            var actualClass = RDomCSharpFactory.Factory.BuildSyntax(class1).ToString();
+            var actualClass = RDomCSharp.Factory.BuildSyntax(class1).ToString();
             Assert.AreEqual(expected, actual);
             Assert.AreEqual(expectedClass, actualClass);
         }
@@ -87,14 +87,14 @@ namespace RoslynDomTests
                 public string FooBar() {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var class2 = root.RootClasses.First().Copy() as RDomClass;
             Assert.IsTrue(class1.SameIntent(class2));
             class2.Name = "Bar2";
             Assert.IsFalse(class1.SameIntent(class2));
             Assert.AreEqual("Bar2", class2.Name);
-            var newCode = RDomCSharpFactory.Factory.BuildSyntax(class2).ToString();
+            var newCode = RDomCSharp.Factory.BuildSyntax(class2).ToString();
             var expected = "[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}";
             Assert.AreEqual(expected, newCode);
         }
@@ -111,14 +111,14 @@ namespace RoslynDomTests
                 public string FooBar() {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var class2 = root.RootClasses.First().Copy() as RDomClass;
             Assert.IsTrue(class1.SameIntent(class2));
             class2.Name = "Bar2";
             Assert.IsFalse(class1.SameIntent(class2));
             Assert.AreEqual("Bar2", class2.Name);
-            var newCode = RDomCSharpFactory.Factory.BuildSyntax(class2).ToString();
+            var newCode = RDomCSharp.Factory.BuildSyntax(class2).ToString();
             Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    private Int32 fooish;\r\n\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode);
         }
 
@@ -131,7 +131,7 @@ namespace RoslynDomTests
                 public string FooBar(int bar1, string bar2) {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var method = root.RootClasses.First().Methods.First() as RDomMethod;
             var param = method.Parameters.First();
             Assert.AreEqual(2, method.Parameters.Count());
@@ -148,7 +148,7 @@ namespace RoslynDomTests
                 public string FooBar(int bar1, string bar2) {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First() as RDomClass;
             var param = class1.TypeParameters.Skip (1).First();
             Assert.AreEqual(3, class1.TypeParameters.Count());
@@ -167,7 +167,7 @@ namespace RoslynDomTests
                 public string FooBar(int bar1, string bar2) {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First() as RDomClass;
             Assert.AreEqual(3, class1.TypeParameters.Count());
             class1.TypeParameters.Clear();
@@ -184,7 +184,7 @@ namespace RoslynDomTests
                 public string FooBar(int bar1, string bar2) {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First() as RDomClass;
             Assert.AreEqual(2, class1.Members.Count());
             class1.MembersAll.Clear();
@@ -198,7 +198,7 @@ namespace RoslynDomTests
             using System;
             public class Bar{}           
             public struct Bar2{}             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode) as RDomRoot;
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode) as RDomRoot;
             Assert.AreEqual(3, root.StemMembers.Count());
             var class1 = root.Classes.First();
             root.StemMembersAll. Remove(class1);
@@ -212,7 +212,7 @@ namespace RoslynDomTests
             using System;
             public class Bar{}           
             public struct Bar2{}             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode) as RDomRoot;
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode) as RDomRoot;
             Assert.AreEqual(3, root.StemMembers.Count());
             var class1 = root.Classes.First();
             root.ClearStemMembers ();
@@ -229,7 +229,7 @@ namespace RoslynDomTests
             public enum Bar3{}           
             public interface Bar4{}           
             ";
-            var rDomRoot = RDomCSharpFactory.Factory.GetRootFromString(csharpCode) as RDomRoot;
+            var rDomRoot = RDomCSharp.Factory.GetRootFromString(csharpCode) as RDomRoot;
             var rDomRoot2 = rDomRoot.Copy() ;
             var class1 = rDomRoot.RootClasses.First() as RDomClass;
             Assert.IsTrue(rDomRoot.SameIntent(rDomRoot2));
@@ -245,8 +245,8 @@ namespace RoslynDomTests
             public enum Bar3{}           
             public interface Bar4{}           
             ";
-            var rDomRoot = RDomCSharpFactory.Factory.GetRootFromString(csharpCode) as RDomRoot;
-            var output = RDomCSharpFactory.Factory .BuildSyntax(rDomRoot);
+            var rDomRoot = RDomCSharp.Factory.GetRootFromString(csharpCode) as RDomRoot;
+            var output = RDomCSharp.Factory .BuildSyntax(rDomRoot);
             var expectedCode = "using System;\r\n\r\npublic class Bar\r\n{\r\n}\r\n\r\npublic struct Bar2\r\n{\r\n}\r\n\r\npublic enum Bar3\r\n{\r\n}\r\n\r\npublic interface Bar4\r\n{\r\n}";
             Assert.AreEqual(expectedCode,output.ToString() );
         }

@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
             var itemAsInterface = item as IInterface;
             if (itemAsInterface == null) { throw new InvalidOperationException(); }
             var membersSyntax = itemAsInterface.Members
-                        .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
             node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));

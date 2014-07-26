@@ -44,7 +44,7 @@ namespace RoslynDom.CSharp
             var itemAsMethod = item as IMethod;
             var nameSyntax = SyntaxFactory.Identifier(itemAsMethod.Name);
 
-            var returnTypeSyntax = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsMethod.ReturnType).First();
+            var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsMethod.ReturnType).First();
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsMethod);
             var node = SyntaxFactory.MethodDeclaration(returnTypeSyntax, nameSyntax)
                             .WithModifiers(modifiers);
@@ -53,7 +53,7 @@ namespace RoslynDom.CSharp
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             var parameterSyntaxList = itemAsMethod.Parameters
-                        .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .OfType<ParameterSyntax>()
                         .ToList();
             if (parameterSyntaxList.Any()) { node = node.WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterSyntaxList))); }

@@ -43,7 +43,7 @@ namespace RoslynDom.CSharp
         public static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
         {
             var statementSyntaxList = statements
-                            .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                            .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                             .ToList();
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
         }
@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
         {
             StatementSyntax statement;
             var statementSyntaxList = statements
-                         .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                          .ToList();
             if (hasBlock || statements.Count() > 1)
             { statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); }

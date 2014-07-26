@@ -21,7 +21,7 @@ namespace RoslynDomTests
             [Foo(""Fred"", bar:3, bar2:""George"")] 
             public class Bar{}           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attribute = root.RootClasses.First().Attributes.Attributes.First();
             var newAttribute = attribute.Copy();
             Assert.IsNotNull(newAttribute);
@@ -35,7 +35,7 @@ namespace RoslynDomTests
             [Foo(""Fred"", bar:3, bar2:""George"")] 
             public class Bar{}           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributeValue = root.RootClasses.First().Attributes.Attributes.First().AttributeValues.Last();
             var newAttributeValue = attributeValue.Copy();
             Assert.IsNotNull(newAttributeValue);
@@ -51,7 +51,7 @@ namespace RoslynDomTests
                public string Foo(int id, string firstName, string lastName) {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var method = root.RootClasses.First().Methods.First();
             var newMethod = method.Copy();
             Assert.IsNotNull(newMethod);
@@ -67,7 +67,7 @@ namespace RoslynDomTests
                public string Foo(int id, string firstName, string lastName) {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var methodParameter = root.RootClasses.First().Methods.First().Parameters.First();
             var newMethodParameter = methodParameter.Copy();
             Assert.IsNotNull(newMethodParameter);
@@ -89,7 +89,7 @@ namespace RoslynDomTests
                 }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var method = root.RootClasses.First().Methods.First();
             var newMethod = method.Copy();
             Assert.IsNotNull(newMethod);
@@ -100,8 +100,8 @@ namespace RoslynDomTests
             Assert.IsTrue(statements[1] is RDomDeclarationStatement);
             Assert.IsTrue(statements[2] is RDomAssignmentStatement);
             Assert.IsTrue(statements[3] is RDomReturnStatement);
-            var outputOld = RDomCSharpFactory.Factory.BuildSyntax(method);
-            var outputNew = RDomCSharpFactory.Factory.BuildSyntax(newMethod);
+            var outputOld = RDomCSharp.Factory.BuildSyntax(method);
+            var outputNew = RDomCSharp.Factory.BuildSyntax(newMethod);
             Assert.AreEqual(outputOld.ToString(), outputNew.ToString());
             var expected = "public String Foo(Int32 id, String firstName, String lastName)\r\n{\r\n    if (true)\r\n    {\r\n    }\r\n\r\n    var x = \", \";\r\n    x = lastName + x + firstName;\r\n    return ret;\r\n}";
             Assert.AreEqual(expected, outputNew.ToString());
@@ -116,7 +116,7 @@ namespace RoslynDomTests
                public string Foo{get; set;}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var property = root.RootClasses.First().Properties.First();
             var newProperty = property.Copy();
             Assert.IsNotNull(newProperty);
@@ -139,7 +139,7 @@ namespace RoslynDomTests
                } }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var property = root.RootClasses.First().Properties.First();
             var newProperty = property.Copy();
             Assert.IsNotNull(newProperty);
@@ -175,7 +175,7 @@ namespace RoslynDomTests
                }
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var property = root.RootClasses.First().Properties.First();
             var newProperty = property.Copy();
             Assert.IsNotNull(newProperty);
@@ -195,7 +195,7 @@ namespace RoslynDomTests
                public string Foo{get; set;}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var newClass = class1.Copy();
             Assert.IsNotNull(newClass);
@@ -212,7 +212,7 @@ namespace RoslynDomTests
                public string Foo2(int FooBar) {}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var structure = root.RootStructures.First();
             var newStructure = structure.Copy();
             Assert.IsNotNull(newStructure);
@@ -228,7 +228,7 @@ namespace RoslynDomTests
                string Foo{get; set;}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var interface1 = root.RootInterfaces.First();
             var newInterface = interface1.Copy();
             Assert.IsNotNull(newInterface);
@@ -244,7 +244,7 @@ namespace RoslynDomTests
               Unknown, Red, Green, Blue
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var enum1 = root.RootEnums.First();
             var newEnum = enum1.Copy();
             Assert.IsNotNull(newEnum);
@@ -263,7 +263,7 @@ namespace RoslynDomTests
                 }  
             }         
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var namespace1 = root.Namespaces.First();
             var newNamespace = namespace1.Copy();
             Assert.IsNotNull(newNamespace);
@@ -289,7 +289,7 @@ namespace RoslynDomTests
                 }  
             }         
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var newRoot = root.Copy();
             Assert.IsNotNull(newRoot);
             Assert.IsTrue(newRoot.SameIntent(root));
@@ -306,7 +306,7 @@ namespace RoslynDomTests
                public string Foo{get; set;}
             }           
             ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var newClass = class1.Copy();
             Assert.IsNotNull(newClass);

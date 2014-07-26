@@ -56,8 +56,8 @@ namespace RoslynDom.CSharp
                 if (itemAsT.Variable.IsImplicitlyTyped)
                 { typeSyntax = SyntaxFactory.IdentifierName("var"); }
                 else
-                { typeSyntax = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Variable.Type)); }
-                var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Variable.Initializer);
+                { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
+                var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Initializer);
                 var nodeDeclarator = SyntaxFactory.VariableDeclarator(itemAsT.Variable.Name);
                 nodeDeclarator = nodeDeclarator.WithInitializer(SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax));
                 var nodeDeclaratorInList = SyntaxFactory.SeparatedList(SyntaxFactory.List<VariableDeclaratorSyntax>(new VariableDeclaratorSyntax[] { (VariableDeclaratorSyntax)nodeDeclarator }));
@@ -66,7 +66,7 @@ namespace RoslynDom.CSharp
             }
             else
             {
-                var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Expression) as ExpressionSyntax;
+                var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression) as ExpressionSyntax;
                 node = node.WithExpression(expressionSyntax);
             }
 

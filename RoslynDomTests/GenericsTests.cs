@@ -26,7 +26,7 @@ public class Foo2<T, T1>{}
 public class Foo3<T, T1, T2>{}
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var classes = root.Classes.ToArray();
             Assert.AreEqual(0, classes[0].TypeParameters.Count());
             Assert.AreEqual(1, classes[1].TypeParameters.Count());
@@ -46,7 +46,7 @@ public struct Foo2<T, T1>{}
 public struct Foo3<T, T1, T2>{}
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var structures = root.Structures.ToArray();
             Assert.AreEqual(0, structures[0].TypeParameters.Count());
             Assert.AreEqual(1, structures[1].TypeParameters.Count());
@@ -66,7 +66,7 @@ public interface Foo2<T, T1>{}
 public interface Foo3<T, T1, T2>{}
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var interfaces = root.Interfaces.ToArray();
             Assert.AreEqual(0, interfaces[0].TypeParameters.Count());
             Assert.AreEqual(1, interfaces[1].TypeParameters.Count());
@@ -88,7 +88,7 @@ public void Foo2<T, T1>();
 public void Foo3<T, T1, T2>();
 }
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var methods = root.Classes.First().Methods.ToArray();
             Assert.AreEqual(0, methods[0].TypeParameters.Count());
             Assert.AreEqual(1, methods[1].TypeParameters.Count());
@@ -108,7 +108,7 @@ public void Foo3<T, T1, T2>();
 public class Foo3<T, T1, T2>
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().TypeParameters.ToArray();
             Assert.AreEqual("T", parameters[0].Name);
             Assert.AreEqual("T1", parameters[1].Name);
@@ -124,7 +124,7 @@ public class Foo3<T, T1, T2>
 public struct Foo3<T, T1, T2>
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Structures.First().TypeParameters.ToArray();
             Assert.AreEqual("T", parameters[0].Name);
             Assert.AreEqual("T1", parameters[1].Name);
@@ -140,7 +140,7 @@ public struct Foo3<T, T1, T2>
 public interface Foo3<T, T1, T2>
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Interfaces.First().TypeParameters.ToArray();
             Assert.AreEqual("T", parameters[0].Name);
             Assert.AreEqual("T1", parameters[1].Name);
@@ -158,7 +158,7 @@ public class Foo
 public string Foo3<T, T1, T2>() {};
 }
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().Methods.First().TypeParameters.ToArray();
             Assert.AreEqual("T", parameters[0].Name);
             Assert.AreEqual("T1", parameters[1].Name);
@@ -178,7 +178,7 @@ public string Foo3<T, T1, T2>() {};
 public class Foo3<in T, out T1,out in T2, T3>
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().TypeParameters.ToArray();
             Assert.AreEqual(Variance.In, parameters[0].Variance);
             Assert.AreEqual(Variance.Out, parameters[1].Variance);
@@ -196,7 +196,7 @@ public class Foo3<in T, out T1,out in T2, T3>
 public struct Foo3<in T, out T1,out in T2, T3>
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Structures.First().TypeParameters.ToArray();
             Assert.AreEqual(Variance.In, parameters[0].Variance);
             Assert.AreEqual(Variance.Out, parameters[1].Variance);
@@ -214,7 +214,7 @@ public struct Foo3<in T, out T1,out in T2, T3>
 public interface Foo3<in T, out T1,out in T2, T3>
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Interfaces.First().TypeParameters.ToArray();
             Assert.AreEqual(Variance.In, parameters[0].Variance);
             Assert.AreEqual(Variance.Out, parameters[1].Variance);
@@ -241,7 +241,7 @@ public class Foo3<in T, out T1, out T2, T3, T4, T5, T6, T7>
     where T7 : T3
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().TypeParameters.ToArray();
             parameters[0].Check(0, hasReferenceConstraint: true);
             parameters[1].Check(1, hasValueTypeConstraint: true);
@@ -268,7 +268,7 @@ public struct Foo3<in T, out T1, out T2, T3, T4, T5, T6, T7>
     where T7 : T3
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Structures.First().TypeParameters.ToArray();
             parameters[0].Check(0, hasReferenceConstraint: true);
             parameters[1].Check(1, hasValueTypeConstraint: true);
@@ -295,7 +295,7 @@ public interface Foo3<in T, out T1, out T2, T3, T4, T5, T6, T7>
     where T7 : T3
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Interfaces.First().TypeParameters.ToArray();
             parameters[0].Check(0, hasReferenceConstraint: true);
             parameters[1].Check(1, hasValueTypeConstraint: true);
@@ -325,7 +325,7 @@ public string Foo3<in T, out T1, out T2, T3, T4, T5, T6, T7>()
 {}
 }
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().Methods.First().TypeParameters.ToArray();
             parameters[0].Check(0, hasReferenceConstraint: true);
             parameters[1].Check(1, hasValueTypeConstraint: true);
@@ -349,7 +349,7 @@ public class Foo3<T, T1, T2, T3>
     where T3 : T2
 {}
 ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().TypeParameters.ToArray();
             IReferencedType[] constraints;
             constraints = parameters[0].ConstraintTypes.ToArray();

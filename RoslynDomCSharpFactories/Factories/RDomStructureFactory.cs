@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
             var itemAsStruct = item as IStructure;
             if (itemAsStruct == null) { throw new InvalidOperationException(); }
             var membersSyntax = itemAsStruct.Members
-                        .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
             node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));

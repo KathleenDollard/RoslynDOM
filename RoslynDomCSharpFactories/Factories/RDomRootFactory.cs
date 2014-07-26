@@ -25,11 +25,11 @@ namespace RoslynDom.CSharp
         {
             var node = SyntaxFactory.CompilationUnit();
             var usingsSyntax = item.UsingDirectives
-                        .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
             var membersSyntax = item.StemMembers
                         .Where(x=>!(x is IUsingDirective))
-                        .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithUsings(SyntaxFactory.List(usingsSyntax));
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));

@@ -334,7 +334,7 @@ namespace RoslynDom.CSharp
         //}
 
         public static ExpressionSyntax GetCondition(IHasCondition itemAsT)
-        { return (ExpressionSyntax)RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Condition); }
+        { return (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition); }
 
         public static StatementSyntax GetStatement(IStatementBlock itemAsT)
         { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock); }

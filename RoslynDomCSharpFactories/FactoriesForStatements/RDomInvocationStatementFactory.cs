@@ -33,7 +33,7 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
         {
             var itemAsT = item as IInvocationStatement;
-            var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Invocation);
+            var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Invocation);
             var node = SyntaxFactory.ExpressionStatement((ExpressionSyntax)expressionSyntax);
 
             return item.PrepareForBuildSyntaxOutput(node);

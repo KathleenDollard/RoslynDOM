@@ -28,7 +28,7 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IBlockStatement;
 
             var statementSyntaxList = itemAsT.Statements
-              .SelectMany(x => RDomCSharpFactory.Factory.BuildSyntaxGroup(x))
+              .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
               .ToList();
             var node = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
 

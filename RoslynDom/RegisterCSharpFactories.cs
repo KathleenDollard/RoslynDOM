@@ -24,7 +24,7 @@ namespace RoslynDom
     public class RDomRootFactoryHelper : RDomFactoryHelper<IRoot>
     { internal RDomRootFactoryHelper() { } }
 
-    public class RDomStemMemberFactoryHelper : RDomFactoryHelper<IStemMemberCommentWhite >
+    public class RDomStemMemberFactoryHelper : RDomFactoryHelper<IStemMemberCommentWhite>
     { internal RDomStemMemberFactoryHelper() { } }
 
     public class RDomTypeMemberFactoryHelper : RDomFactoryHelper<ITypeMemberCommentWhite>

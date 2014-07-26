@@ -26,7 +26,7 @@ namespace RoslynDomTests
                         public class MyClass
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.Classes.First();
             var attributes = class1.Attributes;
             Assert.AreEqual(1, attributes.Attributes.Count());
@@ -42,7 +42,7 @@ namespace RoslynDomTests
                         public enum MyEnum
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Enums.First().Attributes;
             Assert.AreEqual(1, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -57,7 +57,7 @@ namespace RoslynDomTests
                         public struct MyStruct
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Structures.First().Attributes;
             Assert.AreEqual(1, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -72,7 +72,7 @@ namespace RoslynDomTests
                         public interface MyInterface
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Interfaces.First().Attributes;
             Assert.AreEqual(1, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -85,7 +85,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { [Serializable] public int myMethod(int x) { return x; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Methods.First().Attributes;
             Assert.AreEqual(1, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -98,7 +98,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { public int myMethod([Serializable] int x) { return x; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Methods.First().Parameters.First().Attributes;
             Assert.AreEqual(1, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -111,7 +111,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { [Serializable]  public int myProperty { get; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Properties.First().Attributes;
             Assert.AreEqual(1, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -124,7 +124,7 @@ namespace RoslynDomTests
             var csharpCode = @"
                         public class MyClass
                         { [Serializable]  public int myField; }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Fields.First().Attributes;
             Assert.AreEqual(1, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -144,7 +144,7 @@ namespace RoslynDomTests
                         public class MyClass
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -161,7 +161,7 @@ namespace RoslynDomTests
                         public enum MyEnum
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Enums.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -178,7 +178,7 @@ namespace RoslynDomTests
                         public struct MyStruct
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Structures.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -195,7 +195,7 @@ namespace RoslynDomTests
                         public interface MyInterface
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Interfaces.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -212,7 +212,7 @@ namespace RoslynDomTests
                         [Serializable] 
                         [TestClass]                        
                         public int myMethod(int x) { return x; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Methods.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -229,7 +229,7 @@ namespace RoslynDomTests
                         [Serializable] 
                         [TestClass]                        
                         public int myProperty { get; }  }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Properties.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -246,7 +246,7 @@ namespace RoslynDomTests
                         [Serializable] 
                         [TestClass]                        
                         public int myField;  }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Fields.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -265,7 +265,7 @@ namespace RoslynDomTests
                         public class MyClass
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -281,7 +281,7 @@ namespace RoslynDomTests
                         public enum MyEnum
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Enums.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -297,7 +297,7 @@ namespace RoslynDomTests
                         public struct MyStruct
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Structures.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -313,7 +313,7 @@ namespace RoslynDomTests
                         public interface MyInterface
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Interfaces.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -330,7 +330,7 @@ namespace RoslynDomTests
                         [Serializable] 
                         [TestClass]                        
                           public int myMethod(int x) { return x; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Methods.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -347,7 +347,7 @@ namespace RoslynDomTests
                         [Serializable] 
                         [TestClass]                        
                          public int myProperty { get; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Properties.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -364,7 +364,7 @@ namespace RoslynDomTests
                         [Serializable] 
                         [TestClass]                        
                         public int myField;  }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Fields.First().Attributes;
             Assert.AreEqual(2, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -383,7 +383,7 @@ namespace RoslynDomTests
                         public class MyClass
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Attributes;
             Assert.AreEqual(3, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -401,7 +401,7 @@ namespace RoslynDomTests
                         public enum MyEnum
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Enums.First().Attributes;
             Assert.AreEqual(3, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -419,7 +419,7 @@ namespace RoslynDomTests
                         public struct MyStruct
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Structures.First().Attributes;
             Assert.AreEqual(3, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -437,7 +437,7 @@ namespace RoslynDomTests
                         public interface MyInterface
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Interfaces.First().Attributes;
             Assert.AreEqual(3, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -455,7 +455,7 @@ namespace RoslynDomTests
                         [Serializable, TestClass]
                         [Ignore]                  
                         public int myMethod(int x) { return x; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Methods.First().Attributes;
             Assert.AreEqual(3, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -473,7 +473,7 @@ namespace RoslynDomTests
                         [Serializable, TestClass]
                         [Ignore]                  
                         public int myProperty { get; } }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Properties.First().Attributes;
             Assert.AreEqual(3, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -491,7 +491,7 @@ namespace RoslynDomTests
                         [Serializable, TestClass]
                         [Ignore]                  
                         public int myField;  }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Fields.First().Attributes;
             Assert.AreEqual(3, attributes.Attributes.Count());
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
@@ -512,7 +512,7 @@ namespace RoslynDomTests
                         public class MyClass
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributes = root.Classes.First().Attributes;
             Assert.AreEqual(3, attributes.Attributes.Count());
             var first = attributes.Attributes.First();
@@ -544,7 +544,7 @@ namespace RoslynDomTests
                         public class MyClass
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributeValues = root.Classes.First().Attributes.Attributes.First().AttributeValues.ToArray() ;
             Assert.AreEqual(4, attributeValues.Count());
 
@@ -584,7 +584,7 @@ namespace RoslynDomTests
                         public class MyClass
                             { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributeValues = root.Classes.First().Attributes.Attributes.First().AttributeValues.ToArray();
             Assert.AreEqual(4, attributeValues.Count());
 
@@ -625,7 +625,7 @@ namespace RoslynDomTests
                             { }
                         ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributeValues = root.Classes.First().Attributes.Attributes.First().AttributeValues.ToArray() ;
             Assert.AreEqual(1, attributeValues.Count());
 
@@ -648,7 +648,7 @@ namespace RoslynDomTests
                             { }
                         ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributeValues = root.Classes.First().Attributes.Attributes.First().AttributeValues.ToArray();
             Assert.AreEqual(1, attributeValues.Count());
 
@@ -670,7 +670,7 @@ namespace RoslynDomTests
                             { }
                         ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var attributeValues = root.Classes.First().Attributes.Attributes.First().AttributeValues.ToArray();
             Assert.AreEqual(1, attributeValues.Count());
 
@@ -693,7 +693,7 @@ namespace RoslynDomTests
                         public class MyClass
                         {}
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var cl = root.Classes.First();
             var attributes = cl.Attributes.Attributes.ToArray();
             var attributeValues = attributes[0].AttributeValues.ToArray();
@@ -719,7 +719,7 @@ namespace RoslynDomTests
                         public struct MyStructure
                         { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var structure = root.Structures .First();
             var attributes = structure.Attributes.Attributes.ToArray();
             var attributeValues = attributes[0].AttributeValues.ToArray();
@@ -745,7 +745,7 @@ namespace RoslynDomTests
                         public enum MyEnum
                         { }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var myEnum = root.Enums.First();
             var attributes = myEnum.Attributes.Attributes.ToArray();
             var attributeValues = attributes[0].AttributeValues.ToArray();
@@ -774,7 +774,7 @@ namespace RoslynDomTests
                             public void foo(int Bar, string Bar2) { }
                         }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var method = root.Classes.First().Methods.First();
             var attributes = method.Attributes.Attributes.ToArray();
             var attributeValues = attributes[0].AttributeValues.ToArray();
@@ -803,7 +803,7 @@ namespace RoslynDomTests
                             public string foo {get; set; }
                         }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var property = root.Classes.First().Properties .First();
             var attributes = property.Attributes.Attributes.ToArray();
             var attributeValues = attributes[0].AttributeValues.ToArray();
@@ -832,7 +832,7 @@ namespace RoslynDomTests
                             public string foo;
                         }
                         ";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var field = root.Classes.First().Fields.First();
             var attributes = field.Attributes.Attributes.ToArray();
             var attributeValues = attributes[0].AttributeValues.ToArray();

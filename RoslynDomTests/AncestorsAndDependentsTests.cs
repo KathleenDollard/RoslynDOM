@@ -35,7 +35,7 @@ namespace RoslynDomTests
             }           
             ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var descendants = root.Descendants;
             Assert.AreEqual (23, descendants.Count());
         }
@@ -62,7 +62,7 @@ namespace RoslynDomTests
             }           
             ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var statement = root.Descendants.OfType<IAssignmentStatement>().First();
             var ancestors = statement.Ancestors;
             Assert.AreEqual(5, ancestors.Count());
@@ -90,7 +90,7 @@ namespace RoslynDomTests
                 }
             ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var descendants = root.Descendants;
             Assert.AreEqual(10, descendants.Count());
         }
@@ -116,7 +116,7 @@ namespace RoslynDomTests
             }           
             ";
 
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var statement = root.Descendants.OfType<IAssignmentStatement>().First();
             var ancestors = statement.Ancestors;
             Assert.AreEqual(4, ancestors.Count());

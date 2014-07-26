@@ -15,7 +15,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Walkthrogh_1_Load_and_check_code()
         {
-            var factory = RDomCSharpFactory.Factory;
+            var factory = RDomCSharp.Factory;
             var root = factory.GetRootFromFile(fileName);
             var output = factory.BuildSyntax(root).ToString();
             File.WriteAllText(outputFileName, output);
@@ -24,7 +24,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Walkthrogh_2_2_Navigate_and_interrogate_code()
         {
-            var factory = RDomCSharpFactory.Factory;
+            var factory = RDomCSharp.Factory;
             var root = factory.GetRootFromFile(fileName);
             Assert.AreEqual(1, root.UsingDirectives.Count());
             Assert.AreEqual("System", root.UsingDirectives.First().Name);
@@ -48,7 +48,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Walkthrogh_2_3_Ask_harder_questions()
         {
-            var factory = RDomCSharpFactory.Factory;
+            var factory = RDomCSharp.Factory;
             var root = factory.GetRootFromFile(fileName);
 
             // Explore variables that have any uint type
@@ -86,7 +86,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
 public void Walkthrogh_2_4_Find_implicit_variables_of_concern()
 {
-    var factory = RDomCSharpFactory.Factory;
+    var factory = RDomCSharp.Factory;
     var root = factory.GetRootFromFile(fileName);
 
     var implicitlyTyped = root

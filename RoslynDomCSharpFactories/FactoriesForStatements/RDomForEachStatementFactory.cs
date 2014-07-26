@@ -34,7 +34,7 @@ namespace RoslynDom.CSharp
             if (itemAsT.Variable.IsImplicitlyTyped)
             { typeSyntax = SyntaxFactory.IdentifierName("var"); }
             else
-            { typeSyntax = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Variable.Type)); }
+            { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
 
             return LoopFactoryHelper.BuildSyntax<IForEachStatement>
                 (itemAsT, (c, s) => SyntaxFactory.ForEachStatement(typeSyntax, itemAsT.Variable.Name, c,s)) ;

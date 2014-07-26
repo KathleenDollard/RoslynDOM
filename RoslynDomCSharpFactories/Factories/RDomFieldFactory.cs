@@ -45,7 +45,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsField = item as IField;
             var nameSyntax = SyntaxFactory.Identifier(itemAsField.Name);
-            var returnType = (TypeSyntax)RDomCSharpFactory.Factory.BuildSyntaxGroup(itemAsField.ReturnType).First();
+            var returnType = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsField.ReturnType).First();
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsField);
             var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
             var variableNode = SyntaxFactory.VariableDeclaration(returnType)

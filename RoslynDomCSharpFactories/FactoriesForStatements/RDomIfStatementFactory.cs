@@ -100,7 +100,7 @@ namespace RoslynDom.CSharp
         }
 
         private static ExpressionSyntax GetCondition(IHasCondition itemAsT)
-        { return (ExpressionSyntax)RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Condition); }
+        { return (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition); }
 
         private static StatementSyntax GetStatement(IStatementBlock itemAsT)
         { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock); }

@@ -15,7 +15,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_using_statements()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var usings = root.UsingDirectives.ToArray();
             Assert.AreEqual(4, usings.Count());
             Assert.AreEqual("System", usings[0].Name);
@@ -28,7 +28,7 @@ namespace RoslynDomExampleTests
         public void Interrogate_non_empty_namespaces()
         {
              // Nonempty namespaces are anticipated to be the primary namespace access mechanism. 
-           IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+           IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var nspaces = root.Namespaces.ToArray();
             Assert.AreEqual(2, nspaces.Count());
             Assert.AreEqual("testing", nspaces[0].Name);
@@ -39,7 +39,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_child_namespaces()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var nspaces = root.ChildNamespaces.ToArray();
             Assert.AreEqual(3, nspaces.Count());
             Assert.AreEqual("testing", nspaces[0].Name);
@@ -51,7 +51,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_all_namespaces()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var nspaces = root.DescendantNamespaces.ToArray();
             Assert.AreEqual(6, nspaces.Count());
             Assert.AreEqual("testing", nspaces[0].Name);
@@ -66,7 +66,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_classes_in_namespaces()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var nspace = root.Namespaces.Last();
             var classes = nspace.Classes.ToArray();
             Assert.AreEqual(2, classes.Count());
@@ -77,7 +77,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_classes_in_root()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var classes = root.RootClasses.ToArray();
             Assert.AreEqual(3, classes.Count());
             Assert.AreEqual("FooClass1", classes[0].Name);
@@ -88,7 +88,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_structs_in_namespace()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var nspace = root.Namespaces.Last();
             var structures = nspace.Structures.ToArray();
             Assert.AreEqual(1, structures.Count());
@@ -98,7 +98,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_interfaces_in_namespace()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var nspace = root.Namespaces.Last();
             var interfaces = nspace.Interfaces.ToArray();
             Assert.AreEqual(1, interfaces.Count());
@@ -108,7 +108,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_enums_in_namespace()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var nspace = root.Namespaces.Last();
             var enums = nspace.Enums.ToArray();
             Assert.AreEqual(1, enums.Count());
@@ -118,7 +118,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_methods_in_class()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var class1 = root.Namespaces.Last().Classes.First();
             var methods = class1.Methods.ToArray();
             Assert.AreEqual(1, methods.Count());
@@ -128,7 +128,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_fields_in_class()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var class1 = root.Namespaces.Last().Classes.First();
             var fields = class1.Fields.ToArray();
             Assert.AreEqual(1, fields.Count());
@@ -138,7 +138,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_properties_in_class()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var class1 = root.Namespaces.Last().Classes.First();
             var properties = class1.Properties.ToArray();
             Assert.AreEqual(1, properties.Count());
@@ -148,7 +148,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_parameters_for_method()
         {
-            IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
             var class1 = root.Namespaces.Last().Classes.First();
             var method = class1.Methods.First();
             var parameters = method.Parameters.ToArray();
@@ -177,7 +177,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Interrogate_attributes_for_class()
         {
-IRoot root = RDomCSharpFactory.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
 var class1 = root.Namespaces.Last().Classes.First();
 var attributes = class1.Attributes.Attributes.ToArray();
 Assert.AreEqual(2, attributes.Count());

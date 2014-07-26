@@ -26,7 +26,7 @@ namespace RoslynDomTests
                                 Console.WriteLine(42);
                             }
                         }";
-            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var root2 = root.Copy();
             var method = root.Classes.First().Methods.First();
             var method2 = root2.Classes.First().Methods.First();
@@ -36,8 +36,8 @@ namespace RoslynDomTests
             Assert.AreEqual(expected, method2.Description);
             Assert.IsTrue(method.SameIntent(method2));
             var expectedOutput = "public class Foo\r\n{\r\n    /// <summary>\r\n    /// This is a test\r\n    /// </summary>\r\n    /// <param name=\"dummy\">With a dummy parameter</param>\r\n    public Void Foo3(String dummy)\r\n    {\r\n        Console.WriteLine(42);\r\n    }\r\n}";
-            var actual1 = RDomCSharpFactory.Factory.BuildSyntax(root).ToString();
-            var actual2 = RDomCSharpFactory.Factory.BuildSyntax(root2).ToString();
+            var actual1 = RDomCSharp.Factory.BuildSyntax(root).ToString();
+            var actual2 = RDomCSharp.Factory.BuildSyntax(root2).ToString();
             Assert.AreEqual(expectedOutput, actual1);
             Assert.AreEqual(expectedOutput, actual2);
 

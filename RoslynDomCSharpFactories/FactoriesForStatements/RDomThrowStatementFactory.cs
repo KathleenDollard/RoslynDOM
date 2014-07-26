@@ -30,7 +30,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IThrowStatement;
             var node = SyntaxFactory.ThrowStatement();
-            var exception = (ExpressionSyntax)RDomCSharpFactory.Factory.BuildSyntax(itemAsT.ExceptionExpression);
+            var exception = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.ExceptionExpression);
             if (exception != null) node = node.WithExpression(exception);
             return item.PrepareForBuildSyntaxOutput(node);
         }

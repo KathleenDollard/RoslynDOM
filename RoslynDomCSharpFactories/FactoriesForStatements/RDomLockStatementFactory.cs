@@ -32,7 +32,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as ILockStatement;
             var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock);
-            var expressionSyntax = RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Expression) as ExpressionSyntax;
+            var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression) as ExpressionSyntax;
             var node = SyntaxFactory.LockStatement(expressionSyntax, statement);
 
             return itemAsT.PrepareForBuildSyntaxOutput(node);

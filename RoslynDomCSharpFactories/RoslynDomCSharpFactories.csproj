@@ -99,7 +99,7 @@
     <Compile Include="AttributeFactory.cs" />
     <Compile Include="Factories\RDomStructuredDocumentationFactory.cs" />
     <Compile Include="PublicAnnotationFactory.cs" />
-    <Compile Include="RDomCSharpFactory.cs" />
+    <Compile Include="RDomCSharp.cs" />
     <Compile Include="RoslynCSharpUtilities.cs" />
     <Compile Include="BaseFactories\RDomBaseItemFactory.cs" />
   </ItemGroup>

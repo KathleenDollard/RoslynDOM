@@ -33,7 +33,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IParameter;
             var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
-            var syntaxType = (TypeSyntax)(RDomCSharpFactory.Factory.BuildSyntax(itemAsT.Type));
+            var syntaxType = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Type));
 
             var node = SyntaxFactory.Parameter(nameSyntax)
                         .WithType(syntaxType);
