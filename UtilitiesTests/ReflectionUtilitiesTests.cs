@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using RoslynDom.Common;
 using System.Linq;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace TestRoslyn
 {
@@ -123,6 +125,13 @@ namespace TestRoslyn
             var newType = ReflectionUtilities.MakeGenericType (typeof(B<>), typeof(int));
             Assert.AreEqual("B`1", newType.Name);
             Assert.AreEqual("Int32", newType.GenericTypeArguments.First().Name);
+        }
+
+        [TestMethod]
+        public void _researchTest()
+        {
+              Func<IEnumerable<int>, bool> test = x => x.Max() > 3;
+            Assert.AreEqual(1, test.Method.GetParameters().Count());
         }
     }
 }

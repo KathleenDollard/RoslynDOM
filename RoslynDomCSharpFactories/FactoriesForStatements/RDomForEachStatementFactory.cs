@@ -11,10 +11,16 @@ namespace RoslynDom.CSharp
     public class RDomForEachStatementFactory
          : RDomStatementFactory<RDomForEachStatement, ForEachStatementSyntax>
     {
-        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public RDomForEachStatementFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ForEachStatementSyntax;
             var newItem = new RDomForEachStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+
             newItem.TestAtEnd = false; // restating the obvious
 
             var variable = new RDomVariableDeclaration(syntaxNode, parent, model); // ick, there is no syntax node to associate with the variable
@@ -23,10 +29,10 @@ namespace RoslynDom.CSharp
             variable.Type = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
             variable.Name =syntax.Identifier.ToString();
             newItem.Variable = variable;
-            return LoopFactoryHelper.CreateItemFrom<IForEachStatement>(newItem, syntax.Expression, syntax.Statement, parent, model);
+            return LoopFactoryHelper.CreateItemFrom<IForEachStatement>(newItem, syntax.Expression, syntax.Statement, parent, model, Corporation, CreateFromWorker);
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IForEachStatement;
 

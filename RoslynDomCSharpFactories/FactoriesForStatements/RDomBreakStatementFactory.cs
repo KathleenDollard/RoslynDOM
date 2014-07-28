@@ -12,15 +12,20 @@ namespace RoslynDom.CSharp
     public class RDomBreakStatementFactory
                 : RDomStatementFactory<RDomBreakStatement, BreakStatementSyntax>
     {
-        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
+        public RDomBreakStatementFactory(RDomCorporation corporation)
+             : base(corporation)
+        { }
+
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as BreakStatementSyntax;
-            var newItem = new RDomBreakStatement(syntaxNode,parent, model);
+            var newItem = new RDomBreakStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
-            return newItem ;
+            return newItem;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IBreakStatement;
             var node = SyntaxFactory.BreakStatement();

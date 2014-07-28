@@ -10,20 +10,19 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class CommentWhiteFactory : RDomMiscFactory<RDomCommentWhite, SyntaxNode>, ICommentWhiteFactory
+    public class CommentWhiteFactory : RDomMiscFactory<ICommentWhite, SyntaxNode>
     {
+        public CommentWhiteFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
+        public override RDomPriority Priority
+        { get { return 0; } }
+
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
-        {
-            // Is only called directly, not as an IMisc (RDomFactoryHelper.GetFromFactory<ICommentWhite>)
-            return false;
-        }
+        { return true; }
 
         protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            return InternalCreateFrom(syntaxNode, parent, model);
-        }
-
-        IEnumerable<ICommentWhite> IRDomFactory<ICommentWhite>.CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             return InternalCreateFrom(syntaxNode, parent, model);
         }
@@ -72,7 +71,7 @@ namespace RoslynDom.CSharp
             return text;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             return null;
         }

@@ -10,6 +10,10 @@ namespace RoslynDom.CSharp
     public class RDomFieldTypeMemberFactory
           : RDomTypeMemberFactory<RDomField, VariableDeclaratorSyntax>
     {
+        public RDomFieldTypeMemberFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
             // This will conflict with Declaration statement if we don't scope factories. In that case, check parent
@@ -20,19 +24,17 @@ namespace RoslynDom.CSharp
         {
             var list = new List<ITypeMember>();
 
-            var fieldPublicAnnotations = RDomFactoryHelper.GetPublicAnnotations(syntaxNode, parent, model);
+            var fieldPublicAnnotations = CreateFromWorker.GetPublicAnnotations(syntaxNode, parent, model);
             var rawField = syntaxNode as FieldDeclarationSyntax;
             var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
                 var newItem = new RDomField(decl, parent, model);
                 list.Add(newItem);
+                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+
                 newItem.Name = newItem.TypedSymbol.Name;
 
-                var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
-                newItem.Attributes.AddOrMoveAttributeRange(attributes);
-
-                newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
                 newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
                 newItem.IsStatic = newItem.Symbol.IsStatic;
                 newItem.PublicAnnotations.Add(fieldPublicAnnotations);
@@ -41,7 +43,7 @@ namespace RoslynDom.CSharp
             return list;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsField = item as IField;
             var nameSyntax = SyntaxFactory.Identifier(itemAsField.Name);
@@ -54,7 +56,7 @@ namespace RoslynDom.CSharp
                             SyntaxFactory.VariableDeclarator(nameSyntax)));
             var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
-            var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsField.Attributes);
+            var attributes = BuildSyntaxWorker .BuildAttributeSyntax(itemAsField.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));

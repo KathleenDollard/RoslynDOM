@@ -17,7 +17,6 @@ namespace RoslynDom.Common
             if (getItemsDelegate == null) throw new InvalidOperationException();
             var rawItems = getItemsDelegate(input);
             return CreateFromList(rawItems, makeNewItems);
-            return ret;
         }
 
         public static IEnumerable<T> CreateFromList<T, TRaw>(

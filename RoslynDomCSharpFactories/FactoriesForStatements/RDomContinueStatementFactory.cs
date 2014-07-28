@@ -12,15 +12,20 @@ namespace RoslynDom.CSharp
     public class RDomContinueStatementFactory
                 : RDomStatementFactory<RDomContinueStatement, ContinueStatementSyntax>
     {
+        public RDomContinueStatementFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ContinueStatementSyntax;
             var newItem = new RDomContinueStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             return newItem;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IContinueStatement;
             var node = SyntaxFactory.ContinueStatement();

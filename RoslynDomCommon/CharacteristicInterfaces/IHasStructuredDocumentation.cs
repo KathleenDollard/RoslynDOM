@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface IHasStructuredDocumentation
+    public interface IHasStructuredDocumentation : IDom
     {
         IStructuredDocumentation StructuredDocumentation { get; set; }
         string Description { get; set;  }

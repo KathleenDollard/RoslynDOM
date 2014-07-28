@@ -11,18 +11,19 @@ namespace RoslynDom.CSharp
     public class RDomPropertyTypeMemberFactory
           : RDomTypeMemberFactory<RDomProperty, PropertyDeclarationSyntax>
     {
-        protected  override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public RDomPropertyTypeMemberFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as PropertyDeclarationSyntax;
             var newItem = new RDomProperty(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
 
-            var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
-            newItem.Attributes.AddOrMoveAttributeRange(attributes);
-
-            // TODO: Get and set accessibility
             // TODO: Type parameters and constraints
             newItem.PropertyType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
             newItem.IsAbstract = newItem.Symbol.IsAbstract;
@@ -37,17 +38,15 @@ namespace RoslynDom.CSharp
             newItem.CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
             var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
             var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
-            var accessorFactory = RDomFactoryHelper.GetHelperForMisc();
-            if (accessorFactory == null) { throw new InvalidOperationException(); }
             if (getAccessorSyntax != null)
-            { newItem.GetAccessor = (IAccessor)accessorFactory.MakeItems(getAccessorSyntax, newItem, model).FirstOrDefault(); }
+            { newItem.GetAccessor = (IAccessor)Corporation.CreateFrom<IMisc>(getAccessorSyntax, newItem, model).FirstOrDefault(); }
             if (setAccessorSyntax != null)
-            { newItem.SetAccessor = (IAccessor)accessorFactory.MakeItems(setAccessorSyntax, newItem, model).FirstOrDefault(); }
+            { newItem.SetAccessor = (IAccessor)Corporation.CreateFrom<IMisc>(setAccessorSyntax, newItem, model).FirstOrDefault(); }
 
             return newItem ;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsProperty = item as IProperty;
             var nameSyntax = SyntaxFactory.Identifier(itemAsProperty.Name);
@@ -56,7 +55,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax)
                             .WithModifiers(modifiers);
 
-            var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsProperty.Attributes);
+            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsProperty.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             var accessors = SyntaxFactory.List<AccessorDeclarationSyntax>();

@@ -35,10 +35,7 @@ namespace RoslynDom
         public override object RawItem
         { get { return null; } }
 
-        public override ISymbol Symbol
-        { get { return null; } }
-
-        public override object RequestValue(string propertyName)
+         public override object RequestValue(string propertyName)
         { return null; }
       
     }

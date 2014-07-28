@@ -10,6 +10,7 @@
         Enum,
         Interface,
         Whitespace,
-        Comment
+        Comment,
+        Invalid
     }
 }

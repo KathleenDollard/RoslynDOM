@@ -18,7 +18,7 @@ namespace RoslynDom
         private string _containingTypeName;
 
         protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
-             : base(RDomFactoryHelper.GetPublicAnnotations(rawItem, parent, model))
+             : base()
         {
             _rawSyntax = rawItem;
             _originalRawSyntax = rawItem;
@@ -29,24 +29,7 @@ namespace RoslynDom
                 if (_symbol != null)
                 {
                     var thisAsHasStructuredDocs = this as IHasStructuredDocumentation;
-                    if (thisAsHasStructuredDocs != null)
-                    {
-                        var docsItem = RDomFactoryHelper.GetStructuredDocumentation(rawItem, parent, model).FirstOrDefault();
-                        var docs = Symbol.GetDocumentationCommentXml();
-                        if (!string.IsNullOrWhiteSpace(docs))
-                        {
-                            var xDocument = XDocument.Parse(docs);
-                            docsItem.RawItem = xDocument;
-                            var summaryNode = xDocument.DescendantNodes()
-                                                .OfType<XElement>()
-                                                .Where(x => x.Name == "summary")
-                                                .Select(x => x.Value);
-                            var description = summaryNode.FirstOrDefault().Replace("/r", "").Replace("\n", "").Trim();
-                            docsItem.Description = description;
-                            thisAsHasStructuredDocs.StructuredDocumentation = docsItem;
-                            thisAsHasStructuredDocs.Description = description;
-                        }
-                    }
+                 
                 }
             }
         }

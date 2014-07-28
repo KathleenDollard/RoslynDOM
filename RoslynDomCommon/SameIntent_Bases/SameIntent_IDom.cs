@@ -13,7 +13,10 @@ namespace RoslynDom.Common
             {
                 if (oneAsHasName.Name != ((IHasName)other).Name) { return false; }
             }
-            if (!one.PublicAnnotations.SameIntent( other.PublicAnnotations, skipPublicAnnotations)) { return false; }
+            if (!skipPublicAnnotations )
+            {
+                if(!one.PublicAnnotations.SameIntent(other.PublicAnnotations, skipPublicAnnotations)){ return false; }
+            }
             return true;
         }
     }

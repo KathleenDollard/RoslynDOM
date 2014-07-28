@@ -32,7 +32,7 @@ namespace RoslynDom.Common
 
         public static IEnumerable<IReferencedType> ImpementedInterfacesFrom(this IHasImplementedInterfaces rDomType, bool all)
         {
-            var symbol = ((IRoslynDom)rDomType).Symbol as INamedTypeSymbol;
+            var symbol = ((IRoslynHasSymbol)rDomType).Symbol as INamedTypeSymbol;
             var retList = new List<IReferencedType>();
             IEnumerable<INamedTypeSymbol> interfaces;
             if (all) { interfaces = symbol.AllInterfaces; }

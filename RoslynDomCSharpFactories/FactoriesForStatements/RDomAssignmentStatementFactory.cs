@@ -11,8 +11,12 @@ namespace RoslynDom.CSharp
     public class RDomAssignmentStatementFactory
          : RDomStatementFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
     {
-        public override FactoryPriority Priority
-        { get { return FactoryPriority.Normal + 1; } }
+        public RDomAssignmentStatementFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        public override RDomPriority Priority
+        { get { return RDomPriority.Normal + 1; } }
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
@@ -25,6 +29,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as ExpressionStatementSyntax;
             var newItem = new RDomAssignmentStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             var binary = syntax.Expression as BinaryExpressionSyntax;
             if (binary == null) throw new InvalidOperationException();
@@ -37,12 +42,12 @@ namespace RoslynDom.CSharp
             var right = binary.Right;
             var expression = right as ExpressionSyntax;
             if (expression == null) throw new InvalidOperationException();
-            newItem.Left = RDomFactoryHelper.GetHelperForExpression().MakeItems(left, newItem, model).FirstOrDefault();
-            newItem.Expression = RDomFactoryHelper.GetHelperForExpression().MakeItems(expression, newItem, model).FirstOrDefault();
+            newItem.Left = Corporation.CreateFrom<IExpression>(left, newItem, model).FirstOrDefault();
+            newItem.Expression = Corporation.CreateFrom<IExpression>(expression, newItem, model).FirstOrDefault();
             newItem.Operator = Mappings.GetOperatorFromCSharpKind (binary.CSharpKind());
             return newItem;
         }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IAssignmentStatement;
             var leftSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Left);

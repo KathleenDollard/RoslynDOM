@@ -14,16 +14,14 @@ namespace RoslynDom.CSharp
     internal static class LoopFactoryHelper
     {
         public static IStatement CreateItemFrom<T>(
-            T newItem, ExpressionSyntax condition, StatementSyntax statement, IDom parent, SemanticModel model)
+            T newItem, ExpressionSyntax condition, StatementSyntax statement, IDom parent, SemanticModel model,
+            RDomCorporation corporation, ICreateFromWorker createFromWorker)
             where T : ILoop<T>
         {
+            createFromWorker.InitializeStatements(newItem, statement, newItem, model);
 
-            newItem.Condition = RDomFactoryHelper.GetHelperForExpression().MakeItems(condition, newItem, model).FirstOrDefault();
+            newItem.Condition = corporation.CreateFrom<IExpression>(condition, newItem, model).FirstOrDefault();
             if (condition == null) { throw new InvalidOperationException(); }
-            bool hasBlock = false;
-            var statements = CreateFromHelpers.GetStatementsFromSyntax(statement, newItem, ref hasBlock, model);
-            newItem.HasBlock = hasBlock;
-            newItem.StatementsAll.AddOrMoveRange(statements);
 
             return newItem;
         }

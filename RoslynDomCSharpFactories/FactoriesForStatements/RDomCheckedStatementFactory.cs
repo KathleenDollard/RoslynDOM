@@ -12,21 +12,27 @@ namespace RoslynDom.CSharp
     public class RDomCheckedStatementFactory
                 : RDomStatementFactory<RDomCheckedStatement, CheckedStatementSyntax>
     {
-           protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public RDomCheckedStatementFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as CheckedStatementSyntax;
             var newItem = new RDomCheckedStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+
             newItem.Unchecked = (syntax.CSharpKind() == SyntaxKind.UncheckedStatement) ;
          
-            bool hasBlock = false;
-            var statements = CreateFromHelpers .GetStatementsFromSyntax(syntax.Block, newItem, ref hasBlock, model);
-            newItem.HasBlock = hasBlock;
-            newItem.StatementsAll.AddOrMoveRange(statements);
+            //bool hasBlock = false;
+            //var statements = CreateFromHelpers .GetStatementsFromSyntax(syntax.Block, newItem, ref hasBlock, model);
+            //newItem.HasBlock = hasBlock;
+            //newItem.StatementsAll.AddOrMoveRange(statements);
 
             return newItem;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as ICheckedStatement;
             var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock) as BlockSyntax ;

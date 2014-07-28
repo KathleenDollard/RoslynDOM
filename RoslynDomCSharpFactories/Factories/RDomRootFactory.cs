@@ -10,24 +10,30 @@ namespace RoslynDom.CSharp
     public class RDomRootFactory
           : RDomRootContainerFactory<RDomRoot, CompilationUnitSyntax>
     {
-        protected  override IRoot CreateItemFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
+        public RDomRootFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        protected override IRoot CreateItemFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
         {
             var syntax = syntaxNode as CompilationUnitSyntax;
             var newItem = new RDomRoot(syntaxNode, parent,model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             newItem.Name = "Root";
-            CreateFromHelpers.LoadStemMembers(newItem, syntax.Members, syntax.Usings,model);
+            CreateFromWorker .LoadStemMembers(newItem, syntax.Members, syntax.Usings,model);
 
             return newItem ;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IRoot item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
+            var itemAsT = item as IRoot;
             var node = SyntaxFactory.CompilationUnit();
-            var usingsSyntax = item.UsingDirectives
+            var usingsSyntax = itemAsT.UsingDirectives
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
-            var membersSyntax = item.StemMembers
+            var membersSyntax = itemAsT.StemMembers
                         .Where(x=>!(x is IUsingDirective))
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();

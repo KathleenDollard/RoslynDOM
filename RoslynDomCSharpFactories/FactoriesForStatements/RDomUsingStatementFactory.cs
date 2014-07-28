@@ -12,10 +12,15 @@ namespace RoslynDom.CSharp
     public class RDomUsingStatementFactory
                 : RDomStatementFactory<RDomUsingStatement, UsingStatementSyntax>
     {
+        public RDomUsingStatementFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as UsingStatementSyntax;
             var newItem = new RDomUsingStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             // if there is both a declaration and an expression, I'm terribly confused
             var declaration = syntax.Declaration;
             var expression = syntax.Expression;
@@ -27,24 +32,24 @@ namespace RoslynDom.CSharp
                 // Not yet, and might never support as Kendall Miller said "huh, that works?" on Twitter
                 if (declaration.Variables.Count() > 1) throw new NotImplementedException();
 
-                var newVariable = RDomFactoryHelper.GetHelperForMisc().MakeItems(syntax.Declaration, newItem, model).FirstOrDefault();
+                var newVariable = Corporation.CreateFrom<IMisc>(syntax.Declaration, newItem, model).FirstOrDefault();
                 newItem.Variable = (IVariableDeclaration)newVariable;
             }
             else
             {
-                var expr = RDomFactoryHelper.GetHelperForExpression().MakeItems(syntax.Expression, newItem, model).FirstOrDefault();
+                var expr = Corporation.CreateFrom<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
                 newItem.Expression = expr;
             }
 
-            bool hasBlock = false;
-            var statements = CreateFromHelpers .GetStatementsFromSyntax(statement, newItem, ref hasBlock, model);
-            newItem.HasBlock = hasBlock;
-            newItem.StatementsAll.AddOrMoveRange(statements);
+            //bool hasBlock = false;
+            //var statements = CreateFromHelpers .GetStatementsFromSyntax(statement, newItem, ref hasBlock, model);
+            //newItem.HasBlock = hasBlock;
+            //newItem.StatementsAll.AddOrMoveRange(statements);
 
             return newItem;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IUsingStatement;
             var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock);

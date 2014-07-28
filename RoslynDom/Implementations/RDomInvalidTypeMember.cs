@@ -5,15 +5,15 @@ using System.Linq;
 
 namespace RoslynDom
 {
-    public class RDomInvalidTypeMember : RDomBase<IInvalidTypeMember, ISymbol>, IInvalidTypeMember
+    public class RDomInvalidMember : RDomBase<IInvalidMember, ISymbol>, IInvalidMember
     {
         private AttributeList _attributes = new AttributeList();
 
-        public RDomInvalidTypeMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        public RDomInvalidMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { }
 
-        internal RDomInvalidTypeMember(RDomInvalidTypeMember oldRDom)
+        internal RDomInvalidMember(RDomInvalidMember oldRDom)
              : base(oldRDom)
         {
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
@@ -38,7 +38,12 @@ namespace RoslynDom
 
         public MemberKind MemberKind
         {
-            get { return MemberKind.InvalidMember; }
+            get { return MemberKind.Invalid; }
+        }
+
+        public StemMemberKind StemMemberKind
+        {
+            get { return StemMemberKind.Invalid; }
         }
 
         public IStructuredDocumentation StructuredDocumentation { get; set; }

@@ -12,21 +12,26 @@ namespace RoslynDom.CSharp
     public class RDomThrowStatementFactory
                 : RDomStatementFactory<RDomThrowStatement, ThrowStatementSyntax>
     {
+        public RDomThrowStatementFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ThrowStatementSyntax;
             var newItem = new RDomThrowStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             if (syntax.Expression != null)
             {
-                var expression =   RDomFactoryHelper.GetHelperForExpression().MakeItems(syntax.Expression, newItem, model).FirstOrDefault();
+                var expression = Corporation.CreateFrom<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
                 newItem.ExceptionExpression = expression;
             }
 
             return newItem;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IThrowStatement;
             var node = SyntaxFactory.ThrowStatement();

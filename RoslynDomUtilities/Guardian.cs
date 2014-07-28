@@ -38,7 +38,26 @@ namespace RoslynDom.Common
             if (!test) throw new NotImplementedException();
         }
 
-        ///// <summary>
+     public void IsGreaterThan(int expected, int test,
+            [CallerMemberName] string callerName = "",
+            [CallerLineNumber] int callerLineNumber = 0)
+        {
+            IsGreaterThan(expected, test, "", callerName, callerLineNumber);
+        }
+
+        public void IsGreaterThan(int expected, int test, string message,
+            [CallerMemberName] string callerName = "",
+            [CallerLineNumber] int callerLineNumber = 0)
+        {
+            if (test <=expected) throw new NotImplementedException();
+        }
+
+        public void BadContainer()
+        {
+            throw new NotImplementedException();
+        }
+
+       ///// <summary>
         ///// Call to inform of an unexpected null. 
         ///// </summary>
         ///// <param name="value"></param>

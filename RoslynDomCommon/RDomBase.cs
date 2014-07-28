@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
 namespace RoslynDom
@@ -14,21 +13,15 @@ namespace RoslynDom
     /// <remarks>
     /// Initialize must be called near end of the constructor. Existing RDom impelementations all do this.
     /// </remarks>
-    public abstract class RDomBase : IRoslynDom
+    public abstract class RDomBase : IDom
     {
         // until move to C# 6 - I want to support name of as soon as possible
         protected static string nameof<T>(T value) { return ""; }
 
-        private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
+        private PublicAnnotationList _publicAnnotations = new PublicAnnotationList ();
 
         protected RDomBase()
-        // There are two references to this, they just don't tend to show up in CodeLens
         { }
-
-        protected RDomBase(IEnumerable<IPublicAnnotation> publicAnnotations)
-        {
-            _publicAnnotations.Add(publicAnnotations);
-        }
 
         protected RDomBase(IDom oldIDom)
         {
@@ -39,8 +32,8 @@ namespace RoslynDom
             if (oldAsHasName != null && thisAsHasName != null)
             { thisAsHasName.Name = oldAsHasName.Name; }
 
-            var newAnnotations = oldRDom._publicAnnotations.Copy();
-            _publicAnnotations.Add(newAnnotations);
+            var newPublicAnnotations = oldRDom._publicAnnotations.Copy();
+            _publicAnnotations.Add(newPublicAnnotations);
 
             var thisAsHasStructuredDocs = this as IHasStructuredDocumentation;
             if (thisAsHasStructuredDocs != null)
@@ -111,8 +104,6 @@ namespace RoslynDom
         ///  </para> 
         /// </remarks>
         //public abstract string OuterName { get; }
-
-        public abstract ISymbol Symbol { get; }
 
         public override string ToString()
         {

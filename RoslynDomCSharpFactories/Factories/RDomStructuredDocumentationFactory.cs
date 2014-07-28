@@ -11,23 +11,59 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class StructuredDocumentationFactory : IStructuredDocumentationFactory
+    public class StructuredDocumentationFactory
+                : RDomMiscFactory<IStructuredDocumentation, SyntaxNode>
     {
-        public FactoryPriority Priority
-        { get { return FactoryPriority.Normal; } }
+        public StructuredDocumentationFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
 
-        public bool CanCreateFrom(SyntaxNode syntaxNode)
+        public override RDomPriority Priority
+        { get { return 0; } }
+
+        public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
             // Always tries
             return true;
         }
 
-        public IEnumerable<IStructuredDocumentation> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            return new List<IStructuredDocumentation>() { new RDomStructuredDocumentation() };
+            var newItem = new RDomStructuredDocumentation(syntaxNode, parent, model);
+            var parentAsHasSymbol = parent as IRoslynHasSymbol;
+            if (parentAsHasSymbol != null)
+            {
+                var symbol = parentAsHasSymbol.Symbol;
+                var docString = symbol.GetDocumentationCommentXml();
+                if (!string.IsNullOrEmpty(docString))
+                {
+                    var xDocument = XDocument.Parse(docString);
+                    var summaryNode = xDocument.DescendantNodes()
+                                        .OfType<XElement>()
+                                        .Where(x => x.Name == "summary")
+                                        .Select(x => x.Value);
+                    var description = summaryNode.FirstOrDefault().Replace("/r", "").Replace("\n", "").Trim();
+                    newItem.Description = description;
+                    newItem.Document = docString;
+                }
+            }
+            //    var docs = Symbol.GetDocumentationCommentXml();
+            //    if (!string.IsNullOrWhiteSpace(docs))
+            //    {
+            //        var xDocument = XDocument.Parse(docs);
+            //        docsItem.RawItem = xDocument;
+            //        var summaryNode = xDocument.DescendantNodes()
+            //                            .OfType<XElement>()
+            //                            .Where(x => x.Name == "summary")
+            //                            .Select(x => x.Value);
+            //        var description = summaryNode.FirstOrDefault().Replace("/r", "").Replace("\n", "").Trim();
+            //        docsItem.Description = description;
+            //        thisAsHasStructuredDocs.StructuredDocumentation = docsItem;
+            //        thisAsHasStructuredDocs.Description = description;
+            return newItem ;
         }
 
-        public IEnumerable<SyntaxNode> BuildSyntax(IStructuredDocumentation item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             return null;
         }

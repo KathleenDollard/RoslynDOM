@@ -9,10 +9,14 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomReferencedTypeMiscFactory
-           : RDomMiscFactory<RDomReferencedType, FieldDeclarationSyntax>
+           : RDomMiscFactory<RDomReferencedType, SyntaxNode>
     {
-        // I'm still evolving how types are handled.
-        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
+        public RDomReferencedTypeMiscFactory(RDomCorporation corporation)
+            :base (corporation)
+        { }
+
+                  // I'm still evolving how types are handled.
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IReferencedType;
             var node =  SyntaxFactory.ParseTypeName(itemAsT.Name);

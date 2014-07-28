@@ -159,7 +159,7 @@ namespace RoslynDom.CSharp
             }
             else
             {
-                xDoc = itemHasStructDoc.StructuredDocumentation.RawItem as XDocument;
+                xDoc = XDocument.Parse(itemHasStructDoc.StructuredDocumentation.Document) ;
             }
             var oldParent = xDoc.DescendantNodes().OfType<XElement>().Where(x => x.Name == "member").FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(description))

@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
-using System.Linq;
 using System;
 
 namespace RoslynDom

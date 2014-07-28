@@ -12,21 +12,26 @@ namespace RoslynDom.CSharp
     public class RDomReturnStatementFactory
                 : RDomStatementFactory<RDomReturnStatement, ReturnStatementSyntax>
     {
-        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
+        public RDomReturnStatementFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
         {
             var syntax = syntaxNode as ReturnStatementSyntax;
             var newItem = new RDomReturnStatement(syntaxNode,parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             if (syntax.Expression != null)
             {
-                newItem.Return = RDomFactoryHelper.GetHelperForExpression().MakeItems(syntax.Expression, newItem, model).FirstOrDefault();
+                newItem.Return = Corporation.CreateFrom<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
                 if (newItem.Return == null) throw new InvalidOperationException();
             }
 
             return newItem ;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IReturnStatement;
             var node = SyntaxFactory.ReturnStatement();

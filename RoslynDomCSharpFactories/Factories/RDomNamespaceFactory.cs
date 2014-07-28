@@ -12,6 +12,10 @@ namespace RoslynDom.CSharp
     public class RDomNamespaceStemMemberFactory
            : RDomStemMemberFactory<RDomNamespace, NamespaceDeclarationSyntax>
     {
+        public RDomNamespaceStemMemberFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
         protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as NamespaceDeclarationSyntax;
@@ -24,6 +28,8 @@ namespace RoslynDom.CSharp
             foreach (var name in names)
             {
                 var newItem = new RDomNamespace(syntaxNode, parent, model, name, group);
+                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+
                 // At this point, item is the last newItem
                 if (item != null) item.StemMembersAll.AddOrMove(newItem);
                 item = newItem;
@@ -34,14 +40,14 @@ namespace RoslynDom.CSharp
             // Qualified name unbundles namespaces, and if it's defined together, we want it together here. 
             // Thus, this replaces hte base Initialize name with the correct one
             if (item.Name.StartsWith("@")) { item.Name = item.Name.Substring(1); }
-            CreateFromHelpers.LoadStemMembers(item, syntax.Members, syntax.Usings, model);
+            CreateFromWorker.LoadStemMembers(item, syntax.Members, syntax.Usings, model);
 
             // This will return the outer namespace, which in the form N is the only one. 
             // In the form N1.N2.. there is a nested level for each part (N1, N2).
             // The inner holds the children, the outer is returned.  
             return outerNamespace;
         }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMemberCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsNamespace = item as INamespace;
             var identifier = SyntaxFactory.IdentifierName(itemAsNamespace.Name);

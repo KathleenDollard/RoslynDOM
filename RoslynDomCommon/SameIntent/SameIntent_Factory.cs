@@ -18,7 +18,7 @@ namespace RoslynDom.Common
                 { typeof(IEnumValue), typeof(SameIntent_IEnumValue) },
                 { typeof(IField), typeof(SameIntent_IField) },
                 { typeof(IInterface), typeof(SameIntent_IInterface) },
-                { typeof(IInvalidTypeMember), typeof(SameIntent_IInvalidTypeMember) },
+                { typeof(IInvalidMember), typeof(SameIntent_IInvalidTypeMember) },
                 { typeof(IMethod), typeof(SameIntent_IMethod) },
                 { typeof(INamespace), typeof(SameIntent_INamespace) },
                 { typeof(IParameter), typeof(SameIntent_IParameter) },

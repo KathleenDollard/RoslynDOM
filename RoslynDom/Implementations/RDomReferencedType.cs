@@ -78,7 +78,7 @@ namespace RoslynDom
             { throw new NotImplementedException(); }
         }
 
-        public override ISymbol Symbol
+        public ISymbol Symbol
         { get { return _symbol; } }
 
         public string Name { get; set; }

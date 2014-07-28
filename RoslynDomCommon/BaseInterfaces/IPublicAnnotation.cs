@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
-    public interface IPublicAnnotation :IHasLookupValue  , IHasSameIntentMethod 
+    public interface IPublicAnnotation :IHasLookupValue  , IHasSameIntentMethod , IMisc, IDom<IPublicAnnotation>
     {
         object this[string key] { get; }
 

@@ -11,8 +11,12 @@ namespace RoslynDom.CSharp
     public class RDomInvocationStatementFactory
          : RDomStatementFactory<RDomInvocationStatement, ExpressionStatementSyntax>
     {
-        public override FactoryPriority Priority
-        { get { return FactoryPriority.Normal - 1; } }
+        public RDomInvocationStatementFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        public override RDomPriority Priority
+        { get { return RDomPriority.Normal - 1; } }
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {  // Restates the obvious to clarify this is the default
@@ -23,14 +27,15 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as ExpressionStatementSyntax;
             var newItem = new RDomInvocationStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             var expression = syntax.Expression;
-            newItem.Invocation = RDomFactoryHelper.GetHelperForExpression().MakeItems(expression, newItem, model).FirstOrDefault();
+            newItem.Invocation = Corporation.CreateFrom<IExpression>(expression, newItem, model).FirstOrDefault();
 
             return newItem;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IInvocationStatement;
             var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Invocation);

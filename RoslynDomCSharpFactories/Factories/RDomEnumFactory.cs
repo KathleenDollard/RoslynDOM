@@ -10,16 +10,14 @@ namespace RoslynDom.CSharp
 {
     internal static class RDomEnumFactoryHelper
     {
-        public static RDomEnum CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public static RDomEnum CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICreateFromWorker createFromWorker, RDomCorporation corporation)
         {
             var syntax = syntaxNode as EnumDeclarationSyntax;
             var newItem = new RDomEnum(syntaxNode, parent, model);
+            createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
-            newItem.Attributes.AddOrMoveAttributeRange(attributes);
-
-            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
             var symbol = newItem.Symbol as INamedTypeSymbol;
             if (symbol != null)
             {
@@ -30,24 +28,23 @@ namespace RoslynDom.CSharp
             foreach (var member in syntax.Members)
             {
                 var newEnumValue = new RDomEnumValue(member, newItem, model);
+                createFromWorker.StandardInitialize(newEnumValue, member, newItem, model);
                 newEnumValue.Name = member.Identifier.ToString();
                 if (member.EqualsValue != null)
-                { newEnumValue.Expression = CreateFromHelpers.GetExpression(newItem, member.EqualsValue.Value, model); }
-                attributes = RDomFactoryHelper.CreateAttributeFrom(member, newEnumValue, model);
-                newEnumValue.Attributes.AddOrMoveAttributeRange(attributes);
+                { newEnumValue.Expression = corporation.CreateFrom<IExpression>( member.EqualsValue.Value,newItem, model).FirstOrDefault(); }
                 newItem.Values.AddOrMove(newEnumValue);
             }
 
             return newItem;
         }
 
-        public static IEnumerable<SyntaxNode> BuildSyntax(RDomEnum item)
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomEnum item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
             var node = SyntaxFactory.EnumDeclaration(identifier)
                 .WithModifiers(modifiers);
-            var attributes = RDomFactoryHelper.BuildAttributeSyntax(item.Attributes);
+            var attributes = buildSyntaxWorker.BuildAttributeSyntax (item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
             var itemAsEnum = item as IEnum;
             if (itemAsEnum == null) { throw new InvalidOperationException(); }
@@ -66,15 +63,19 @@ namespace RoslynDom.CSharp
     public class RDomEnumTypeMemberFactory
         : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
+        public RDomEnumTypeMemberFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
         protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model);
+            var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
             return ret;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
-            return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item);
+            return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item, BuildSyntaxWorker, Corporation);
         }
     }
 
@@ -82,14 +83,18 @@ namespace RoslynDom.CSharp
     public class RDomEnumStemMemberFactory
            : RDomStemMemberFactory<RDomEnum, EnumDeclarationSyntax>
     {
+        public RDomEnumStemMemberFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
         protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            return RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model);
+            return RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMemberCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
-            return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item);
+            return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item, BuildSyntaxWorker, Corporation);
         }
     }
 

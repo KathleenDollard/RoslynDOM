@@ -10,10 +10,16 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class AttributeFactory : RDomMiscFactory<RDomAttribute, AttributeSyntax>, IAttributeFactory
+    public class AttributeFactory : RDomMiscFactory<IAttribute , AttributeSyntax>
     {
         //public override FactoryPriority Priority
         //{ get { return FactoryPriority.Normal; } }
+        public AttributeFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
+        public override RDomPriority Priority
+        { get { return 0; } }
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
@@ -21,11 +27,6 @@ namespace RoslynDom.CSharp
         }
 
         protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            return InternalCreateFrom(syntaxNode, parent, model);
-        }
-
-        IEnumerable<IAttribute> IRDomFactory<IAttribute>.CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             return InternalCreateFrom(syntaxNode, parent, model);
         }
@@ -39,12 +40,12 @@ namespace RoslynDom.CSharp
             return ExtractAttributes(syntaxNode, parent, model);
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             return BuildSyntax((IAttribute)item);
         }
 
-        public IEnumerable<SyntaxNode> BuildSyntax(IAttribute item)
+        private IEnumerable<SyntaxNode> BuildSyntax(IAttribute item)
         {
             var itemAsT = item as IAttribute;
             var nameSyntax = SyntaxFactory.ParseName(itemAsT.Name);
@@ -77,7 +78,9 @@ namespace RoslynDom.CSharp
 
         public IEnumerable<IAttribute> ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model)
         {
-            var parentSymbol = (newParent as RDomBase).Symbol;
+            var parentAsHasSymbol = newParent as IRoslynHasSymbol;
+            if (parentAsHasSymbol == null) { throw new InvalidOperationException(); }
+            var parentSymbol = parentAsHasSymbol.Symbol;
             var symbolAttributes = parentSymbol.GetAttributes();
             var list = new List<IAttribute>();
             foreach (var attributeData in symbolAttributes)
@@ -192,7 +195,7 @@ namespace RoslynDom.CSharp
                 // TODO: Work harder at getting the real parameter name
                 //name = attributeSyntax.Name.ToString();
             }
-            return new Tuple<string, AttributeValueStyle>(name, style);
+            return Tuple.Create(name, style);
         }
 
         private Tuple<object, LiteralKind> GetAttributeValueValue(
@@ -216,7 +219,7 @@ namespace RoslynDom.CSharp
                     value = GetTypeExpressionValue(typeExpression, model);
                 }
             }
-            return new Tuple<object, LiteralKind>(value, literalKind);
+            return Tuple.Create(value, literalKind);
         }
 
         private object GetTypeExpressionValue(TypeOfExpressionSyntax typeExpression, SemanticModel model)

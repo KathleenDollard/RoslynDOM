@@ -31,7 +31,7 @@ namespace RoslynDom
             //{ AddConstraintType(constraint); }
         }
 
-        // new here feels wrong, so I am currently leaving the warning
+        // TODO: new here feels wrong, so I am currently leaving the warning
         public ITypeParameter Copy()
         {
             return new RDomTypeParameter(this);

@@ -9,10 +9,15 @@ namespace RoslynDom.CSharp
     public class RDomUsingDirectiveStemMemberFactory
             : RDomStemMemberFactory<RDomUsingDirective, UsingDirectiveSyntax>
     {
+        public RDomUsingDirectiveStemMemberFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
         protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as UsingDirectiveSyntax;
             var newItem = new RDomUsingDirective(syntaxNode,parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             newItem. Name = syntax.Name.NameFrom();
             if (syntax.Alias != null)
@@ -21,7 +26,7 @@ namespace RoslynDom.CSharp
             return  newItem ;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStemMemberCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             // TODO: Handle alias's
             // TODO: Handle using statements, that's not done (the other usings)

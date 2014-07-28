@@ -10,25 +10,61 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     // Factories are specific to the type, FactoryHelpers are specific to the level (StemMember, TypeMember, Statement, Expression)
-    public abstract class RDomBaseItemFactory<T, TSyntax, TKind> : IRDomFactory<TKind>
+    public abstract class RDomBaseItemFactory<T, TSyntax, TKind> : IRDomFactory
         where T : class, TKind  // This isn't stupid - TKind is the broader category, T is the specific 
         where TSyntax : SyntaxNode
         where TKind : class, IDom
     {
-        public virtual FactoryPriority Priority
+
+        public RDomBaseItemFactory(RDomCorporation corporation)
+        {
+            Corporation = corporation;
+        }
+
+        protected RDomCorporation Corporation { get; private set; }
+
+        private ICSharpBuildSyntaxWorker _buildSyntaxWorker;
+        internal ICSharpBuildSyntaxWorker BuildSyntaxWorker
         {
             get
             {
-                if (this.GetType().IsConstructedGenericType) { return FactoryPriority.Fallback; }
-                return FactoryPriority.Normal;
+                if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)Corporation.Worker.BuildSyntaxWorker; }
+                return _buildSyntaxWorker;
+            }
+
+        }
+
+        private ICSharpCreateFromWorker _createFromWorker;
+        internal ICSharpCreateFromWorker CreateFromWorker
+        {
+            get
+            {
+                if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)Corporation.Worker.CreateFromWorker; }
+                return _createFromWorker;
+            }
+
+        }
+
+        public virtual RDomPriority Priority
+        {
+            get
+            {
+                if (this.GetType().IsConstructedGenericType) { return RDomPriority.Fallback; }
+                return RDomPriority.Normal;
             }
         }
 
-        public abstract IEnumerable<SyntaxNode> BuildSyntax(TKind item);
+        public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
 
         public virtual bool CanCreateFrom(SyntaxNode syntaxNode)
         {
             return (syntaxNode is TSyntax);
+        }
+
+        public virtual bool CanBuildSyntax(IDom item)
+        {
+            // TODO: use this to call correct IStem or IType version of class, interface, structure and enum
+            return true;
         }
 
         /// <summary>
@@ -50,17 +86,24 @@ namespace RoslynDom.CSharp
         /// Use CanCreate and Priority to control how your factory is selected. Highest priority wins and 
         /// you can add to the enum values (as in Normal + 1)
         /// </remarks>
-        public IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var ret = new List<TKind>();
 
             var newItems = CreateListFrom(syntaxNode, parent, model);
-            // Whitespace and comments have to appear before list items in the string
-            var newItem = newItems.FirstOrDefault();
-            if (newItem != null)
+            // Whitespace and comments have to appear before new items 
+            if (typeof(T) != typeof(ICommentWhite)
+                && typeof(T) != typeof(IAttribute)
+                && typeof(T) != typeof(IPublicAnnotation )
+                && typeof(T) != typeof(IStructuredDocumentation )
+                && !typeof(T).IsAssignableFrom(typeof(ICommentWhite)))
             {
-                var whiteComment = RDomFactoryHelper.GetCommentWhite(syntaxNode, newItem, model);
-                ret.AddRange(whiteComment.OfType<TKind>());
+                var newItem = newItems.FirstOrDefault();
+                if (newItem != null)
+                {
+                    var whiteComment = CreateFromWorker.GetCommentWhite(syntaxNode, newItem, model);
+                    ret.AddRange(whiteComment.OfType<TKind>());
+                }
             }
             ret.AddRange(newItems);
             return ret;
@@ -79,59 +122,79 @@ namespace RoslynDom.CSharp
                         BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,
                         new object[] { syntax, parent, model }, null);
             var itemAsT = newItem as T;
-            InitializeItem(itemAsT, syntax, model);
+            //InitializeItem(itemAsT, syntax, model);
             return itemAsT;
         }
 
-        public virtual void InitializeItem(T newItem, TSyntax syntax, SemanticModel model)
-        { return; }
+        //public virtual void InitializeItem(T newItem, TSyntax syntax, SemanticModel model)
+        //{ return; }
 
-        public virtual void Initialize(T newItem, TSyntax syntaxNode, SemanticModel model, string name)
-        {
-            var itemAsHasName = newItem as IHasName;
-            if (itemAsHasName != null)
-            { itemAsHasName.Name = name; }
-
-            var itemHasAttributes = newItem as IHasAttributes;
-            if (itemHasAttributes != null)
-            {
-                var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
-                itemHasAttributes.Attributes.AddOrMoveAttributeRange(attributes);
-            }
-        }
+        //public virtual void Initialize(T newItem, TSyntax syntaxNode, SemanticModel model, string name)
+        //{
+        //    var itemAsHasName = newItem as IHasName;
+        //    if (itemAsHasName != null)
+        //    { itemAsHasName.Name = name; }
+                  
+        //}
     }
 
     public abstract class RDomRootContainerFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IRoot>
              where T : class, IRoot
              where TSyntax : SyntaxNode
-    { }
+    {
+        public RDomRootContainerFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+    }
 
     public abstract class RDomStemMemberFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IStemMemberCommentWhite>
             where T : class, IStemMemberCommentWhite
             where TSyntax : SyntaxNode
-    { }
+    {
+        public RDomStemMemberFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+    }
 
 
     public abstract class RDomTypeMemberFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, ITypeMemberCommentWhite>
             where T : class, ITypeMemberCommentWhite
             where TSyntax : SyntaxNode
-    { }
+    {
+        public RDomTypeMemberFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+    }
 
 
     public abstract class RDomStatementFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IStatementCommentWhite>
             where T : class, IStatementCommentWhite
             where TSyntax : SyntaxNode
-    { }
+    {
+        public RDomStatementFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+    }
 
 
     public abstract class RDomExpressionFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IExpression>
              where T : class, IExpression
              where TSyntax : SyntaxNode
-    { }
+    {
+        public RDomExpressionFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+    }
 
 
     public abstract class RDomMiscFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IMisc>
              where T : class, IMisc
              where TSyntax : SyntaxNode
-    { }
+    {
+        public RDomMiscFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+    }
+
+    // These interfaces currently exist only for the same of counting
 }

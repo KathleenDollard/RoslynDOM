@@ -10,20 +10,25 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class PublicAnnotationFactory :  IPublicAnnotationFactory
+    public class PublicAnnotationFactory
+        : RDomMiscFactory<IPublicAnnotation, SyntaxNode>
     {
-         public FactoryPriority Priority
-        { get { return FactoryPriority.Normal; } }
+        public PublicAnnotationFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
 
-        public bool CanCreateFrom(SyntaxNode syntaxNode)
+        public override RDomPriority Priority
+        { get { return 0; } }
+
+        public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
             // Always tries
             return true;
         }
 
-        public IEnumerable<IPublicAnnotation> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            IEnumerable<PublicAnnotation> list;
+            IEnumerable<IMisc> list;
             var syntaxRoot = syntaxNode as CompilationUnitSyntax;
             if (syntaxRoot != null)
             {
@@ -35,12 +40,12 @@ namespace RoslynDom.CSharp
             return list;
         }
 
-        public IEnumerable<SyntaxNode> BuildSyntax(IPublicAnnotation item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             return null;
         }
 
-       
+
         #region Private methods to support public annotations
         private IEnumerable<PublicAnnotation> GetPublicAnnotations(CompilationUnitSyntax syntaxRoot)
         {
@@ -53,12 +58,12 @@ namespace RoslynDom.CSharp
             return ret;
         }
 
-        private static IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode node)
+        private IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode node)
         {
             return GetPublicAnnotationFromFirstToken(node, false);
         }
 
-        private static IEnumerable<PublicAnnotation> GetPublicAnnotationFromFirstToken(
+        private IEnumerable<PublicAnnotation> GetPublicAnnotationFromFirstToken(
                    SyntaxNode node, bool isRoot)
         {
             var ret = new List<PublicAnnotation>();
@@ -70,7 +75,7 @@ namespace RoslynDom.CSharp
             return ret;
         }
 
-        private static IEnumerable<PublicAnnotation> GetPublicAnnotationFromToken(
+        private IEnumerable<PublicAnnotation> GetPublicAnnotationFromToken(
                SyntaxToken token, bool isRoot)
         {
             var ret = new List<PublicAnnotation>();
@@ -88,9 +93,9 @@ namespace RoslynDom.CSharp
                 {
                     var attribSyntax = GetAnnotationStringAsAttribute(str);
                     // Reuse the evaluation work done in attribute to follow same rules
-                    var tempAttribute = RDomFactoryHelper.CreateAttributeFrom(attribSyntax,null, null).FirstOrDefault();
+                    var tempAttribute = Corporation.CreateFrom<IAttribute>(attribSyntax, null, null).FirstOrDefault();
                     var newPublicAnnotation = new PublicAnnotation(tempAttribute.Name.ToString());
-                    foreach (var attributeValue in tempAttribute.AttributeValues )
+                    foreach (var attributeValue in tempAttribute.AttributeValues)
                     {
                         newPublicAnnotation.AddItem(attributeValue.Name ?? "", attributeValue.Value);
                     }
@@ -131,7 +136,7 @@ namespace RoslynDom.CSharp
             return null;
         }
 
- 
+
         #endregion
     }
 }

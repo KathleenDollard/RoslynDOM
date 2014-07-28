@@ -67,7 +67,7 @@ namespace RoslynDomTests
                         ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var ns = root.DescendantNamespaces.Last();
-            var symbol = ((IRoslynDom)ns).Symbol;
+            var symbol = ((IRoslynHasSymbol)ns).Symbol;
             Assert.AreEqual("testing", ns.Namespace);
             Assert.AreEqual("testing.Namespace1", ns.QualifiedName);
             Assert.AreEqual("Namespace1", symbol.MetadataName, "meta");
@@ -84,7 +84,7 @@ namespace RoslynDomTests
                         ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var cl = root.Classes.First();
-            var symbol = ((IRoslynDom)cl).Symbol;
+            var symbol = ((IRoslynHasSymbol )cl).Symbol;
             Assert.AreEqual("MyClass", cl.Name);
             Assert.AreEqual("MyClass", symbol.MetadataName);
             Assert.AreEqual("MyClass", symbol.Name);
@@ -100,7 +100,7 @@ namespace RoslynDomTests
                         ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var en = root.Enums.First();
-            var symbol = ((IRoslynDom)en).Symbol;
+            var symbol = ((IRoslynHasSymbol)en).Symbol;
             Assert.AreEqual("MyEnum", en.Name);
             Assert.AreEqual("MyEnum", symbol.MetadataName);
             Assert.AreEqual("MyEnum", symbol.Name);
@@ -117,7 +117,7 @@ namespace RoslynDomTests
                         ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var st = root.Structures.First();
-            var symbol = ((IRoslynDom)st).Symbol;
+            var symbol = ((IRoslynHasSymbol)st).Symbol;
             Assert.AreEqual("MyStruct", st.Name);
             Assert.AreEqual("MyStruct", symbol.MetadataName);
             Assert.AreEqual("MyStruct", symbol.Name);
@@ -134,7 +134,7 @@ namespace RoslynDomTests
                         ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var inter = root.Interfaces.First();
-            var symbol = ((IRoslynDom)inter).Symbol;
+            var symbol = ((IRoslynHasSymbol)inter).Symbol;
             Assert.AreEqual("MyInterface", inter.Name);
             Assert.AreEqual("MyInterface", symbol.MetadataName);
             Assert.AreEqual("MyInterface", symbol.Name);
@@ -149,7 +149,7 @@ namespace RoslynDomTests
                         { public int myField; }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var fld = root.Classes.First().Fields.First();
-            var symbol = ((IRoslynDom)fld).Symbol;
+            var symbol = ((IRoslynHasSymbol)fld).Symbol;
             Assert.AreEqual("myField", fld.Name);
             Assert.AreEqual("myField", symbol.MetadataName);
             Assert.AreEqual("myField", symbol.Name);
@@ -165,8 +165,8 @@ namespace RoslynDomTests
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var fld = root.Classes.First().Fields.First();
             var fld2 = root.Classes.First().Fields.Last();
-            var symbol = ((IRoslynDom)fld).Symbol;
-            var symbol2 = ((IRoslynDom)fld2).Symbol;
+            var symbol = ((IRoslynHasSymbol)fld).Symbol;
+            var symbol2 = ((IRoslynHasSymbol)fld2).Symbol;
             Assert.AreEqual("myField", fld.Name);
             Assert.AreEqual("myField2", fld2.Name);
             Assert.AreEqual("myField", symbol.MetadataName);
@@ -184,7 +184,7 @@ namespace RoslynDomTests
                         { public int myProperty { get; } }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var pr = root.Classes.First().Properties.First();
-            var symbol = ((IRoslynDom)pr).Symbol;
+            var symbol = ((IRoslynHasSymbol)pr).Symbol;
             Assert.AreEqual("myProperty", pr.Name);
             Assert.AreEqual("myProperty", symbol.MetadataName);
             Assert.AreEqual("myProperty", symbol.Name);
@@ -199,7 +199,7 @@ namespace RoslynDomTests
                         { public int myMethod(int x) { return x; } }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var me = root.Classes.First().Methods.First();
-            var symbol = ((IRoslynDom)me).Symbol;
+            var symbol = ((IRoslynHasSymbol)me).Symbol;
             Assert.AreEqual("myMethod", me.Name);
             Assert.AreEqual("myMethod", symbol.MetadataName);
             Assert.AreEqual("myMethod", symbol.Name);
@@ -232,7 +232,7 @@ namespace RoslynDomTests
                         { public class MyNestedClass {  } }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var nestedType = root.Classes.First().Classes.First();
-            var symbol = ((IRoslynDom)nestedType).Symbol;
+            var symbol = ((IRoslynHasSymbol)nestedType).Symbol;
             Assert.AreEqual("MyNestedClass", nestedType.Name);
             Assert.AreEqual("MyNestedClass", symbol.MetadataName);
             Assert.AreEqual("MyNestedClass", symbol.Name);
@@ -251,7 +251,7 @@ namespace RoslynDomTests
                         ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var ns = root.ChildNamespaces.First();
-            var symbol = ((IRoslynDom)ns).Symbol;
+            var symbol = ((IRoslynHasSymbol)ns).Symbol;
             Assert.AreEqual("Namespace1", root.DescendantNamespaces.Last().Name);
             Assert.AreEqual("Namespace2.testing.Namespace1", root.DescendantNamespaces.Last().QualifiedName);
         }

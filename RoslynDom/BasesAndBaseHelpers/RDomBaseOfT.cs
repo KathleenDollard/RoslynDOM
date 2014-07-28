@@ -7,18 +7,20 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBase<T> : RDomBase, IDom<T>
+    public abstract class RDomBase<T> : RDomBase, IDom<T>, IRoslynHasSymbol
           where T : class, IDom<T>
     {
         private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
 
-        protected RDomBase(IEnumerable<IPublicAnnotation> publicAnnotations)
-          : base(publicAnnotations)
+        protected RDomBase()
+          : base()
         { }
 
         protected RDomBase(T oldRDom)
          : base(oldRDom)
         { }
+
+        public abstract ISymbol Symbol { get; }
 
         public virtual T Copy()
         {

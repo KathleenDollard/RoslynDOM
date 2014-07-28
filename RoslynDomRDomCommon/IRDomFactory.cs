@@ -8,41 +8,36 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public interface IRDomFactory<TKind> : IRDomFactory
+    public interface IRDomFactory 
     {
         bool CanCreateFrom(SyntaxNode syntaxNode);
-        IEnumerable<TKind> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
-        FactoryPriority Priority { get; }
-
-        IEnumerable<SyntaxNode> BuildSyntax(TKind item);
+        bool CanBuildSyntax(IDom item);
+        IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
+        RDomPriority Priority { get; }
+                IEnumerable<SyntaxNode> BuildSyntax(IDom item);
     }
 
-    public interface IRDomFactory
-    {
+    //public interface IPublicAnnotationFactory : IRDomFactory<IPublicAnnotation>
+    //{ }
 
-    }
+    //public interface IStructuredDocumentationFactory : IRDomFactory<IStructuredDocumentation>
+    //{ }
 
-    public interface IPublicAnnotationFactory : IRDomFactory<IPublicAnnotation>
-    { }
+    //public interface IAttributeFactory : IRDomFactory<IAttribute>
+    //{
+    //    //IEnumerable<IAttribute> ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model);
+    //    //IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributes);
+    //}
 
-    public interface IStructuredDocumentationFactory : IRDomFactory<IStructuredDocumentation>
-    { }
-
-    public interface IAttributeFactory : IRDomFactory<IAttribute>
-    {
-        //IEnumerable<IAttribute> ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model);
-        //IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributes);
-    }
-
-    public interface ICommentWhiteFactory : IRDomFactory<ICommentWhite>
-    {    }
+    //public interface ICommentWhiteFactory : IRDomFactory<ICommentWhite>
+    //{ }
 
 
     /// <summary>
     /// Priority for candidate selection. These are for clarity. Please add your
     /// own in the format "Normal + 1"
     /// </summary>
-    public enum FactoryPriority
+    public enum RDomPriority
     {
         None = 0,
         Fallback = 100,

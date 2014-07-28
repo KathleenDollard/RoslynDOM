@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface IHasAttributes
+    public interface IHasAttributes : IDom
     {
         AttributeList Attributes { get; }
     }

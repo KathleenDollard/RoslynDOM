@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface IInvalidTypeMember : ITypeMember<IInvalidTypeMember>
+    public interface IInvalidMember : ITypeMember<IInvalidMember>, IStemMember, IStatement
     {
     }
 }

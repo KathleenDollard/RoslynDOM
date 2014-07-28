@@ -29,9 +29,13 @@ namespace RoslynDom
                 for (int i = 0, j = 3; i < length && j < length; i++, j++)
                 {
                 }
-
+                Foo2(A: 3, B: 4);
             }
+            public void  Foo2(int A, int B)
+            { }
         }
+
+
     }
 }
 

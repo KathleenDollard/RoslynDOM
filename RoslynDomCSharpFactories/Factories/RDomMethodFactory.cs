@@ -10,12 +10,23 @@ namespace RoslynDom.CSharp
     public class RDomMethodTypeMemberFactory
           : RDomTypeMemberFactory<RDomMethod, MethodDeclarationSyntax>
     {
-        protected  override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public RDomMethodTypeMemberFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as MethodDeclarationSyntax;
             var newItem = new RDomMethod(syntaxNode, parent, model);
-            Initialize(newItem, syntax, model, newItem.TypedSymbol.Name);
-   
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
+            //if (syntax.Body != null)
+            //{
+            //    var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => Corporation.CreateFrom<IStatementCommentWhite>(x, newItem, model));
+            //    newItem.StatementsAll.AddOrMoveRange(statements);
+            //}
+            newItem.Name = newItem.TypedSymbol.Name;
+
             var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
             newItem.TypeParameters.AddOrMoveRange(typeParameters);
 
@@ -27,19 +38,15 @@ namespace RoslynDom.CSharp
             newItem.IsSealed = newItem.Symbol.IsSealed;
             newItem.IsStatic = newItem.Symbol.IsStatic;
             newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
-            var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => RDomFactoryHelper.GetHelperForMisc().MakeItems(x, newItem, model))
+            var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
                                 .OfType<IParameter>();
             newItem.Parameters.AddOrMoveRange(parameters);
-            if (syntax.Body != null)
-            {
-                var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => RDomFactoryHelper.GetHelperForStatement().MakeItems(x, newItem, model));
-                newItem.StatementsAll.AddOrMoveRange(statements);
-            }
 
-            return newItem ;
+
+            return newItem;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(ITypeMemberCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsMethod = item as IMethod;
             var nameSyntax = SyntaxFactory.Identifier(itemAsMethod.Name);
@@ -49,7 +56,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.MethodDeclaration(returnTypeSyntax, nameSyntax)
                             .WithModifiers(modifiers);
 
-            var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsMethod.Attributes);
+            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsMethod.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             var parameterSyntaxList = itemAsMethod.Parameters

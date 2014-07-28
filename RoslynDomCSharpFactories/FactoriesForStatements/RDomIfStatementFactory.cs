@@ -11,26 +11,33 @@ namespace RoslynDom.CSharp
     public class RDomIfStatementFactory
          : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
     {
-        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public RDomIfStatementFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as IfStatementSyntax;
             var newItem = new RDomIfStatement(syntaxNode, parent, model);
-            newItem.Condition = CreateFromHelpers.GetExpression(newItem, syntax.Condition, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            newItem.Condition = Corporation.CreateFrom<IExpression>(syntax.Condition, newItem, model).FirstOrDefault();
+            CreateFromWorker.InitializeStatements(newItem, syntax.Statement, newItem, model);
 
-            CreateFromHelpers.InitializeStatements(newItem,  syntax.Statement, model);
             var elseIfSyntaxList = GetElseIfSyntaxList(syntax);
             foreach (var elseIf in elseIfSyntaxList.Skip(1))  // The first is the root if
             {
                 var newElse = new RDomElseIfStatement(elseIf, newItem, model);
-                newElse.Condition = CreateFromHelpers.GetExpression(newElse, elseIf.Condition, model);
-                CreateFromHelpers.InitializeStatements(newElse, elseIf.Statement, model);
+                CreateFromWorker.StandardInitialize(newElse, syntaxNode, newElse, model);
+                CreateFromWorker.InitializeStatements(newElse, elseIf.Statement, newElse, model);
+                newElse.Condition = Corporation.CreateFrom<IExpression>(elseIf.Condition, newElse, model).FirstOrDefault();
                 newItem.Elses.AddOrMove(newElse);
             }
             var lastElseIf = elseIfSyntaxList.Last();
             if (lastElseIf.Else != null && lastElseIf.Else.Statement != null)
             {
                 var newElse = new RDomElseStatement(syntax, newItem, model);
-                CreateFromHelpers.InitializeStatements(newElse,  lastElseIf.Else.Statement, model);
+                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+                CreateFromWorker.InitializeStatements(newElse, lastElseIf.Else.Statement, newElse, model);
                 newItem.Elses.AddOrMove(newElse);
             }
             return  newItem ;
@@ -68,7 +75,7 @@ namespace RoslynDom.CSharp
             return list;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IIfStatement;
             var elseSyntax = BuildElseSyntax(itemAsT.Elses);

@@ -8,22 +8,27 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomBlockStatementFactory
-             : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
+            : RDomStatementFactory<RDomBlockStatement, BlockSyntax>
     {
-        protected  override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public RDomBlockStatementFactory(RDomCorporation corporation)
+              : base(corporation)
+        { }
+
+        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as BlockSyntax;
             var newItem = new RDomBlockStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             foreach (var statementSyntax in syntax.Statements)
             {
-                var statements = RDomFactoryHelper.GetHelperForStatement().MakeItems(statementSyntax, newItem, model);
+                var statements = Corporation.CreateFrom<IStatementCommentWhite>(statementSyntax, newItem, model);
                 newItem.Statements.AddOrMoveRange(statements);
             }
 
-            return newItem ;
+            return newItem;
         }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IBlockStatement;
 

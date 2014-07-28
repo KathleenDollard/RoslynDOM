@@ -11,6 +11,10 @@ namespace RoslynDom.CSharp
     public class RDomVariableDeclarationFactory
         : RDomMiscFactory<RDomVariableDeclaration, VariableDeclaratorSyntax>
     {
+        public RDomVariableDeclarationFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
             return syntaxNode is VariableDeclarationSyntax;
@@ -25,6 +29,7 @@ namespace RoslynDom.CSharp
             foreach (var decl in declarators)
             {
                 var newItem = new RDomVariableDeclaration( decl, parent, model);
+                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
                 list.Add(newItem);
                 InitializeNewItem(newItem, decl, model);
             }
@@ -42,13 +47,12 @@ namespace RoslynDom.CSharp
             if (syntax.Initializer != null)
             {
                 var equalsClause = syntax.Initializer;
-                newItem.Initializer = RDomFactoryHelper.GetHelperForExpression()
-                                .MakeItems(equalsClause.Value, newItem, model).FirstOrDefault();
+                newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
             }
 
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IVariableDeclaration;
             var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);

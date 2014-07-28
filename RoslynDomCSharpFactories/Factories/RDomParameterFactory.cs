@@ -10,14 +10,17 @@ namespace RoslynDom.CSharp
     public class RDomParameterMiscFactory
             : RDomMiscFactory<RDomParameter, ParameterSyntax>
     {
-        protected  override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public RDomParameterMiscFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
+        protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ParameterSyntax;
             var newItem = new RDomParameter(syntaxNode, parent,model);
-            newItem.Name = newItem.TypedSymbol.Name;
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
-            var attributes = RDomFactoryHelper.CreateAttributeFrom(syntaxNode, newItem, model);
-            newItem.Attributes.AddOrMoveAttributeRange(attributes);
+            newItem.Name = newItem.TypedSymbol.Name;
 
             newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
             newItem.IsOut = newItem.TypedSymbol.RefKind == RefKind.Out;
@@ -29,7 +32,7 @@ namespace RoslynDom.CSharp
             return newItem ;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IMisc item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IParameter;
             var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
@@ -38,7 +41,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.Parameter(nameSyntax)
                         .WithType(syntaxType);
 
-            var attributes = RDomFactoryHelper.BuildAttributeSyntax(itemAsT.Attributes);
+            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             var modifiers = SyntaxFactory.TokenList();

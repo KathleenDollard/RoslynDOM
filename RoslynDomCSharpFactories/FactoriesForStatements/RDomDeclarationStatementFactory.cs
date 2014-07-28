@@ -11,6 +11,10 @@ namespace RoslynDom.CSharp
     public class RDomDeclarationStatementFactory
         : RDomStatementFactory<RDomDeclarationStatement, VariableDeclaratorSyntax>
     {
+        public RDomDeclarationStatementFactory(RDomCorporation corporation)
+         : base(corporation)
+        { }
+
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
             return syntaxNode is LocalDeclarationStatementSyntax;
@@ -19,19 +23,20 @@ namespace RoslynDom.CSharp
         protected override IEnumerable<IStatementCommentWhite> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<IStatement>();
-           // LineDirectiveTriviaSyntax
+            // LineDirectiveTriviaSyntax
             var rawDeclaration = syntaxNode as LocalDeclarationStatementSyntax;
             var rawVariableDeclaration = rawDeclaration.Declaration;
             var declarators = rawDeclaration.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                var newItem = new RDomDeclarationStatement( decl, parent, model);
+                var newItem = new RDomDeclarationStatement(decl, parent, model);
                 list.Add(newItem);
+                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
                 InitializeNewItem(newItem, decl, model);
             }
             return list;
         }
-   
+
         public void InitializeNewItem(RDomDeclarationStatement newItem, VariableDeclaratorSyntax syntax, SemanticModel model)
         {
             newItem.Name = newItem.TypedSymbol.Name;
@@ -43,13 +48,12 @@ namespace RoslynDom.CSharp
             if (syntax.Initializer != null)
             {
                 var equalsClause = syntax.Initializer;
-                newItem.Initializer = RDomFactoryHelper.GetHelperForExpression()
-                                .MakeItems(equalsClause.Value, newItem, model).FirstOrDefault();
+                newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
             }
 
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IDeclarationStatement;
             var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);

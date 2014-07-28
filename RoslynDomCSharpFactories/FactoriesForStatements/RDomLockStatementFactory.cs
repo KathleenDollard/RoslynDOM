@@ -12,23 +12,23 @@ namespace RoslynDom.CSharp
     public class RDomLockStatementFactory
                 : RDomStatementFactory<RDomLockStatement, LockStatementSyntax>
     {
+        public RDomLockStatementFactory(RDomCorporation corporation)
+            : base(corporation)
+        { }
+
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as LockStatementSyntax;
             var newItem = new RDomLockStatement(syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
-            var expr = RDomFactoryHelper.GetHelperForExpression().MakeItems(syntax.Expression, newItem, model).FirstOrDefault();
+            var expr = Corporation.CreateFrom<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
             newItem.Expression = expr;
-
-            bool hasBlock = false;
-            var statements = CreateFromHelpers.GetStatementsFromSyntax(syntax.Statement, newItem, ref hasBlock, model);
-            newItem.HasBlock = hasBlock;
-            newItem.StatementsAll.AddOrMoveRange(statements);
 
             return newItem;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IStatementCommentWhite item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as ILockStatement;
             var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock);
