@@ -34,15 +34,6 @@ namespace RoslynDom
             IsStatic = oldRDom.IsStatic;
         }
 
-        //protected override bool CheckSameIntent(IField other, bool skipPublicAnnotations)
-        //{
-        //    if (!base.CheckSameIntent(other, skipPublicAnnotations)) return false;
-        //    if (AccessModifier != other.AccessModifier) return false;
-        //    if (ReturnType.QualifiedName != other.ReturnType.QualifiedName) return false;
-        //    if (IsStatic != other.IsStatic) return false;
-        //    return true;
-        //}
-
         public string Name { get; set; }
 
         public string OuterName

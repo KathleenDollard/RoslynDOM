@@ -29,9 +29,6 @@ namespace RoslynDom
         public override object OriginalRawItem
         { get { return null; } }
 
-        //public override string OuterName
-        //{ get { return null; } }
-
         public override object RawItem
         { get { return null; } }
 

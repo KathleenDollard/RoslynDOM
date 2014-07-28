@@ -41,12 +41,7 @@ namespace RoslynDom.CSharp
                 newItem.Expression = expr;
             }
 
-            //bool hasBlock = false;
-            //var statements = CreateFromHelpers .GetStatementsFromSyntax(statement, newItem, ref hasBlock, model);
-            //newItem.HasBlock = hasBlock;
-            //newItem.StatementsAll.AddOrMoveRange(statements);
-
-            return newItem;
+              return newItem;
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)

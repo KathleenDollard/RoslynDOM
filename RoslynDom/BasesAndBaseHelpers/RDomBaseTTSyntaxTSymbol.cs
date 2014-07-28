@@ -67,54 +67,13 @@ namespace RoslynDom
         public virtual TSymbol TypedSymbol
         { get { return _symbol; } }
 
-        //public override string OuterName
-        //{
-        //    get
-        //    {
-        //        // TODO: Fix OuterName and all those broken tests
-        //        var thisAsHasName = this as IHasName;
-        //        if (thisAsHasName != null)
-        //        {
-        //            return (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
-        //                  thisAsHasName.Name;
-        //        }
-        //        return "";
-        //    }
-        //}
-
-        //protected virtual string GetQualifiedName()
-        //{
-        //    var item = this as IHasNamespace;
-        //    if (item != null)
-        //    {
-        //        var outerName = (string.IsNullOrWhiteSpace(_containingTypeName) ? "" : _containingTypeName + ".") +
-        //               item.Name;
-        //        // There are probably slightly cleaner ways to do this, but with some override scenarios
-        //        // directly calling OuterName will result in a StackOverflowException
-        //        return (string.IsNullOrWhiteSpace(item.Namespace) ? "" : item.Namespace + ".")
-        //                  + outerName;
-        //    }
-        //    // The following line should not be reachable, so is not tested
-        //    throw new InvalidOperationException();
-        //}
-
-
         protected virtual AccessModifier GetAccessibility()
         {
             if (Symbol == null) { return AccessModifier.NotApplicable; }
             return (AccessModifier)Symbol.DeclaredAccessibility;
         }
 
-        //private static string GetContainingTypeName(ITypeSymbol typeSymbol)
-        //{
-        //    if (typeSymbol == null) return "";
-        //    var parentName = GetContainingTypeName(typeSymbol.ContainingType);
-        //    return (string.IsNullOrWhiteSpace(parentName) ? "" : parentName + ".") +
-        //        typeSymbol.Name;
-        //}
-
- 
-        /// <summary>
+         /// <summary>
         /// Fallback for getting requested values. 
         /// <br/>
         /// For special values (those that don't just return a property) override

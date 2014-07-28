@@ -50,24 +50,7 @@ namespace RoslynDom.CSharp
             return SyntaxFactory.TriviaList(leadingTrivia);
         }
 
-        //private static IEnumerable<SyntaxTrivia> BuildCommentWhite(IDom item)
-        //{
-        //    var ret = new List<SyntaxTrivia>();
-        //    // This can happen if someone copies an item to a new item, does not attach it to a tree, 
-        //    // and asks for the syntax. It's actually expected to sometimes be unattached. 
-        //    if (item.Parent == null) { return ret; }
-        //    if (item is IStemMember)
-        //    {
-        //        var parentAsStem = item.Parent as IStemContainer;
-        //        if (parentAsStem == null) throw new InvalidOperationException();
-        //        var commentWhites = parentAsStem.StemMembersAll
-        //                            .PreviousSiblingsUntil(item, x => !(x is IComment || x is IVerticalWhitespace))
-        //                            .OfType<ICommentWhite>();
-        //        ret.AddRange(MakeWhiteCommentTrivia(commentWhites));
-        //    }
-        //    return ret;
-        //}
-
+ 
         private static IEnumerable<SyntaxTrivia> BuildCommentWhite(IDom item)
         {
             var ret = new List<SyntaxTrivia>();
@@ -192,32 +175,7 @@ namespace RoslynDom.CSharp
             return ret;
         }
 
-        //private static IEnumerable<XmlNodeSyntax> GetXmlNodes(IHasStructuredDocumentation item, string description)
-        //{
-        //    var xmlNodes = new List<XmlNodeSyntax>();
-        //    if (item.StructuredDocumentation == null) return xmlNodes;
-        //    var oldDocumentation = item.StructuredDocumentation.RawItem as XDocument;
-        //    if (oldDocumentation != null)
-        //    {
-        //        var oldParent = oldDocumentation.DescendantNodes().OfType<XElement>().Where(x => x.Name == "member").FirstOrDefault();
-        //        var oldSummaryElement = oldDocumentation
-        //                    .DescendantNodes().OfType<XElement>()
-        //                    .Where(x => x.Name == "summary")
-        //                    .FirstOrDefault();
-        //        if (oldSummaryElement != null)
-        //        { oldSummaryElement.Value = description; }
-        //        else
-        //        {
-        //            var newSummary = new XElement("summary", description);
-        //            oldParent.AddFirst(newSummary);
-        //        }
-        //        // No doubt I'll feel dirty in the morning, but the manual alternative is awful
-        //        var oldDocsAsString = oldDocumentation.ToString();
-        //        var docNodes = SyntaxFactory.ParseLeadingTrivia(oldDocsAsString);
-        //    }
-        //    return docNodes;
-        //}
-
+  
         private static XmlTextSyntax MakeXmlDocumentationExterior()
         {
             return SyntaxFactory.XmlText()
@@ -319,20 +277,7 @@ namespace RoslynDom.CSharp
             var ret = SyntaxFactory.Block(statementSyntaxList);
             return ret;
         }
-        //public static SyntaxList<AttributeListSyntax> BuildAttributeListSyntax(IEnumerable<IAttribute> attributes)
-        //{
-        //    var list = SyntaxFactory.List<AttributeListSyntax>();
-        //    if (attributes.Any())
-        //    {
-        //        var attribList = SyntaxFactory.AttributeList();
-        //        var attributeSyntax = attributes.Select(x => ((RDomAttribute)x).BuildSyntax());
-        //        var attributeSyntax = attributes.Select(x => .BuildSyntax());
-        //        attribList = attribList.AddAttributes(attributeSyntax.ToArray());
-        //        list = list.Add(attribList);
-        //    }
-        //    return list;
-        //}
-
+ 
         public static ExpressionSyntax GetCondition(IHasCondition itemAsT)
         { return (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition); }
 

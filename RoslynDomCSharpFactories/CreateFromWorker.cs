@@ -58,13 +58,6 @@ namespace RoslynDom.CSharp
             InitializeAttributes(newItem as IHasAttributes, syntaxNode, parent, model);
             InitializeAccessModifiers(newItem as IHasAccessModifier, syntaxNode, parent, model);
             InitializeStructuredDocumentation(newItem as IHasStructuredDocumentation, syntaxNode, parent, model);
-            // InitializeStatements(newItem as IStatementBlock, syntaxNode, parent, model);
-
-            //throw new NotImplementedException();
-            //bool hasBlock = false;
-            //var statements = CreateFromHelpers.GetStatementsFromSyntax(syntax.Statement, newItem, ref hasBlock, model);
-            //newItem.HasBlock = hasBlock;
-            //newItem.StatementsAll.AddOrMoveRange(statements);
         }
 
         public void InitializeAccessModifiers(IHasAccessModifier itemHasAccessModifier, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -98,7 +91,7 @@ namespace RoslynDom.CSharp
             item.PublicAnnotations.Add(publicAnnotations);
         }
 
-        public void InitializeStructuredDocumentation(IHasStructuredDocumentation  item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public void InitializeStructuredDocumentation(IHasStructuredDocumentation item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             if (item == null) return;
             var structuredDocumentation = GetStructuredDocumenation(syntaxNode, item, model).FirstOrDefault();
@@ -107,42 +100,7 @@ namespace RoslynDom.CSharp
                 item.StructuredDocumentation = structuredDocumentation;
                 item.Description = structuredDocumentation.Description;
             }
-            //    var docsItem = RDomCorporation.GetStructuredDocumentation(rawItem, parent, model).FirstOrDefault();
-            //    var docs = Symbol.GetDocumentationCommentXml();
-            //    if (!string.IsNullOrWhiteSpace(docs))
-            //    {
-            //        var xDocument = XDocument.Parse(docs);
-            //        docsItem.RawItem = xDocument;
-            //        var summaryNode = xDocument.DescendantNodes()
-            //                            .OfType<XElement>()
-            //                            .Where(x => x.Name == "summary")
-            //                            .Select(x => x.Value);
-            //        var description = summaryNode.FirstOrDefault().Replace("/r", "").Replace("\n", "").Trim();
-            //        docsItem.Description = description;
-            //        thisAsHasStructuredDocs.StructuredDocumentation = docsItem;
-            //        thisAsHasStructuredDocs.Description = description;
-            //    }
-            //}
-            //    throw new NotImplementedException();
         }
-
-            //public static IExpression GetExpression(IDom newItem,
-            //    ExpressionSyntax expressionSyntax, SemanticModel model,
-            //    RDomCorporation corporation)
-            //{
-            //    if (expressionSyntax == null) { return null; }
-            //    return corporation.CreateFrom<IExpression>(expressionSyntax, newItem, model).FirstOrDefault();
-            //}
-
-
-            //public static void InitializeStatements(IStatementBlock newItem,
-            //        StatementSyntax statementSytax, SemanticModel model)
-            //{
-            //    bool hasBlock = false;
-            //    var statements = GetStatementsFromSyntax(statementSytax, newItem, ref hasBlock, model);
-            //    newItem.HasBlock = hasBlock;
-            //    newItem.StatementsAll.AddOrMoveRange(statements);
-            //}
 
         public void LoadStemMembers(IStemContainer newItem,
                     IEnumerable<MemberDeclarationSyntax> memberSyntaxes,
@@ -203,75 +161,6 @@ namespace RoslynDom.CSharp
             if (ret == null) { throw new InvalidOperationException("Invalid can't be represented as this kind"); }
             return new List<TKind>() { };
         }
-
-
-
-        ////public static void InitializeStatements(IStatementBlock newItem,
-        ////   BlockSyntax  blockSytax, SemanticModel model)
-        ////{
-        ////    bool hasBlock = false;
-        ////    var statements = GetStatementsFromSyntax(statementSytax, newItem, ref hasBlock, model);
-        ////    newItem.HasBlock = hasBlock;
-        ////    newItem.StatementsAll.AddOrMoveRange(statements);
-        ////}
-
-
-        //public static IVariableDeclaration GetVariable(ISymbol typedSymbol,
-        //        VariableDeclaratorSyntax variableSyntax, IDom parent, SemanticModel model)
-        //{
-        //    var parentSyntax = variableSyntax.Parent as VariableDeclarationSyntax;
-        //    if (parentSyntax == null) throw new InvalidOperationException();
-        //    var variable = new RDomVariableDeclaration(variableSyntax, parent, model);
-        //    variable.IsImplicitlyTyped = (parentSyntax.Type.ToString() == "var");
-        //    // not sure this is valid at all
-        //    variable.Type = new RDomReferencedType(typedSymbol.DeclaringSyntaxReferences, typedSymbol);
-        //    variable.Name = variableSyntax.Identifier.ToString();
-        //    return variable;
-        //}
-
-        //public static IEnumerable<IStatementCommentWhite> GetStatementsFromSyntax(StatementSyntax statementSyntax,
-        //    IDom parent, ref bool hasBlock, SemanticModel model)
-        //{
-        //    var statement = RDomCorporation.GetHelperForStatement().MakeItems(statementSyntax, parent, model).First();
-        //    var list = new List<IStatementCommentWhite>();
-        //    var blockStatement = statement as IBlockStatement;
-        //    if (blockStatement != null)
-        //    {
-        //        hasBlock = true;
-        //        foreach (var state in blockStatement.Statements)
-        //        {
-        //            // Don't need to copy because abandoning block
-        //            list.Add(state);
-        //        }
-        //    }
-        //    else
-        //    { list.Add(statement); }
-        //    return list;
-        //}
-
-        //void StandardInitialize(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        //{
-        //RDomCorporation.GetPublicAnnotations(rawItem, parent, model);
-        //if (thisAsHasStructuredDocs != null)
-        //{
-        //    var docsItem = RDomCorporation.GetStructuredDocumentation(rawItem, parent, model).FirstOrDefault();
-        //    var docs = Symbol.GetDocumentationCommentXml();
-        //    if (!string.IsNullOrWhiteSpace(docs))
-        //    {
-        //        var xDocument = XDocument.Parse(docs);
-        //        docsItem.RawItem = xDocument;
-        //        var summaryNode = xDocument.DescendantNodes()
-        //                            .OfType<XElement>()
-        //                            .Where(x => x.Name == "summary")
-        //                            .Select(x => x.Value);
-        //        var description = summaryNode.FirstOrDefault().Replace("/r", "").Replace("\n", "").Trim();
-        //        docsItem.Description = description;
-        //        thisAsHasStructuredDocs.StructuredDocumentation = docsItem;
-        //        thisAsHasStructuredDocs.Description = description;
-        //    }
-        //}
-        //    throw new NotImplementedException();
-        //}
 
 
     }

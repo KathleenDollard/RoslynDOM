@@ -63,7 +63,6 @@
     <Compile Include="CommentWhiteFactory.cs" />
     <Compile Include="BaseFactories\RDomExpressionFactory.cs" />
     <Compile Include="BuildSyntaxHelpers.cs" />
-    <Compile Include="CreateFromHelpers.cs" />
     <Compile Include="CreateFromWorker.cs" />
     <Compile Include="FactoriesForStatements\LoopFactoryHelper.cs" />
     <Compile Include="FactoriesForStatements\RDomAssignmentStatementFactory.cs" />

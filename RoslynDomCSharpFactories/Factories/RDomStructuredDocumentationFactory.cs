@@ -47,19 +47,7 @@ namespace RoslynDom.CSharp
                     newItem.Document = docString;
                 }
             }
-            //    var docs = Symbol.GetDocumentationCommentXml();
-            //    if (!string.IsNullOrWhiteSpace(docs))
-            //    {
-            //        var xDocument = XDocument.Parse(docs);
-            //        docsItem.RawItem = xDocument;
-            //        var summaryNode = xDocument.DescendantNodes()
-            //                            .OfType<XElement>()
-            //                            .Where(x => x.Name == "summary")
-            //                            .Select(x => x.Value);
-            //        var description = summaryNode.FirstOrDefault().Replace("/r", "").Replace("\n", "").Trim();
-            //        docsItem.Description = description;
-            //        thisAsHasStructuredDocs.StructuredDocumentation = docsItem;
-            //        thisAsHasStructuredDocs.Description = description;
+ 
             return newItem ;
         }
 

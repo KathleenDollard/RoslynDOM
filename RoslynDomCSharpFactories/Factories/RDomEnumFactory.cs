@@ -51,12 +51,7 @@ namespace RoslynDom.CSharp
 
             node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
-            //var membersSyntax = itemAsEnum.Members
-            //            .SelectMany(x => RDomFactoryHelper.TypeMemberFactoryHelper.BuildSyntax(x))
-            //            .ToList();
-            //node = node.WithMembers(SyntaxFactory.List(membersSyntax));
-            // TODO: Class type members and type constraints
-            return item.PrepareForBuildSyntaxOutput(node);
+                    return item.PrepareForBuildSyntaxOutput(node);
         }
     }
 

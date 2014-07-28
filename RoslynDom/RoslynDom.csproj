@@ -71,7 +71,6 @@
     <Compile Include="Implementations\RDomComment.cs" />
     <Compile Include="Implementations\RDomVerticalWhitespace.cs" />
     <Compile Include="IRoslynHasSymbol.cs" />
-    <Compile Include="RegisterCSharpFactories.cs" />
     <Compile Include="RoslynDomSymbolUtilities.cs" />
     <Compile Include="RoslynUtilities.cs" />
     <Compile Include="StatementImplementations\RDomElseIfStatement.cs" />

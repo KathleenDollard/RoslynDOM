@@ -673,21 +673,7 @@ private string Foo{get;}}
             Assert.AreEqual(1, root.Interfaces.Count());
         }
 
-        //        public void Can_get_members()
-        //        {
-        //            var csharpCode = @"
-        //                        class Interface
-        //                            { 
-        //string Foo{get;}
-        //int Bar;
-        //int FooBar(int cnt);
-        //}
-        //";
-        //            var root = RDomCSharpFactory.Factory.GetRootFromString(csharpCode);
-        //            Assert.AreEqual(1, root.Interfaces.First().Members.Count());
-        //        }
-
-        [TestMethod, TestCategory(StemContainerCategory)]
+          [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_structures()
         {
             var csharpCode = @"

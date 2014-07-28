@@ -22,12 +22,7 @@ namespace RoslynDom.CSharp
             var newItem = new RDomCheckedStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
-            newItem.Unchecked = (syntax.CSharpKind() == SyntaxKind.UncheckedStatement) ;
-         
-            //bool hasBlock = false;
-            //var statements = CreateFromHelpers .GetStatementsFromSyntax(syntax.Block, newItem, ref hasBlock, model);
-            //newItem.HasBlock = hasBlock;
-            //newItem.StatementsAll.AddOrMoveRange(statements);
+            newItem.Unchecked = (syntax.CSharpKind() == SyntaxKind.UncheckedStatement);
 
             return newItem;
         }
@@ -35,11 +30,11 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as ICheckedStatement;
-            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock) as BlockSyntax ;
+            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock) as BlockSyntax;
             var kind = itemAsT.Unchecked ? SyntaxKind.UncheckedExpression : SyntaxKind.CheckedExpression;
-            
+
             var node = SyntaxFactory.CheckedStatement(kind, statement);
-        
+
 
             return itemAsT.PrepareForBuildSyntaxOutput(node);
         }

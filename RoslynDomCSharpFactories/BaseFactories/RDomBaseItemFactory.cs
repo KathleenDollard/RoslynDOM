@@ -126,16 +126,6 @@ namespace RoslynDom.CSharp
             return itemAsT;
         }
 
-        //public virtual void InitializeItem(T newItem, TSyntax syntax, SemanticModel model)
-        //{ return; }
-
-        //public virtual void Initialize(T newItem, TSyntax syntaxNode, SemanticModel model, string name)
-        //{
-        //    var itemAsHasName = newItem as IHasName;
-        //    if (itemAsHasName != null)
-        //    { itemAsHasName.Name = name; }
-                  
-        //}
     }
 
     public abstract class RDomRootContainerFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IRoot>
@@ -196,5 +186,4 @@ namespace RoslynDom.CSharp
         { }
     }
 
-    // These interfaces currently exist only for the same of counting
 }

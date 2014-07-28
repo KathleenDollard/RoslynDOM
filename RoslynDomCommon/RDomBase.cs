@@ -64,47 +64,7 @@ namespace RoslynDom
         public IDom Parent { get; set; }
 
 
-        /// <summary>
-        /// NOTE: This documentation has not been updated to reflect changes due to @beefarino's input
-        /// <para>
-        /// The name is the local name. The best name 
-        /// is the name you are most likely to use inside the assembly and 
-        /// outside the current type. This name is also legal inside the type.
-        ///  </para><para>
-        ///    - namespace: The full namespace, regardless of declaration nesting
-        ///  </para><para>
-        ///    - nested types: The type name plus the outer type name
-        ///  </para><para>
-        ///    - static members: The member name plus the containing type name
-        ///  </para><para>
-        ///    - root and usings: empty string
-        ///  </para><para>
-        ///    - other symbols: The symbol name
-        /// </para>
-        /// </summary>
-        /// <returns></returns>
-        /// <remarks>
-        ///  <para>
-        /// Names are complicated. These are the distinctions for the RoslynDom
-        ///  <para>
-        ///    - Name: The local name, and same as the semantic tree symbol name
-        ///  </para><para>
-        ///    - OuterName: Described above
-        ///  </para><para>
-        ///    - QualifiedName: The name, nesting types, and namespace
-        ///  </para><para>
-        /// Part of the driver for this is removing differences based on namespace
-        /// nesting and other layout details that are irrelevant to meaning. However, 
-        /// it seemed unfriendly to have a name that differed from the Roslyn symbol name, 
-        /// so namespaces are the immediate name, not the current namespace name. Thus
-        /// Name on namespaces should be used with caution. Either use the Namespace property 
-        /// on another item, or use the OuterName in almost all cases.
-        ///  </para><para>
-        /// NOTE: Naming for generics is not yet included. 
-        ///  </para> 
-        /// </remarks>
-        //public abstract string OuterName { get; }
-
+  
         public override string ToString()
         {
             var ret = base.ToString() + " : ";

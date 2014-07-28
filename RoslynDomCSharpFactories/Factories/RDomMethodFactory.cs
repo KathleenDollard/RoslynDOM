@@ -20,11 +20,7 @@ namespace RoslynDom.CSharp
             var newItem = new RDomMethod(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
-            //if (syntax.Body != null)
-            //{
-            //    var statements = ListUtilities.MakeList(syntax, x => x.Body.Statements, x => Corporation.CreateFrom<IStatementCommentWhite>(x, newItem, model));
-            //    newItem.StatementsAll.AddOrMoveRange(statements);
-            //}
+
             newItem.Name = newItem.TypedSymbol.Name;
 
             var typeParameters = newItem.TypedSymbol.TypeParametersFrom();

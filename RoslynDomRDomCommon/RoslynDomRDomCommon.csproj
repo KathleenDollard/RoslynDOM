@@ -63,7 +63,6 @@
     <Compile Include="IRoslynDom.cs" />
     <Compile Include="IWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RDomBaseFactory.cs" />
     <Compile Include="RDomCorporation.cs" />
     <Compile Include="RoslynDomUtilities.cs" />
     <Compile Include="RoslynRDomUtilities.cs" />

@@ -83,17 +83,7 @@ namespace RoslynDom.CSharp
             syntaxNode = _helper.BuildSyntaxGroup(item);
             return true;
         }
-        //private bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> syntaxNode)
-        //    where TKind : class, IDom
-        //{
-        //    syntaxNode = null;
-        //    var itemAsKind = item as TKind;
-        //    if (itemAsKind == null) { return false; }
-        //    var corporation = RDomFactoryHelper.GetHelper<TKind>();
-        //    syntaxNode = corporation.BuildSyntaxGroup(item);
-        //    return true;
-        //}
-
+  
         private IEnumerable<Tuple<Type, int>> expectations = new List<Tuple<Type, int>>()
         {
                     Tuple.Create(typeof(IMisc),2),

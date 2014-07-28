@@ -43,19 +43,6 @@ namespace RoslynDom.CSharp
             return  newItem ;
         }
 
-        //public IExpression GetCondition(IStatementBlock newItem, ExpressionSyntax condition, SemanticModel model)
-        //{
-        //    if (condition == null) { return null; }
-        //    return RDomFactoryHelper.GetHelperForExpression().MakeItems(condition, newItem, model).FirstOrDefault();
-        //}
-
-        //public void InitializeStatements(IStatementBlock  newItem,  StatementSyntax statementSytax, SemanticModel model)
-        //{
-        //    bool hasBlock = false;
-        //    var statements = RoslynCSharpUtilities.GetStatementsFromSyntax(statementSytax, newItem, ref hasBlock, model);
-        //    newItem.HasBlock = hasBlock;
-        //    newItem.StatementsAll.AddOrMoveRange(statements);
-        //}
 
         private IEnumerable<IfStatementSyntax> GetElseIfSyntaxList(IfStatementSyntax syntax)
         {

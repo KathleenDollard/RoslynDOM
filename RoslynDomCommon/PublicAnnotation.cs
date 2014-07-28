@@ -37,30 +37,6 @@ namespace RoslynDom.Common
             get { return items.Select(x => x.Key); }
         }
 
-        //public bool SameIntent<T>(T other)
-        //     where T : class
-        //{
-        //    var otherAnnotation = other as IPublicAnnotation;
-        //    foreach (var item in items)
-        //    {
-        //        var otherValue = otherAnnotation.GetValue(item.Key);
-        //        if (otherValue == null) return false;
-        //        var itemHasSameIntent = item.Value as IHasSameIntentMethod;
-        //        if (itemHasSameIntent != null)
-        //        { if (!itemHasSameIntent.SameIntent(otherValue)) { return false; } }
-        //        if (!otherValue.Equals(item.Value)) return false;
-        //    }
-        //    return true;
-        //}
-
-        //public bool SameIntent<T>(T otherAnnotation, bool ignorePublicAnnotations)
-        //    where T : class
-        //{
-        //    if (ignorePublicAnnotations) return true;
-        //    return SameIntent(otherAnnotation);
-        //}
-
-
         public T GetValue<T>(string key)
         { return (T)this[key]; }
 
@@ -85,9 +61,6 @@ namespace RoslynDom.Common
 
         protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
         {
-            //var otherAsT = other as IPublicAnnotation;
-            //if (otherAsT == null) return false;
-            //return sameIntent.SameIntent(this, otherAsT, skipPublicAnnotations);
             if (skipPublicAnnotations) return true;
             var otherAnnotation = other as IPublicAnnotation;
             foreach (var item in items)
@@ -109,9 +82,6 @@ namespace RoslynDom.Common
 
         public override object OriginalRawItem
         { get { return null; } }
-
-        //public override string OuterName
-        //{ get { return null; } }
 
         public override object RawItem
         { get { return null; } }
