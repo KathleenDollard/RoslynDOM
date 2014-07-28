@@ -1,6 +1,6 @@
 ﻿using RoslynDom.Common;
 
-namespace RoslynDomCommon.InterfacesForStatements
+namespace RoslynDom.Common
 {
     public interface ISpecialStatement : IStatement
     {

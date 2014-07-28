@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface IHasSameIntentMethod
+    public interface IHasSameIntentMethod 
     {
         bool SameIntent<T>(T other, bool skipPublicAnnotations)
                 where T : class;

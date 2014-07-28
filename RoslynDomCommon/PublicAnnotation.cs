@@ -88,7 +88,7 @@ namespace RoslynDom.Common
             //var otherAsT = other as IPublicAnnotation;
             //if (otherAsT == null) return false;
             //return sameIntent.SameIntent(this, otherAsT, skipPublicAnnotations);
-
+            if (skipPublicAnnotations) return true;
             var otherAnnotation = other as IPublicAnnotation;
             foreach (var item in items)
             {

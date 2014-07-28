@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IHasName
+    public interface IHasName : IDom
     {
         string Name { get; set; }
         string OuterName { get; }

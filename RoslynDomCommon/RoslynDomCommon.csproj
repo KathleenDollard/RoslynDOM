@@ -168,6 +168,7 @@
     <Compile Include="SameIntent\SameIntent_IStructure.cs" />
     <Compile Include="SameIntent\SameIntent_ITypeParameter.cs" />
     <Compile Include="SameIntent\SameIntent_IUsing.cs" />
+    <Compile Include="StandardSameIntent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfaceCommonality.cd" />

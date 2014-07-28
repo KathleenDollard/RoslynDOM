@@ -1,0 +1,318 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using RoslynDom.Common;
+
+namespace RoslynDomCommon
+{
+    public class StandardSameIntent
+    {
+        public static bool CheckSameIntent<T>(T one, T other, bool skipPublicAnnotations)
+            where T : class, IDom
+        {
+            var checker = new Checker(skipPublicAnnotations);
+            return checker.Check(one, other);
+        }
+
+        /// <summary>
+        /// Nested class used to avoid passing comparison rules like skipPublicAnnotations around
+        /// </summary>
+        private class Checker
+        {
+            private bool skipPublicAnnotations;
+
+            internal Checker(bool skipPublicAnnotations)
+            { this.skipPublicAnnotations = skipPublicAnnotations; }
+
+            internal bool Check<T>(T one, T other)
+                        where T : class, IDom
+            {
+                if (one == null && other == null) return true;
+                if (one == null && other != null) return false;
+                if (one != null && other == null) return false;
+
+                if (!CheckSpecial(one, other)) return false;
+                if (!CheckCharacteristics(one, other)) return false;
+                if (!CheckBase(one, other)) return false;
+                if (!CheckEntities(one, other)) return false;
+                if (!CheckStatements(one, other)) return false;
+
+                return true;
+            }
+
+            private bool CheckSpecial<T>(T one, T other)
+                        where T : class, IDom
+            {
+                // Special interfaces
+                if (!Check<T, IHasAttributes>(one, other,
+                    (x, y) => CheckChildrenAnyOrder(x.Attributes, y.Attributes)))
+                    return false;
+                if (!Check<T, IAttribute>(one, other,
+                    (x, y) => CheckChildrenAnyOrder(x.AttributeValues, y.AttributeValues)))
+                    return false;
+                // need to compare the boxed value types with Equals
+                if (!Check<T, IAttributeValue>(one, other,
+                    (x, y) => x.ValueType == y.ValueType && x.Value.Equals(y.Value)
+                    && x.Type == y.Type))
+                    return false;
+                if (!Check<T, IHasStructuredDocumentation>(one, other,
+                    (x, y) => Check(x.StructuredDocumentation, y.StructuredDocumentation) && x.Description == y.Description))
+                    return false;
+                if (!Check<T, IComment>(one, other,
+                   (x, y) => x.Text == y.Text && x.IsMultiline == y.IsMultiline))
+                    return false;
+                return true;
+            }
+
+
+            private bool CheckCharacteristics<T>(T one, T other)
+                         where T : class, IDom
+            {
+                // Characteristic
+                // An infinite loop can happen with the check for nested types 
+                // TODO: See if there are any, possibly patholoical cases, where the string fix fails,
+                if (!Check<T, ICanBeNested>(one, other,
+                    (x, y) => x.IsNested == y.IsNested
+                    && (x.ContainingType == null && y.ContainingType == null
+                       || x.ContainingType.ToString() == y.ContainingType.ToString())))
+                    return false;
+                if (!Check<T, ICanBeStatic>(one, other,
+                    (x, y) => x.IsStatic == y.IsStatic))
+                    return false;
+                if (!Check<T, IHasAccessModifier>(one, other,
+                    (x, y) => x.AccessModifier == y.AccessModifier))
+                    return false;
+                if (!Check<T, IHasCondition>(one, other,
+                    (x, y) => Check(x.Condition, y.Condition)))
+                    return false;
+                // if (!Check<T, IHasGroup> not tested, groups aren't important for same intent
+                if (!Check<T, IHasImplementedInterfaces>(one, other,
+                    (x, y) => CheckChildrenAnyOrder(x.AllImplementedInterfaces, y.AllImplementedInterfaces)))
+                    return false;
+                if (!Check<T, IHasName>(one, other,
+                    (x, y) => x.Name == y.Name ))
+                    return false;
+                // TODO: SHould anything in namespace be checked?
+                //if (!Check<T, IHasNamespace>(one, other,
+                //    (x, y) => x.Namespace == y.Namespace && x.QualifiedName == y.QualifiedName))
+                //    return false;
+                if (!Check<T, IHasReturnType>(one, other,
+                    (x, y) => Check(x.ReturnType, y.ReturnType)))
+                    return false;
+                if (!Check<T, IHasTypeParameters>(one, other,
+                    (x, y) => CheckChildrenAnyOrder(x.TypeParameters, y.TypeParameters)))
+                    return false;
+                return true;
+            }
+
+            private bool CheckBase<T>(T one, T other)
+                        where T : class, IDom
+            {
+                // Base
+                if (!Check<T, IExpression>(one, other,
+                    (x, y) => x.Expression == y.Expression && x.ExpressionType == y.ExpressionType))
+                    return false;
+                if (!Check<T, ILoop>(one, other,
+                    (x, y) => x.TestAtEnd == y.TestAtEnd))
+                    return false;
+                if (!Check<T, INestedContainer>(one, other,
+                    (x, y) => CheckChildrenAnyOrder(x.Types, y.Types)))
+                    return false;
+                if (!Check<T, IPropertyOrMethod>(one, other,
+                    (x, y) => x.IsAbstract == y.IsAbstract && x.IsVirtual == y.IsVirtual
+                    && x.IsOverride == y.IsOverride && x.IsSealed == y.IsSealed
+                    && CheckChildrenAnyOrder(x.Parameters, y.Parameters)))
+                    return false;
+                if (!Check<T, IStatementBlock>(one, other,
+                     (x, y) => x.HasBlock == y.HasBlock
+                     && CheckChildrenInOrder(x.Statements, y.Statements)))
+                    return false;
+                if (!Check<T, IStemContainer>(one, other,
+                    (x, y) => CheckChildrenAnyOrder(x.StemMembers, y.StemMembers)
+                    && CheckChildrenAnyOrder(x.UsingDirectives, y.UsingDirectives)))
+                    return false;
+                if (!Check<T, IStemMemberCommentWhite>(one, other,
+                     (x, y) => x.StemMemberKind == y.StemMemberKind))
+                    return false;
+                if (!Check<T, ITypeMemberCommentWhite>(one, other,
+                     (x, y) => x.MemberKind == y.MemberKind))
+                    return false;
+                if (!Check<T, ITypeMemberContainer>(one, other,
+                    (x, y) => CheckChildrenAnyOrder(x.Members, y.Members)))
+                    return false;
+
+                return true;
+            }
+
+            private bool CheckEntities<T>(T one, T other)
+                        where T : class, IDom
+            {
+                // entity interfaces
+                if (!Check<T, IAccessor>(one, other,
+                     (x, y) => x.AccessorType == y.AccessorType))
+                    return false;
+                if (!Check<T, IClass>(one, other,
+                     (x, y) =>  x.IsAbstract == y.IsAbstract 
+                     && x.IsSealed == y.IsSealed && Check(x.BaseType, y.BaseType) ))
+                    return false;
+                if (!Check<T, IEnum>(one, other,
+                     (x, y) => Check(x.UnderlyingType, y.UnderlyingType)
+                     && CheckChildrenInOrder(x.Values, y.Values)))
+                    return false;
+                if (!Check<T, IEnumValue>(one, other,
+                     (x, y) => Check(x.Expression, y.Expression)))
+                    return false;
+                if (!Check<T, IMethod>(one, other,
+                     (x, y) => x.IsExtensionMethod == y.IsExtensionMethod))
+                    return false;
+                if (!Check<T, IParameter>(one, other,
+                     (x, y) => Check(x.Type, y.Type)
+                     && x.IsOut == y.IsOut
+                     && x.IsRef == y.IsRef && x.IsParamArray == y.IsParamArray
+                     && x.IsOptional == y.IsOptional && x.Ordinal == y.Ordinal))
+                    return false;
+                if (!Check<T, IProperty>(one, other,
+                     (x, y) => x.CanGet == y.CanGet && x.CanSet == y.CanSet
+                     && Check(x.PropertyType, y.PropertyType )
+                     && Check(x.GetAccessor, y.GetAccessor )
+                     && Check(x.SetAccessor , y.SetAccessor )))
+                    return false;
+                if (!Check<T, ITypeParameter>(one, other,
+                     (x, y) => x.Variance == y.Variance && x.HasConstructorConstraint == y.HasConstructorConstraint
+                     && x.HasReferenceTypeConstraint == y.HasReferenceTypeConstraint
+                      && x.HasValueTypeConstraint == y.HasValueTypeConstraint
+                      && x.Ordinal == y.Ordinal
+                      && CheckChildrenAnyOrder(x.ConstraintTypes, y.ConstraintTypes)))
+                    return false;
+                if (!Check<T, IUsingDirective>(one, other,
+                      (x, y) => x.Alias == y.Alias))
+                    return false;
+                return true;
+            }
+
+            private bool CheckStatements<T>(T one, T other)
+                         where T : class, IDom
+            {
+                // Statement interfaces
+                if (!Check<T, IArgument>(one, other,
+                    (x, y) => x.Name == y.Name
+                      && x.IsRef == y.IsRef && x.IsOut == y.IsOut
+                      && Check(x.ValueExpression, y.ValueExpression)))
+                    return false;
+                if (!Check<T, IAssignmentStatement>(one, other,
+                    (x, y) => x.Expression == y.Expression
+                    && x.Left == y.Left
+                    && x.Operator == y.Operator))
+                    return false;
+                if (!Check<T, IBlockStatement>(one, other,
+                    (x, y) => CheckChildrenInOrder(x.Statements, y.Statements)))
+                    return false;
+                if (!Check<T, ICheckedStatement>(one, other,
+                    (x, y) => x.Unchecked == y.Unchecked))
+                    return false;
+                if (!Check<T, IForEachStatement>(one, other,
+                    (x, y) => Check(x.Variable, y.Variable)))
+                    return false;
+                if (!Check<T, IForStatement>(one, other,
+                    (x, y) => Check(x.Variable, y.Variable)
+                    && x.Incrementor == y.Incrementor))
+                    return false;
+                if (!Check<T, IIfStatement>(one, other,
+                    (x, y) => CheckChildrenInOrder(x.Elses, y.Elses)
+                    && Check(x.Else, y.Else)))
+                    return false;
+                if (!Check<T, IInvocationStatement>(one, other,
+                    (x, y) => Check(x.Invocation, y.Invocation)))
+                    return false;
+                if (!Check<T, ILockStatement>(one, other,
+                    (x, y) => Check(x.Expression, y.Expression)))
+                    return false;
+                if (!Check<T, IObjectCreationExpression>(one, other,
+                    (x, y) => Check(x.Type, y.Type)
+                    && CheckChildrenInOrder(x.Arguments, y.Arguments)))
+                    return false;
+                if (!Check<T, IReturnStatement>(one, other,
+                    (x, y) => Check(x.Return, y.Return)))
+                    return false;
+                if (!Check<T, ISpecialStatement>(one, other,
+                    (x, y) => x.SpecialStatementKind == y.SpecialStatementKind))
+                    return false;
+                if (!Check<T, IThrowStatement>(one, other,
+                    (x, y) => Check(x.ExceptionExpression, y.ExceptionExpression)))
+                    return false;
+                if (!Check<T, ITryStatement>(one, other,
+                    (x, y) => Check(x.Finally, y.Finally)
+                    && CheckChildrenInOrder(x.Catches, y.Catches)))
+                    return false;
+                if (!Check<T, ICatchStatement>(one, other,
+                    (x, y) => Check(x.ExceptionVariable, y.ExceptionVariable)))
+                    return false;
+                if (!Check<T, IUsingStatement>(one, other,
+                    (x, y) => Check(x.Expression, y.Expression)
+                    && Check(x.Variable, y.Variable)))
+                    return false;
+                if (!Check<T, IVariable>(one, other,
+                    (x, y) => x.IsImplicitlyTyped == y.IsImplicitlyTyped
+                    && x.IsConst == y.IsConst
+                    && Check(x.Type, y.Type)
+                    && Check(x.Initializer, y.Initializer)))
+                    return false;
+                if (!Check<T, ICanBeStatic>(one, other,
+                    (x, y) => x.IsStatic == y.IsStatic))
+                    return false;
+                if (!Check<T, ICanBeStatic>(one, other,
+                    (x, y) => x.IsStatic == y.IsStatic))
+                    return false;
+                return true;
+
+            }
+
+            private bool Check<T, TCheck>(T one, T other,
+                Func<TCheck, TCheck, bool> check)
+                where TCheck : class, IDom
+                where T : class, IDom
+            {
+                if (!skipPublicAnnotations)
+                {
+                    if (!one.PublicAnnotations.SameIntent(other.PublicAnnotations))
+                        return false;
+                }
+
+                var oneAs = one as TCheck;
+                var otherAs = other as TCheck;
+                if (oneAs == null) return true;// already checked for initially null, this means cast failed
+                return check(oneAs, otherAs);
+            }
+
+            private bool CheckChildrenInOrder<T>(IEnumerable<T> oneList, IEnumerable<T> otherList)
+                        where T : class, IDom
+            {
+                if (oneList.Count() != otherList.Count()) return false;
+                var otherArray = otherList.ToArray();
+                var oneArray = oneList.ToArray();
+                for (int i = 0; i < oneArray.Length; i++)
+                {
+                    if (!Check(oneArray[i], otherArray[i])) return false;
+
+                }
+                return true;
+            }
+
+            private bool CheckChildrenAnyOrder<T>(IEnumerable<T> oneList, IEnumerable<T> otherList)
+                        where T : class, IDom
+            {
+                if (oneList.Count() != otherList.Count()) return false;
+                foreach (var item in oneList)
+                {
+                    var otherItem = otherList.Where(x => item.Matches(x)).FirstOrDefault();
+                    if (otherItem == null) return false;
+                    if (!Check(item, otherItem)) return false;
+                }
+                return true;
+            }
+
+        }
+    }
+}

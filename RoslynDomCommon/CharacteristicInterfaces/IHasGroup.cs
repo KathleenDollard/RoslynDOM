@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-  public   interface IHasGroup
+  public   interface IHasGroup : IDom
     {
         Guid Group { get;  }
     }

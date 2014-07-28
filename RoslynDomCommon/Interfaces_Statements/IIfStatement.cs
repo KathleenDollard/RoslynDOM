@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace RoslynDom.Common
 {
 
-  
-       public interface IIfStatement :IStatement,  IStatementBlock, IHasCondition, IDom<IIfStatement>
+
+    public interface IIfStatement : IStatement, IStatementBlock, IHasCondition, IDom<IIfStatement>
     {
         RDomList<IElseStatement> Elses { get; }
         IFinalElseStatement Else { get; }
@@ -16,10 +16,10 @@ namespace RoslynDom.Common
 
     }
 
-    public interface IElseIfStatement :  IDom<IElseIfStatement>, IElseStatement, IHasCondition
+    public interface IElseIfStatement : IDom<IElseIfStatement>, IElseStatement, IHasCondition
     { }
 
-    public interface IFinalElseStatement :  IDom<IFinalElseStatement>, IElseStatement
+    public interface IFinalElseStatement : IDom<IFinalElseStatement>, IElseStatement
     { }
     public interface IElseStatement : IStatement, IStatementBlock
     { }

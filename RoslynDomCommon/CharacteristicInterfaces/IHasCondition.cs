@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface IHasCondition
+    public interface IHasCondition : IDom
     {
         IExpression Condition { get; set; }
     }

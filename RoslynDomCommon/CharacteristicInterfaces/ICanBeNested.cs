@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface ICanBeNested
+    public interface ICanBeNested : IDom
     {
         bool IsNested { get; }
         IType ContainingType { get; }

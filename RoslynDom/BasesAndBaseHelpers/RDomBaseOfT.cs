@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using RoslynDomCommon;
 
 namespace RoslynDom
 {
@@ -35,12 +36,16 @@ namespace RoslynDom
             return (T)newItem;
         }
 
-        protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
+        protected override sealed bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
         {
             var otherAsT = other as T;
+            var thisAsT = this as T;
             if (otherAsT == null) return false;
             if (!CheckSameIntent(otherAsT, skipPublicAnnotations)) { return false; }
-            return sameIntent.SameIntent(this as T, other as T, skipPublicAnnotations);
+            if (!StandardSameIntent.CheckSameIntent(thisAsT, otherAsT, skipPublicAnnotations)) return false; ;
+            //if (sameIntent == null) return true; // assume that CheckSameIntent override does work
+            //return sameIntent.SameIntent(this as T, other as T, skipPublicAnnotations);
+            return true;
         }
 
         /// <summary>

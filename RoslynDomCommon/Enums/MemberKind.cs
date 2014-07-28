@@ -13,6 +13,7 @@
         EnumItem,
         Invalid,
         Whitespace,
-        Comment
+        Comment,
+        Accessor
     }
 }

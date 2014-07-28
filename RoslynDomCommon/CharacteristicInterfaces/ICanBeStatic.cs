@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface ICanBeStatic
+    public interface ICanBeStatic : IDom
     {
         bool IsStatic { get; set; }
     }

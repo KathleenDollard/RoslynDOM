@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface IHasImplementedInterfaces
+    public interface IHasImplementedInterfaces : IDom
     {
         IEnumerable<IReferencedType> ImplementedInterfaces { get; }
         IEnumerable<IReferencedType> AllImplementedInterfaces { get; }

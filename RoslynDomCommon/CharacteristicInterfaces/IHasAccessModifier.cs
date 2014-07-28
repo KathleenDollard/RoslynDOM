@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface IHasAccessModifier
+    public interface IHasAccessModifier : IDom
     {
         AccessModifier AccessModifier { get; set; }
     }

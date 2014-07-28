@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface IHasTypeParameters 
+    public interface IHasTypeParameters : IDom
     {
         RDomList<ITypeParameter> TypeParameters { get; }
     }

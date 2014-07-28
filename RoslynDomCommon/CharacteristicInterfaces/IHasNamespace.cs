@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface IHasNamespace : IHasName
+    public interface IHasNamespace : IHasName,  IDom
     {
         string Namespace { get;  }
         string QualifiedName { get;  }

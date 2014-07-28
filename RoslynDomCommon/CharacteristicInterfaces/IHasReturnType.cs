@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface IHasReturnType
+    public interface IHasReturnType : IDom
     {
         IReferencedType  ReturnType { get; set; }
     }

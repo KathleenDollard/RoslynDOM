@@ -28,6 +28,10 @@ namespace RoslynDom
             StatementsAll.AddOrMoveRange(newStatements);
 
             AccessModifier = oldRDom.AccessModifier;
+            if (oldRDom.ReturnType != null)
+            { ReturnType = oldRDom.ReturnType.Copy(); }
+            HasBlock = oldRDom.HasBlock;
+            _accessorType = oldRDom.AccessorType;
         }
 
         protected override void Initialize()
@@ -64,13 +68,7 @@ namespace RoslynDom
 
         public AccessModifier AccessModifier { get; set; }
         public IReferencedType ReturnType { get; set; }
-        public bool IsAbstract { get; set; }
-        public bool IsVirtual { get; set; }
-        public bool IsOverride { get; set; }
-        public bool IsSealed { get; set; }
-        public bool IsStatic { get; set; }
-        public bool IsExtensionMethod { get; set; }
-
+   
         public RDomList<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
@@ -78,7 +76,7 @@ namespace RoslynDom
         { get { return _statements.OfType<IStatement>().ToList(); } }
 
         public MemberKind MemberKind
-        { get { return MemberKind.Method; } }
+        { get { return MemberKind.Accessor; } }
 
         public AccessorType AccessorType
         { get { return _accessorType; } }
