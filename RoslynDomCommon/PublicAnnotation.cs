@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RoslynDom.Common
 {
     public class PublicAnnotation : RDomBase, IPublicAnnotation
     {
-        private ISameIntent<IPublicAnnotation> sameIntent = SameIntent_Factory.SameIntent<IPublicAnnotation>();
+       // private ISameIntent<IPublicAnnotation> sameIntent = SameIntent_Factory.SameIntent<IPublicAnnotation>();
         public PublicAnnotation(string name)
         {
             this.Name = name;
@@ -56,6 +57,7 @@ namespace RoslynDom.Common
             return items.Any(x => x.Key == key);
         }
 
+        [ExcludeFromCodeCoverage]
         public override object RequestValue(string propertyName)
         { return GetValue(propertyName); }
 
@@ -75,14 +77,17 @@ namespace RoslynDom.Common
             return true;
         }
 
+        [ExcludeFromCodeCoverage]
         public IPublicAnnotation Copy()
         {
             throw new NotImplementedException();
         }
 
+        [ExcludeFromCodeCoverage]
         public override object OriginalRawItem
         { get { return null; } }
 
+        [ExcludeFromCodeCoverage]
         public override object RawItem
         { get { return null; } }
 

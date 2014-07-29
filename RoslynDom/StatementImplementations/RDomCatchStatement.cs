@@ -15,8 +15,10 @@ namespace RoslynDom
         internal RDomCatchStatement(RDomCatchStatement oldRDom)
             : base(oldRDom)
         {
-            Condition = oldRDom.Condition.Copy();
-            ExceptionVariable = oldRDom.ExceptionVariable.Copy();
+            if (oldRDom.Condition != null)
+            { Condition = oldRDom.Condition.Copy(); }
+            Variable = oldRDom.Variable.Copy();
+            ExceptionType  = oldRDom.ExceptionType.Copy();
         }
 
         public override IEnumerable<IDom> Children
@@ -42,7 +44,8 @@ namespace RoslynDom
         }
 
         public IExpression Condition { get; set; }
-        public IVariableDeclaration  ExceptionVariable { get; set; }
+        public IVariableDeclaration Variable { get; set; }
+        public IReferencedType  ExceptionType { get; set; }
 
     }
 }

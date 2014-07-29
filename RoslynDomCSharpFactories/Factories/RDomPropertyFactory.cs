@@ -32,7 +32,7 @@ namespace RoslynDom.CSharp
             newItem.IsSealed = newItem.Symbol.IsSealed;
             newItem.IsStatic = newItem.Symbol.IsStatic;
             var propSymbol = newItem.Symbol as IPropertySymbol;
-            if (propSymbol == null) throw new InvalidOperationException();
+            Guardian.Assert.IsNotNull(propSymbol, nameof(propSymbol));
 
             newItem.CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
             newItem.CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null

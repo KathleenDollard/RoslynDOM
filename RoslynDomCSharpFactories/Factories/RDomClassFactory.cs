@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -10,6 +11,10 @@ namespace RoslynDom.CSharp
 {
     internal static class RDomClassFactoryHelper
     {
+        [ExcludeFromCodeCoverage]
+        // until move to C# 6 - I want to support name of as soon as possible
+        private static string nameof<T>(T value) { return ""; }
+
         internal static RDomClass CreateFromInternal(SyntaxNode syntaxNode, IDom parent, SemanticModel model,
                ICreateFromWorker  createFromWorker, RDomCorporation corporation)
         {
@@ -39,7 +44,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.ClassDeclaration(identifier)
                 .WithModifiers(modifiers);
             var itemAsClass = item as IClass;
-            if (itemAsClass == null) { throw new InvalidOperationException(); }
+            Guardian.Assert.IsNotNull(itemAsClass, nameof(itemAsClass));
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 

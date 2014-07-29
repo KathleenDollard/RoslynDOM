@@ -11,7 +11,10 @@ namespace RoslynDom.Common
 
     public interface ICatchStatement : IStatement, IHasCondition, IStatementBlock, IDom<ICatchStatement >
     {
-        IVariableDeclaration ExceptionVariable { get; set; }
+        IVariableDeclaration Variable { get; set; }
+        IReferencedType ExceptionType { get; set; }
+
+        //TODO: Add conditionals for C# 6
     }
 
     public interface IFinallyStatement : IStatement, IDom<IFinallyStatement>, IStatementBlock

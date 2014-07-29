@@ -17,8 +17,7 @@ namespace RoslynDomTests
         private const string RootClassAttributesCategory = "RootClassAttributes";
 
         #region get attributes
-        [TestMethod]
-        [TestCategory(SimpleAttributeCategory)]
+        [TestMethod, TestCategory(SimpleAttributeCategory)]
         public void Can_get_attributes_on_class()
         {
             var csharpCode = @"
@@ -33,8 +32,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SimpleAttributeCategory)]
+        [TestMethod, TestCategory(SimpleAttributeCategory)]
         public void Can_get_attributes_on_enum()
         {
             var csharpCode = @"
@@ -48,8 +46,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SimpleAttributeCategory)]
+        [TestMethod, TestCategory(SimpleAttributeCategory)]
         public void Can_get_attributes_on_struct()
         {
             var csharpCode = @"
@@ -63,8 +60,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SimpleAttributeCategory)]
+        [TestMethod, TestCategory(SimpleAttributeCategory)]
         public void Can_get_attributes_on_interface()
         {
             var csharpCode = @"
@@ -78,8 +74,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SimpleAttributeCategory)]
+        [TestMethod, TestCategory(SimpleAttributeCategory)]
         public void Can_get_attributes_on_method()
         {
             var csharpCode = @"
@@ -91,8 +86,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SimpleAttributeCategory)]
+        [TestMethod, TestCategory(SimpleAttributeCategory)]
         public void Can_get_attributes_on_parameters()
         {
             var csharpCode = @"
@@ -104,8 +98,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SimpleAttributeCategory)]
+        [TestMethod, TestCategory(SimpleAttributeCategory)]
         public void Can_get_attributes_on_property()
         {
             var csharpCode = @"
@@ -117,8 +110,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Serializable", attributes.Attributes.First().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SimpleAttributeCategory)]
+        [TestMethod, TestCategory(SimpleAttributeCategory)]
         public void Can_get_attributes_on_field()
         {
             var csharpCode = @"
@@ -134,8 +126,7 @@ namespace RoslynDomTests
         #endregion
 
         #region get multiple attributes one to a bracket set
-        [TestMethod]
-        [TestCategory(SeparateBracketsAttributeCategory)]
+        [TestMethod, TestCategory(SeparateBracketsAttributeCategory)]
         public void Can_get_multiple_attributes_in_separate_brackets_on_class()
         {
             var csharpCode = @"
@@ -151,8 +142,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SeparateBracketsAttributeCategory)]
+        [TestMethod, TestCategory(SeparateBracketsAttributeCategory)]
         public void Can_get_multiple_attributes_in_separate_brackets_on_enum()
         {
             var csharpCode = @"
@@ -168,8 +158,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SeparateBracketsAttributeCategory)]
+        [TestMethod, TestCategory(SeparateBracketsAttributeCategory)]
         public void Can_get_multiple_attributes_in_separate_brackets_on_struct()
         {
             var csharpCode = @"
@@ -185,8 +174,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SeparateBracketsAttributeCategory)]
+        [TestMethod, TestCategory(SeparateBracketsAttributeCategory)]
         public void Can_get_multiple_attributes_in_separate_brackets_on_interface()
         {
             var csharpCode = @"
@@ -202,8 +190,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SeparateBracketsAttributeCategory)]
+        [TestMethod, TestCategory(SeparateBracketsAttributeCategory)]
         public void Can_get_multiple_attributes_in_separate_brackets_on_method()
         {
             var csharpCode = @"
@@ -219,8 +206,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SeparateBracketsAttributeCategory)]
+        [TestMethod, TestCategory(SeparateBracketsAttributeCategory)]
         public void Can_get_multiple_attributes_in_separate_brackets_on_property()
         {
             var csharpCode = @"
@@ -236,8 +222,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(SeparateBracketsAttributeCategory)]
+        [TestMethod, TestCategory(SeparateBracketsAttributeCategory)]
         public void Can_get_multiple_attributes_in_separate_brackets_on_field()
         {
             var csharpCode = @"
@@ -256,8 +241,7 @@ namespace RoslynDomTests
         #endregion
 
         #region get multiple attributes many in bracket
-        [TestMethod]
-        [TestCategory(AttributesCombinedInBracketsCategory)]
+        [TestMethod, TestCategory(AttributesCombinedInBracketsCategory)]
         public void Can_get_multiple_attributes_in_shared_brackets_on_class()
         {
             var csharpCode = @"
@@ -272,8 +256,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesCombinedInBracketsCategory)]
+        [TestMethod, TestCategory(AttributesCombinedInBracketsCategory)]
         public void Can_get_multiple_attributes_in_shared_brackets_on_enum()
         {
             var csharpCode = @"
@@ -288,8 +271,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesCombinedInBracketsCategory)]
+        [TestMethod, TestCategory(AttributesCombinedInBracketsCategory)]
         public void Can_get_multiple_attributes_in_shared_brackets_on_struct()
         {
             var csharpCode = @"
@@ -304,8 +286,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesCombinedInBracketsCategory)]
+        [TestMethod, TestCategory(AttributesCombinedInBracketsCategory)]
         public void Can_get_multiple_attributes_in_shared_brackets_on_interface()
         {
             var csharpCode = @"
@@ -320,8 +301,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesCombinedInBracketsCategory)]
+        [TestMethod, TestCategory(AttributesCombinedInBracketsCategory)]
         public void Can_get_multiple_attributes_in_shared_brackets_on_method()
         {
             var csharpCode = @"
@@ -337,8 +317,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesCombinedInBracketsCategory)]
+        [TestMethod, TestCategory(AttributesCombinedInBracketsCategory)]
         public void Can_get_multiple_attributes_in_shared_brackets_on_property()
         {
             var csharpCode = @"
@@ -354,8 +333,7 @@ namespace RoslynDomTests
             Assert.AreEqual("TestClass", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesCombinedInBracketsCategory)]
+        [TestMethod, TestCategory(AttributesCombinedInBracketsCategory)]
         public void Can_get_multiple_attributes_in_shared_brackets_on_field()
         {
             var csharpCode = @"
@@ -373,8 +351,7 @@ namespace RoslynDomTests
         #endregion
 
         #region get multiple attributes with mixed bracketing
-        [TestMethod]
-        [TestCategory(AttributesMixedBracketingCategory)]
+        [TestMethod, TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_class()
         {
             var csharpCode = @"
@@ -391,8 +368,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Ignore", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesMixedBracketingCategory)]
+        [TestMethod, TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_enum()
         {
             var csharpCode = @"
@@ -409,8 +385,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Ignore", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesMixedBracketingCategory)]
+        [TestMethod, TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_struct()
         {
             var csharpCode = @"
@@ -427,8 +402,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Ignore", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesMixedBracketingCategory)]
+        [TestMethod, TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_interface()
         {
             var csharpCode = @"
@@ -445,8 +419,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Ignore", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesMixedBracketingCategory)]
+        [TestMethod, TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_method()
         {
             var csharpCode = @"
@@ -463,8 +436,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Ignore", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesMixedBracketingCategory)]
+        [TestMethod, TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_property()
         {
             var csharpCode = @"
@@ -481,8 +453,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Ignore", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributesMixedBracketingCategory)]
+        [TestMethod, TestCategory(AttributesMixedBracketingCategory)]
         public void Can_get_multiple_multiple_attributes_with_mixed_brackets_in_shared_brackets_on_field()
         {
             var csharpCode = @"
@@ -501,8 +472,7 @@ namespace RoslynDomTests
         #endregion
 
         #region get attribute values
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_attribute_values_on_class()
         {
             var csharpCode = @"
@@ -535,8 +505,7 @@ namespace RoslynDomTests
             Assert.AreEqual("SemanticLog", attributes.Attributes.Last().Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_attribute_values_of_most_types_on_class_with_equals()
         {
             var csharpCode = @"
@@ -575,8 +544,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_attribute_values_of_most_types_on_class_with_colons()
         {
             var csharpCode = @"
@@ -615,8 +583,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_attribute_value_of_typeof_primitive_on_class()
         {
             var csharpCode = @"
@@ -638,8 +605,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_attribute_value_of_typeof_identifier_only_on_class()
         {
             var csharpCode = @"
@@ -660,8 +626,7 @@ namespace RoslynDomTests
             Assert.AreEqual("Foo", refType.Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_attribute_value_of_typeof_referenced_on_class()
         {
             var csharpCode = @"
@@ -683,8 +648,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_class()
         {
             var csharpCode = @"
@@ -709,8 +673,7 @@ namespace RoslynDomTests
             Assert.AreEqual("", attributeValues[1].Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_structure()
         {
             var csharpCode = @"
@@ -735,8 +698,7 @@ namespace RoslynDomTests
             Assert.AreEqual("", attributeValues[1].Name);
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_enum()
         {
             var csharpCode = @"
@@ -762,8 +724,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_method()
         {
             var csharpCode = @"
@@ -791,8 +752,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_property()
         {
             var csharpCode = @"
@@ -820,8 +780,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod]
-        [TestCategory(AttributeValuesCategory)]
+        [TestMethod, TestCategory(AttributeValuesCategory)]
         public void Can_get_simple_attribute_values_on_field()
         {
             var csharpCode = @"

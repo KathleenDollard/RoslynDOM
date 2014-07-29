@@ -9,8 +9,7 @@ namespace RoslynDomTests
     {
         private const string DiagnosticsTestsCategory = "DiagnosticsTests";
 
-        [TestMethod ]
-        [TestCategory(DiagnosticsTestsCategory)]
+        [TestMethod , TestCategory(DiagnosticsTestsCategory)]
         public void No_diagnostics_for_correct_happy_case()
         {
             var csharpCode = @"
@@ -25,8 +24,7 @@ namespace RoslynDomTests
 
         }
 
-        [TestMethod]
-        [TestCategory(DiagnosticsTestsCategory)]
+        [TestMethod, TestCategory(DiagnosticsTestsCategory)]
         public void Find_diagnostics_issue_for_unhappy_case()
         {
             var csharpCode = @"

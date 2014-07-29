@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using RoslynDom.Common;
@@ -15,6 +16,7 @@ namespace RoslynDom
     /// </remarks>
     public abstract class RDomBase : IDom
     {
+        [ExcludeFromCodeCoverage]
         // until move to C# 6 - I want to support name of as soon as possible
         protected static string nameof<T>(T value) { return ""; }
 
@@ -62,10 +64,8 @@ namespace RoslynDom
 
         // TODO: Return the parent set to hidden
         public IDom Parent { get; set; }
-
-
-  
-        public override string ToString()
+        
+                public override string ToString()
         {
             var ret = base.ToString() + " : ";
             if (this is IHasNamespace) return ret + ((IHasNamespace)this).QualifiedName;

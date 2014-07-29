@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -10,6 +11,10 @@ namespace RoslynDom.CSharp
 {
     internal static class RDomStructureFactoryHelper
     {
+         // until move to C# 6 - I want to support name of as soon as possible
+        [ExcludeFromCodeCoverage]
+        private static string nameof<T>(T value) { return ""; }
+
 
         public static RDomStructure CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICreateFromWorker createFromWorker, RDomCorporation corporation)
         {
@@ -37,7 +42,7 @@ namespace RoslynDom.CSharp
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
             var itemAsStruct = item as IStructure;
-            if (itemAsStruct == null) { throw new InvalidOperationException(); }
+            Guardian.Assert.IsNotNull(itemAsStruct, nameof(itemAsStruct));
             var membersSyntax = itemAsStruct.Members
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();

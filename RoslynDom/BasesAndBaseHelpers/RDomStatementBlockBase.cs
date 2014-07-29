@@ -17,7 +17,6 @@ namespace RoslynDom
         internal RDomStatementBlockBase(T oldRDom)
             : base(oldRDom)
         {
-            Initialize();
             var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
             StatementsAll.AddOrMoveRange(statements);
             HasBlock = oldRDom.HasBlock;

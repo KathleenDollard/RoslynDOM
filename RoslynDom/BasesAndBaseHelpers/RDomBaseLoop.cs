@@ -18,7 +18,8 @@ namespace RoslynDom
         internal RDomBaseLoop(T oldRDom)
              : base(oldRDom)
         {
-            StatementsAll.AddOrMoveRange(oldRDom.Statements);
+            var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
+            StatementsAll.AddOrMoveRange(statements);
             Condition = oldRDom.Condition.Copy();
             HasBlock = oldRDom.HasBlock;
             TestAtEnd = oldRDom.TestAtEnd;

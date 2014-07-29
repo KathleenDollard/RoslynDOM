@@ -4,14 +4,13 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using RoslynDomCommon;
 
 namespace RoslynDom
 {
     public abstract class RDomBase<T> : RDomBase, IDom<T>, IRoslynHasSymbol
           where T : class, IDom<T>
     {
-        private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
+      //  private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
 
         protected RDomBase()
           : base()

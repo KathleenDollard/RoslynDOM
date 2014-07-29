@@ -58,7 +58,7 @@ namespace RoslynDom.CSharp
              Tuple.Create( SyntaxKind.RightShiftAssignmentExpression, Operator.RightShiftAssignment)
         };
 
-        public static Operator GetOperatorFromCSharpKind(SyntaxKind kind)
+        public static Operator OperatorFromCSharpKind(SyntaxKind kind)
         {
             foreach (var tuple in operatorMap)
             {
@@ -67,7 +67,7 @@ namespace RoslynDom.CSharp
             throw new InvalidOperationException();
         }
 
-        public static SyntaxKind GetSyntaxKindFromOperator(Operator op)
+        public static SyntaxKind SyntaxKindFromOperator(Operator op)
         {
             foreach (var tuple in operatorMap)
             {
@@ -89,7 +89,7 @@ namespace RoslynDom.CSharp
              Tuple.Create(Accessibility. ProtectedOrFriend , AccessModifier. ProtectedOrFriend),
              Tuple.Create(Accessibility. Public , AccessModifier. Public )
         };
-        public static Accessibility GetAccessibilityFromAccessModifier(AccessModifier accessModifier)
+        public static Accessibility AccessibilityFromAccessModifier(AccessModifier accessModifier)
         {
             foreach (var tuple in accessModifierMap)
             {
@@ -98,7 +98,7 @@ namespace RoslynDom.CSharp
             throw new InvalidOperationException();
         }
 
-        public static AccessModifier GetAccessModifierFromAccessibility(Accessibility accessibility)
+        public static AccessModifier AccessModifierFromAccessibility(Accessibility accessibility)
         {
             foreach (var tuple in accessModifierMap)
             {

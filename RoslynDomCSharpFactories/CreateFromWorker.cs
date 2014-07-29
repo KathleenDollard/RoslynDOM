@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,9 @@ namespace RoslynDom.CSharp
 {
     public class CreateFromWorker : ICSharpCreateFromWorker
     {
+        [ExcludeFromCodeCoverage]
+        private static string nameof<T>(T value) { return ""; }
+
         public CreateFromWorker(RDomCorporation corporation)
         {
             Corporation = corporation;
@@ -43,7 +47,7 @@ namespace RoslynDom.CSharp
                 if (statementAsBlockStatement != null)
                 {
                     itemAsStatement.HasBlock = true;
-                    foreach (var st in statementAsBlockStatement.Statements )
+                    foreach (var st in statementAsBlockStatement.Statements)
                     { itemAsStatement.StatementsAll.AddOrMove(st); }
                 }
                 else
@@ -64,9 +68,10 @@ namespace RoslynDom.CSharp
         {
             if (itemHasAccessModifier == null) { return; }
             var itemAsHasSymbol = itemHasAccessModifier as IRoslynHasSymbol;
-            if (itemAsHasSymbol == null) { throw new InvalidOperationException(); }
+            Guardian.Assert.IsNotNull(itemAsHasSymbol, nameof(itemAsHasSymbol));
+
             var accessibility = itemAsHasSymbol.Symbol.DeclaredAccessibility;
-            itemHasAccessModifier.AccessModifier = Mappings.GetAccessModifierFromAccessibility(accessibility);
+            itemHasAccessModifier.AccessModifier = Mappings.AccessModifierFromAccessibility(accessibility);
         }
 
         public void InitializeAttributes(IHasAttributes itemAsHasAttributes, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -120,25 +125,25 @@ namespace RoslynDom.CSharp
             return Corporation.CreateFrom<ICommentWhite>(syntaxNode, newItem, model);
         }
 
-        public IEnumerable<IAttribute> GetAttributes<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
-            where T : class, IDom
-            where TSyntax : SyntaxNode
-        {
-            var parentAsHasSymbol = newItem as IRoslynHasSymbol;
-            if (parentAsHasSymbol == null) { throw new InvalidOperationException(); }
-            var parentSymbol = parentAsHasSymbol.Symbol;
-            var symbolAttributes = parentSymbol.GetAttributes();
-            var list = new List<IAttribute>();
-            foreach (var attributeData in symbolAttributes)
-            {
-                // TODO: In those cases where we do have a symbol reference to the attribute, try to use it
-                var appRef = attributeData.ApplicationSyntaxReference;
-                var attribSyntax = syntaxNode.SyntaxTree.GetRoot().FindNode(appRef.Span) as AttributeSyntax;
-                var newAttrib = Corporation.CreateFrom<IAttribute>(attribSyntax, newItem, model);
-                list.AddRange(newAttrib);
-            }
-            return list;
-        }
+        //public IEnumerable<IAttribute> GetAttributes<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+        //    where T : class, IDom
+        //    where TSyntax : SyntaxNode
+        //{
+        //    var parentAsHasSymbol = newItem as IRoslynHasSymbol;
+        //    if (parentAsHasSymbol == null) { throw new InvalidOperationException(); }
+        //    var parentSymbol = parentAsHasSymbol.Symbol;
+        //    var symbolAttributes = parentSymbol.GetAttributes();
+        //    var list = new List<IAttribute>();
+        //    foreach (var attributeData in symbolAttributes)
+        //    {
+        //        // TODO: In those cases where we do have a symbol reference to the attribute, try to use it
+        //        var appRef = attributeData.ApplicationSyntaxReference;
+        //        var attribSyntax = syntaxNode.SyntaxTree.GetRoot().FindNode(appRef.Span) as AttributeSyntax;
+        //        var newAttrib = Corporation.CreateFrom<IAttribute>(attribSyntax, newItem, model);
+        //        list.AddRange(newAttrib);
+        //    }
+        //    return list;
+        //}
 
         public IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
             where T : class, IDom
@@ -158,7 +163,7 @@ namespace RoslynDom.CSharp
             where TKind : class
         {
             var ret = new RDomInvalidMember(syntaxNode, parent, model) as TKind;
-            if (ret == null) { throw new InvalidOperationException("Invalid can't be represented as this kind"); }
+            Guardian.Assert.IsNotNull(ret, nameof(ret));
             return new List<TKind>() { };
         }
 

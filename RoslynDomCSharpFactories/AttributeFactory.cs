@@ -10,7 +10,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class AttributeFactory : RDomMiscFactory<IAttribute , AttributeSyntax>
+    public class AttributeFactory : RDomMiscFactory<IAttribute, AttributeSyntax>
     {
         //public override FactoryPriority Priority
         //{ get { return FactoryPriority.Normal; } }
@@ -61,20 +61,20 @@ namespace RoslynDom.CSharp
             return new SyntaxNode[] { nodeList };
         }
 
-        public IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributeList)
-        {
-            var list = SyntaxFactory.List<SyntaxNode>();
-            var attributes = attributeList.Attributes;
-            if (attributes.Any())
-            {
-                var attribList = SyntaxFactory.AttributeList();
-                var attributeSyntaxItems = attributes.SelectMany(x => BuildSyntax(x)).ToArray();
-                // TODO: attributeSyntaxItems = attributeSyntaxItems.Select(x => x.Format()).ToArray();
-                attribList = attribList.AddAttributes(attributeSyntaxItems.OfType<AttributeSyntax>().ToArray());
-                list = list.Add(attribList);
-            }
-            return list;
-        }
+        //public IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributeList)
+        //{
+        //    var list = SyntaxFactory.List<SyntaxNode>();
+        //    var attributes = attributeList.Attributes;
+        //    if (attributes.Any())
+        //    {
+        //        var attribList = SyntaxFactory.AttributeList();
+        //        var attributeSyntaxItems = attributes.SelectMany(x => BuildSyntax(x)).ToArray();
+        //        // TODO: attributeSyntaxItems = attributeSyntaxItems.Select(x => x.Format()).ToArray();
+        //        attribList = attribList.AddAttributes(attributeSyntaxItems.OfType<AttributeSyntax>().ToArray());
+        //        list = list.Add(attribList);
+        //    }
+        //    return list;
+        //}
 
         public IEnumerable<IAttribute> ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model)
         {
@@ -202,7 +202,8 @@ namespace RoslynDom.CSharp
                       SyntaxNode argNode, SemanticModel model)
         {
             var arg = argNode as AttributeArgumentSyntax;
-            if (arg == null) throw new InvalidOperationException();
+            Guardian.Assert.IsNotNull(arg, nameof(arg));
+
             // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
             var expr = arg.Expression;
             var literalKind = LiteralKind.Unknown;

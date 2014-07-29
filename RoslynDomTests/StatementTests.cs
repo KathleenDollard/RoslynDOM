@@ -21,7 +21,7 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_misc_statements_for_method()
         {
-            var csharpCode = 
+            var csharpCode =
           @"public class Bar
             {
                 public void Foo()
@@ -278,7 +278,7 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_for_statements_for_method()
         {
-   
+
             var csharpCode = @"
             public class Bar
             {
@@ -302,7 +302,34 @@ namespace RoslynDomTests
             Assert.AreEqual(expectedString, actual);
         }
 
-          [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_for_statements_for_method_implicit_type()
+        {
+
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    for (var i = 0; i < 10; i++)
+                    {
+                        Console.WriteLine(i);
+                    }
+                }
+            }           
+            ";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
+            var method = root.RootClasses.First().Methods.First();
+            var statements = method.Statements.ToArray();
+            Assert.AreEqual(1, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomForStatement));
+            var actual = output.ToString();
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        for (var i = 0; i < 10; i++)\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
+            Assert.AreEqual(expectedString, actual);
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_foreach_statements_for_method()
         {
 
@@ -326,6 +353,33 @@ namespace RoslynDomTests
             Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
             var actual = output.ToString();
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (var i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
+            Assert.AreEqual(expectedString, actual);
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_foreach_statements_for_method_implicitly_typed()
+        {
+
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })
+                    {
+                        Console.WriteLine(i);
+                    }
+                }
+            }           
+            ";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
+            var method = root.RootClasses.First().Methods.First();
+            var statements = method.Statements.ToArray();
+            Assert.AreEqual(1, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
+            var actual = output.ToString();
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (Int32 i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
         #endregion
@@ -358,7 +412,7 @@ namespace RoslynDomTests
             ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
-            var property = root.RootClasses.First().Properties .First();
+            var property = root.RootClasses.First().Properties.First();
             var statements = property.GetAccessor.Statements.ToArray();
             Assert.AreEqual(5, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomIfStatement));
@@ -366,7 +420,7 @@ namespace RoslynDomTests
             Assert.IsInstanceOfType(statements[2], typeof(RDomAssignmentStatement));
             Assert.IsInstanceOfType(statements[3], typeof(RDomInvocationStatement));
             Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
-             statements = property.SetAccessor.Statements.ToArray();
+            statements = property.SetAccessor.Statements.ToArray();
             Assert.AreEqual(5, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomInvocationStatement));
             Assert.IsInstanceOfType(statements[1], typeof(RDomAssignmentStatement));

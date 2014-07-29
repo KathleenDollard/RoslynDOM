@@ -12,8 +12,7 @@ namespace RoslynDomTests
         private const string ClassNestingCategory = "ClassNesting";
 
         #region structure nesting tests
-        [TestMethod]
-        [TestCategory(StructureNestingCategory)]
+        [TestMethod, TestCategory(StructureNestingCategory)]
         public void Can_get_classes_for_structure()
         {
             var csharpCode = @"
@@ -33,8 +32,7 @@ namespace RoslynDomTests
             Assert.AreEqual(3, structure.Types.Count());
         }
 
-        [TestMethod]
-        [TestCategory(StructureNestingCategory)]
+        [TestMethod, TestCategory(StructureNestingCategory)]
         public void Can_get_structs_for_structure()
         {
             var csharpCode = @"
@@ -55,8 +53,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod]
-        [TestCategory(StructureNestingCategory)]
+        [TestMethod, TestCategory(StructureNestingCategory)]
         public void Can_get_interfacess_for_structure()
         {
             var csharpCode = @"
@@ -77,8 +74,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod]
-        [TestCategory(StructureNestingCategory)]
+        [TestMethod, TestCategory(StructureNestingCategory)]
         public void Can_get_enums_for_structure()
         {
             var csharpCode = @"
@@ -98,8 +94,7 @@ namespace RoslynDomTests
             Assert.AreEqual(3, structure.Types.Count());
         }
 
-        [TestMethod]
-        [TestCategory(StructureNestingCategory)]
+        [TestMethod, TestCategory(StructureNestingCategory)]
         public void Can_get_types_for_structure()
         {
             var csharpCode = @"
@@ -124,8 +119,7 @@ namespace RoslynDomTests
         #endregion
 
         #region class nesting tests
-        [TestMethod]
-        [TestCategory(ClassNestingCategory)]
+        [TestMethod, TestCategory(ClassNestingCategory)]
         public void Can_get_classes_for_class()
         {
             var csharpCode = @"
@@ -145,8 +139,7 @@ namespace RoslynDomTests
             Assert.AreEqual(3, cl.Types.Count());
         }
 
-        [TestMethod]
-        [TestCategory(ClassNestingCategory)]
+        [TestMethod, TestCategory(ClassNestingCategory)]
         public void Can_get_structs_for_class()
         {
             var csharpCode = @"
@@ -167,8 +160,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod]
-        [TestCategory(ClassNestingCategory)]
+        [TestMethod, TestCategory(ClassNestingCategory)]
         public void Can_get_interfacess_for_class()
         {
             var csharpCode = @"
@@ -189,8 +181,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod]
-        [TestCategory(ClassNestingCategory)]
+        [TestMethod, TestCategory(ClassNestingCategory)]
         public void Can_get_enums_for_class()
         {
             var csharpCode = @"
@@ -210,8 +201,7 @@ namespace RoslynDomTests
             Assert.AreEqual(3, cl.Types.Count());
         }
 
-        [TestMethod]
-        [TestCategory(ClassNestingCategory)]
+        [TestMethod, TestCategory(ClassNestingCategory)]
         public void Can_get_types_for_class()
         {
             var csharpCode = @"

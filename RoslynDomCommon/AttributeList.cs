@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,19 +29,20 @@ namespace RoslynDom.Common
         public IEnumerable<IAttribute> Attributes
         { get { return _attributes; } }
 
-        public AttributeList Copy()
-        {
-            var list = new AttributeList();
-            foreach (var attribute in _attributes )
-            {
-                list.AddOrMoveAttribute(attribute.Copy());
-            }
-            return list;
-        }
+        //public AttributeList Copy()
+        //{
+        //    var list = new AttributeList();
+        //    foreach (var attribute in _attributes )
+        //    {
+        //        list.AddOrMoveAttribute(attribute.Copy());
+        //    }
+        //    return list;
+        //}
 
         public IEnumerator<IAttribute> GetEnumerator()
         { return _attributes.GetEnumerator(); }
 
+        [ExcludeFromCodeCoverage]
         IEnumerator IEnumerable.GetEnumerator()
         { return _attributes.GetEnumerator(); }
     }

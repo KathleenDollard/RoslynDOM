@@ -55,22 +55,22 @@ namespace RoslynDom
                 .Where(x => x.GetParameters().Count() == 1
                 && typeof(T).IsAssignableFrom(x.GetParameters().First().ParameterType))
                 .FirstOrDefault();
-            if (constructor == null) throw new InvalidOperationException("Missing constructor for clone");
+            Guardian.Assert.RDomHasCloneContructor(constructor, type);
             var newItem = constructor.Invoke(new object[] { oldItem });
             return (T)newItem;
         }
 
-        public static string MakeOuterName(string outerTypeName, string name)
-        {
-            return (string.IsNullOrWhiteSpace(outerTypeName) ? "" : outerTypeName + ".")
-                      + name;
-        }
+        //public static string MakeOuterName(string outerTypeName, string name)
+        //{
+        //    return (string.IsNullOrWhiteSpace(outerTypeName) ? "" : outerTypeName + ".")
+        //              + name;
+        //}
 
-        public static string MakeQualifiedName(string nspace, string outerTypeName, string name)
-        {
-            return (string.IsNullOrWhiteSpace(nspace) ? "" : nspace + ".")
-                      + MakeOuterName(outerTypeName, name);
-        }
+        //public static string MakeQualifiedName(string nspace, string outerTypeName, string name)
+        //{
+        //    return (string.IsNullOrWhiteSpace(nspace) ? "" : nspace + ".")
+        //              + MakeOuterName(outerTypeName, name);
+        //}
 
         public static string GetNamespace(IDom item)
         {
@@ -85,23 +85,23 @@ namespace RoslynDom
             return ret;
         }
 
-        public static Type FindFirstSyntaxNodeType(Type type)
-        {
-            return FindFirstCastableType<SyntaxNode>(type);
-        }
+        //public static Type FindFirstSyntaxNodeType(Type type)
+        //{
+        //    return FindFirstCastableType<SyntaxNode>(type);
+        //}
 
-        public static Type FindFirstIDomType(Type type)
-        {
-            return FindFirstCastableType<IDom>(type);
-        }
+        //public static Type FindFirstIDomType(Type type)
+        //{
+        //    return FindFirstCastableType<IDom>(type);
+        //}
 
-        public static Type FindFirstCastableType<T>(Type type)
-        {
-            if (type == typeof(object)) { return null; }
-            var retType = type.GenericTypeArguments.Where(x => typeof(T).IsAssignableFrom(x)).FirstOrDefault();
-            if (retType != null) { return retType; }
-            return FindFirstCastableType<T>(type.BaseType);
-        }
+        //public static Type FindFirstCastableType<T>(Type type)
+        //{
+        //    if (type == typeof(object)) { return null; }
+        //    var retType = type.GenericTypeArguments.Where(x => typeof(T).IsAssignableFrom(x)).FirstOrDefault();
+        //    if (retType != null) { return retType; }
+        //    return FindFirstCastableType<T>(type.BaseType);
+        //}
 
     }
 }

@@ -16,7 +16,7 @@ namespace RoslynDom
             IsImplicitlyTyped = oldRDom.IsImplicitlyTyped;
             IsConst = oldRDom.IsConst;
             Type = oldRDom.Type.Copy();
-            Initializer = oldRDom.Initializer.Copy();
+            if (oldRDom.Initializer != null) Initializer = oldRDom.Initializer.Copy();
         }
 
         public override IEnumerable<IDom> Children

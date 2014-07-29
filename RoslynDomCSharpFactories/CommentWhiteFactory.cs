@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,15 +72,11 @@ namespace RoslynDom.CSharp
             return text;
         }
 
+        [ExcludeFromCodeCoverage]
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             return null;
         }
 
-        public IEnumerable<SyntaxNode> BuildSyntax(ICommentWhite item)
-        {
-            return null;
-        }
-
-    }
+     }
 }

@@ -23,11 +23,11 @@ namespace RoslynDom.CSharp
             return item.PrepareForBuildSyntaxOutput(node);
         }
 
-        protected  override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            // Not currently used
-            throw new NotImplementedException();
-        }
+        //protected  override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        //{
+        //    // Not currently used
+        //    throw new NotImplementedException();
+        //}
     }
 
 }

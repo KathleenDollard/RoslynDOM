@@ -18,8 +18,8 @@ namespace RoslynDom.Common
         public ICreateFromWorker CreateFromWorker { get; private set; }
         public IBuildSyntaxWorker BuildSyntaxWorker { get; private set; }
 
-        public RDomPriority Priority
-        { get { return RDomPriority.Normal; } }
+        //public RDomPriority Priority
+        //{ get { return RDomPriority.Normal; } }
 
     }
 }

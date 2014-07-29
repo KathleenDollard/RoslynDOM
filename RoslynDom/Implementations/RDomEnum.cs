@@ -17,7 +17,6 @@ namespace RoslynDom
         internal RDomEnum(RDomEnum oldRDom)
              : base(oldRDom)
         {
-            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newValues = RoslynDomUtilities.CopyMembers(oldRDom._values);
             Values.AddOrMoveRange(newValues);

@@ -5,11 +5,15 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RoslynDom.CSharp
 {
     internal static class RDomInterfaceFactoryHelper
     {
+        [ExcludeFromCodeCoverage]
+        private static string nameof<T>(T value) { return ""; }
+
         public static RDomInterface CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICreateFromWorker createFromWorker, RDomCorporation corporation)
         {
             var syntax = syntaxNode as InterfaceDeclarationSyntax;
@@ -36,7 +40,7 @@ namespace RoslynDom.CSharp
                 .WithModifiers(modifiers);
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(itemAsInterface.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
-            if (itemAsInterface == null) { throw new InvalidOperationException(); }
+            Guardian.Assert.IsNotNull(itemAsInterface, nameof(itemAsInterface));
             var membersSyntax = itemAsInterface.Members
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -10,6 +11,10 @@ namespace RoslynDom.CSharp
 {
     public class RDomCSharp 
     {
+        [ExcludeFromCodeCoverage]
+        // until move to C# 6 - I want to support name of as soon as possible
+        protected static string nameof<T>(T value) { return ""; }
+
         private static RDomCSharp _factory = new RDomCSharp();
         private RDomCorporation _helper = new RDomCorporation();
 
@@ -32,7 +37,7 @@ namespace RoslynDom.CSharp
 
         public IRoot GetRootFromDocument(Document document)
         {
-            if (document == null) { throw new InvalidOperationException(); }
+            Guardian.Assert.IsNotNull(document, nameof(document));
             SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
             return GetRootFromSyntaxTree(tree);
         }
@@ -69,8 +74,10 @@ namespace RoslynDom.CSharp
 
         public SyntaxNode BuildSyntax(IDom item)
         {
-            return BuildSyntaxGroup(item).Single();
-            //return RoslynUtilities.Format(BuildSyntaxGroup(item).Single());
+            var syntaxGroup = BuildSyntaxGroup(item);
+            if (syntaxGroup == null || !syntaxGroup.Any()) return null;
+            //return syntaxGroup.Single();
+            return RoslynUtilities.Format(syntaxGroup.Single());
         }
 
         private bool TryBuildSyntax<TKind>(IDom item,  out IEnumerable<SyntaxNode> syntaxNode)

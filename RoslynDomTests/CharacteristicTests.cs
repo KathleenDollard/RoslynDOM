@@ -28,8 +28,7 @@ namespace RoslynDomTests
         private const string MiscellaneousCategory = "Miscellaneous";
 
         #region returned type tests
-        [TestMethod]
-        [TestCategory(ReturnedTypeCategory)]
+        [TestMethod, TestCategory(ReturnedTypeCategory)]
         public void Can_get_field_return_type()
         {
             var csharpCode = @"
@@ -48,8 +47,7 @@ public string Bar;
             Assert.AreEqual("System", retType.Namespace, "Namespace");
         }
 
-        [TestMethod]
-        [TestCategory(ReturnedTypeCategory)]
+        [TestMethod, TestCategory(ReturnedTypeCategory)]
         public void Can_get_property_return_type()
         {
             var csharpCode = @"
@@ -69,8 +67,7 @@ public int Bar{get;};
 
         }
 
-        [TestMethod]
-        [TestCategory(ReturnedTypeCategory)]
+        [TestMethod, TestCategory(ReturnedTypeCategory)]
         public void Can_get_method_return_type()
         {
             // This test is failing and I believe it to be due to a temporary CTP bug. So, I made it inconclusive
@@ -95,8 +92,7 @@ public Namespace1.A  Bar() {};
         #endregion
 
         #region access modifier tests
-        [TestMethod]
-        [TestCategory(AccessModifierCategory)]
+        [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_class()
         {
             var csharpCode = @"
@@ -118,8 +114,7 @@ class Foo6{}
 
         }
 
-        [TestMethod]
-        [TestCategory(AccessModifierCategory)]
+        [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_Interface()
         {
             var csharpCode = @"
@@ -141,8 +136,7 @@ interface Foo6{}
 
         }
 
-        [TestMethod]
-        [TestCategory(AccessModifierCategory)]
+        [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_Structure()
         {
             var csharpCode = @"
@@ -164,8 +158,7 @@ struct Foo6{}
 
         }
 
-        [TestMethod]
-        [TestCategory(AccessModifierCategory)]
+        [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_enum()
         {
             var csharpCode = @"
@@ -188,8 +181,7 @@ enum Foo6{}
 
         }
 
-        [TestMethod]
-        [TestCategory(AccessModifierCategory)]
+        [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_members_in_class()
         {
             var csharpCode = @"
@@ -238,8 +230,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(AccessModifierCategory)]
+        [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_members_in_structure()
         {
             var csharpCode = @"
@@ -288,8 +279,7 @@ public struct Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(AccessModifierCategory)]
+        [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_members_in_interface()
         {
             var csharpCode = @"
@@ -310,8 +300,7 @@ public interface Foo1
         #endregion
 
         #region virtual tests
-        [TestMethod]
-        [TestCategory(VirtualCategory)]
+        [TestMethod, TestCategory(VirtualCategory)]
         public void Can_get_virtual_for_method()
         {
             var csharpCode = @"
@@ -334,8 +323,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(VirtualCategory)]
+        [TestMethod, TestCategory(VirtualCategory)]
         public void Can_get_virtual_for_property()
         {
             var csharpCode = @"
@@ -361,8 +349,7 @@ public class Foo1
         #endregion
 
         #region override tests
-        [TestMethod]
-        [TestCategory(OverrideCategory)]
+        [TestMethod, TestCategory(OverrideCategory)]
         public void Can_get_override_for_method()
         {
             var csharpCode = @"
@@ -385,8 +372,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(OverrideCategory)]
+        [TestMethod, TestCategory(OverrideCategory)]
         public void Can_get_override_for_property()
         {
             var csharpCode = @"
@@ -412,8 +398,7 @@ public class Foo1
         #endregion
 
         #region abstract tests
-        [TestMethod]
-        [TestCategory(AbstractCategory)]
+        [TestMethod, TestCategory(AbstractCategory)]
         public void Can_get_abstract_for_method()
         {
             var csharpCode = @"
@@ -436,8 +421,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(AbstractCategory)]
+        [TestMethod, TestCategory(AbstractCategory)]
         public void Can_get_abstract_for_property()
         {
             var csharpCode = @"
@@ -460,8 +444,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(AbstractCategory)]
+        [TestMethod, TestCategory(AbstractCategory)]
         public void Can_get_abstract_for_class()
         {
             var csharpCode = @"
@@ -480,8 +463,7 @@ public class Foo2{}
         #endregion
 
         #region sealed tests
-        [TestMethod]
-        [TestCategory(SealedCategory)]
+        [TestMethod, TestCategory(SealedCategory)]
         public void Can_get_sealed_for_method()
         {
             var csharpCode = @"
@@ -504,8 +486,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(SealedCategory)]
+        [TestMethod, TestCategory(SealedCategory)]
         public void Can_get_sealed_for_property()
         {
             var csharpCode = @"
@@ -528,8 +509,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(SealedCategory)]
+        [TestMethod, TestCategory(SealedCategory)]
         public void Can_get_sealed_for_class()
         {
             var csharpCode = @"
@@ -548,8 +528,7 @@ public class Foo2{}
         #endregion
 
         #region new tests
-        [TestMethod]
-        [TestCategory(NewCategory)]
+        [TestMethod, TestCategory(NewCategory)]
         public void Can_get_new_for_method()
         {
             var csharpCode = @"
@@ -572,8 +551,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(NewCategory)]
+        [TestMethod, TestCategory(NewCategory)]
         public void Can_get_new_for_property()
         {
             var csharpCode = @"
@@ -599,8 +577,7 @@ public class Foo1
         #endregion
 
         #region static tests
-        [TestMethod]
-        [TestCategory(StaticCategory)]
+        [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_static_for_field()
         {
             var csharpCode = @"
@@ -617,8 +594,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(StaticCategory)]
+        [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_static_for_method()
         {
             var csharpCode = @"
@@ -643,8 +619,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(StaticCategory)]
+        [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_static_for_property()
         {
             var csharpCode = @"
@@ -670,8 +645,7 @@ public class Foo1
 
         }
 
-        [TestMethod]
-        [TestCategory(StaticCategory)]
+        [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_static_for_class()
         {
             var csharpCode = @"
@@ -692,8 +666,7 @@ public class Foo2{}
         #endregion
 
         #region enum tests
-        [TestMethod]
-        [TestCategory(StaticCategory)]
+        [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_underlyig_type_for_enum()
         {
             var csharpCode = @"
@@ -727,8 +700,7 @@ public interface IFooC{}
 ";
 
 
-        [TestMethod]
-        [TestCategory(ImplementedInterfacesCategory)]
+        [TestMethod, TestCategory(ImplementedInterfacesCategory)]
         public void Can_get_implemented_interfaces_for_class()
         {
             var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
@@ -738,8 +710,7 @@ public interface IFooC{}
             Assert.AreEqual(0, classes[2].ImplementedInterfaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(ImplementedInterfacesCategory)]
+        [TestMethod, TestCategory(ImplementedInterfacesCategory)]
         public void Can_get_all_implemented_interfaces_for_class()
         {
             var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
@@ -750,8 +721,7 @@ public interface IFooC{}
         }
 
 
-        [TestMethod]
-        [TestCategory(ImplementedInterfacesCategory)]
+        [TestMethod, TestCategory(ImplementedInterfacesCategory)]
         public void Can_get_implemented_interfaces_for_structure()
         {
             var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
@@ -759,8 +729,7 @@ public interface IFooC{}
             Assert.AreEqual(2, structures[0].ImplementedInterfaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(ImplementedInterfacesCategory)]
+        [TestMethod, TestCategory(ImplementedInterfacesCategory)]
         public void Can_get_all_implemented_interfaces_for_structure()
         {
             var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
@@ -769,8 +738,7 @@ public interface IFooC{}
         }
 
 
-        [TestMethod]
-        [TestCategory(ImplementedInterfacesCategory)]
+        [TestMethod, TestCategory(ImplementedInterfacesCategory)]
         public void Can_get_implemented_interfaces_for_interface()
         {
             var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
@@ -780,8 +748,7 @@ public interface IFooC{}
             Assert.AreEqual(1, interfaces[2].ImplementedInterfaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(ImplementedInterfacesCategory)]
+        [TestMethod, TestCategory(ImplementedInterfacesCategory)]
         public void Can_get_all_implemented_interfaces_for_interface()
         {
             var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
@@ -812,8 +779,7 @@ public class Foo2 : Foo1 {}
         #endregion
 
         #region parameter tests
-        [TestMethod]
-        [TestCategory(ParameterAndMethodCategory)]
+        [TestMethod, TestCategory(ParameterAndMethodCategory)]
         public void Can_get_parameters_for_methods_in_class()
         {
             var csharpCode = @"
@@ -846,8 +812,7 @@ public class Foo
 
         }
 
-        [TestMethod]
-        [TestCategory(ParameterAndMethodCategory)]
+        [TestMethod, TestCategory(ParameterAndMethodCategory)]
         public void Can_get_param_array_type_name()
         {
             var csharpCode = @"
@@ -862,8 +827,7 @@ public class Foo
 
         }
 
-        [TestMethod]
-        [TestCategory(ParameterAndMethodCategory)]
+        [TestMethod, TestCategory(ParameterAndMethodCategory)]
         public void Can_get_parameters_for_extension_methods()
         {
             var csharpCode = @"
@@ -880,8 +844,7 @@ public static class Foo
 
         }
 
-        [TestMethod]
-        [TestCategory(ParameterAndMethodCategory)]
+        [TestMethod, TestCategory(ParameterAndMethodCategory)]
         public void Can_determine_extension_method()
         {
             var csharpCode = @"
@@ -912,8 +875,7 @@ public static class Foo
         #endregion
 
         #region returned type tests
-        [TestMethod]
-        [TestCategory(ReturnTypeNameCategory)]
+        [TestMethod, TestCategory(ReturnTypeNameCategory)]
         public void Can_get_return_type_name_for_method()
         {
             var csharpCode = @"
@@ -934,8 +896,7 @@ public class Foo
             Assert.AreEqual("BadName", methods[3].RequestValue("TypeName"));
         }
 
-        [TestMethod]
-        [TestCategory(ReturnTypeNameCategory)]
+        [TestMethod, TestCategory(ReturnTypeNameCategory)]
         public void Can_get_return_type_name_for_property()
         {
             var csharpCode = @"
@@ -957,8 +918,7 @@ public class Foo
             Assert.AreEqual("Foo4", properties[3].RequestValue("Name"));
         }
 
-        [TestMethod]
-        [TestCategory(ReturnTypeNameCategory)]
+        [TestMethod, TestCategory(ReturnTypeNameCategory)]
         public void Can_get_return_type_name_for_field()
         {
             var csharpCode = @"
@@ -979,8 +939,7 @@ public class Foo
             Assert.AreEqual("BadName", methods[3].RequestValue("TypeName"));
         }
 
-        [TestMethod]
-        [TestCategory(ReturnTypeNameCategory)]
+        [TestMethod, TestCategory(ReturnTypeNameCategory)]
         public void Can_get_return_type_name_for_parameter()
         {
             var csharpCode = @"
@@ -1000,8 +959,7 @@ public class Foo
         #endregion
 
         #region namespace tests
-        [TestMethod]
-        [TestCategory(NamespaceCategory)]
+        [TestMethod, TestCategory(NamespaceCategory)]
         public void Can_get_all_namespaces_from_root()
         {
             var csharpCode = @"
@@ -1027,8 +985,7 @@ namespace Foo
             Assert.AreEqual("Foo.Bar1.FooBar", nonEmptyNamespaces.First().QualifiedName);
         }
 
-        [TestMethod]
-        [TestCategory(NamespaceCategory)]
+        [TestMethod, TestCategory(NamespaceCategory)]
         public void Does_not_crash_on_empty_namespaces_from_root()
         {
             var csharpCode = @"
@@ -1052,8 +1009,7 @@ namespace Foo
             Assert.AreEqual(0, nonEmptyNamespaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(NamespaceCategory)]
+        [TestMethod, TestCategory(NamespaceCategory)]
         public void Does_not_crash_on_no_namespaces_from_root()
         {
             var csharpCode = @"
@@ -1068,8 +1024,7 @@ public enum Foo1 : byte {}
             Assert.AreEqual(0, nonEmptyNamespaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(NamespaceCategory)]
+        [TestMethod, TestCategory(NamespaceCategory)]
         public void Can_get_all_namespaces_from_namespace()
         {
             var csharpCode = @"
@@ -1096,8 +1051,7 @@ namespace Foo
             Assert.AreEqual("Foo.Bar1.FooBar", namespaces.First().QualifiedName);
         }
 
-        [TestMethod]
-        [TestCategory(NamespaceCategory)]
+        [TestMethod, TestCategory(NamespaceCategory)]
         public void Does_not_crash_on_empty_namespaces_from_namespace()
         {
             var csharpCode = @"
@@ -1122,8 +1076,7 @@ namespace Foo
             Assert.AreEqual(0, nonEmptyNamespaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(NamespaceCategory)]
+        [TestMethod, TestCategory(NamespaceCategory)]
         public void Does_not_crash_on_no_namespaces_from_namespace()
         {
             var csharpCode = @"
@@ -1144,8 +1097,7 @@ namespace Namespace1
         #endregion
 
         #region member type
-        [TestMethod]
-        [TestCategory(MemberKindCategory)]
+        [TestMethod, TestCategory(MemberKindCategory)]
         public void Can_get_member_type_for_members()
         {
             var csharpCode = @"
@@ -1172,8 +1124,7 @@ public class Foo
             Assert.AreEqual(MemberKind.Enum,     members[6].MemberKind);
         }
 
-        [TestMethod]
-        [TestCategory(MemberKindCategory)]
+        [TestMethod, TestCategory(MemberKindCategory)]
         public void Can_get_member_type_for_members_via_requestValue()
         {
             var csharpCode = @"
@@ -1200,8 +1151,7 @@ public class Foo
             Assert.AreEqual(MemberKind.Enum, members[6].RequestValue("MemberKind"));
         }
 
-        [TestMethod]
-        [TestCategory(MemberKindCategory)]
+        [TestMethod, TestCategory(MemberKindCategory)]
         public void RequestValue_returns_null_if_property_not_found()
         {
             var csharpCode = @"
@@ -1217,8 +1167,7 @@ public class Foo
         }
 
 
-        [TestMethod]
-        [TestCategory(MemberKindCategory)]
+        [TestMethod, TestCategory(MemberKindCategory)]
         public void Can_get_value_from_parameter_via_RequestValue()
         {
             var csharpCode = @"
@@ -1235,8 +1184,7 @@ public class Foo
         #endregion
 
         #region property access
-        [TestMethod]
-        [TestCategory(PropertyAccessCategory )]
+        [TestMethod, TestCategory(PropertyAccessCategory )]
         public void Can_get_property_access()
         {
             var csharpCode = @"
@@ -1262,8 +1210,7 @@ public class Foo
         #endregion
 
         #region miscellaneous
-        [TestMethod]
-        [TestCategory(MiscellaneousCategory )]
+        [TestMethod, TestCategory(MiscellaneousCategory )]
         public void Can_get_class_name_for_class()
         {
             var csharpCode = @"
@@ -1278,8 +1225,7 @@ public class Foo
             Assert.AreEqual("Foo",cl.ClassName) ;
         }
 
-        [TestMethod]
-        [TestCategory(MiscellaneousCategory)]
+        [TestMethod, TestCategory(MiscellaneousCategory)]
         public void Can_get_root_classes()
         {
             var csharpCode = @"

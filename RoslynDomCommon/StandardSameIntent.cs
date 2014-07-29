@@ -5,10 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using RoslynDom.Common;
 
-namespace RoslynDomCommon
+namespace RoslynDom.Common
 {
     public class StandardSameIntent
     {
+        public static bool CheckSameIntent<T>(T one, T other)
+              where T : class, IDom
+        {
+            return CheckSameIntent(one, other, false);
+        }
+
         public static bool CheckSameIntent<T>(T one, T other, bool skipPublicAnnotations)
             where T : class, IDom
         {
@@ -57,12 +63,13 @@ namespace RoslynDomCommon
                     (x, y) => x.ValueType == y.ValueType && x.Value.Equals(y.Value)
                     && x.Type == y.Type))
                     return false;
-                if (!Check<T, IHasStructuredDocumentation>(one, other,
-                    (x, y) => Check(x.StructuredDocumentation, y.StructuredDocumentation) && x.Description == y.Description))
-                    return false;
-                if (!Check<T, IComment>(one, other,
-                   (x, y) => x.Text == y.Text && x.IsMultiline == y.IsMultiline))
-                    return false;
+                // TODO: Add SameIntent system that supports comparing comments and structured docs
+                //if (!Check<T, IHasStructuredDocumentation>(one, other,
+                //    (x, y) => Check(x.StructuredDocumentation, y.StructuredDocumentation) && x.Description == y.Description))
+                //    return false;
+                //if (!Check<T, IComment>(one, other,
+                //   (x, y) => x.Text == y.Text && x.IsMultiline == y.IsMultiline))
+                //    return false;
                 return true;
             }
 
@@ -70,14 +77,6 @@ namespace RoslynDomCommon
             private bool CheckCharacteristics<T>(T one, T other)
                          where T : class, IDom
             {
-                // Characteristic
-                // An infinite loop can happen with the check for nested types 
-                // TODO: See if there are any, possibly patholoical cases, where the string fix fails,
-                if (!Check<T, ICanBeNested>(one, other,
-                    (x, y) => x.IsNested == y.IsNested
-                    && (x.ContainingType == null && y.ContainingType == null
-                       || x.ContainingType.ToString() == y.ContainingType.ToString())))
-                    return false;
                 if (!Check<T, ICanBeStatic>(one, other,
                     (x, y) => x.IsStatic == y.IsStatic))
                     return false;
@@ -92,7 +91,7 @@ namespace RoslynDomCommon
                     (x, y) => CheckChildrenAnyOrder(x.AllImplementedInterfaces, y.AllImplementedInterfaces)))
                     return false;
                 if (!Check<T, IHasName>(one, other,
-                    (x, y) => x.Name == y.Name ))
+                    (x, y) => x.Name == y.Name))
                     return false;
                 // TODO: SHould anything in namespace be checked?
                 //if (!Check<T, IHasNamespace>(one, other,
@@ -104,6 +103,9 @@ namespace RoslynDomCommon
                 if (!Check<T, IHasTypeParameters>(one, other,
                     (x, y) => CheckChildrenAnyOrder(x.TypeParameters, y.TypeParameters)))
                     return false;
+                if (!Check<T, ILoop>(one, other,
+                     (x, y) => x.TestAtEnd == y.TestAtEnd))
+                    return false;
                 return true;
             }
 
@@ -113,9 +115,6 @@ namespace RoslynDomCommon
                 // Base
                 if (!Check<T, IExpression>(one, other,
                     (x, y) => x.Expression == y.Expression && x.ExpressionType == y.ExpressionType))
-                    return false;
-                if (!Check<T, ILoop>(one, other,
-                    (x, y) => x.TestAtEnd == y.TestAtEnd))
                     return false;
                 if (!Check<T, INestedContainer>(one, other,
                     (x, y) => CheckChildrenAnyOrder(x.Types, y.Types)))
@@ -133,14 +132,8 @@ namespace RoslynDomCommon
                     (x, y) => CheckChildrenAnyOrder(x.StemMembers, y.StemMembers)
                     && CheckChildrenAnyOrder(x.UsingDirectives, y.UsingDirectives)))
                     return false;
-                if (!Check<T, IStemMemberCommentWhite>(one, other,
-                     (x, y) => x.StemMemberKind == y.StemMemberKind))
-                    return false;
-                if (!Check<T, ITypeMemberCommentWhite>(one, other,
-                     (x, y) => x.MemberKind == y.MemberKind))
-                    return false;
                 if (!Check<T, ITypeMemberContainer>(one, other,
-                    (x, y) => CheckChildrenAnyOrder(x.Members, y.Members)))
+                   (x, y) => CheckChildrenAnyOrder(x.Members, y.Members)))
                     return false;
 
                 return true;
@@ -150,12 +143,9 @@ namespace RoslynDomCommon
                         where T : class, IDom
             {
                 // entity interfaces
-                if (!Check<T, IAccessor>(one, other,
-                     (x, y) => x.AccessorType == y.AccessorType))
-                    return false;
                 if (!Check<T, IClass>(one, other,
-                     (x, y) =>  x.IsAbstract == y.IsAbstract 
-                     && x.IsSealed == y.IsSealed && Check(x.BaseType, y.BaseType) ))
+                    (x, y) => x.IsAbstract == y.IsAbstract
+                    && x.IsSealed == y.IsSealed && Check(x.BaseType, y.BaseType)))
                     return false;
                 if (!Check<T, IEnum>(one, other,
                      (x, y) => Check(x.UnderlyingType, y.UnderlyingType)
@@ -175,15 +165,14 @@ namespace RoslynDomCommon
                     return false;
                 if (!Check<T, IProperty>(one, other,
                      (x, y) => x.CanGet == y.CanGet && x.CanSet == y.CanSet
-                     && Check(x.PropertyType, y.PropertyType )
-                     && Check(x.GetAccessor, y.GetAccessor )
-                     && Check(x.SetAccessor , y.SetAccessor )))
+                     && Check(x.PropertyType, y.PropertyType)
+                     && Check(x.GetAccessor, y.GetAccessor)
+                     && Check(x.SetAccessor, y.SetAccessor)))
                     return false;
                 if (!Check<T, ITypeParameter>(one, other,
                      (x, y) => x.Variance == y.Variance && x.HasConstructorConstraint == y.HasConstructorConstraint
                      && x.HasReferenceTypeConstraint == y.HasReferenceTypeConstraint
                       && x.HasValueTypeConstraint == y.HasValueTypeConstraint
-                      && x.Ordinal == y.Ordinal
                       && CheckChildrenAnyOrder(x.ConstraintTypes, y.ConstraintTypes)))
                     return false;
                 if (!Check<T, IUsingDirective>(one, other,
@@ -196,14 +185,16 @@ namespace RoslynDomCommon
                          where T : class, IDom
             {
                 // Statement interfaces
-                if (!Check<T, IArgument>(one, other,
-                    (x, y) => x.Name == y.Name
-                      && x.IsRef == y.IsRef && x.IsOut == y.IsOut
-                      && Check(x.ValueExpression, y.ValueExpression)))
-                    return false;
+
+                    // TODO: Support arguments when you support ObjectCreationExpressions
+                //if (!Check<T, IArgument>(one, other,
+                //    (x, y) => x.Name == y.Name
+                //      && x.IsRef == y.IsRef && x.IsOut == y.IsOut
+                //      && Check(x.ValueExpression, y.ValueExpression)))
+                //    return false;
                 if (!Check<T, IAssignmentStatement>(one, other,
-                    (x, y) => x.Expression == y.Expression
-                    && x.Left == y.Left
+                    (x, y) => Check(x.Expression, y.Expression)
+                    && Check(x.Left, y.Left)
                     && x.Operator == y.Operator))
                     return false;
                 if (!Check<T, IBlockStatement>(one, other,
@@ -217,7 +208,7 @@ namespace RoslynDomCommon
                     return false;
                 if (!Check<T, IForStatement>(one, other,
                     (x, y) => Check(x.Variable, y.Variable)
-                    && x.Incrementor == y.Incrementor))
+                    && Check(x.Incrementor , y.Incrementor)))
                     return false;
                 if (!Check<T, IIfStatement>(one, other,
                     (x, y) => CheckChildrenInOrder(x.Elses, y.Elses)
@@ -229,16 +220,18 @@ namespace RoslynDomCommon
                 if (!Check<T, ILockStatement>(one, other,
                     (x, y) => Check(x.Expression, y.Expression)))
                     return false;
-                if (!Check<T, IObjectCreationExpression>(one, other,
-                    (x, y) => Check(x.Type, y.Type)
-                    && CheckChildrenInOrder(x.Arguments, y.Arguments)))
-                    return false;
+                // TODO: Implement ObjectCreation expressions
+                //if (!Check<T, IObjectCreationExpression>(one, other,
+                //    (x, y) => Check(x.Type, y.Type)
+                //    && CheckChildrenInOrder(x.Arguments, y.Arguments)))
+                //    return false;
                 if (!Check<T, IReturnStatement>(one, other,
                     (x, y) => Check(x.Return, y.Return)))
                     return false;
-                if (!Check<T, ISpecialStatement>(one, other,
-                    (x, y) => x.SpecialStatementKind == y.SpecialStatementKind))
-                    return false;
+                // not currently in use, nto certain it's needed
+                //if (!Check<T, ISpecialStatement>(one, other,
+                //    (x, y) => x.SpecialStatementKind == y.SpecialStatementKind))
+                //    return false;
                 if (!Check<T, IThrowStatement>(one, other,
                     (x, y) => Check(x.ExceptionExpression, y.ExceptionExpression)))
                     return false;
@@ -247,7 +240,8 @@ namespace RoslynDomCommon
                     && CheckChildrenInOrder(x.Catches, y.Catches)))
                     return false;
                 if (!Check<T, ICatchStatement>(one, other,
-                    (x, y) => Check(x.ExceptionVariable, y.ExceptionVariable)))
+                    (x, y) => Check(x.Variable, y.Variable)
+                    && Check(x.ExceptionType, y.ExceptionType)))
                     return false;
                 if (!Check<T, IUsingStatement>(one, other,
                     (x, y) => Check(x.Expression, y.Expression)
@@ -259,12 +253,6 @@ namespace RoslynDomCommon
                     && Check(x.Type, y.Type)
                     && Check(x.Initializer, y.Initializer)))
                     return false;
-                if (!Check<T, ICanBeStatic>(one, other,
-                    (x, y) => x.IsStatic == y.IsStatic))
-                    return false;
-                if (!Check<T, ICanBeStatic>(one, other,
-                    (x, y) => x.IsStatic == y.IsStatic))
-                    return false;
                 return true;
 
             }
@@ -274,6 +262,16 @@ namespace RoslynDomCommon
                 where TCheck : class, IDom
                 where T : class, IDom
             {
+                if (one == null && other == null) return true;
+                if (one == null && other != null) return false;
+                if (one != null && other == null) return false;
+
+                if (one.GetType() != other.GetType()) return false;
+
+                // checking the type parameters provided problematic
+                //if (!typeof(TCheck).IsAssignableFrom(typeof(T))) return true;
+                if (!typeof(TCheck).IsAssignableFrom(one.GetType())) return true;
+
                 if (!skipPublicAnnotations)
                 {
                     if (!one.PublicAnnotations.SameIntent(other.PublicAnnotations))
@@ -282,7 +280,7 @@ namespace RoslynDomCommon
 
                 var oneAs = one as TCheck;
                 var otherAs = other as TCheck;
-                if (oneAs == null) return true;// already checked for initially null, this means cast failed
+
                 return check(oneAs, otherAs);
             }
 

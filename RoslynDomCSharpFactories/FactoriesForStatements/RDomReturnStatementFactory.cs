@@ -25,7 +25,7 @@ namespace RoslynDom.CSharp
             if (syntax.Expression != null)
             {
                 newItem.Return = Corporation.CreateFrom<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
-                if (newItem.Return == null) throw new InvalidOperationException();
+                Guardian.Assert.IsNotNull(newItem.Return, nameof(newItem.Return));
             }
 
             return newItem ;

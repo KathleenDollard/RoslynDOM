@@ -20,8 +20,8 @@ namespace RoslynDom
             var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
             StatementsAll.AddOrMoveRange(statements);
             HasBlock = oldRDom.HasBlock;
-            Expression = oldRDom.Expression.Copy();
-            Variable = oldRDom.Variable.Copy();
+            if (oldRDom.Expression != null) Expression = oldRDom.Expression.Copy();
+            if (oldRDom.Variable != null) Variable = oldRDom.Variable.Copy();
         }
 
         protected override void Initialize()

@@ -5,11 +5,16 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RoslynDom.CSharp
 {
     internal static class RDomEnumFactoryHelper
     {
+        // until move to C# 6 - I want to support name of as soon as possible
+        [ExcludeFromCodeCoverage]
+        private static string nameof<T>(T value) { return ""; }
+
         public static RDomEnum CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICreateFromWorker createFromWorker, RDomCorporation corporation)
         {
             var syntax = syntaxNode as EnumDeclarationSyntax;
@@ -31,7 +36,9 @@ namespace RoslynDom.CSharp
                 createFromWorker.StandardInitialize(newEnumValue, member, newItem, model);
                 newEnumValue.Name = member.Identifier.ToString();
                 if (member.EqualsValue != null)
-                { newEnumValue.Expression = corporation.CreateFrom<IExpression>( member.EqualsValue.Value,newItem, model).FirstOrDefault(); }
+                {
+                    newEnumValue.Expression = corporation.CreateFrom<IExpression>(member.EqualsValue.Value, newItem, model).FirstOrDefault();
+                }
                 newItem.Values.AddOrMove(newEnumValue);
             }
 
@@ -44,14 +51,14 @@ namespace RoslynDom.CSharp
             var identifier = SyntaxFactory.Identifier(item.Name);
             var node = SyntaxFactory.EnumDeclaration(identifier)
                 .WithModifiers(modifiers);
-            var attributes = buildSyntaxWorker.BuildAttributeSyntax (item.Attributes);
+            var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
             var itemAsEnum = item as IEnum;
-            if (itemAsEnum == null) { throw new InvalidOperationException(); }
+            Guardian.Assert.IsNotNull(itemAsEnum, nameof(itemAsEnum));
 
             node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
-                    return item.PrepareForBuildSyntaxOutput(node);
+            return item.PrepareForBuildSyntaxOutput(node);
         }
     }
 

@@ -20,28 +20,37 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as TryStatementSyntax;
             var newItem = new RDomTryStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.InitializeStatements(newItem, syntax.Block, newItem, model);
             var catchSyntaxList = syntax.ChildNodes()
                                     .Where(x => x.CSharpKind() == SyntaxKind.CatchClause)
                                     .OfType<CatchClauseSyntax>();
-            foreach (var ctch in catchSyntaxList)  // The first is the root if
+            foreach (var ctch in catchSyntaxList)  
             {
                 var newCatch = new RDomCatchStatement(ctch, newItem, model);
-                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-                var newVariable = Corporation
-                            .CreateFrom<IMisc>(ctch.Declaration, newCatch, model)
-                            .OfType<IVariableDeclaration>()
-                            .FirstOrDefault();
-                newCatch.ExceptionVariable = newVariable;
-                newCatch.Condition = Corporation.CreateFrom<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault();
+                CreateFromWorker.StandardInitialize(newCatch, ctch, newItem, model);
+                CreateFromWorker.InitializeStatements(newCatch, ctch.Block, newCatch, model);
+                ISymbol typeSymbol = model.GetDeclaredSymbol(ctch.Declaration);
+                if (typeSymbol == null)
+                { typeSymbol = model.GetTypeInfo(ctch.Declaration.Type).Type; }
+                // TODO: Reconsider Symbol being write only or have an overridable way to retrieve
+                // newCatch.Symbol = typeSymbol;
+                newCatch.ExceptionType = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
+                newCatch.Variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newItem, model).FirstOrDefault() as IVariableDeclaration;
+                if (ctch.Filter != null)
+                { newCatch.Condition = Corporation.CreateFrom<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault(); }
                 newItem.CatchesAll.AddOrMove(newCatch);
             }
-            var newFinally = new RDomFinallyStatement(syntax.Finally, newItem, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            newItem.Finally = newFinally ;
-            return newItem ;
+            if (syntax.Finally != null)
+            {
+                var newFinally = new RDomFinallyStatement(syntax.Finally, newItem, model);
+                CreateFromWorker.StandardInitialize(newFinally, syntax.Finally, parent, model);
+                CreateFromWorker.InitializeStatements(newFinally, syntax.Finally.Block, newFinally, model);
+                newItem.Finally = newFinally;
+            }
+            return newItem;
         }
 
-      
+
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
@@ -74,6 +83,6 @@ namespace RoslynDom.CSharp
             return elseClause;
         }
 
-   
+
     }
 }

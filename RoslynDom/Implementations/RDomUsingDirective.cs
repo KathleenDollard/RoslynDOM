@@ -11,7 +11,9 @@ namespace RoslynDom
 
         internal RDomUsingDirective(RDomUsingDirective oldRDom)
             : base(oldRDom)
-        { }
+        {
+            Alias = oldRDom.Alias;
+        }
 
         public string Name { get; set; }
 

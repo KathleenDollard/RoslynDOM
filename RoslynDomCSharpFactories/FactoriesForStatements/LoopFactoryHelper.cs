@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,10 @@ namespace RoslynDom.CSharp
 {
     internal static class LoopFactoryHelper
     {
+        // until move to C# 6 - I want to support name of as soon as possible
+        [ExcludeFromCodeCoverage]
+        private static string nameof<T>(T value) { return ""; }
+
         public static IStatement CreateItemFrom<T>(
             T newItem, ExpressionSyntax condition, StatementSyntax statement, IDom parent, SemanticModel model,
             RDomCorporation corporation, ICreateFromWorker createFromWorker)
@@ -21,7 +26,7 @@ namespace RoslynDom.CSharp
             createFromWorker.InitializeStatements(newItem, statement, newItem, model);
 
             newItem.Condition = corporation.CreateFrom<IExpression>(condition, newItem, model).FirstOrDefault();
-            if (condition == null) { throw new InvalidOperationException(); }
+            Guardian.Assert.IsNotNull(condition, nameof(condition));
 
             return newItem;
         }

@@ -17,39 +17,64 @@ namespace RoslynDom.CSharp
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
-            return syntaxNode is VariableDeclarationSyntax;
+            return syntaxNode is VariableDeclarationSyntax
+                || syntaxNode is CatchDeclarationSyntax;
         }
 
-        protected  override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        {
+            var rawVariableDeclaration = syntaxNode as VariableDeclarationSyntax;
+            if (rawVariableDeclaration != null)
+            { return CreateFromVariableDeclaration(rawVariableDeclaration, syntaxNode, parent, model); }
+
+            var rawCatchDeclaration = syntaxNode as CatchDeclarationSyntax;
+            if (rawCatchDeclaration != null)
+            { return CreateFromCatchDeclaration(rawCatchDeclaration, syntaxNode, parent, model); }
+
+            throw new InvalidOperationException();
+        }
+
+        private IEnumerable<IMisc> CreateFromCatchDeclaration(CatchDeclarationSyntax syntax, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<IMisc>();
 
-            var rawVariableDeclaration = syntaxNode as VariableDeclarationSyntax;
-            var declarators = rawVariableDeclaration.Variables.OfType<VariableDeclaratorSyntax>();
-            foreach (var decl in declarators)
-            {
-                var newItem = new RDomVariableDeclaration( decl, parent, model);
-                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-                list.Add(newItem);
-                InitializeNewItem(newItem, decl, model);
-            }
+            var newItem = new RDomVariableDeclaration(syntax, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            list.Add(newItem);
+            newItem.Name = syntax.Identifier.ToString();
+            ISymbol typeSymbol = null;
+            if (newItem.TypedSymbol != null)
+            { typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type; }
+            if (typeSymbol == null)
+            { typeSymbol = model.GetDeclaredSymbol(syntax); }
+            if (typeSymbol == null)
+            { typeSymbol = model.GetTypeInfo(syntax.Type).Type; }
+            newItem.Type = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
             return list;
         }
-   
-        public void InitializeNewItem(RDomVariableDeclaration newItem, VariableDeclaratorSyntax syntax, SemanticModel model)
-        {
-            newItem.Name = newItem.TypedSymbol.Name;
-            var declaration = syntax.Parent as VariableDeclarationSyntax;
-            if (declaration == null) throw new InvalidOperationException();
-            newItem.IsImplicitlyTyped = (declaration.Type.ToString() == "var");
-            var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type;
-            newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, typeSymbol);
-            if (syntax.Initializer != null)
-            {
-                var equalsClause = syntax.Initializer;
-                newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
-            }
 
+        private IEnumerable<IMisc> CreateFromVariableDeclaration(VariableDeclarationSyntax syntax, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        {
+            var list = new List<IMisc>();
+            var declarators = syntax.Variables.OfType<VariableDeclaratorSyntax>();
+            foreach (var decl in declarators)
+            {
+                var newItem = new RDomVariableDeclaration(decl, parent, model);
+                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+                list.Add(newItem);
+                newItem.Name = newItem.TypedSymbol.Name;
+                var declaration = decl.Parent as VariableDeclarationSyntax;
+                Guardian.Assert.IsNotNull(declaration, nameof(declaration));
+                newItem.IsImplicitlyTyped = (declaration.Type.ToString() == "var");
+                var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type;
+                newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, typeSymbol);
+                if (decl.Initializer != null)
+                {
+                    var equalsClause = decl.Initializer;
+                    newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
+                }
+            }
+            return list;
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)

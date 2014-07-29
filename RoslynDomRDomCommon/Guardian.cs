@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 
 namespace RoslynDom.Common
 {
@@ -52,12 +54,32 @@ namespace RoslynDom.Common
             if (test <=expected) throw new NotImplementedException();
         }
 
-        public void BadContainer()
+        public void AccessedProviderBeforeInitialization(Type type)
         {
-            throw new NotImplementedException();
+            throw new InvalidOperationException();
         }
 
-       ///// <summary>
+        public void BadContainer()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public void FactoryExists(IRDomFactory factory, Type type, IDom item)
+        {
+            if (factory == null)
+            { throw new InvalidOperationException(); }
+        }
+
+        public void RDomHasCloneContructor(ConstructorInfo constructor, Type type)
+        {
+            if (constructor == null)
+            { throw new InvalidOperationException("Missing constructor for clone"); }
+        }
+
+        public void NeitherCreateFromNorListOverridden<TKind>(Type type, SyntaxNode item)
+            { throw new InvalidOperationException(); }
+
+        ///// <summary>
         ///// Call to inform of an unexpected null. 
         ///// </summary>
         ///// <param name="value"></param>
@@ -78,7 +100,7 @@ namespace RoslynDom.Common
         /// <param name="value">Value to check for null</param>
         /// <param name="name">Name of value where practical, generally retrieved via new nameof operator which has a noop implementation in most locations</param>
         /// <remarks>
-        /// Please do not call on non-null values because this results in boxing
+        /// Please do not call on value types because this results in boxing
         /// </remarks>
         public void IsNotNull<T>(
             T value,
@@ -90,6 +112,17 @@ namespace RoslynDom.Common
             if (value == null) throw new NotImplementedException();
         }
 
+     
 
+        internal void FactorySetExists(FactorySet factorySet, Type kind, string v)
+        {
+            if (factorySet == null)
+            { throw new InvalidOperationException(); }
+        }
+
+        internal void FactoryNotFound(IDom item)
+        {
+            throw new InvalidOperationException();
+        }
     }
 }

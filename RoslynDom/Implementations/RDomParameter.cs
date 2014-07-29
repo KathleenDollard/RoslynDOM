@@ -16,7 +16,7 @@ namespace RoslynDom
         internal RDomParameter(RDomParameter oldRDom)
            : base(oldRDom)
         {
-                        Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
+            Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
             Type = oldRDom.Type;
             IsOut = oldRDom.IsOut;
             IsRef = oldRDom.IsRef;

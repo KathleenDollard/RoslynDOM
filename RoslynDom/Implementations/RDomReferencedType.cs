@@ -12,7 +12,7 @@ namespace RoslynDom
         private TypeInfo _typeInfo;
         private ISymbol _symbol;
         private string _outerTypeName;
-        private ISameIntent<IReferencedType> sameIntent = SameIntent_Factory.SameIntent<IReferencedType>();
+     //   private ISameIntent<IReferencedType> sameIntent = SameIntent_Factory.SameIntent<IReferencedType>();
 
         public RDomReferencedType(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
         {
@@ -55,8 +55,10 @@ namespace RoslynDom
 
         protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
         {
+            var thisAsT = this as IPublicAnnotation;
+            var otherAsT = other as IPublicAnnotation;
             if (!CheckSameIntent(other as IReferencedType, skipPublicAnnotations)) { return false; }
-            return sameIntent.SameIntent(this as IReferencedType, other as IReferencedType, skipPublicAnnotations);
+            return (StandardSameIntent.CheckSameIntent(thisAsT, otherAsT, skipPublicAnnotations))  ;
         }
 
         protected virtual bool CheckSameIntent(IReferencedType other, bool skipPublicAnnotations)

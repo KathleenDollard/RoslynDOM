@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -24,9 +25,7 @@ namespace RoslynDomTests
         private const string StemContainerCategory = "StemContainerSyntax";
 
         #region general factory tests
-        [TestMethod]
-        [TestCategory(GeneralFactoryCategory)]
-        [TestCategory("_Common")]
+        [TestMethod, TestCategory(GeneralFactoryCategory), TestCategory("_Common")]
         public void Can_get_root_from_file()
         {
             IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
@@ -34,8 +33,7 @@ namespace RoslynDomTests
             Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(GeneralFactoryCategory)]
+        [TestMethod, TestCategory(GeneralFactoryCategory)]
         public void Can_get_root_from_string()
         {
             var csharpCode = @"
@@ -48,8 +46,7 @@ namespace RoslynDomTests
             Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(GeneralFactoryCategory)]
+        [TestMethod, TestCategory(GeneralFactoryCategory)]
         public void Can_get_root_from_syntaxtree()
         {
             var csharpCode = @"
@@ -63,8 +60,7 @@ namespace RoslynDomTests
             Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
 
-        [TestMethod]
-        [TestCategory(GeneralFactoryCategory)]
+        [TestMethod, TestCategory(GeneralFactoryCategory)]
         public void Can_get_root_from_document()
         {
             var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
@@ -81,8 +77,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod]
-        [TestCategory(GeneralFactoryCategory)]
+        [TestMethod, TestCategory(GeneralFactoryCategory)]
         public void Can_get_root_from_string_with_invalid_code()
         {
             var csharpCode = @"
@@ -96,11 +91,149 @@ namespace RoslynDomTests
             Assert.IsNotNull(root);
             Assert.AreEqual(1, root.ChildNamespaces.Count());
         }
+
+        [TestMethod, TestCategory(GeneralFactoryCategory)]
+        public void BuildSyntax_returns_null_for_null()
+        {
+            Assert.IsNull(RDomCSharp.Factory.BuildSyntax(null));
+        }
+
+        [TestMethod, TestCategory(GeneralFactoryCategory)]
+        public void BuildSyntaxGroup_returns_empty_list_for_null()
+        {
+            Assert.IsFalse(RDomCSharp.Factory.BuildSyntaxGroup(null).Any());
+        }
+
+
+        [TestMethod, TestCategory(GeneralFactoryCategory)]
+        public void Forced_corporation_returns_empty_list_on_null()
+        {
+            // Do not access the corporation directly as that's the purpose of the 
+            // language specific factory. However, I want to test these two side
+            // cases. 
+            var corp = new RDomCorporation();
+            var result1 = corp.BuildSyntaxGroup(null);
+            Assert.IsFalse(result1.Any());
+        }
+
+        [TestMethod, TestCategory(GeneralFactoryCategory)]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void Forced_corporation_throws_on_non_implemented_item()
+        {
+            var csharpCode = @"public classX x {}";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            // Do not access the corporation directly as that's the purpose of the 
+            // language specific factory. However, I want to test these two side
+            // cases. 
+            var corp = new RDomCorporation();
+            var a = new ClassA();
+            var result1 = corp.BuildSyntaxGroup(a);
+        }
+
+        // Class just for test
+        private class ClassA : IDom
+        {
+            public IEnumerable<IDom> Ancestors
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public IEnumerable<IDom> AncestorsAndSelf
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public IEnumerable<IDom> Children
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public IEnumerable<IDom> Descendants
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public IEnumerable<IDom> DescendantsAndSelf
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public object OriginalRawItem
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public IDom Parent
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public PublicAnnotationList PublicAnnotations
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public object RawItem
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public bool Matches(IDom other)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string ReportHierarchy()
+            {
+                throw new NotImplementedException();
+            }
+
+            public object RequestValue(string propertyName)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool SameIntent<T>(T other) where T : class
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool SameIntent<T>(T other, bool skipPublicAnnotations) where T : class
+            {
+                throw new NotImplementedException();
+            }
+        }
         #endregion
 
         #region symbol tests
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_namespace()
         {
             var csharpCode = @"
@@ -112,8 +245,7 @@ namespace RoslynDomTests
             Assert.IsNotNull(symbol);
         }
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_class()
         {
             var csharpCode = @"
@@ -126,8 +258,7 @@ namespace RoslynDomTests
             Assert.AreEqual("MyClass", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_enum()
         {
             var csharpCode = @"
@@ -140,8 +271,7 @@ namespace RoslynDomTests
             Assert.AreEqual("MyEnum", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_struct()
         {
             var csharpCode = @"
@@ -154,8 +284,7 @@ namespace RoslynDomTests
             Assert.AreEqual("MyStruct", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_interface()
         {
             var csharpCode = @"
@@ -169,8 +298,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_field()
         {
             var csharpCode = @"
@@ -182,8 +310,7 @@ namespace RoslynDomTests
             Assert.AreEqual("myField", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_property()
         {
             var csharpCode = @"
@@ -195,8 +322,7 @@ namespace RoslynDomTests
             Assert.AreEqual("myProperty", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_method()
         {
             var csharpCode = @"
@@ -208,8 +334,7 @@ namespace RoslynDomTests
             Assert.AreEqual("myMethod", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_parameter()
         {
             var csharpCode = @"
@@ -221,8 +346,7 @@ namespace RoslynDomTests
             Assert.AreEqual("x", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(SymbolCategory)]
+        [TestMethod, TestCategory(SymbolCategory)]
         public void Can_get_symbol_for_nestedType()
         {
             var csharpCode = @"
@@ -236,8 +360,7 @@ namespace RoslynDomTests
         #endregion
 
         #region typed symbol tests
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_namespace()
         {
             var csharpCode = @"
@@ -250,8 +373,7 @@ namespace RoslynDomTests
             Assert.IsNotNull(symbol);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_class()
         {
             var csharpCode = @"
@@ -264,8 +386,7 @@ namespace RoslynDomTests
             Assert.AreEqual("MyClass", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_enum()
         {
             var csharpCode = @"
@@ -278,8 +399,7 @@ namespace RoslynDomTests
             Assert.AreEqual("MyEnum", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_struct()
         {
             var csharpCode = @"
@@ -292,8 +412,7 @@ namespace RoslynDomTests
             Assert.AreEqual("MyStruct", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_interface()
         {
             var csharpCode = @"
@@ -307,8 +426,7 @@ namespace RoslynDomTests
         }
 
 
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_field()
         {
             var csharpCode = @"
@@ -320,8 +438,7 @@ namespace RoslynDomTests
             Assert.AreEqual("myField", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_property()
         {
             var csharpCode = @"
@@ -333,8 +450,7 @@ namespace RoslynDomTests
             Assert.AreEqual("myProperty", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_method()
         {
             var csharpCode = @"
@@ -346,8 +462,7 @@ namespace RoslynDomTests
             Assert.AreEqual("myMethod", symbol.Name);
         }
 
-        [TestMethod]
-        [TestCategory(TypedSymbolCategory)]
+        [TestMethod, TestCategory(TypedSymbolCategory)]
         public void Can_get_typed_symbol_for_nestedType()
         {
             var csharpCode = @"
@@ -361,8 +476,7 @@ namespace RoslynDomTests
         #endregion
 
         #region RawItem tests
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_namespace()
         {
             var csharpCode = @"
@@ -374,8 +488,7 @@ namespace RoslynDomTests
             Assert.IsNotNull(RawItem);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_class()
         {
             var csharpCode = @"
@@ -388,8 +501,7 @@ namespace RoslynDomTests
             Assert.IsTrue(RawItem is ClassDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_enum()
         {
             var csharpCode = @"
@@ -402,8 +514,7 @@ namespace RoslynDomTests
             Assert.IsTrue(RawItem is EnumDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_struct()
         {
             var csharpCode = @"
@@ -416,8 +527,7 @@ namespace RoslynDomTests
             Assert.IsTrue(RawItem is StructDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_interface()
         {
             var csharpCode = @"
@@ -430,8 +540,7 @@ namespace RoslynDomTests
             Assert.IsTrue(RawItem is InterfaceDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_field()
         {
             var csharpCode = @"
@@ -443,8 +552,7 @@ namespace RoslynDomTests
             Assert.IsTrue(RawItem is VariableDeclaratorSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_property()
         {
             var csharpCode = @"
@@ -456,8 +564,7 @@ namespace RoslynDomTests
             Assert.IsTrue(RawItem is PropertyDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_method()
         {
             var csharpCode = @"
@@ -469,8 +576,7 @@ namespace RoslynDomTests
             Assert.IsTrue(RawItem is MethodDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_nestedType()
         {
             var csharpCode = @"
@@ -482,8 +588,7 @@ namespace RoslynDomTests
             Assert.IsTrue(RawItem is ClassDeclarationSyntax);
         }
 
-        [TestMethod]
-        [TestCategory(RawSyntaxCategory)]
+        [TestMethod, TestCategory(RawSyntaxCategory)]
         public void Can_get_rawSyntax_for_referencedType()
         {
             var csharpCode = @"
@@ -673,7 +778,7 @@ private string Foo{get;}}
             Assert.AreEqual(1, root.Interfaces.Count());
         }
 
-          [TestMethod, TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_structures()
         {
             var csharpCode = @"
@@ -711,8 +816,7 @@ string Foo{get;}}
             Assert.AreEqual(2, root.UsingDirectives.Count());
         }
 
-        [TestMethod]
-        [TestCategory(StemContainerCategory)]
+        [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_usingdirectives_in_namespaces()
         {
             var csharpCode = @"

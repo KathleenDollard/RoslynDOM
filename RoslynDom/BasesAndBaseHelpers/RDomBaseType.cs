@@ -33,7 +33,6 @@ namespace RoslynDom
              : base(oldIDom)
         {
             var oldRDom = oldIDom as RDomBaseType<T>;
-            Initialize();
             _memberKind = oldRDom._memberKind;
             _stemMemberKind = oldRDom._stemMemberKind;
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
@@ -86,6 +85,7 @@ namespace RoslynDom
 
         public bool IsNested
         { get { return (Parent is IType); } }
+
         public IType ContainingType
         { get { return Parent as IType; } }
 

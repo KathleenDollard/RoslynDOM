@@ -17,6 +17,7 @@ namespace RoslynDom
         internal RDomLockStatement(RDomLockStatement oldRDom)
             : base(oldRDom)
         {
+            Expression = oldRDom.Expression.Copy();
         }
 
         protected override void Initialize()

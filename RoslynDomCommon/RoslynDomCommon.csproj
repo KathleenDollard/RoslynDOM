@@ -131,43 +131,6 @@
     <Compile Include="PublicAnnotationList.cs" />
     <Compile Include="RDomBase.cs" />
     <Compile Include="RDomList.cs" />
-    <Compile Include="SameIntent_Bases\SameIntentHelpers.cs" />
-    <Compile Include="SameIntentCharacteristics\SameIntent_ICanBeStatic.cs" />
-    <Compile Include="SameIntentCharacteristics\SameIntent_IHasAccessModifier.cs" />
-    <Compile Include="SameIntentCharacteristics\SameIntent_IHasAttributes.cs" />
-    <Compile Include="SameIntentCharacteristics\SameIntent_IHasImplementedInterfaces.cs" />
-    <Compile Include="SameIntentCharacteristics\SameIntent_IHasNamespace.cs" />
-    <Compile Include="SameIntentCharacteristics\SameIntent_IHasReturnType.cs" />
-    <Compile Include="SameIntentCharacteristics\SameIntent_IHasTypeParameters.cs" />
-    <Compile Include="SameIntent\SameIntent_Factory.cs" />
-    <Compile Include="SameIntent\SameIntent_IAttribute.cs" />
-    <Compile Include="SameIntent\SameIntent_IAttributeValue.cs" />
-    <Compile Include="SameIntent\SameIntent_IClass.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_IDom.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_IExpression.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_IStatement.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_IMember.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_INestedContainer.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_IPropertyOrMethod.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_IStemContainer.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_IStemMember.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_IType.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_ITypeMember.cs" />
-    <Compile Include="SameIntent_Bases\SameIntent_ITypeMemberContainer.cs" />
-    <Compile Include="SameIntent\SameIntent_IEnumValue.cs" />
-    <Compile Include="SameIntent\SameIntent_IEnum.cs" />
-    <Compile Include="SameIntent\SameIntent_IField.cs" />
-    <Compile Include="SameIntent\SameIntent_IInterface.cs" />
-    <Compile Include="SameIntent\SameIntent_IInvalidMember.cs" />
-    <Compile Include="SameIntent\SameIntent_IMethod.cs" />
-    <Compile Include="SameIntent\SameIntent_INamespace.cs" />
-    <Compile Include="SameIntent\SameIntent_IParameter.cs" />
-    <Compile Include="SameIntent\SameIntent_IProperty.cs" />
-    <Compile Include="SameIntent\SameIntent_IReferencedType.cs" />
-    <Compile Include="SameIntent\SameIntent_IRoot.cs" />
-    <Compile Include="SameIntent\SameIntent_IStructure.cs" />
-    <Compile Include="SameIntent\SameIntent_ITypeParameter.cs" />
-    <Compile Include="SameIntent\SameIntent_IUsing.cs" />
     <Compile Include="StandardSameIntent.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -180,9 +143,7 @@
       <Name>RoslynDomUtilities</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SameIntent_Statements\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -32,19 +32,17 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
 
             var binary = syntax.Expression as BinaryExpressionSyntax;
-            if (binary == null) throw new InvalidOperationException();
-            // TODO: handle all the other kinds of assigments here (like +=)
-            if (binary.CSharpKind() != SyntaxKind.SimpleAssignmentExpression) { throw new NotImplementedException(); }
+            Guardian.Assert.IsNotNull(binary, nameof(binary));
             var left = binary.Left as ExpressionSyntax;
             // Previously tested for identifier here, but can also be SimpleMemberAccess and ElementAccess expressions
             // not currently seeing value in testing for the type. Fix #46
             // Also changed Name to Left and string to expression
             var right = binary.Right;
             var expression = right as ExpressionSyntax;
-            if (expression == null) throw new InvalidOperationException();
+            Guardian.Assert.IsNotNull(expression, nameof(expression));
             newItem.Left = Corporation.CreateFrom<IExpression>(left, newItem, model).FirstOrDefault();
             newItem.Expression = Corporation.CreateFrom<IExpression>(expression, newItem, model).FirstOrDefault();
-            newItem.Operator = Mappings.GetOperatorFromCSharpKind (binary.CSharpKind());
+            newItem.Operator = Mappings.OperatorFromCSharpKind (binary.CSharpKind());
             return newItem;
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
@@ -52,7 +50,7 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IAssignmentStatement;
             var leftSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Left);
             var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression);
-            var syntaxKind =Mappings. GetSyntaxKindFromOperator (itemAsT.Operator);
+            var syntaxKind =Mappings. SyntaxKindFromOperator (itemAsT.Operator);
             var assignmentSyntax = SyntaxFactory.BinaryExpression(syntaxKind,
                             (ExpressionSyntax)leftSyntax, (ExpressionSyntax)expressionSyntax);
             var node = SyntaxFactory.ExpressionStatement(assignmentSyntax);

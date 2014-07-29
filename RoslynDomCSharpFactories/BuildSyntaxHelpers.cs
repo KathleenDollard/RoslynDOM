@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,9 @@ namespace RoslynDom.CSharp
 {
     public static class BuildSyntaxHelpers
     {
+        [ExcludeFromCodeCoverage]
+        private static string nameof<T>(T value) { return ""; }
+
         public static IEnumerable<SyntaxNode> PrepareForBuildSyntaxOutput(this IDom item, SyntaxNode node)
         {
             var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(item);
@@ -50,7 +54,7 @@ namespace RoslynDom.CSharp
             return SyntaxFactory.TriviaList(leadingTrivia);
         }
 
- 
+
         private static IEnumerable<SyntaxTrivia> BuildCommentWhite(IDom item)
         {
             var ret = new List<SyntaxTrivia>();
@@ -90,7 +94,7 @@ namespace RoslynDom.CSharp
                 else
                 {
                     var itemAsComment = item as IComment;
-                    if (itemAsComment == null) throw new InvalidOperationException();
+                    Guardian.Assert.IsNotNull(itemAsComment, nameof(itemAsComment));
                     var comment = "";
                     if (itemAsComment.IsMultiline) { comment = "/* " + itemAsComment.Text + "*/"; }
                     else { comment = "// " + itemAsComment.Text; }
@@ -109,9 +113,9 @@ namespace RoslynDom.CSharp
                 case LiteralKind.Unknown:
                     return SyntaxFactory.Literal(value.ToString());
                 case LiteralKind.Numeric:
-                    if (GeneralUtilities .IsInteger(value))
+                    if (GeneralUtilities.IsInteger(value))
                     { return SyntaxFactory.Literal(Convert.ToInt32(value)); }
-                    if (GeneralUtilities.IsFloatingPint (value))
+                    if (GeneralUtilities.IsFloatingPint(value))
                     { return SyntaxFactory.Literal(Convert.ToDouble(value)); }
                     if (value is uint)
                     { return SyntaxFactory.Literal(Convert.ToUInt32(value)); }
@@ -120,7 +124,7 @@ namespace RoslynDom.CSharp
                     if (value is ulong)
                     { return SyntaxFactory.Literal(Convert.ToUInt64(value)); }
                     else
-                    { return SyntaxFactory.Literal(Convert.ToDecimal (value)); }
+                    { return SyntaxFactory.Literal(Convert.ToDecimal(value)); }
                 case LiteralKind.Boolean:
                 case LiteralKind.Type:
                 // Need to create an expression so handled separately and should not call this
@@ -142,7 +146,7 @@ namespace RoslynDom.CSharp
             }
             else
             {
-                xDoc = XDocument.Parse(itemHasStructDoc.StructuredDocumentation.Document) ;
+                xDoc = XDocument.Parse(itemHasStructDoc.StructuredDocumentation.Document);
             }
             var oldParent = xDoc.DescendantNodes().OfType<XElement>().Where(x => x.Name == "member").FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(description))
@@ -175,75 +179,75 @@ namespace RoslynDom.CSharp
             return ret;
         }
 
-  
-        private static XmlTextSyntax MakeXmlDocumentationExterior()
-        {
-            return SyntaxFactory.XmlText()
-                    .WithTextTokens(
-                        SyntaxFactory.TokenList(
-                            SyntaxFactory.XmlTextLiteral(
-                                SyntaxFactory.TriviaList(
-                                    SyntaxFactory.DocumentationCommentExterior(
-                                        @"///")),
-                                @" ",
-                                @" ",
-                                SyntaxFactory.TriviaList())));
 
-        }
+//        private static XmlTextSyntax MakeXmlDocumentationExterior()
+//        {
+//            return SyntaxFactory.XmlText()
+//                    .WithTextTokens(
+//                        SyntaxFactory.TokenList(
+//                            SyntaxFactory.XmlTextLiteral(
+//                                SyntaxFactory.TriviaList(
+//                                    SyntaxFactory.DocumentationCommentExterior(
+//                                        @"///")),
+//                                @" ",
+//                                @" ",
+//                                SyntaxFactory.TriviaList())));
 
-        private static XmlElementEndTagSyntax GetEndTag(string name)
-        {
-            return SyntaxFactory.XmlElementEndTag(
-                     SyntaxFactory.XmlName(
-                         SyntaxFactory.Identifier(
-                             name)));
-        }
+//        }
 
-        private static XmlElementStartTagSyntax GetStartTag(string name)
-        {
-            return SyntaxFactory.XmlElementStartTag(
-                     SyntaxFactory.XmlName(
-                         SyntaxFactory.Identifier(
-                             name)));
-        }
+//        private static XmlElementEndTagSyntax GetEndTag(string name)
+//        {
+//            return SyntaxFactory.XmlElementEndTag(
+//                     SyntaxFactory.XmlName(
+//                         SyntaxFactory.Identifier(
+//                             name)));
+//        }
 
-        private static SyntaxToken XmlTextLiteral(string content)
-        {
-            return SyntaxFactory.XmlTextLiteral(
-                            SyntaxFactory.TriviaList(
-                                SyntaxFactory.DocumentationCommentExterior(
-                                    @"    ///")),
-                            " " + content,
-                            " " + content,
-                            SyntaxFactory.TriviaList());
-        }
+//        private static XmlElementStartTagSyntax GetStartTag(string name)
+//        {
+//            return SyntaxFactory.XmlElementStartTag(
+//                     SyntaxFactory.XmlName(
+//                         SyntaxFactory.Identifier(
+//                             name)));
+//        }
 
-        private static SyntaxToken XmlNewLine()
-        {
-            return SyntaxFactory.XmlTextNewLine(
-                             SyntaxFactory.TriviaList(),
-                             @"
-",
-                             @"
-",
-                             SyntaxFactory.TriviaList());
-        }
-        private static XmlNodeSyntax MakeSummaryNode(string text)
-        {
-            var element = SyntaxFactory.XmlElement(GetStartTag("summary"), GetEndTag("summary"));
-            element = element.WithContent(
-                SyntaxFactory.SingletonList<XmlNodeSyntax>(
-                    SyntaxFactory.XmlText()
-                    .WithTextTokens(
-                        SyntaxFactory.TokenList(
-                            new[]{
-                            XmlNewLine(),
-                            XmlTextLiteral(text),
-                            XmlNewLine(),
-                            XmlTextLiteral("") }
-                            ))));
-            return element;
-        }
+//        private static SyntaxToken XmlTextLiteral(string content)
+//        {
+//            return SyntaxFactory.XmlTextLiteral(
+//                            SyntaxFactory.TriviaList(
+//                                SyntaxFactory.DocumentationCommentExterior(
+//                                    @"    ///")),
+//                            " " + content,
+//                            " " + content,
+//                            SyntaxFactory.TriviaList());
+//        }
+
+//        private static SyntaxToken XmlNewLine()
+//        {
+//            return SyntaxFactory.XmlTextNewLine(
+//                             SyntaxFactory.TriviaList(),
+//                             @"
+//",
+//                             @"
+//",
+//                             SyntaxFactory.TriviaList());
+//        }
+//        //private static XmlNodeSyntax MakeSummaryNode(string text)
+//        //{
+//        //    var element = SyntaxFactory.XmlElement(GetStartTag("summary"), GetEndTag("summary"));
+//        //    element = element.WithContent(
+//        //        SyntaxFactory.SingletonList<XmlNodeSyntax>(
+//        //            SyntaxFactory.XmlText()
+//        //            .WithTextTokens(
+//        //                SyntaxFactory.TokenList(
+//        //                    new[]{
+//        //                    XmlNewLine(),
+//        //                    XmlTextLiteral(text),
+//        //                    XmlNewLine(),
+//        //                    XmlTextLiteral("") }
+//        //                    ))));
+//        //    return element;
+//        //}
 
         public static SyntaxTokenList SyntaxTokensForAccessModifier(AccessModifier accessModifier)
         {
@@ -266,18 +270,18 @@ namespace RoslynDom.CSharp
                     throw new InvalidOperationException();
             }
         }
-        public static BlockSyntax BuildStatementBlock(this IEnumerable<IStatement> statements)
-        {
-            var statementSyntaxList = new List<StatementSyntax>();
-            foreach (var statement in statements)
-            {
-                //  statementSyntaxList.Add(RDomStatement statement.BuildSyntax());
-            }
-            //if (statementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
-            var ret = SyntaxFactory.Block(statementSyntaxList);
-            return ret;
-        }
- 
+        //public static BlockSyntax BuildStatementBlock(this IEnumerable<IStatement> statements)
+        //{
+        //    var statementSyntaxList = new List<StatementSyntax>();
+        //    foreach (var statement in statements)
+        //    {
+        //        //  statementSyntaxList.Add(RDomStatement statement.BuildSyntax());
+        //    }
+        //    //if (statementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
+        //    var ret = SyntaxFactory.Block(statementSyntaxList);
+        //    return ret;
+        //}
+
         public static ExpressionSyntax GetCondition(IHasCondition itemAsT)
         { return (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition); }
 

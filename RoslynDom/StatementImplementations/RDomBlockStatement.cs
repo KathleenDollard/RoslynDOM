@@ -15,7 +15,6 @@ namespace RoslynDom
         internal RDomBlockStatement(RDomBlockStatement oldRDom)
             : base(oldRDom)
         {
-            Initialize();
             var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
             Statements.AddOrMoveRange(statements);
         }

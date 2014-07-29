@@ -15,8 +15,7 @@ namespace RoslynDomTests
         private const string GenericVarianceCategory = "GenericVariance";
 
         #region generic parameter counting
-        [TestMethod]
-        [TestCategory(GenericParamCountingCategory)]
+        [TestMethod, TestCategory(GenericParamCountingCategory)]
         public void Can_get_count_generic_types_for_class()
         {
             var csharpCode = @"
@@ -35,8 +34,7 @@ public class Foo3<T, T1, T2>{}
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericParamCountingCategory)]
+        [TestMethod, TestCategory(GenericParamCountingCategory)]
         public void Can_get_count_generic_types_for_structure()
         {
             var csharpCode = @"
@@ -55,8 +53,7 @@ public struct Foo3<T, T1, T2>{}
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericParamCountingCategory)]
+        [TestMethod, TestCategory(GenericParamCountingCategory)]
         public void Can_get_count_generic_types_for_interface()
         {
             var csharpCode = @"
@@ -75,8 +72,7 @@ public interface Foo3<T, T1, T2>{}
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericParamCountingCategory)]
+        [TestMethod, TestCategory(GenericParamCountingCategory)]
         public void Can_get_count_generic_types_for_method()
         {
             var csharpCode = @"
@@ -100,8 +96,7 @@ public void Foo3<T, T1, T2>();
         #endregion
 
         #region generic naming 
-        [TestMethod]
-        [TestCategory(GenericNamingCategory)]
+        [TestMethod, TestCategory(GenericNamingCategory)]
         public void Can_get_names_for_generic_parameters_of_classes()
         {
             var csharpCode = @"
@@ -116,8 +111,7 @@ public class Foo3<T, T1, T2>
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericNamingCategory)]
+        [TestMethod, TestCategory(GenericNamingCategory)]
         public void Can_get_names_for_generic_parameters_of_structures()
         {
             var csharpCode = @"
@@ -132,8 +126,7 @@ public struct Foo3<T, T1, T2>
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericNamingCategory)]
+        [TestMethod, TestCategory(GenericNamingCategory)]
         public void Can_get_names_for_generic_parameters_of_interfaces()
         {
             var csharpCode = @"
@@ -148,8 +141,7 @@ public interface Foo3<T, T1, T2>
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericNamingCategory)]
+        [TestMethod, TestCategory(GenericNamingCategory)]
         public void Can_get_names_for_generic_parameters_of_methods()
         {
             var csharpCode = @"
@@ -170,8 +162,7 @@ public string Foo3<T, T1, T2>() {};
         #endregion
 
         #region generic variance 
-        [TestMethod]
-        [TestCategory(GenericVarianceCategory)]
+        [TestMethod, TestCategory(GenericVarianceCategory)]
         public void Can_get_variance_for_generic_parameters_of_classes()
         {
             var csharpCode = @"
@@ -188,8 +179,7 @@ public class Foo3<in T, out T1,out in T2, T3>
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericVarianceCategory)]
+        [TestMethod, TestCategory(GenericVarianceCategory)]
         public void Can_get_variance_for_generic_parameters_of_structures()
         {
             var csharpCode = @"
@@ -206,8 +196,7 @@ public struct Foo3<in T, out T1,out in T2, T3>
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericVarianceCategory)]
+        [TestMethod, TestCategory(GenericVarianceCategory)]
         public void Can_get_variance_for_generic_parameters_of_interfaces()
         {
             var csharpCode = @"
@@ -227,8 +216,7 @@ public interface Foo3<in T, out T1,out in T2, T3>
         #endregion
 
         #region generic constraints 
-        [TestMethod]
-        [TestCategory(GenericVarianceCategory)]
+        [TestMethod, TestCategory(GenericVarianceCategory)]
         public void Can_get_generic_constraints_for_classes()
         {
             var csharpCode = @"
@@ -254,8 +242,7 @@ public class Foo3<in T, out T1, out T2, T3, T4, T5, T6, T7>
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericVarianceCategory)]
+        [TestMethod, TestCategory(GenericVarianceCategory)]
         public void Can_get_generic_constraints_for_structures()
         {
             var csharpCode = @"
@@ -281,8 +268,7 @@ public struct Foo3<in T, out T1, out T2, T3, T4, T5, T6, T7>
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericVarianceCategory)]
+        [TestMethod, TestCategory(GenericVarianceCategory)]
         public void Can_get_generic_constraints_for_interfaces()
         {
             var csharpCode = @"
@@ -308,8 +294,7 @@ public interface Foo3<in T, out T1, out T2, T3, T4, T5, T6, T7>
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericVarianceCategory)]
+        [TestMethod, TestCategory(GenericVarianceCategory)]
         public void Can_get_generic_constraints_for_methods()
         {
             var csharpCode = @"
@@ -338,8 +323,7 @@ public string Foo3<in T, out T1, out T2, T3, T4, T5, T6, T7>()
 
         }
 
-        [TestMethod]
-        [TestCategory(GenericVarianceCategory)]
+        [TestMethod, TestCategory(GenericVarianceCategory)]
         public void Can_get_generic_constraints_names_for_classes()
         {
             var csharpCode = @"

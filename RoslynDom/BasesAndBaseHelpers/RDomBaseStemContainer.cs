@@ -20,7 +20,6 @@ namespace RoslynDom
         internal RDomBaseStemContainer(T oldIDom)
              : base(oldIDom)
         {
-            Initialize();
             // Really need to keep them in order so need to iterate entire list in order
             var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;
             var newMembers = new List<IStemMember>();

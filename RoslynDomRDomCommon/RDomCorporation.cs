@@ -12,6 +12,9 @@ namespace RoslynDom
     {
         // WARNING: At present you must register all factories before retrieving any. 
 
+        // until move to C# 6 - I want to support name of as soon as possible
+        protected static string nameof<T>(T value) { return ""; }
+
         private Provider provider = new Provider();
         private Dictionary<Type, Tuple<IRDomFactory, IRDomFactory>> domFactoryLookup;
         private Worker worker;
@@ -92,7 +95,7 @@ namespace RoslynDom
         public IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
         {
             Initialize();
-            if (item == null) return null;
+            if (item == null) return new List<SyntaxNode>();
             var candidates = GetCandidateFactories(item.GetType());
             foreach (var factory in candidates)
             {
@@ -102,7 +105,8 @@ namespace RoslynDom
                     return ret;
                 }
             }
-            throw new InvalidOperationException();
+            Guardian.Assert.FactoryNotFound(item);
+            return null;
         }
 
         public int CountFactorySet(Type type)
@@ -169,14 +173,12 @@ namespace RoslynDom
         {
             while (type != null && type.GenericTypeArguments.Count() < 3)
             { type = type.BaseType; }
-            if (type == null) { throw new NotImplementedException(); }
+            Guardian.Assert.IsNotNull(type, nameof(type));
             return type.GenericTypeArguments;
         }
 
         private IEnumerable<IRDomFactory> GetFactoriesOfKind(Type kind)
         {
-            var factorySet = GetFactorySet(kind);
-            if (factorySet != null) { return factorySet.Factories; }
             Tuple<IRDomFactory, IRDomFactory> factory = null;
             if (domFactoryLookup.TryGetValue(kind, out factory))
             {
@@ -184,7 +186,10 @@ namespace RoslynDom
                 if (factory.Item2 != null) { list.Add(factory.Item2); }
                 return list;
             }
-            return null;
+
+            var factorySet = GetFactorySet(kind);
+            Guardian.Assert.FactorySetExists (factorySet, kind, nameof(factorySet));
+             return factorySet.Factories; 
         }
 
 

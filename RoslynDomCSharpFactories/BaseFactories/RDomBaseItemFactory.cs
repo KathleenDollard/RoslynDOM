@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
@@ -15,6 +16,9 @@ namespace RoslynDom.CSharp
         where TSyntax : SyntaxNode
         where TKind : class, IDom
     {
+        // until move to C# 6 - I want to support name of as soon as possible
+        [ExcludeFromCodeCoverage]
+        protected static string nameof<T>(T value) { return ""; }
 
         public RDomBaseItemFactory(RDomCorporation corporation)
         {
@@ -116,15 +120,19 @@ namespace RoslynDom.CSharp
 
         protected virtual TKind CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            var syntax = syntaxNode as TSyntax;
-            var newItem = Activator.CreateInstance(
-                        typeof(T),
-                        BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,
-                        new object[] { syntax, parent, model }, null);
-            var itemAsT = newItem as T;
-            //InitializeItem(itemAsT, syntax, model);
-            return itemAsT;
+            Guardian.Assert.NeitherCreateFromNorListOverridden<TKind>(this.GetType(), syntaxNode);
+            return null;
         }
+        //{
+        //    var syntax = syntaxNode as TSyntax;
+        //    var newItem = Activator.CreateInstance(
+        //                typeof(T),
+        //                BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null,
+        //                new object[] { syntax, parent, model }, null);
+        //    var itemAsT = newItem as T;
+        //    //InitializeItem(itemAsT, syntax, model);
+        //    return itemAsT;
+        //}
 
     }
 

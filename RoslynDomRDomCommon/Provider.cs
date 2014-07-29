@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -21,7 +23,7 @@ namespace RoslynDom
             var types = AllClasses.FromAssembliesInBasePath()
                           .Where(x => x.Namespace.StartsWith("RoslynDom"));
             // TODO: *** Load other things, at least SameIntent and IWorker
-            LoadIntoContainerWithArgument<IRDomFactory, RDomCorporation >(types, corporation);
+            LoadIntoContainerWithArgument<IRDomFactory, RDomCorporation>(types, corporation);
             LoadIntoContainer<IContainerCheck>(types);
             LoadIntoContainerWithArgument<ICreateFromWorker, RDomCorporation>(types, corporation);
             LoadIntoContainerWithArgument<IBuildSyntaxWorker, RDomCorporation>(types, corporation);
@@ -29,15 +31,28 @@ namespace RoslynDom
             isLoaded = true;
         }
 
-        internal IEnumerable<IRDomFactory> GetFactories()
+        [ExcludeFromCodeCoverage]
+        private void AssertLoaded()
         {
-            if (!isLoaded) throw new InvalidOperationException();
+            if (!isLoaded || unityContainer == null)
+            {
+                Guardian.Assert.AccessedProviderBeforeInitialization(typeof(Provider));
+            }
+        }
+
+        internal IEnumerable<IRDomFactory> GetFactories(
+            [CallerMemberName] string callerName = "",
+            [CallerLineNumber] int callerLineNumber = 0)
+        {
+            AssertLoaded();
             return UnityContainer.ResolveAll<IRDomFactory>();
         }
 
-        internal ICreateFromWorker GetCreateFromWorker()
+        internal ICreateFromWorker GetCreateFromWorker(
+            [CallerMemberName] string callerName = "",
+            [CallerLineNumber] int callerLineNumber = 0)
         {
-            if (!isLoaded) throw new InvalidOperationException();
+            AssertLoaded();
             return UnityContainer.ResolveAll<ICreateFromWorker>()
                         .OrderByDescending(x => x.Priority)
                         .First();
@@ -45,20 +60,23 @@ namespace RoslynDom
 
         internal IBuildSyntaxWorker GetBuildSyntaxWorker()
         {
-            if (!isLoaded) throw new InvalidOperationException();
+            AssertLoaded();
             return UnityContainer.ResolveAll<IBuildSyntaxWorker>()
                         .OrderByDescending(x => x.Priority)
                         .First();
         }
 
-        internal void CheckContainer()
+        internal bool CheckContainer(
+            [CallerMemberName] string callerName = "",
+            [CallerLineNumber] int callerLineNumber = 0)
         {
-            if (!isLoaded) throw new InvalidOperationException();
+            AssertLoaded();
             var containerChecks = UnityContainer.ResolveAll<IContainerCheck>();
             foreach (var check in containerChecks)
             {
-                if (!check.ContainerCheck()) { throw new InvalidOperationException(); }
+                if (!check.ContainerCheck()) { return false; }
             }
+            return true;
         }
 
         private void LoadIntoContainer<T>(
@@ -96,7 +114,7 @@ namespace RoslynDom
         {
             get
             {
-                if (unityContainer == null) throw new InvalidOperationException();
+                AssertLoaded();
                 return unityContainer;
             }
         }

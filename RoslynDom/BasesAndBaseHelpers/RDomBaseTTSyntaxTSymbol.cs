@@ -47,6 +47,7 @@ namespace RoslynDom
             {
                 thisAsHasName.Name = ((IHasName)oldRDom).Name;
             }
+            Initialize();
         }
 
         public SyntaxNode TypedSyntax
