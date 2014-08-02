@@ -29,6 +29,7 @@ namespace RoslynDom
             IsOverride = oldRDom.IsOverride;
             IsSealed = oldRDom.IsSealed;
             IsStatic = oldRDom.IsStatic;
+            IsNew = oldRDom.IsNew;
             CanGet = oldRDom.CanGet;
             CanSet = oldRDom.CanSet;
         }
@@ -102,6 +103,8 @@ namespace RoslynDom
         public bool CanGet { get; set; }
 
         public bool CanSet { get; set; }
+
+        public bool IsNew { get; set; }
 
         /// <summary>
         /// 

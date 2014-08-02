@@ -23,12 +23,14 @@ namespace RoslynDom.CSharp
 
             newItem.TestAtEnd = false; // restating the obvious
 
-            var variable = new RDomVariableDeclaration(syntaxNode, parent, model); // ick, there is no syntax node to associate with the variable
-            variable.IsImplicitlyTyped = (syntax.Type.ToString() == "var");
-            var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type; // not sure this is valid at all
-            variable.Type = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
-            variable.Name =syntax.Identifier.ToString();
-            newItem.Variable = variable;
+            var newVariable = Corporation.CreateFrom<IMisc>(syntaxNode, newItem, model).FirstOrDefault();
+            newItem.Variable = (IVariableDeclaration)newVariable;
+            //var variable = new RDomVariableDeclaration(syntaxNode, parent, model); // ick, there is no syntax node to associate with the variable
+            //variable.IsImplicitlyTyped = (syntax.Type.ToString() == "var");
+            //var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type; 
+            //variable.Type = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
+            //variable.Name =syntax.Identifier.ToString();
+            //newItem.Variable = variable;
             return LoopFactoryHelper.CreateItemFrom<IForEachStatement>(newItem, syntax.Expression, syntax.Statement, parent, model, Corporation, CreateFromWorker);
         }
 
@@ -36,11 +38,12 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IForEachStatement;
 
-           TypeSyntax typeSyntax;
-            if (itemAsT.Variable.IsImplicitlyTyped)
-            { typeSyntax = SyntaxFactory.IdentifierName("var"); }
-            else
-            { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
+            var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable);
+            //TypeSyntax typeSyntax;
+            //if (itemAsT.Variable.IsImplicitlyTyped)
+            //{ typeSyntax = SyntaxFactory.IdentifierName("var"); }
+            //else
+            //{ typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
 
             return LoopFactoryHelper.BuildSyntax<IForEachStatement>
                 (itemAsT, (c, s) => SyntaxFactory.ForEachStatement(typeSyntax, itemAsT.Variable.Name, c,s)) ;

@@ -26,13 +26,9 @@ namespace RoslynDom.CSharp
             var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
             newItem.TypeParameters.AddOrMoveRange(typeParameters);
 
-            newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
+           // newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
             newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
-            newItem.IsAbstract = newItem.Symbol.IsAbstract;
-            newItem.IsVirtual = newItem.Symbol.IsVirtual;
-            newItem.IsOverride = newItem.Symbol.IsOverride;
-            newItem.IsSealed = newItem.Symbol.IsSealed;
-            newItem.IsStatic = newItem.Symbol.IsStatic;
+            // TODO: Assign IsNew, question on insider's list
             newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
             var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
                                 .OfType<IParameter>();

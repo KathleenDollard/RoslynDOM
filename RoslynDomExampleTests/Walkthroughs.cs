@@ -1,5 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom.Common;
 using RoslynDom.CSharp;
@@ -24,8 +29,7 @@ namespace RoslynDomExampleTests
         [TestMethod]
         public void Walkthrogh_2_2_Navigate_and_interrogate_code()
         {
-            var factory = RDomCSharp.Factory;
-            var root = factory.GetRootFromFile(fileName);
+            var root = RDomCSharp.Factory.GetRootFromFile(fileName);
             Assert.AreEqual(1, root.UsingDirectives.Count());
             Assert.AreEqual("System", root.UsingDirectives.First().Name);
             Assert.AreEqual(1, root.Namespaces.Count());
@@ -34,15 +38,6 @@ namespace RoslynDomExampleTests
             Assert.AreEqual(0, methods[0].Parameters.Count());
             Assert.AreEqual(1, methods[1].Parameters.Count());
             Assert.AreEqual("dummy", methods[1].Parameters.First().Name);
-        }
-
-        public string FooBar
-        {
-            get
-            {
-                ushort z = 432;
-                return z.ToString();
-            }
         }
 
         [TestMethod]
@@ -63,12 +58,12 @@ namespace RoslynDomExampleTests
 
             // Retrieve methods and properties with Uint types
             // Explore variables that have any uint type
-            var uintCode = (from cl in root.Descendants.OfType<IStatementContainer>()
-                            from v in cl.Descendants.OfType<IVariable>()
+            var uintCode = (from c in root.Descendants.OfType<IStatementContainer>()
+                            from v in c.Descendants.OfType<IVariable>()
                             where v.Type.Name.StartsWith("UInt")
                             select new
                             {
-                                containerName = cl.Name,
+                                containerName = c.Name,
                                 variableName = v.Name
                             })
                             .ToArray();
@@ -84,26 +79,118 @@ namespace RoslynDomExampleTests
         }
 
         [TestMethod]
-public void Walkthrogh_2_4_Find_implicit_variables_of_concern()
-{
-    var factory = RDomCSharp.Factory;
-    var root = factory.GetRootFromFile(fileName);
+        public void Walkthrogh_3_Find_implicit_variables_of_concern()
+        {
+            var root = RDomCSharp.Factory.GetRootFromFile(fileName);
+            var candidates = FindImplicitVariablesOfConcern(root);
+            var report = ReportCodeLines(candidates);
+            var expected = "Walkthrough_1_code.cs(13, 16) RoslynDom.RDomDeclarationStatement : ret {String}   var ret = lastName;\r\nWalkthrough_1_code.cs(51, 16) RoslynDom.RDomDeclarationStatement : x3 {Int32}     var x3 = x2;\r\n";
+            Assert.AreEqual(expected, report);
+        }
 
-    var implicitlyTyped = root
-                    .Descendants.OfType<IDeclarationStatement>()
-                    .Where(x => x.IsImplicitlyTyped);
+        private static IEnumerable<IDeclarationStatement> FindImplicitVariablesOfConcern(IRoot root)
+        {
+            var implicitlyTyped = root
+                            .Descendants.OfType<IDeclarationStatement>()
+                            .Where(x => x.IsImplicitlyTyped);
 
-    var instantiations = implicitlyTyped
-                .Where(x => x.Initializer.ExpressionType == ExpressionType.ObjectCreation);
+            var instantiations = implicitlyTyped
+                        .Where(x => x.Initializer.ExpressionType == ExpressionType.ObjectCreation);
 
-    var literals = implicitlyTyped
-                .Where(x => x.Initializer.ExpressionType == ExpressionType.Literal &&
-                                (x.Type.Name == "String"
-                                || x.Type.Name == "Int"
-                                || x.Type.Name == "DateTime")// for VB
+            var literals = implicitlyTyped
+                        .Where(x => x.Initializer.ExpressionType == ExpressionType.Literal &&
+                                        (x.Type.Name == "String"
+                                        || x.Type.Name.StartsWith("Int")
+                                        || x.Type.Name.StartsWith("UInt")
+                                        || x.Type.Name == "DateTime")// for VB
                     );
-    var candidates = implicitlyTyped.Except(instantiations).Except(literals);
-            Assert.Inconclusive();
+            var candidates = implicitlyTyped.Except(instantiations).Except(literals);
+            return candidates;
+        }
+
+        [TestMethod]
+        public void Walkthrogh_4_Fix_implicit_variables_of_concern()
+        {
+            var root = RDomCSharp.Factory.GetRootFromFile(fileName);
+            var candidates = FindImplicitVariablesOfConcern(root);
+     
+            var report = ReportCodeLines(candidates);
+            var expected = "Walkthrough_1_code.cs(13, 16) RoslynDom.RDomDeclarationStatement : ret {String}   var ret = lastName;\r\nWalkthrough_1_code.cs(51, 16) RoslynDom.RDomDeclarationStatement : x3 {Int32}     var x3 = x2;\r\n";
+            Assert.AreEqual(expected, report);
+        }
+
+        private string ReportCodeLines(IEnumerable<IDom> items)
+        {
+            var sb = new StringBuilder();
+
+            var lineItems = from x in items
+                            select new
+                            {
+                                item = x,
+                                fileName = GetFileName(x),
+                                position = GetPosition(x),
+                                code = GetNewCode(x)
+                            };
+            var filePathMax = lineItems.Max(x => x.fileName.Length);
+            var itemMax = lineItems.Max(x => x.item.ToString().Trim().Length);
+            var lineMax = lineItems.Max(x => x.position.Line.ToString().Trim().Length);
+            var format = "{0, -fMax}({1,lineMax},{2,3}) {3, -itemMax}   {4}"
+                        .Replace("fMax", filePathMax.ToString())
+                        .Replace("itemMax", itemMax.ToString())
+                        .Replace("lineMax", lineMax.ToString());
+            foreach (var line in lineItems)
+            {
+                sb.AppendFormat(format, line.fileName, line.position.Line, line.position.Character, line.item.ToString().Trim(), line.code);
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
+        private string GetNewCode(IDom item)
+        {
+            var ret = new List<string>();
+            return RDomCSharp.Factory.BuildSyntax(item).ToString();
+        }
+
+        private string GetOldCode(IDom item)
+        {
+
+            var node = item.RawItem as SyntaxNode;
+            if (node == null)
+            { return "<no syntax node>"; }
+            else
+            {
+                return node.ToFullString();
+            }
+        }
+
+        private LinePosition GetPosition(IDom item)
+        {
+            var node = item.RawItem as SyntaxNode;
+            if (node == null)
+            { return default(LinePosition); }
+            else
+            {
+                var location = node.GetLocation();
+                var linePos = location.GetLineSpan().StartLinePosition;
+                return linePos;
+            }
+        }
+
+        private string GetFileName(IDom item)
+        {
+            var root = item.Ancestors.OfType<IRoot>().FirstOrDefault();
+            if (root != null)
+            { return root.FilePath; }
+            else
+            {
+                var top = item.Ancestors.Last();
+                var node = top as SyntaxNode;
+                if (node == null)
+                { return "<no file name>"; }
+                else
+                { return node.SyntaxTree.FilePath; }
+            }
         }
     }
 }

@@ -51,12 +51,13 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.UsingStatement(statement);
             if (itemAsT.Variable != null)
             {
-                TypeSyntax typeSyntax;
-                // TODO: Try to move this to BuildSyntaxExtensions, shared with at least ForStatement, and probably VariableDeclarationStatement, perhaps call through IOC
-                if (itemAsT.Variable.IsImplicitlyTyped)
-                { typeSyntax = SyntaxFactory.IdentifierName("var"); }
-                else
-                { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
+                var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable);
+                //TypeSyntax typeSyntax;
+                //// TODO: Try to move this to BuildSyntaxExtensions, shared with at least ForStatement, and probably VariableDeclarationStatement, perhaps call through IOC
+                //if (itemAsT.Variable.IsImplicitlyTyped)
+                //{ typeSyntax = SyntaxFactory.IdentifierName("var"); }
+                //else
+                //{ typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
                 var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Initializer);
                 var nodeDeclarator = SyntaxFactory.VariableDeclarator(itemAsT.Variable.Name);
                 nodeDeclarator = nodeDeclarator.WithInitializer(SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax));

@@ -58,6 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContainerCheck.cs" />
+    <Compile Include="Factories\RDomConstructorFactory.cs" />
+    <Compile Include="Factories\RDomOperatorFactory.cs" />
+    <Compile Include="Factories\RDomConversionOperatorFactory.cs" />
+    <Compile Include="Factories\RDomDestructorFactory.cs" />
     <Compile Include="ICSharpCreateFromWorker.cs" />
     <Compile Include="BuildSyntaxWorker.cs" />
     <Compile Include="CommentWhiteFactory.cs" />

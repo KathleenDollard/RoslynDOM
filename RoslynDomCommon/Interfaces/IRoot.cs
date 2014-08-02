@@ -9,5 +9,7 @@ namespace RoslynDom.Common
         IEnumerable<IEnum> RootEnums { get; }
         IEnumerable<IStructure > RootStructures { get; }
         bool HasSyntaxErrors { get; }
+
+        string FilePath { get; set; }
     }
 }

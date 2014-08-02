@@ -14,7 +14,7 @@ namespace RoslynDom
              : base(oldRDom)
         {
             IsImplicitlyTyped = oldRDom.IsImplicitlyTyped;
-            IsConst = oldRDom.IsConst;
+            IsAliased = oldRDom.IsAliased;
             Type = oldRDom.Type.Copy();
             if (oldRDom.Initializer != null) Initializer = oldRDom.Initializer.Copy();
         }
@@ -36,7 +36,7 @@ namespace RoslynDom
         public IReferencedType Type { get; set; }
 
         public bool IsImplicitlyTyped { get; set; }
-        public bool IsConst { get; set; }
+        public bool IsAliased { get; set; }
 
 
     }

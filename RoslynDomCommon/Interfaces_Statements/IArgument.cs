@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IArgument : IDom<IArgument >
+    public interface IArgument : IDom<IArgument >, IHasName
     {
-        string Name { get; set; }
         bool IsRef { get; set; }
         bool IsOut { get; set; }
         IExpression ValueExpression { get; set; }

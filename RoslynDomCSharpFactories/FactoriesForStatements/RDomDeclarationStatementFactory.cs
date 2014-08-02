@@ -23,33 +23,53 @@ namespace RoslynDom.CSharp
         protected override IEnumerable<IStatementCommentWhite> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<IStatement>();
-            // LineDirectiveTriviaSyntax
             var rawDeclaration = syntaxNode as LocalDeclarationStatementSyntax;
-            var rawVariableDeclaration = rawDeclaration.Declaration;
-            var declarators = rawDeclaration.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
-            foreach (var decl in declarators)
+            // This returns VariableDeclarations that are then converted into Declaration statements. 
+            // That is ugly, but I felt it more important to reuse the variable extraction code. 
+            var newItems = Corporation.CreateFrom<IMisc>(rawDeclaration.Declaration, parent, model);
+            foreach (var item in newItems)
             {
-                var newItem = new RDomDeclarationStatement(decl, parent, model);
+                if (item is ICommentWhite) { continue; }
+                var syntax = (SyntaxNode)item.RawItem;
+                var itemAsT = item as IVariableDeclaration;
+                var newItem = new RDomDeclarationStatement(syntax, parent, model);
+                CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
                 list.Add(newItem);
-                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-                InitializeNewItem(newItem, decl, model);
+                // Don't need to copy here, because we are trashing item. 
+                newItem.Name = itemAsT.Name;
+                newItem.IsAliased = itemAsT.IsAliased;
+                newItem.IsConst = rawDeclaration.IsConst;
+                newItem.IsImplicitlyTyped = itemAsT.IsImplicitlyTyped;
+                newItem.Initializer = itemAsT.Initializer;
+                newItem.Type = itemAsT.Type;
             }
+            list.AddRange(newItems.OfType<IStatement>());
+            //var rawVariableDeclaration = rawDeclaration.Declaration;
+            //var declarators = rawDeclaration.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
+            //foreach (var decl in declarators)
+            //{
+            //    var newItem = new RDomDeclarationStatement(decl, parent, model);
+            //    list.Add(newItem);
+            //    CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            //    InitializeNewItem(newItem, decl, model);
+            //}
             return list;
         }
 
         public void InitializeNewItem(RDomDeclarationStatement newItem, VariableDeclaratorSyntax syntax, SemanticModel model)
         {
             newItem.Name = newItem.TypedSymbol.Name;
-            var declaration = syntax.Parent as VariableDeclarationSyntax;
-            if (declaration == null) throw new InvalidOperationException();
-            newItem.IsImplicitlyTyped = (declaration.Type.ToString() == "var");
-            var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type;
-            newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, typeSymbol);
-            if (syntax.Initializer != null)
-            {
-                var equalsClause = syntax.Initializer;
-                newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
-            }
+
+            //var declaration = syntax.Parent as VariableDeclarationSyntax;
+            //if (declaration == null) throw new InvalidOperationException();
+
+            //CreateFromWorker.InitializeVariable(newItem, declaration.Type.ToString(), syntax, model);
+
+            //if (syntax.Initializer != null)
+            //{
+            //    var equalsClause = syntax.Initializer;
+            //    newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
+            //}
 
         }
 
@@ -57,12 +77,8 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IDeclarationStatement;
             var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
-            TypeSyntax typeSyntax;
-            // TODO: Type alias are not currently being used. Could be brute forced here, but I'd rather run a simplifier for real world scenarios
-            if (itemAsT.IsImplicitlyTyped)
-            { typeSyntax = SyntaxFactory.IdentifierName("var"); }
-            else
-            { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Type)); }
+            TypeSyntax typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT);
+
             var nodeDeclarator = SyntaxFactory.VariableDeclarator(itemAsT.Name);
             if (itemAsT.Initializer != null)
             {
@@ -75,5 +91,7 @@ namespace RoslynDom.CSharp
 
             return item.PrepareForBuildSyntaxOutput(node);
         }
+
+
     }
 }

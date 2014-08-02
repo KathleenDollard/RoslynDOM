@@ -27,6 +27,6 @@ namespace RoslynDom
 
         public IExpression Left { get; set; }
         public IExpression Expression { get; set; }
-        public Operator Operator { get; set; }
+        public AssignmentOperator Operator { get; set; }
     }
 }

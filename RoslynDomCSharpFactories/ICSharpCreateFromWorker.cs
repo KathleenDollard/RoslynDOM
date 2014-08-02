@@ -27,5 +27,6 @@ namespace RoslynDom.CSharp
                   IEnumerable<MemberDeclarationSyntax> memberSyntaxes,
                   IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
                   SemanticModel model);
+
     }
 }

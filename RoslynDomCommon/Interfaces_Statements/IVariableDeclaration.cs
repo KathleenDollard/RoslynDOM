@@ -12,7 +12,7 @@ namespace RoslynDom.Common
         IExpression Initializer { get; set; }
         IReferencedType Type { get; set; }
         bool IsImplicitlyTyped { get; set; }
-        bool IsConst { get; set; }
+        bool IsAliased { get; set; }
     }
 
     public interface IVariableDeclaration : IVariable, IDom<IVariableDeclaration>, IMisc

@@ -64,11 +64,16 @@
     <Compile Include="Implementations\RDomClass.cs" />
     <Compile Include="Implementations\RDomEnumValue.cs" />
     <Compile Include="Implementations\RDomEnum.cs" />
+    <Compile Include="Implementations\RDomArgument.cs" />
     <Compile Include="Implementations\RDomField.cs" />
     <Compile Include="Implementations\RDomInterface.cs" />
     <Compile Include="Implementations\RDomInvalidTypeMember.cs" />
     <Compile Include="Implementations\RDomAccessor.cs" />
     <Compile Include="Implementations\RDomComment.cs" />
+    <Compile Include="Implementations\RDomConstructor.cs" />
+    <Compile Include="Implementations\RDomDestructor.cs" />
+    <Compile Include="Implementations\RDomConversionOperator.cs" />
+    <Compile Include="Implementations\RDomOperator.cs" />
     <Compile Include="Implementations\RDomVerticalWhitespace.cs" />
     <Compile Include="IRoslynHasSymbol.cs" />
     <Compile Include="RoslynDomSymbolUtilities.cs" />

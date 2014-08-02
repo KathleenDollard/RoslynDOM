@@ -2,14 +2,14 @@
 
 namespace RoslynDom.Common
 {
-    public interface IPropertyOrMethod : IHasReturnType, ICanBeStatic, ITypeMember
+    public interface IPropertyOrMethod : 
+        IHasReturnType, 
+        ICanBeStatic, 
+        ITypeMember, 
+        IOOTypeMember, 
+        ICanBeNew, 
+        IHasParameters 
     {
-        bool IsAbstract { get; set; }
-        bool IsVirtual { get; set; }
-        bool IsOverride { get; set; }
-        bool IsSealed { get; set; }
-
-        RDomList<IParameter> Parameters { get; }
     }
 
     public interface IPropertyOrMethod<T> : IPropertyOrMethod, ITypeMember<T>

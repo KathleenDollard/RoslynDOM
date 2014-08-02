@@ -24,18 +24,18 @@ namespace RoslynDom.CSharp
             var catchSyntaxList = syntax.ChildNodes()
                                     .Where(x => x.CSharpKind() == SyntaxKind.CatchClause)
                                     .OfType<CatchClauseSyntax>();
-            foreach (var ctch in catchSyntaxList)  
+            foreach (var ctch in catchSyntaxList)
             {
                 var newCatch = new RDomCatchStatement(ctch, newItem, model);
                 CreateFromWorker.StandardInitialize(newCatch, ctch, newItem, model);
                 CreateFromWorker.InitializeStatements(newCatch, ctch.Block, newCatch, model);
-                ISymbol typeSymbol = model.GetDeclaredSymbol(ctch.Declaration);
-                if (typeSymbol == null)
-                { typeSymbol = model.GetTypeInfo(ctch.Declaration.Type).Type; }
-                // TODO: Reconsider Symbol being write only or have an overridable way to retrieve
-                // newCatch.Symbol = typeSymbol;
-                newCatch.ExceptionType = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
-                newCatch.Variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newItem, model).FirstOrDefault() as IVariableDeclaration;
+                if (ctch.Declaration != null)
+                {
+                    var variable = GetDeclaration(newCatch, ctch, model);
+                    newCatch.Variable = variable;
+                    var typeSymbol = model.GetTypeInfo(ctch.Declaration.Type).Type;
+                    newCatch.ExceptionType = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
+                }
                 if (ctch.Filter != null)
                 { newCatch.Condition = Corporation.CreateFrom<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault(); }
                 newItem.CatchesAll.AddOrMove(newCatch);
@@ -50,39 +50,64 @@ namespace RoslynDom.CSharp
             return newItem;
         }
 
-
+        private IVariableDeclaration GetDeclaration(RDomCatchStatement newCatch,
+            CatchClauseSyntax ctch, SemanticModel model)
+        {
+            if (string.IsNullOrWhiteSpace(ctch.Declaration.Identifier.ToString())) return null;
+            ISymbol typeSymbol = model.GetDeclaredSymbol(ctch.Declaration);
+            if (typeSymbol == null)
+            { typeSymbol = model.GetTypeInfo(ctch.Declaration.Type).Type; }
+            // TODO: Reconsider Symbol being write only or have an overridable way to retrieve
+            // newCatch.Symbol = typeSymbol;
+            var variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
+            return variable;
+        }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
-            var itemAsT = item as IIfStatement;
-            var elseSyntax = BuildElseSyntax(itemAsT.Elses);
-            var node = SyntaxFactory.IfStatement(BuildSyntaxHelpers.GetCondition(itemAsT), BuildSyntaxHelpers.GetStatement(itemAsT));
-            if (elseSyntax != null) { node = node.WithElse(elseSyntax); }
+            var itemAsT = item as ITryStatement;
+            var node = SyntaxFactory.TryStatement();
+            var catches = BuildCatchSyntaxList(itemAsT);
+            var fnally = BuildFinallySyntax(itemAsT);
+            var block = BuildSyntaxWorker.GetStatementBlock(itemAsT.Statements);
+
+            node = node.WithCatches(SyntaxFactory.List(catches))
+                     .WithFinally(fnally)
+                     .WithBlock(block);
 
             return item.PrepareForBuildSyntaxOutput(node);
         }
 
-        private ElseClauseSyntax BuildElseSyntax(IEnumerable<IElseStatement> elses)
+        private FinallyClauseSyntax BuildFinallySyntax(ITryStatement itemAsT)
         {
-            // Because we reversed the list, inner is first, inner to outer required for this approach
-            elses = elses.Reverse();
-            ElseClauseSyntax elseClause = null;
-            foreach (var nestedElse in elses)
-            {
-                var statement = BuildSyntaxHelpers.GetStatement(nestedElse);
-                var elseIf = nestedElse as IElseIfStatement;
-                if (elseIf != null)
-                {
-                    // build if statement and put in else clause
-                    statement = SyntaxFactory.IfStatement(BuildSyntaxHelpers.GetCondition(elseIf), statement)
-                                .WithElse(elseClause);
-                }
-                var newElseClause = SyntaxFactory.ElseClause(statement);
-                elseClause = newElseClause;
-            }
-            return elseClause;
+            var fnally = itemAsT.Finally;
+            // TODO: Empty statement would return empty brackets here?
+            var block = BuildSyntaxWorker.GetStatementBlock(fnally.Statements);
+            var syntax = SyntaxFactory.FinallyClause(block);
+            return syntax;
         }
 
+        private IEnumerable<CatchClauseSyntax> BuildCatchSyntaxList(ITryStatement itemAsT)
+        {
+            var ret = new List<CatchClauseSyntax>();
+            foreach (var ctch in itemAsT.Catches)
+            {
+                var syntax = SyntaxFactory.CatchClause();
+                if (ctch.ExceptionType != null)
+                {
+                    TypeSyntax typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(ctch.ExceptionType));
+                    var declaration = SyntaxFactory.CatchDeclaration(typeSyntax);
+                    if (ctch.Variable != null)
+                    { declaration = declaration.WithIdentifier(SyntaxFactory.Identifier(ctch.Variable.Name)); }
+                }
+                // TODO: Add catch filter for 6.0
+                // TODO: Empty statement would return empty brackets here?
+                var block = BuildSyntaxWorker.GetStatementBlock(ctch.Statements);
+                syntax = syntax.WithBlock(block);
+                ret.Add(syntax);
+            }
 
+            return ret;
+        }
     }
 }

@@ -8,16 +8,22 @@ namespace RoslynDom.Common
 {
     public enum Operator
     {
-        Equals = 0,
-        AddAssignment,
-        SubtractAssignment,
-        MultiplyAssignment,
-        DivideAssignment,
-        ModuloAssignment,
-        AndAssignment,
-        ExclusiveOrAssignment,
-        OrAssignment,
-        LeftShiftAssignment,
-        RightShiftAssignment
+        Unknown = 0,
+        Plus,
+        Minus,
+        Asterisk,
+        Slash,
+        Percent,
+        Ampersand,
+        Bar,
+        Caret,
+        LessThanLessThan,
+        GreaterThanGreaterThan,
+        EqualsEquals,
+        ExclamationEquals,
+        GreaterThan,
+        LessThan,
+        GreaterThanEquals,
+        LessThanEquals
     }
 }

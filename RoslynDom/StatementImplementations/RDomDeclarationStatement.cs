@@ -15,6 +15,7 @@ namespace RoslynDom
         {
             IsImplicitlyTyped = oldRDom.IsImplicitlyTyped;
             IsConst = oldRDom.IsConst;
+            IsAliased = oldRDom.IsAliased;
             Type = oldRDom.Type.Copy();
             Initializer = oldRDom.Initializer.Copy();
         }
@@ -30,14 +31,18 @@ namespace RoslynDom
         public string OuterName
         { get { return RoslynUtilities.GetOuterName(this); } }
 
+        public override string ToString()
+        {
+            return base.ToString() + " {" + Type.Name + "}";
 
+        }
         public IExpression Initializer { get; set; }
 
         public IReferencedType Type { get; set; }
 
         public bool IsImplicitlyTyped { get; set; }
         public bool IsConst { get; set; }
-
+        public bool IsAliased { get; set; }
 
     }
 }

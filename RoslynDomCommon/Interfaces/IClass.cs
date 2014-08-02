@@ -7,6 +7,7 @@ namespace RoslynDom.Common
         INestedContainer, 
         ITypeMemberContainer, 
         IHasTypeParameters, 
+        IHasConstructors,
         IHasImplementedInterfaces , 
         ICanBeStatic 
     {

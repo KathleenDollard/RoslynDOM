@@ -57,6 +57,9 @@ namespace RoslynDom
 
         public IReferencedType BaseType { get; set; }
 
+        public IEnumerable<IConstructor> Constructors
+        {  get { return Members.OfType<IConstructor>(); } }
+
         public IEnumerable<IReferencedType> ImplementedInterfaces
         { get { return this.ImpementedInterfacesFrom(false); } }
 

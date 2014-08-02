@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
             Guardian.Assert.IsNotNull(expression, nameof(expression));
             newItem.Left = Corporation.CreateFrom<IExpression>(left, newItem, model).FirstOrDefault();
             newItem.Expression = Corporation.CreateFrom<IExpression>(expression, newItem, model).FirstOrDefault();
-            newItem.Operator = Mappings.OperatorFromCSharpKind (binary.CSharpKind());
+            newItem.Operator = Mappings.AssignmentOperatorFromCSharpKind (binary.CSharpKind());
             return newItem;
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
@@ -50,7 +50,7 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IAssignmentStatement;
             var leftSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Left);
             var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression);
-            var syntaxKind =Mappings. SyntaxKindFromOperator (itemAsT.Operator);
+            var syntaxKind =Mappings. SyntaxKindFromAssignmentOperator (itemAsT.Operator);
             var assignmentSyntax = SyntaxFactory.BinaryExpression(syntaxKind,
                             (ExpressionSyntax)leftSyntax, (ExpressionSyntax)expressionSyntax);
             var node = SyntaxFactory.ExpressionStatement(assignmentSyntax);

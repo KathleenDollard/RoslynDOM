@@ -31,6 +31,7 @@ namespace RoslynDom.CSharp
             newItem.IsOverride = newItem.Symbol.IsOverride;
             newItem.IsSealed = newItem.Symbol.IsSealed;
             newItem.IsStatic = newItem.Symbol.IsStatic;
+            // TODO: Assign IsNew, question on insider's list
             var propSymbol = newItem.Symbol as IPropertySymbol;
             Guardian.Assert.IsNotNull(propSymbol, nameof(propSymbol));
 
@@ -64,7 +65,7 @@ namespace RoslynDom.CSharp
             var setAccessorSyntax = RDomCSharp.Factory.BuildSyntaxGroup(itemAsProperty.SetAccessor).FirstOrDefault();
             if (setAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)setAccessorSyntax); }
             if (accessors.Any()) { node = node.WithAccessorList(SyntaxFactory.AccessorList(accessors)); }
-            node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
             // TODO: parameters , typeParameters and constraintClauses 
 
             return item.PrepareForBuildSyntaxOutput(node);

@@ -26,23 +26,30 @@ namespace RoslynDom.CSharp
         public IRoot GetRootFromFile(string fileName)
         {
             var code = File.ReadAllText(fileName);
-            return GetRootFromString(code);
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+            // TODO: Consider whether to expand the filename to full path
+            return GetRootFromStringInternal(tree, fileName);
         }
 
         public IRoot GetRootFromString(string code)
         {
             SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-            return GetRootFromSyntaxTree(tree);
+            return GetRootFromStringInternal(tree, null);
         }
 
         public IRoot GetRootFromDocument(Document document)
         {
             Guardian.Assert.IsNotNull(document, nameof(document));
             SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
-            return GetRootFromSyntaxTree(tree);
+            return GetRootFromStringInternal(tree, document.FilePath);
         }
 
         public IRoot GetRootFromSyntaxTree(SyntaxTree tree)
+        {
+            return GetRootFromStringInternal(tree, tree.FilePath );
+        }
+
+        private IRoot GetRootFromStringInternal(SyntaxTree tree, string filePath)
         {
             //CSharpFactory.Register();
             var compilation = CSharpCompilation.Create("MyCompilation",
@@ -51,6 +58,7 @@ namespace RoslynDom.CSharp
                                            references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
             var model = compilation.GetSemanticModel(tree);
             var root = _helper.CreateFrom<IRoot>(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();
+            root.FilePath = filePath;
             return root;
         }
 

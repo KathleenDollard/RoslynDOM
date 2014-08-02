@@ -20,7 +20,7 @@ namespace RoslynDom.CSharp
             return syntaxNode is FieldDeclarationSyntax;
         }
 
-        protected  override IEnumerable<ITypeMemberCommentWhite> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IEnumerable<ITypeMemberCommentWhite> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<ITypeMember>();
 
@@ -35,8 +35,15 @@ namespace RoslynDom.CSharp
 
                 newItem.Name = newItem.TypedSymbol.Name;
 
+                if (decl.Initializer != null)
+                { newItem.Initializer = Corporation.CreateFrom<IExpression>(decl.Initializer.Value, newItem, model).FirstOrDefault(); }
                 newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
-                newItem.IsStatic = newItem.Symbol.IsStatic;
+                var fieldSymbol = newItem.Symbol as IFieldSymbol;
+                newItem.IsStatic = fieldSymbol.IsStatic;
+                // TODO: Assign IsNew, question on insider's list
+                // newItem.IsNew = fieldSymbol.i 
+                newItem.IsVolatile = fieldSymbol.IsVolatile;
+                newItem.IsReadOnly = fieldSymbol.IsReadOnly;
                 newItem.PublicAnnotations.Add(fieldPublicAnnotations);
 
             }
@@ -56,10 +63,10 @@ namespace RoslynDom.CSharp
                             SyntaxFactory.VariableDeclarator(nameSyntax)));
             var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
-            var attributes = BuildSyntaxWorker .BuildAttributeSyntax(itemAsField.Attributes);
+            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsField.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
-            node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             return item.PrepareForBuildSyntaxOutput(node);
         }

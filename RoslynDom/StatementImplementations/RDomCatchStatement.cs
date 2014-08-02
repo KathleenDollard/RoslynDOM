@@ -17,8 +17,10 @@ namespace RoslynDom
         {
             if (oldRDom.Condition != null)
             { Condition = oldRDom.Condition.Copy(); }
-            Variable = oldRDom.Variable.Copy();
-            ExceptionType  = oldRDom.ExceptionType.Copy();
+            if (oldRDom.Variable != null)
+            { Variable = oldRDom.Variable.Copy(); }
+            if (oldRDom.ExceptionType != null)
+            { ExceptionType = oldRDom.ExceptionType.Copy(); }
         }
 
         public override IEnumerable<IDom> Children

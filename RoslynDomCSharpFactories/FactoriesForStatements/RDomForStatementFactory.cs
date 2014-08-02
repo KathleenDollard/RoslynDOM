@@ -34,12 +34,13 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IForStatement;
             var node = LoopFactoryHelper.BuildSyntax<IForStatement>(itemAsT, (c, s) => SyntaxFactory.ForStatement(s).WithCondition(c)).First() as ForStatementSyntax;
 
-            // TODO: Try to share this code with DeclarationSyntaxStatementFactory
-            TypeSyntax typeSyntax;
-            if (itemAsT.Variable.IsImplicitlyTyped)
-            { typeSyntax = SyntaxFactory.IdentifierName("var"); }
-            else
-            { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
+            var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable );
+            //// TODO: Try to share this code with DeclarationSyntaxStatementFactory
+            //TypeSyntax typeSyntax;
+            //if (itemAsT.Variable.IsImplicitlyTyped)
+            //{ typeSyntax = SyntaxFactory.IdentifierName("var"); }
+            //else
+            //{ typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
             var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Initializer);
             var nodeDeclarator = SyntaxFactory.VariableDeclarator(itemAsT.Variable.Name);
             nodeDeclarator = nodeDeclarator.WithInitializer(SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax));

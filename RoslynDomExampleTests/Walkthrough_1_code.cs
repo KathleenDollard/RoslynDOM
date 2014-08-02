@@ -48,6 +48,8 @@ namespace RoslynDom.Tests.Walkthrough_1_code
         /// <param name="dummy">With a dummy parameter</param>
         public void Foo3(string dummy)
         {
+            var x2 = 3;
+            var x3 = x2;
             Console.WriteLine("Making up silly code to evaluate");
         }
     }

@@ -35,6 +35,7 @@ namespace RoslynDom
             IsOverride = oldRDom.IsOverride;
             IsSealed = oldRDom.IsSealed;
             IsStatic = oldRDom.IsStatic;
+            IsNew = oldRDom.IsNew;
             IsExtensionMethod = oldRDom.IsExtensionMethod;
 
         }
@@ -83,6 +84,7 @@ namespace RoslynDom
         public bool IsOverride { get; set; }
         public bool IsSealed { get; set; }
         public bool IsStatic { get; set; }
+        public bool IsNew { get; set; }
 
         public bool IsExtensionMethod { get; set; }
 

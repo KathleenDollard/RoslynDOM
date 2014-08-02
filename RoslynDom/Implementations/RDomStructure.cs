@@ -36,7 +36,10 @@ namespace RoslynDom
         public IEnumerable<IEnum> Enums
         { get { return Members.OfType<IEnum>().ToList(); } }
 
-             public IEnumerable<IReferencedType> ImplementedInterfaces
+        public IEnumerable<IConstructor> Constructors
+        { get { return Members.OfType<IConstructor>(); } }
+
+        public IEnumerable<IReferencedType> ImplementedInterfaces
         { get { return this.ImpementedInterfacesFrom(false); } }
 
         public IEnumerable<IReferencedType> AllImplementedInterfaces

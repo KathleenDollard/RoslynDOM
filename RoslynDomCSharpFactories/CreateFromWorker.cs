@@ -61,6 +61,8 @@ namespace RoslynDom.CSharp
             InitializePublicAnnotations(newItem, syntaxNode, parent, model);
             InitializeAttributes(newItem as IHasAttributes, syntaxNode, parent, model);
             InitializeAccessModifiers(newItem as IHasAccessModifier, syntaxNode, parent, model);
+            InitializeOOTypeMember(newItem as IOOTypeMember, syntaxNode, parent, model);
+            InitializeStatic(newItem as ICanBeStatic, syntaxNode, parent, model);
             InitializeStructuredDocumentation(newItem as IHasStructuredDocumentation, syntaxNode, parent, model);
         }
 
@@ -88,6 +90,23 @@ namespace RoslynDom.CSharp
                 }
             }
             itemAsHasAttributes.Attributes.AddOrMoveAttributeRange(attributes);
+        }
+
+        public void InitializeOOTypeMember(IOOTypeMember itemAsOO, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        {
+            if (itemAsOO == null) { return; }
+            var itemAsDom = itemAsOO as IRoslynHasSymbol;
+            itemAsOO.IsAbstract = itemAsDom.Symbol.IsAbstract;
+            itemAsOO.IsVirtual = itemAsDom.Symbol.IsVirtual;
+            itemAsOO.IsOverride = itemAsDom.Symbol.IsOverride;
+            itemAsOO.IsSealed = itemAsDom.Symbol.IsSealed;
+        }
+
+        public void InitializeStatic(ICanBeStatic item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        {
+            if (item == null) { return; }
+            var itemAsDom = item as IRoslynHasSymbol;
+            item.IsStatic = itemAsDom.Symbol.IsStatic;
         }
 
         public void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -125,29 +144,9 @@ namespace RoslynDom.CSharp
             return Corporation.CreateFrom<ICommentWhite>(syntaxNode, newItem, model);
         }
 
-        //public IEnumerable<IAttribute> GetAttributes<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
-        //    where T : class, IDom
-        //    where TSyntax : SyntaxNode
-        //{
-        //    var parentAsHasSymbol = newItem as IRoslynHasSymbol;
-        //    if (parentAsHasSymbol == null) { throw new InvalidOperationException(); }
-        //    var parentSymbol = parentAsHasSymbol.Symbol;
-        //    var symbolAttributes = parentSymbol.GetAttributes();
-        //    var list = new List<IAttribute>();
-        //    foreach (var attributeData in symbolAttributes)
-        //    {
-        //        // TODO: In those cases where we do have a symbol reference to the attribute, try to use it
-        //        var appRef = attributeData.ApplicationSyntaxReference;
-        //        var attribSyntax = syntaxNode.SyntaxTree.GetRoot().FindNode(appRef.Span) as AttributeSyntax;
-        //        var newAttrib = Corporation.CreateFrom<IAttribute>(attribSyntax, newItem, model);
-        //        list.AddRange(newAttrib);
-        //    }
-        //    return list;
-        //}
-
         public IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
-            where T : class, IDom
-            where TSyntax : SyntaxNode
+           where T : class, IDom
+           where TSyntax : SyntaxNode
         {
             return Corporation.CreateFrom<IPublicAnnotation>(syntaxNode, newItem, model);
         }

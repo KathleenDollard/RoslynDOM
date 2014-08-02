@@ -32,6 +32,9 @@ namespace RoslynDom
             AccessModifier = oldRDom.AccessModifier;
             ReturnType = oldRDom.ReturnType;
             IsStatic = oldRDom.IsStatic;
+            IsReadOnly = oldRDom.IsReadOnly;
+            IsVolatile = oldRDom.IsVolatile;
+            IsNew = oldRDom.IsNew;
         }
 
         public string Name { get; set; }
@@ -48,6 +51,10 @@ namespace RoslynDom
         public IReferencedType ReturnType { get; set; }
 
         public bool IsStatic { get; set; }
+        public bool IsNew { get; set; }
+        public bool IsReadOnly { get; set; }
+        public bool IsVolatile { get; set; }
+        public IExpression Initializer { get; set; }
 
         public MemberKind MemberKind
         {

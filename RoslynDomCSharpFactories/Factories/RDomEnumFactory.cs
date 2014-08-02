@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
             var itemAsEnum = item as IEnum;
             Guardian.Assert.IsNotNull(itemAsEnum, nameof(itemAsEnum));
 
-            node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             return item.PrepareForBuildSyntaxOutput(node);
         }

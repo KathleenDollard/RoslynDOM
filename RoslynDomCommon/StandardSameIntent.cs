@@ -97,6 +97,9 @@ namespace RoslynDom.Common
                 //if (!Check<T, IHasNamespace>(one, other,
                 //    (x, y) => x.Namespace == y.Namespace && x.QualifiedName == y.QualifiedName))
                 //    return false;
+                if (!Check<T, IHasParameters>(one, other,
+                       (x, y) => CheckChildrenAnyOrder(x.Parameters, y.Parameters)))
+                    return false;
                 if (!Check<T, IHasReturnType>(one, other,
                     (x, y) => Check(x.ReturnType, y.ReturnType)))
                     return false;
@@ -105,6 +108,9 @@ namespace RoslynDom.Common
                     return false;
                 if (!Check<T, ILoop>(one, other,
                      (x, y) => x.TestAtEnd == y.TestAtEnd))
+                    return false;
+                if (!Check<T, ICanBeNew>(one, other,
+                    (x, y) => x.IsNew == y.IsNew))
                     return false;
                 return true;
             }
@@ -121,8 +127,7 @@ namespace RoslynDom.Common
                     return false;
                 if (!Check<T, IPropertyOrMethod>(one, other,
                     (x, y) => x.IsAbstract == y.IsAbstract && x.IsVirtual == y.IsVirtual
-                    && x.IsOverride == y.IsOverride && x.IsSealed == y.IsSealed
-                    && CheckChildrenAnyOrder(x.Parameters, y.Parameters)))
+                    && x.IsOverride == y.IsOverride && x.IsSealed == y.IsSealed))
                     return false;
                 if (!Check<T, IStatementBlock>(one, other,
                      (x, y) => x.HasBlock == y.HasBlock
@@ -143,9 +148,17 @@ namespace RoslynDom.Common
                         where T : class, IDom
             {
                 // entity interfaces
+                if (!Check<T, IArgument>(one, other,
+                      (x, y) => x.IsOut == y.IsOut
+                      && x.IsRef == y.IsRef && Check(x.ValueExpression, y.ValueExpression)))
+                    return false;
                 if (!Check<T, IClass>(one, other,
                     (x, y) => x.IsAbstract == y.IsAbstract
                     && x.IsSealed == y.IsSealed && Check(x.BaseType, y.BaseType)))
+                    return false;
+                if (!Check<T, IConstructor>(one, other,
+                  (x, y) => x.ConstructorInitializerType == y.ConstructorInitializerType
+                   && CheckChildrenInOrder(x.InitializationArguments, y.InitializationArguments)))
                     return false;
                 if (!Check<T, IEnum>(one, other,
                      (x, y) => Check(x.UnderlyingType, y.UnderlyingType)
@@ -153,6 +166,11 @@ namespace RoslynDom.Common
                     return false;
                 if (!Check<T, IEnumValue>(one, other,
                      (x, y) => Check(x.Expression, y.Expression)))
+                    return false;
+                if (!Check<T, IField>(one, other,
+                     (x, y) => x.IsReadOnly == y.IsReadOnly
+                              && x.IsVolatile == y.IsVolatile
+                              && Check(x.Initializer, y.Initializer)))
                     return false;
                 if (!Check<T, IMethod>(one, other,
                      (x, y) => x.IsExtensionMethod == y.IsExtensionMethod))
@@ -186,7 +204,7 @@ namespace RoslynDom.Common
             {
                 // Statement interfaces
 
-                    // TODO: Support arguments when you support ObjectCreationExpressions
+                // TODO: Support arguments when you support ObjectCreationExpressions
                 //if (!Check<T, IArgument>(one, other,
                 //    (x, y) => x.Name == y.Name
                 //      && x.IsRef == y.IsRef && x.IsOut == y.IsOut
@@ -203,12 +221,15 @@ namespace RoslynDom.Common
                 if (!Check<T, ICheckedStatement>(one, other,
                     (x, y) => x.Unchecked == y.Unchecked))
                     return false;
+                if (!Check<T, IDeclarationStatement>(one, other,
+                     (x, y) => x.IsConst == y.IsConst))
+                    return false;
                 if (!Check<T, IForEachStatement>(one, other,
                     (x, y) => Check(x.Variable, y.Variable)))
                     return false;
                 if (!Check<T, IForStatement>(one, other,
                     (x, y) => Check(x.Variable, y.Variable)
-                    && Check(x.Incrementor , y.Incrementor)))
+                    && Check(x.Incrementor, y.Incrementor)))
                     return false;
                 if (!Check<T, IIfStatement>(one, other,
                     (x, y) => CheckChildrenInOrder(x.Elses, y.Elses)
@@ -249,7 +270,7 @@ namespace RoslynDom.Common
                     return false;
                 if (!Check<T, IVariable>(one, other,
                     (x, y) => x.IsImplicitlyTyped == y.IsImplicitlyTyped
-                    && x.IsConst == y.IsConst
+                    && x.IsAliased == y.IsAliased
                     && Check(x.Type, y.Type)
                     && Check(x.Initializer, y.Initializer)))
                     return false;

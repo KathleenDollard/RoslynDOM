@@ -59,6 +59,9 @@ namespace RoslynDomTests
                 {
                   var w = "", "";
                   string x = "", "";
+                  var a1 = 42;
+                  int a2 = 42;
+                  Int32 a3 =  42;
                   var y = new Bar(4, ""Fred"");
                   XYZ xyz = new XYZ();
                   Bar z = Bar(w, x);
@@ -69,18 +72,13 @@ namespace RoslynDomTests
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
-            Assert.AreEqual(5, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(statements[1], typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(statements[2], typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(statements[3], typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(statements[4], typeof(RDomDeclarationStatement));
+            Assert.AreEqual(8, statements.Count());
+            Assert.AreEqual(8, statements.OfType<RDomDeclarationStatement>().Count());
             // TODO: Solve simplification problem.
             var actual = RoslynCSharpUtilities.Simplify(output);
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        var w = \", \";\r\n        String x = \", \";\r\n        var y = new Bar(4, \"Fred\");\r\n        XYZ xyz = new XYZ();\r\n        Bar z = Bar(w, x);\r\n    }\r\n}";
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        var w = \", \";\r\n        string x = \", \";\r\n        var a1 = 42;\r\n        int a2 = 42;\r\n        Int32 a3 = 42;\r\n        var y = new Bar(4, \"Fred\");\r\n        XYZ xyz = new XYZ();\r\n        Bar z = Bar(w, x);\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
-
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_if_statements_for_method()
@@ -124,7 +122,6 @@ namespace RoslynDomTests
             Assert.AreEqual(expectedString, actual);
         }
 
-
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_block_statements_for_method()
         {
@@ -164,7 +161,6 @@ namespace RoslynDomTests
             Assert.AreEqual(expectedString, actual);
         }
 
-
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_invocation_statements_for_method()
         {
@@ -190,7 +186,6 @@ namespace RoslynDomTests
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        Console.WriteLine();\r\n        Math.Pow(4, 2);\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
-
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_return_statements_for_method()
@@ -219,8 +214,6 @@ namespace RoslynDomTests
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        return;\r\n    }\r\n\r\n    public Int32 Foo()\r\n    {\r\n        return 42;\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
-
-
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_while_statements_for_method()
@@ -298,7 +291,7 @@ namespace RoslynDomTests
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForStatement));
             var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        for (Int32 i = 0; i < 10; i++)\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        for (int i = 0; i < 10; i++)\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
 
@@ -357,7 +350,7 @@ namespace RoslynDomTests
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
-        public void Can_load_foreach_statements_for_method_implicitly_typed()
+        public void Can_load_foreach_statements_for_method_explicitly_typed()
         {
 
             var csharpCode = @"
@@ -379,9 +372,56 @@ namespace RoslynDomTests
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
             var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (Int32 i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_try_statements_for_method_explicitly_typed()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    try
+                    {
+                        foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })
+                        {
+                            Console.WriteLine(i);
+                        }
+                    }
+                    catch (NotImplementedException)
+                    { var a = 3; }
+                    catch(DivideByZeroException ex)
+                    { var b = 3; }
+                    catch
+                    { var c = 3; }
+                    finally
+                    { var d = 3; }
+                }
+            }           
+            ";
+ 
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
+            var method = root.RootClasses.First().Methods.First();
+            var statements = method.Statements.ToArray();
+            Assert.AreEqual(1, statements.Count());
+            Assert.IsInstanceOfType(statements[0], typeof(RDomTryStatement));
+            var actual = output.ToString();
+            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        try\r\n        {\r\n            foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n            {\r\n                Console.WriteLine(i);\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            var a = 3;\r\n        }\r\n        catch\r\n        {\r\n            var b = 3;\r\n        }\r\n        catch\r\n        {\r\n            var c = 3;\r\n        }\r\n        finally\r\n        {\r\n            var d = 3;\r\n        }\r\n    }\r\n}";
+            Assert.AreEqual(expectedString, actual);
+        }
+
+        //try
+        // break
+        // continue
+        // empty
+        // using
+        // throw
+
+
         #endregion
 
         #region property code loading

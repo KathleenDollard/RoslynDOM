@@ -37,12 +37,26 @@ namespace RoslynDom.CSharp
             return SyntaxFactory.List<AttributeListSyntax>( attributeSyntaxes);
         }
 
-        public BlockSyntax GetStatementBlock(IEnumerable<IStatement> statements)
+        public BlockSyntax GetStatementBlock(IEnumerable<IStatementCommentWhite> statements)
         {
             var statementSyntaxList = statements
                               .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                               .ToList();
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
+        }
+
+        public TypeSyntax GetVariableTypeSyntax(IVariable itemAsVariable)
+        {
+            if (itemAsVariable.IsImplicitlyTyped)
+            { return SyntaxFactory.IdentifierName("var"); }
+
+            var type = itemAsVariable.Type;
+            if (itemAsVariable.IsAliased)
+            {
+                var typeName = Mappings.AliasFromSystemType(type.Name);
+                return SyntaxFactory.IdentifierName(typeName);
+            }
+            return (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(type));
         }
     }
 }

@@ -45,6 +45,10 @@
     <Compile Include="BaseInterfaces\IStructuredDocumentation.cs" />
     <Compile Include="BaseInterfaces\ITypeMemberCommentWhite.cs" />
     <Compile Include="BaseInterfaces\IVerticalWhitespace.cs" />
+    <Compile Include="CharacteristicInterfaces\ICanBeOOTypeMember.cs" />
+    <Compile Include="CharacteristicInterfaces\ICanBeNew.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasConstructors.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasParameters.cs" />
     <Compile Include="CharacteristicInterfaces\IHasGroup.cs" />
     <Compile Include="CharacteristicInterfaces\IHasName.cs" />
     <Compile Include="CharacteristicInterfaces\IHasStructuredDocumentation.cs" />
@@ -62,8 +66,10 @@
     <Compile Include="CharacteristicInterfaces\IHasNamespace.cs" />
     <Compile Include="CharacteristicInterfaces\IHasTypeParameters.cs" />
     <Compile Include="CharacteristicInterfaces\ISupportsSameIntent.cs" />
+    <Compile Include="Enums\ConstructorInitializerType.cs" />
     <Compile Include="Enums\ExpressionType.cs" />
     <Compile Include="Enums\LiteralKind.cs" />
+    <Compile Include="Enums\AssignmentOperator.cs" />
     <Compile Include="Enums\Operator.cs" />
     <Compile Include="Enums\StatementKind.cs" />
     <Compile Include="Enums\MemberKind.cs" />
@@ -73,6 +79,12 @@
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IHasLookupValue.cs" />
     <Compile Include="Interfaces\IEnumValue.cs" />
+    <Compile Include="Interfaces\IDestructor.cs" />
+    <Compile Include="Interfaces\IConversionOperator.cs" />
+    <Compile Include="Interfaces\IConstant.cs" />
+    <Compile Include="Interfaces\IOperator.cs" />
+    <Compile Include="Interfaces\IContructor.cs" />
+    <Compile Include="Interfaces\IEvent.cs" />
     <Compile Include="Interfaces_Statements\IAssignmentStatement.cs" />
     <Compile Include="Interfaces_Statements\IBlockStatement.cs" />
     <Compile Include="Interfaces_Statements\IArgument.cs" />

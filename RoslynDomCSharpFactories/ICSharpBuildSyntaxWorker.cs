@@ -8,6 +8,8 @@ namespace RoslynDom.CSharp
     internal interface ICSharpBuildSyntaxWorker : IBuildSyntaxWorker
     {
         SyntaxList<AttributeListSyntax> BuildAttributeSyntax(AttributeList attributes);
-        BlockSyntax GetStatementBlock(IEnumerable<IStatement> statements);
+        BlockSyntax GetStatementBlock(IEnumerable<IStatementCommentWhite> statements);
+
+         TypeSyntax GetVariableTypeSyntax(IVariable itemAsVariable);
     }
 }

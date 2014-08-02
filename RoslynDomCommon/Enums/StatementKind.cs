@@ -26,11 +26,11 @@
         Invocation,  // done
         Assignment,  // done
 
-        Special // (platform or lanuguage specific)
+        Special, // (platform or lanuguage specific)
         //Yield, Split into YieldBreak and YieldReturn (expression)
 
-        //Checked ( characteristic of block? probably not)
-        //Lock,   ( characteristic of block? probably not)
+        Checked ,
+        Lock, 
 
         // Planning to avoid unless someone has a scenario. Fixed and unsafe could be characteristics, perhaps
         //Unsafe,

@@ -43,20 +43,62 @@ namespace RoslynDom.CSharp
             throw new InvalidOperationException();
         }
 
+        private static List<Tuple<SyntaxKind, AssignmentOperator>> assignmentOpMap = new List<Tuple<SyntaxKind, AssignmentOperator>>()
+        {
+             Tuple.Create( SyntaxKind.SimpleAssignmentExpression, AssignmentOperator.Equals ),
+             Tuple.Create( SyntaxKind.AddAssignmentExpression, AssignmentOperator.AddAssignment),
+             Tuple.Create( SyntaxKind.SubtractAssignmentExpression, AssignmentOperator.SubtractAssignment),
+             Tuple.Create( SyntaxKind.MultiplyAssignmentExpression, AssignmentOperator.MultiplyAssignment),
+             Tuple.Create( SyntaxKind.DivideAssignmentExpression, AssignmentOperator.DivideAssignment),
+             Tuple.Create( SyntaxKind.ModuloAssignmentExpression, AssignmentOperator.ModuloAssignment),
+             Tuple.Create( SyntaxKind.AndAssignmentExpression, AssignmentOperator.AndAssignment),
+             Tuple.Create( SyntaxKind.ExclusiveOrAssignmentExpression, AssignmentOperator.ExclusiveOrAssignment),
+             Tuple.Create( SyntaxKind.OrAssignmentExpression, AssignmentOperator.OrAssignment),
+             Tuple.Create( SyntaxKind.LeftShiftAssignmentExpression, AssignmentOperator.LeftShiftAssignment),
+             Tuple.Create( SyntaxKind.RightShiftAssignmentExpression, AssignmentOperator.RightShiftAssignment)
+        };
+
+        public static AssignmentOperator AssignmentOperatorFromCSharpKind(SyntaxKind kind)
+        {
+            foreach (var tuple in assignmentOpMap)
+            {
+                if (tuple.Item1 == kind) { return tuple.Item2; }
+            }
+            throw new InvalidOperationException();
+        }
+
+        public static SyntaxKind SyntaxKindFromAssignmentOperator(AssignmentOperator op)
+        {
+            foreach (var tuple in assignmentOpMap)
+            {
+                if (tuple.Item2 == op) { return tuple.Item1; }
+            }
+            throw new InvalidOperationException();
+        }
+
+
         private static List<Tuple<SyntaxKind, Operator>> operatorMap = new List<Tuple<SyntaxKind, Operator>>()
         {
-             Tuple.Create( SyntaxKind.SimpleAssignmentExpression, Operator.Equals ),
-             Tuple.Create( SyntaxKind.AddAssignmentExpression, Operator.AddAssignment),
-             Tuple.Create( SyntaxKind.SubtractAssignmentExpression, Operator.SubtractAssignment),
-             Tuple.Create( SyntaxKind.MultiplyAssignmentExpression, Operator.MultiplyAssignment),
-             Tuple.Create( SyntaxKind.DivideAssignmentExpression, Operator.DivideAssignment),
-             Tuple.Create( SyntaxKind.ModuloAssignmentExpression, Operator.ModuloAssignment),
-             Tuple.Create( SyntaxKind.AndAssignmentExpression, Operator.AndAssignment),
-             Tuple.Create( SyntaxKind.ExclusiveOrAssignmentExpression, Operator.ExclusiveOrAssignment),
-             Tuple.Create( SyntaxKind.OrAssignmentExpression, Operator.OrAssignment),
-             Tuple.Create( SyntaxKind.LeftShiftAssignmentExpression, Operator.LeftShiftAssignment),
-             Tuple.Create( SyntaxKind.RightShiftAssignmentExpression, Operator.RightShiftAssignment)
+             Tuple.Create( SyntaxKind.PlusToken                      , Operator.Plus),                   
+             Tuple.Create( SyntaxKind.MinusToken                     , Operator.Minus),                  
+             Tuple.Create( SyntaxKind.AsteriskToken                  , Operator.Asterisk),               
+             Tuple.Create( SyntaxKind.SlashToken                     , Operator.Slash),                  
+             Tuple.Create( SyntaxKind.PercentToken                   , Operator.Percent),                
+             Tuple.Create( SyntaxKind.AmpersandToken                 , Operator.Ampersand),              
+             Tuple.Create( SyntaxKind.BarToken                       , Operator.Bar),                    
+             Tuple.Create( SyntaxKind.CaretToken                     , Operator.Caret),                  
+             Tuple.Create( SyntaxKind.LessThanLessThanToken          , Operator.LessThanLessThan),       
+             Tuple.Create( SyntaxKind.GreaterThanGreaterThanToken    , Operator.GreaterThanGreaterThan), 
+             Tuple.Create( SyntaxKind.EqualsEqualsToken              , Operator.EqualsEquals),           
+             Tuple.Create( SyntaxKind.ExclamationEqualsToken         , Operator.ExclamationEquals),      
+             Tuple.Create( SyntaxKind.GreaterThanToken               , Operator.GreaterThan),            
+             Tuple.Create( SyntaxKind.LessThanToken                  , Operator.LessThan),               
+             Tuple.Create( SyntaxKind.GreaterThanEqualsToken         , Operator.GreaterThanEquals),      
+             Tuple.Create( SyntaxKind.LessThanEqualsToken            , Operator.LessThanEquals)
         };
+
+
+
 
         public static Operator OperatorFromCSharpKind(SyntaxKind kind)
         {
@@ -75,6 +117,7 @@ namespace RoslynDom.CSharp
             }
             throw new InvalidOperationException();
         }
+
 
         private static List<Tuple<Accessibility, AccessModifier>> accessModifierMap = new List<Tuple<Accessibility, AccessModifier>>()
         {
@@ -103,6 +146,42 @@ namespace RoslynDom.CSharp
             foreach (var tuple in accessModifierMap)
             {
                 if (tuple.Item1 == accessibility) { return tuple.Item2; }
+            }
+            throw new InvalidOperationException();
+        }
+
+        private static List<Tuple<string, string>> typeAliasMap = new List<Tuple<string, string>>()
+        {
+             Tuple.Create("sbyte"  ,"SByte"),
+             Tuple.Create("short"  ,"Int16"),
+             Tuple.Create("int"    ,"Int32"),
+             Tuple.Create("long"   ,"Int64"),
+             Tuple.Create("byte"   ,"Byte"),
+             Tuple.Create("ushort" ,"UInt16"),
+             Tuple.Create("uint"   ,"UInt32"),
+             Tuple.Create("ulong"  ,"UInt64"),
+             Tuple.Create("decimal","Decimal"),
+             Tuple.Create("float"  ,"Single"  ),
+             Tuple.Create("double" ,"Double" ),
+             Tuple.Create("bool"   ,"Boolean"   ),
+             Tuple.Create("string" ,"String" ),
+             Tuple.Create("char"   ,"Char" )
+        };
+
+        public static string SystemTypeFromAlias(string alias)
+        {
+            foreach (var tuple in typeAliasMap)
+            {
+                if (tuple.Item1 == alias) { return tuple.Item2; }
+            }
+            throw new InvalidOperationException();
+        }
+
+        public static string AliasFromSystemType(string systemTypeName)
+        {
+            foreach (var tuple in typeAliasMap)
+            {
+                if (tuple.Item2 == systemTypeName) { return tuple.Item1; }
             }
             throw new InvalidOperationException();
         }
