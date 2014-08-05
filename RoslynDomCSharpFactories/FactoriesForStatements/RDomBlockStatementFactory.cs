@@ -37,7 +37,7 @@ namespace RoslynDom.CSharp
             //  .ToList();
             var node = SyntaxFactory.Block(SyntaxFactory.List(block.Statements));
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
 
         }
     }

@@ -8,9 +8,13 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
+    public class IfStatementTokens : TokenWhitespaceList<IfStatementSyntax>
+    { }
+
     public class RDomIfStatementFactory
          : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
     {
+
         public RDomIfStatementFactory(RDomCorporation corporation)
          : base(corporation)
         { }
@@ -22,6 +26,13 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             newItem.Condition = Corporation.CreateFrom<IExpression>(syntax.Condition, newItem, model).FirstOrDefault();
             CreateFromWorker.InitializeStatements(newItem, syntax.Statement, newItem, model);
+
+            //newItem.TokenWhitespaceList.Add(CreateFromWorker.MakeTokenWhitespace<IfStatementSyntax>(
+            //    syntax.IfKeyword, (n, t) => n.WithIfKeyword(t)));
+            //newItem.TokenWhitespaceList.Add(CreateFromWorker.MakeTokenWhitespace<IfStatementSyntax>(
+            //    syntax.OpenParenToken, (n, t) => n.WithOpenParenToken(t)));
+            //newItem.TokenWhitespaceList.Add(CreateFromWorker.MakeTokenWhitespace<IfStatementSyntax>(
+            //    syntax.CloseParenToken, (n, t) => n.WithCloseParenToken(t)));
 
             var elseIfSyntaxList = GetElseIfSyntaxList(syntax);
             foreach (var elseIf in elseIfSyntaxList.Skip(1))  // The first is the root if
@@ -40,7 +51,7 @@ namespace RoslynDom.CSharp
                 CreateFromWorker.InitializeStatements(newElse, lastElseIf.Else.Statement, newElse, model);
                 newItem.Elses.AddOrMove(newElse);
             }
-            return  newItem ;
+            return newItem;
         }
 
 
@@ -69,7 +80,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.IfStatement(GetCondition(itemAsT), GetStatement(itemAsT));
             if (elseSyntax != null) { node = node.WithElse(elseSyntax); }
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
 
         private ElseClauseSyntax BuildElseSyntax(IEnumerable<IElseStatement> elses)
@@ -97,6 +108,6 @@ namespace RoslynDom.CSharp
         { return (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition); }
 
         private static StatementSyntax GetStatement(IStatementBlock itemAsT)
-        { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock); }
+        { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT); }
     }
 }

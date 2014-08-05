@@ -126,24 +126,24 @@ namespace RoslynDomTests
         public void Can_load_block_statements_for_method()
         {
             var csharpCode = @"
-            public class Bar
-            {
-                public void Foo()
-                {
-                    {
-                    var z;
-                    var z;
-                    {
-                    z = 43;
-                    z = x + y;
-                    z = x + y;
-                    z = x + y;
-                    }
-                    }
-                    z = Console.WriteLine();
-                    {}
-                }
-            }           
+public class Bar
+{
+    public void Foo()
+    {
+        {
+        var z;
+        var z;
+        {
+        z = 43;
+        z = x + y;
+        z = x + y;
+        z = x + y;
+        }
+        }
+        z = Console.WriteLine();
+        {}
+    }
+}           
             ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);

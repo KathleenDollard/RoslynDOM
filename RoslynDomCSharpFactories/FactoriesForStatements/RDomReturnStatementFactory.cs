@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
                 node = node.WithExpression((ExpressionSyntax)returnExpressionSyntax);
             }
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 }

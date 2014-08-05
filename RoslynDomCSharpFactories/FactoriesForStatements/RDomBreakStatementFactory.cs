@@ -30,7 +30,7 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IBreakStatement;
             var node = SyntaxFactory.BreakStatement();
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 }

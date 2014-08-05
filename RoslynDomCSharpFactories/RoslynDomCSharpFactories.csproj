@@ -107,9 +107,11 @@
     <Compile Include="Factories\RDomStructuredDocumentationFactory.cs" />
     <Compile Include="PublicAnnotationFactory.cs" />
     <Compile Include="RDomCSharp.cs" />
+    <Compile Include="Replacer.cs" />
     <Compile Include="RoslynCSharpUtilities.cs" />
     <Compile Include="BaseFactories\RDomBaseItemFactory.cs" />
     <Compile Include="ICSharpBuildSyntaxWorker.cs" />
+    <Compile Include="TokenWhitespaceCSharp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -33,7 +33,7 @@ namespace RoslynDom
             ReturnType = oldRDom.ReturnType;
             IsStatic = oldRDom.IsStatic;
             IsReadOnly = oldRDom.IsReadOnly;
-            IsVolatile = oldRDom.IsVolatile;
+            IsConstant  = oldRDom.IsConstant;
             IsNew = oldRDom.IsNew;
         }
 
@@ -54,6 +54,7 @@ namespace RoslynDom
         public bool IsNew { get; set; }
         public bool IsReadOnly { get; set; }
         public bool IsVolatile { get; set; }
+        public bool IsConstant { get; set; }
         public IExpression Initializer { get; set; }
 
         public MemberKind MemberKind

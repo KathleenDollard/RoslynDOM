@@ -41,9 +41,11 @@ namespace RoslynDom.CSharp
             if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
-            node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsT.Statements));
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            //node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsT.Statements));
+            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT));
+
+            return node.PrepareForBuildSyntaxOutput(item);
         }
 
     }

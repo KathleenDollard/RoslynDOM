@@ -64,14 +64,14 @@ namespace RoslynDomTests
             ";
             var csharpCode2 = @"
             [Foo(""Fred"", bar2=""Sam"", bar=3)]
-            public struct Struct1 {}
+            public class Class1 {}
             ";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var class1 = root1.Classes.First();
-            var struct1 = root2.Structures.First();
+            var class2 = root2.Classes.First();
             var attribute1 = class1.Attributes.Attributes.First();
-            var attribute2 = struct1.Attributes.Attributes.First();
+            var attribute2 = class2.Attributes.Attributes.First();
             Assert.IsTrue(attribute1.SameIntent(attribute2));
 
         }
@@ -85,14 +85,14 @@ namespace RoslynDomTests
             ";
             var csharpCode2 = @"
             [Foo2(""Fred"", bar2=""Sam"", bar=3)]
-            public struct Struct1 {}
+            public class Class1 {}
             ";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var class1 = root1.Classes.First();
-            var struct1 = root2.Structures.First();
+            var class2 = root2.Classes.First();
             var attribute1 = class1.Attributes.Attributes.First();
-            var attribute2 = struct1.Attributes.Attributes.First();
+            var attribute2 = class2.Attributes.Attributes.First();
             Assert.IsFalse(attribute1.SameIntent(attribute2));
 
         }
@@ -106,14 +106,14 @@ namespace RoslynDomTests
             ";
             var csharpCode2 = @"
             [Foo(""Fred"", bar2=""Sam"", bar=3)]
-            public struct Struct1 {}
+            public class Class1 {}
             ";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var class1 = root1.Classes.First();
-            var struct1 = root2.Structures.First();
+            var class2 = root2.Classes.First();
             var attribute1 = class1.Attributes.Attributes.First();
-            var attribute2 = struct1.Attributes.Attributes.First();
+            var attribute2 = class2.Attributes.Attributes.First();
             Assert.IsFalse(attribute1.SameIntent(attribute2));
 
         }
@@ -128,14 +128,14 @@ namespace RoslynDomTests
             ";
             var csharpCode2 = @"
             [Foo(""Fred"", bar2=""Sam"", bar=3)]
-            public struct Struct1 {}
+            public class Class1 {}
             ";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var class1 = root1.Classes.First();
-            var struct1 = root2.Structures.First();
+            var class2 = root2.Classes.First();
             var attribute1 = class1.Attributes.Attributes.First();
-            var attribute2 = struct1.Attributes.Attributes.First();
+            var attribute2 = class2.Attributes.Attributes.First();
             Assert.IsFalse(attribute1.SameIntent(attribute2));
 
         }
@@ -154,7 +154,7 @@ namespace RoslynDomTests
                 public void Foo(string bar, int bar2) {}
             ";
             var csharpCode2 = @"
-            public struct Struct1 
+            public class Class1 
             {
                 public void Foo(string bar, int bar2) {}
             }
@@ -162,7 +162,7 @@ namespace RoslynDomTests
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var method1 = root1.Classes.First().Methods.First();
-            var method2 = root2.Structures.First().Methods.First();
+            var method2 = root2.Classes.First().Methods.First();
             Assert.IsTrue(method1.SameIntent(method2));
         }
 
@@ -488,9 +488,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentPropertyCategory)]
         public void Same_intent_true_with_same_property_declaration_in_different_contexts()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
             public class Class1 
             {
@@ -694,7 +691,7 @@ namespace RoslynDomTests
                 public string Foo;
             ";
             var csharpCode2 = @"
-            public struct Struct1 
+            public class Class1 
             {
                 new public string Foo;
             }
@@ -702,7 +699,7 @@ namespace RoslynDomTests
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Structures.First().Fields.First();
+            var field2 = root2.Classes.First().Fields.First();
             Assert.IsFalse(field1.SameIntent(field2));
         }
 
@@ -713,18 +710,18 @@ namespace RoslynDomTests
             var csharpCode1 = @"
             public class Class1 
             {
-                public string Foo;
+                public static string Foo = ""Fred"";
             ";
             var csharpCode2 = @"
-            public struct Struct1 
+            public class Class1 
             {
-                public const string Foo;
+                public const string Foo = ""Fred"";
             }
             ";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Structures.First().Fields.First();
+            var field2 = root2.Classes.First().Fields.First();
             Assert.IsFalse(field1.SameIntent(field2));
         }
 
@@ -738,7 +735,7 @@ namespace RoslynDomTests
                 public volatile string Foo;
             ";
             var csharpCode2 = @"
-            public struct Struct1 
+            public class Class1 
             {
                 public string Foo;
             }
@@ -746,7 +743,7 @@ namespace RoslynDomTests
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Structures.First().Fields.First();
+            var field2 = root2.Classes.First().Fields.First();
             Assert.IsFalse(field1.SameIntent(field2));
         }
 
@@ -760,7 +757,7 @@ namespace RoslynDomTests
                 public readonly string Foo;
             ";
             var csharpCode2 = @"
-            public struct Struct1 
+            public class Class1 
             {
                 public string Foo;
             }
@@ -768,7 +765,7 @@ namespace RoslynDomTests
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Structures.First().Fields.First();
+            var field2 = root2.Classes.First().Fields.First();
             Assert.IsFalse(field1.SameIntent(field2));
         }
 

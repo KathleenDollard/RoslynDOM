@@ -29,8 +29,8 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IEmptyStatement;
             var node = SyntaxFactory.EmptyStatement();
-          
-            return item.PrepareForBuildSyntaxOutput(node);
+
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 }

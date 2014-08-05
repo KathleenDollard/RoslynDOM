@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -27,6 +29,10 @@ namespace RoslynDom.CSharp
                   IEnumerable<MemberDeclarationSyntax> memberSyntaxes,
                   IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
                   SemanticModel model);
+
+        TokenWhitespace MakeTokenWhitespace<TSyntaxNode>(SyntaxToken token,
+                   Func<TSyntaxNode, SyntaxToken, TSyntaxNode> withDelegate)
+                   where TSyntaxNode : SyntaxNode;
 
     }
 }

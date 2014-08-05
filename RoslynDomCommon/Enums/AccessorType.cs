@@ -10,6 +10,8 @@ namespace RoslynDom.Common
     {
         Unknown = 0,
         Get,
-        Set
+        Set,
+        AddEventAccessor,
+        RemoveEventAccessor
     }
 }

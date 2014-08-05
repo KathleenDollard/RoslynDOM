@@ -56,7 +56,9 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.Attribute(nameSyntax, argumentList);
             var nodeList = SyntaxFactory.AttributeList(
                                 SyntaxFactory.SeparatedList(
-                                    new AttributeSyntax[] { (AttributeSyntax)RoslynUtilities.Format(node) }));
+                                    new AttributeSyntax[] {
+                                        (AttributeSyntax)BuildSyntaxHelpers.PrepareForBuildItemSyntaxOutput(node, item)
+                                    }));
 
             return new SyntaxNode[] { nodeList };
         }

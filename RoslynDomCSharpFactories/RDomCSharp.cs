@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class RDomCSharp 
+    public class RDomCSharp
     {
         [ExcludeFromCodeCoverage]
         // until move to C# 6 - I want to support name of as soon as possible
@@ -46,7 +47,7 @@ namespace RoslynDom.CSharp
 
         public IRoot GetRootFromSyntaxTree(SyntaxTree tree)
         {
-            return GetRootFromStringInternal(tree, tree.FilePath );
+            return GetRootFromStringInternal(tree, tree.FilePath);
         }
 
         private IRoot GetRootFromStringInternal(SyntaxTree tree, string filePath)
@@ -66,9 +67,9 @@ namespace RoslynDom.CSharp
         {
             IEnumerable<SyntaxNode> syntaxNodes;
             if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }
-            if (TryBuildSyntax<IStemMemberCommentWhite>(item,  out syntaxNodes)) { return syntaxNodes; }
-            if (TryBuildSyntax<ITypeMemberCommentWhite>(item,  out syntaxNodes)) { return syntaxNodes; }
-            if (TryBuildSyntax<IStatementCommentWhite>(item,  out syntaxNodes)) { return syntaxNodes; }
+            if (TryBuildSyntax<IStemMemberCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
+            if (TryBuildSyntax<ITypeMemberCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
+            if (TryBuildSyntax<IStatementCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
             if (TryBuildSyntax<IExpression>(item, out syntaxNodes)) { return syntaxNodes; }
             if (TryBuildSyntax<IMisc>(item, out syntaxNodes)) { return syntaxNodes; }
             //if (TryBuildSyntax<IRoot>(item, RDomFactoryHelper.GetHelperForRoot(), out syntaxNodes)) { return syntaxNodes; }
@@ -84,11 +85,15 @@ namespace RoslynDom.CSharp
         {
             var syntaxGroup = BuildSyntaxGroup(item);
             if (syntaxGroup == null || !syntaxGroup.Any()) return null;
-            //return syntaxGroup.Single();
-            return RoslynUtilities.Format(syntaxGroup.Single());
+            return syntaxGroup.Single();
+        }
+        public SyntaxNode BuildFormattedSyntax(IDom item)
+        {
+            var syntax = BuildSyntax(item);
+            return BuildSyntaxHelpers.Format(syntax, item);
         }
 
-        private bool TryBuildSyntax<TKind>(IDom item,  out IEnumerable<SyntaxNode> syntaxNode)
+        private bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> syntaxNode)
              where TKind : class, IDom
         {
             syntaxNode = null;
@@ -98,7 +103,7 @@ namespace RoslynDom.CSharp
             syntaxNode = _helper.BuildSyntaxGroup(item);
             return true;
         }
-  
+
         private IEnumerable<Tuple<Type, int>> expectations = new List<Tuple<Type, int>>()
         {
                     Tuple.Create(typeof(IMisc),2),
@@ -122,13 +127,59 @@ namespace RoslynDom.CSharp
 
             foreach (var tuple in expectations)
             {
-                if (_helper.CountFactorySet(tuple.Item1) < tuple.Item2 )
+                if (_helper.CountFactorySet(tuple.Item1) < tuple.Item2)
                 {
                     Guardian.Assert.BadContainer();
                     return false;
                 }
             }
             return true;
+        }
+
+        public string Report(IDom item)
+        {
+            return Report(item, false);
+
+        }
+
+        public virtual string Report(IDom item, bool includeTrivia)
+        {
+            var sb = new StringBuilder();
+            var spaces = 2;
+            var indentToAdd = new string(' ', spaces);
+            var indent = "";
+            var reversedAncestors = item.Ancestors.Reverse();
+            foreach (var ancestor in reversedAncestors)
+            {
+                sb.AppendLine(indent + ancestor.ToString());
+                indent += indentToAdd;
+            }
+            sb.AppendLine(indent + this.ToString());
+            AppendChildHierarchy(item, sb, indent + indentToAdd, indentToAdd, includeTrivia);
+            return sb.ToString();
+        }
+
+        private static void AppendChildHierarchy(IDom item, StringBuilder sb,
+            string indent, string indentToAdd, bool includeTrivia)
+        {
+            foreach (var child in item.Children)
+            {
+                sb.AppendLine(indent + child.ToString());
+                if (includeTrivia)
+                { ReportTrivia(child, sb, indent); }
+                AppendChildHierarchy(child, sb, indent + indentToAdd, indentToAdd, includeTrivia);
+            }
+        }
+
+        private static void ReportTrivia(IDom child, StringBuilder sb, string indent)
+        {
+            var item = child as IRoslynDom;
+            if (item == null) return;
+            // Eventually flesh this out to all trivia types
+            foreach (var ws in item.TokenWhitespaceList)
+            {
+                sb.AppendLine(indent + "- WS - " + ws.Token.ToString() + " - Leading='" + ws.LeadingWhitespace.Normalize() + "'; Trailing='" + ws.TrailingWhitespace.Normalize() + "'");
+            }
         }
     }
 

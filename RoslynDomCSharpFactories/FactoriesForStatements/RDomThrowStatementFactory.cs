@@ -37,7 +37,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.ThrowStatement();
             var exception = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.ExceptionExpression);
             if (exception != null) node = node.WithExpression(exception);
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 }

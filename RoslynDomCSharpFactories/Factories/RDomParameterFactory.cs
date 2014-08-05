@@ -51,7 +51,7 @@ namespace RoslynDom.CSharp
             if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
             if (modifiers.Any()) { node = node.WithModifiers(modifiers); }
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
 
         }
     }

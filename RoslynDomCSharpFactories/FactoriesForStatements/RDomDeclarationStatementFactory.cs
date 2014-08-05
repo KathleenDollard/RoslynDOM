@@ -89,7 +89,7 @@ namespace RoslynDom.CSharp
             var nodeDeclaration = SyntaxFactory.VariableDeclaration(typeSyntax, nodeDeclaratorInList);
             var node = SyntaxFactory.LocalDeclarationStatement(nodeDeclaration);
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
 
 

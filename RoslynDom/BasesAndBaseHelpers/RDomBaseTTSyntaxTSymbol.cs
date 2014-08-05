@@ -16,6 +16,7 @@ namespace RoslynDom
         private SyntaxNode _rawSyntax;
         private TSymbol _symbol;
         private string _containingTypeName;
+        private List<TokenWhitespace> _tokenTrivia = new List<TokenWhitespace>();
 
         protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
              : base()
@@ -24,14 +25,7 @@ namespace RoslynDom
             _originalRawSyntax = rawItem;
             Parent = parent;
             if (model != null)
-            {
-                _symbol = (TSymbol)model.GetDeclaredSymbol(rawItem);
-                if (_symbol != null)
-                {
-                    var thisAsHasStructuredDocs = this as IHasStructuredDocumentation;
-                 
-                }
-            }
+            { _symbol = (TSymbol)model.GetDeclaredSymbol(rawItem); }
         }
 
         protected RDomBase(T oldIDom)
@@ -41,12 +35,17 @@ namespace RoslynDom
             _rawSyntax = oldRDom._rawSyntax;
             _originalRawSyntax = oldRDom._originalRawSyntax;
             _symbol = oldRDom._symbol;
+
+            var whitespace = RoslynDomUtilities.CopyMembers(oldRDom._tokenTrivia);
+            _tokenTrivia.AddRange(whitespace);
+            LeadingWhitespace = oldRDom.LeadingWhitespace;
+            TrailingWhitespace = oldRDom.TrailingWhitespace;
+
             // TODO: SameIntent tests broke when I removed this, although it appears to be done in the base. 
             var thisAsHasName = this as IHasName;
             if (thisAsHasName != null)
-            {
-                thisAsHasName.Name = ((IHasName)oldRDom).Name;
-            }
+            { thisAsHasName.Name = ((IHasName)oldRDom).Name; }
+
             Initialize();
         }
 
@@ -68,13 +67,19 @@ namespace RoslynDom
         public virtual TSymbol TypedSymbol
         { get { return _symbol; } }
 
+        public IList<TokenWhitespace> TokenWhitespaceList
+        { get { return _tokenTrivia; } }
+
+        public string LeadingWhitespace { get; set; }
+        public string TrailingWhitespace { get; set; }
+
         protected virtual AccessModifier GetAccessibility()
         {
             if (Symbol == null) { return AccessModifier.NotApplicable; }
             return (AccessModifier)Symbol.DeclaredAccessibility;
         }
 
-         /// <summary>
+        /// <summary>
         /// Fallback for getting requested values. 
         /// <br/>
         /// For special values (those that don't just return a property) override

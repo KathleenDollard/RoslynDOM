@@ -81,7 +81,6 @@
     <Compile Include="Interfaces\IEnumValue.cs" />
     <Compile Include="Interfaces\IDestructor.cs" />
     <Compile Include="Interfaces\IConversionOperator.cs" />
-    <Compile Include="Interfaces\IConstant.cs" />
     <Compile Include="Interfaces\IOperator.cs" />
     <Compile Include="Interfaces\IContructor.cs" />
     <Compile Include="Interfaces\IEvent.cs" />

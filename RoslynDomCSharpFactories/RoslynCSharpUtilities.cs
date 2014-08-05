@@ -48,14 +48,19 @@ namespace RoslynDom.CSharp
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
         }
 
-         public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, bool hasBlock)
+        public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, IStatementBlock parent)
         {
             StatementSyntax statement;
             var statementSyntaxList = statements
                          .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                          .ToList();
+            var hasBlock = parent.HasBlock;
             if (hasBlock || statements.Count() > 1)
-            { statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList)); }
+            {
+                statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
+                // Block tokens are held in parent
+                statement = BuildSyntaxHelpers.BuildTokenWhitespace(statement, parent, false);
+            }
             else if (statements.Count() == 1)
             { statement = (StatementSyntax)statementSyntaxList.First(); }
             else

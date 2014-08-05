@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.UsingDirective(identifier);
             if (!string.IsNullOrWhiteSpace(itemAsT.Alias))
             { node = node.WithAlias(SyntaxFactory.NameEquals(itemAsT.Alias)); }
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 

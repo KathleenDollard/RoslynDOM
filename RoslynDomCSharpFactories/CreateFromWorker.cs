@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
@@ -27,9 +28,10 @@ namespace RoslynDom.CSharp
 
         public void InitializeStatements(IStatementBlock itemAsStatement, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            if (itemAsStatement == null) return;
-            var blockSyntax = syntaxNode as BlockSyntax;
             if (syntaxNode == null) return;
+            if (itemAsStatement == null) return;
+            InitializeWhitespace(itemAsStatement as IRoslynDom, syntaxNode, parent, model, false);
+            var blockSyntax = syntaxNode as BlockSyntax;
             if (blockSyntax != null)
             {
                 var statements = ListUtilities.CreateFromList(blockSyntax.Statements, x => Corporation.CreateFrom<IStatementCommentWhite>(x, parent, model));
@@ -64,7 +66,9 @@ namespace RoslynDom.CSharp
             InitializeOOTypeMember(newItem as IOOTypeMember, syntaxNode, parent, model);
             InitializeStatic(newItem as ICanBeStatic, syntaxNode, parent, model);
             InitializeStructuredDocumentation(newItem as IHasStructuredDocumentation, syntaxNode, parent, model);
+            InitializeWhitespace(newItem as IRoslynDom, syntaxNode, parent, model, true);
         }
+
 
         public void InitializeAccessModifiers(IHasAccessModifier itemHasAccessModifier, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
@@ -126,6 +130,44 @@ namespace RoslynDom.CSharp
             }
         }
 
+        private void InitializeWhitespace(IRoslynDom newItem, SyntaxNode syntaxNode, IDom parent, SemanticModel model, bool includeLeadingTrailing)
+        {
+            if (newItem == null) return;
+            var firstToken = syntaxNode.DescendantTokens().First();
+            var lastToken = syntaxNode.DescendantTokens().Last();
+            foreach (var token in syntaxNode.ChildTokens())
+            {
+                // First and last whitespace are handled special because same whitespace appears at beginning 
+                // and end regardless of whether the same tokens appear. But this needs to be turned off 
+                // for statement blocks
+                if (includeLeadingTrailing && (token == firstToken && token == lastToken)) continue;
+                if (includeLeadingTrailing && token == firstToken)
+                {   // just add last token
+                    var newTokenWhitespace = new TokenWhitespaceCSharp(token, null,
+                        TokenWhitespaceCSharp.GetWhitespace(token.TrailingTrivia));
+                    newItem.TokenWhitespaceList.Add(newTokenWhitespace);
+                }
+                else if (includeLeadingTrailing && token == lastToken)
+                {   // just add last token
+                    var newTokenWhitespace = new TokenWhitespaceCSharp(token,
+                        TokenWhitespaceCSharp.GetWhitespace(token.LeadingTrivia), null);
+                    newItem.TokenWhitespaceList.Add(newTokenWhitespace);
+                }
+                else
+                {
+                    var newTokenWhitespace = new TokenWhitespaceCSharp(token,
+                        TokenWhitespaceCSharp.GetWhitespace(token.LeadingTrivia),
+                        TokenWhitespaceCSharp.GetWhitespace(token.TrailingTrivia));
+                    newItem.TokenWhitespaceList.Add(newTokenWhitespace);
+                }
+            }
+            if (includeLeadingTrailing)
+            {
+                newItem.LeadingWhitespace = TokenWhitespaceCSharp.GetWhitespace(firstToken.LeadingTrivia);
+                newItem.TrailingWhitespace = TokenWhitespaceCSharp.GetWhitespace(lastToken.TrailingTrivia);
+            }
+        }
+
         public void LoadStemMembers(IStemContainer newItem,
                     IEnumerable<MemberDeclarationSyntax> memberSyntaxes,
                     IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
@@ -167,5 +209,19 @@ namespace RoslynDom.CSharp
         }
 
 
+        public TokenWhitespace MakeTokenWhitespace<TSyntaxNode>(SyntaxToken token,
+            Func<TSyntaxNode, SyntaxToken, TSyntaxNode> withDelegate)
+            where TSyntaxNode : SyntaxNode
+        {
+            var wsTrivia = token.LeadingTrivia
+                            .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia
+                                || x.CSharpKind() == SyntaxKind.EndOfLineTrivia);
+            var leading = string.Join("", wsTrivia.Select(x => x.ToString()));
+            wsTrivia = token.TrailingTrivia
+                          .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia
+                              || x.CSharpKind() == SyntaxKind.EndOfLineTrivia);
+            var trailing = string.Join("", wsTrivia.Select(x => x.ToString()));
+            return new TokenWhitespace<TSyntaxNode>(token, leading, trailing, withDelegate);
+        }
     }
 }

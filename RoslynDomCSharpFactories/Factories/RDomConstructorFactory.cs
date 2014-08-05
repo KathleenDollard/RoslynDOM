@@ -74,11 +74,12 @@ namespace RoslynDom.CSharp
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
-            node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsConstructor.Statements));
+            //node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsConstructor.Statements));
+            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsConstructor.Statements, itemAsConstructor));
 
             // TODO: typeParameters  and constraintClauses 
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
 
     }

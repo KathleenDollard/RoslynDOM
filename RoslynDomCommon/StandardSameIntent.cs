@@ -170,6 +170,7 @@ namespace RoslynDom.Common
                 if (!Check<T, IField>(one, other,
                      (x, y) => x.IsReadOnly == y.IsReadOnly
                               && x.IsVolatile == y.IsVolatile
+                              && x.IsConstant == y.IsConstant 
                               && Check(x.Initializer, y.Initializer)))
                     return false;
                 if (!Check<T, IMethod>(one, other,

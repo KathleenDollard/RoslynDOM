@@ -44,6 +44,7 @@ namespace RoslynDom.CSharp
                 // newItem.IsNew = fieldSymbol.i 
                 newItem.IsVolatile = fieldSymbol.IsVolatile;
                 newItem.IsReadOnly = fieldSymbol.IsReadOnly;
+                newItem.IsConstant = fieldSymbol.HasConstantValue;
                 newItem.PublicAnnotations.Add(fieldPublicAnnotations);
 
             }
@@ -68,7 +69,7 @@ namespace RoslynDom.CSharp
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
 
     }

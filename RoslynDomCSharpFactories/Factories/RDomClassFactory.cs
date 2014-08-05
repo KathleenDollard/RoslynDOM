@@ -55,7 +55,7 @@ namespace RoslynDom.CSharp
 
             // TODO: Class type members and type constraints
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
     public class RDomClassTypeMemberFactory

@@ -20,7 +20,7 @@ namespace RoslynDom
         // until move to C# 6 - I want to support name of as soon as possible
         protected static string nameof<T>(T value) { return ""; }
 
-        private PublicAnnotationList _publicAnnotations = new PublicAnnotationList ();
+        private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase()
         { }
@@ -64,8 +64,8 @@ namespace RoslynDom
 
         // TODO: Return the parent set to hidden
         public IDom Parent { get; set; }
-        
-                public override string ToString()
+
+        public override string ToString()
         {
             var ret = base.ToString() + " : ";
             if (this is IHasNamespace) return ret + ((IHasNamespace)this).QualifiedName;

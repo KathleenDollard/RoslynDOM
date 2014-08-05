@@ -149,7 +149,7 @@ namespace RoslynDomExampleTests
         private string GetNewCode(IDom item)
         {
             var ret = new List<string>();
-            return RDomCSharp.Factory.BuildSyntax(item).ToString();
+            return RDomCSharp.Factory.BuildFormattedSyntax(item).ToString();
         }
 
         private string GetOldCode(IDom item)

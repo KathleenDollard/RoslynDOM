@@ -31,11 +31,11 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as ILockStatement;
-            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock);
+            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT);
             var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression) as ExpressionSyntax;
             var node = SyntaxFactory.LockStatement(expressionSyntax, statement);
 
-            return itemAsT.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 }

@@ -68,7 +68,7 @@ namespace RoslynDom.CSharp
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
             // TODO: parameters , typeParameters and constraintClauses 
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 

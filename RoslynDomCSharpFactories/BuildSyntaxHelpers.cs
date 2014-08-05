@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
@@ -17,15 +18,29 @@ namespace RoslynDom.CSharp
         [ExcludeFromCodeCoverage]
         private static string nameof<T>(T value) { return ""; }
 
-        public static IEnumerable<SyntaxNode> PrepareForBuildSyntaxOutput(this IDom item, SyntaxNode node)
+        public static IEnumerable<SyntaxNode> PrepareForBuildSyntaxOutput(this SyntaxNode node, IDom item)
         {
-            var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(item);
-            node = node.WithLeadingTrivia(leadingTrivia);
-            if (!(node is StatementSyntax || node is ExpressionSyntax))
-            { node = RoslynUtilities.Format(node); }
-
-            //return new SyntaxNode[] { RoslynUtilities.Format(node) };
+            node = PrepareForBuildItemSyntaxOutput(node, item);
             return new SyntaxNode[] { node };
+        }
+
+        public static TNode PrepareForBuildItemSyntaxOutput<TNode>(this TNode node, IDom item)
+            where TNode : SyntaxNode
+        {
+            node = BuildSyntaxHelpers.BuildTokenWhitespace(node, item, true);
+            var moreLeadingTrivia = BuildSyntaxHelpers.LeadingTrivia(item);
+            var leadingTriviaList = node.GetLeadingTrivia().Concat(moreLeadingTrivia);
+            node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadingTriviaList));
+            //node = Format(node, item);
+
+            return node;
+        }
+
+        public static SyntaxNode Format(SyntaxNode node, IDom item)
+        {
+            var span = node.FullSpan;
+            node = Formatter.Format(node, span, new CustomWorkspace());
+            return node;
         }
 
         public static SyntaxList<AttributeListSyntax> WrapInAttributeList(this IEnumerable<SyntaxNode> attributes)
@@ -41,6 +56,147 @@ namespace RoslynDom.CSharp
             { list = list.AddRange(SyntaxTokensForAccessModifier(hasAccessModifier.AccessModifier)); }
             // TODO: Static and other modifiers
             return list;
+        }
+
+
+        public static TSyntax BuildTokenWhitespace<TSyntax>(TSyntax node, IDom item, bool useFirstLast)
+            where TSyntax : SyntaxNode
+        {
+            // This is ugly because of side cases, so may need to be optimized for main line paths where all tokens are unique in context
+            // The ugliness is exhibited at least with the two semi-colons of a for-each.
+            var rDomItem = item as IRoslynDom;
+            if (rDomItem == null) return node;
+            var list = rDomItem.TokenWhitespaceList.OfType<TokenWhitespaceCSharp>();
+            // in a few cases, there are multiple tokens of a type (for statement semicolons)
+            var tokens = node.ChildTokens();
+            var distinctTokenKinds = tokens.Select(x => x.CSharpKind()).Distinct();
+            var firstToken = node.DescendantTokens().First();
+            var lastToken = node.DescendantTokens().Last();
+            foreach (var kind in distinctTokenKinds)
+            {
+                var tokenWhitespaceMatches = list.Where(x => x.Token.CSharpKind() == kind).ToArray();
+                if (!tokenWhitespaceMatches.Any()) continue; // no whitespace information
+                var tokenMatches = tokens.Where(x => x.CSharpKind() == kind);
+                // match tokens from left, if whitespacematches run out, reuse first
+                for (int i = 0; i < tokenMatches.Count(); i++)
+                {
+                    var tokenWhitespace = i < tokenWhitespaceMatches.Count()
+                                            ? tokenWhitespaceMatches[i]
+                                            : tokenWhitespaceMatches[0];
+                    var token = tokenMatches.Skip(i).First();
+
+                    SyntaxTriviaList newLeading;
+                    SyntaxTriviaList newTrailing;
+                    if (token == firstToken && token == lastToken) continue;
+
+                    SyntaxToken newToken;
+                    // For now, leading/trailing replace initial ws on token
+                    if (useFirstLast && token == firstToken)
+                    {
+                        newTrailing = GetWhitespaceTriviaList(token.TrailingTrivia, tokenWhitespace.TrailingWhitespace);
+                        newToken = token.WithTrailingTrivia(newTrailing);
+                    }
+                    else if (useFirstLast &&token == node.DescendantTokens().Last())
+                    {
+                        newLeading = GetWhitespaceTriviaList(token.LeadingTrivia, tokenWhitespace.LeadingWhitespace);
+                        newToken = token.WithLeadingTrivia(newLeading);
+                    }
+                    else
+                    {
+                        newLeading = GetWhitespaceTriviaList(token.LeadingTrivia, tokenWhitespace.LeadingWhitespace);
+                        newTrailing = GetWhitespaceTriviaList(token.TrailingTrivia, tokenWhitespace.TrailingWhitespace);
+                        newToken = token
+                             .WithLeadingTrivia(newLeading)
+                             .WithTrailingTrivia(newTrailing);
+                    }
+                    node = node.ReplaceToken(node.ChildTokens().Where(x => x.CSharpKind() == kind).Skip(i).First(), newToken);
+                }
+            }
+            if (useFirstLast)
+            {
+                SyntaxTriviaList trivia;
+                SyntaxToken descedantToken = node.DescendantTokens().First();
+                if (!string.IsNullOrEmpty(rDomItem.LeadingWhitespace))
+                {
+                    descedantToken = node.DescendantTokens().First();
+                    trivia = SyntaxFactory.ParseLeadingTrivia(rDomItem.LeadingWhitespace);
+                    node = node.ReplaceToken(descedantToken, descedantToken.WithLeadingTrivia(descedantToken.LeadingTrivia.Concat(trivia)));
+                }
+
+                if (!string.IsNullOrEmpty(rDomItem.TrailingWhitespace))
+                {
+                    descedantToken = node.DescendantTokens().Last();
+                    trivia = SyntaxFactory.ParseLeadingTrivia(rDomItem.TrailingWhitespace);
+                    node = node.ReplaceToken(descedantToken, descedantToken.WithTrailingTrivia(descedantToken.LeadingTrivia.Concat(trivia)));
+                }
+            }
+
+            //var rDomItem = item as IRoslynDom;
+            //if (rDomItem == null) return node;
+            //var list = rDomItem.TokenWhitespaceList.OfType<TokenWhitespaceCSharp>();
+            //foreach (var token in node.ChildTokens())
+            //{
+            //    var kind = (SyntaxKind)token.RawKind;
+            //    var tokenWhitespace = list.Where(x => x.Token.CSharpKind() == kind).SingleOrDefault();
+            //    if (tokenWhitespace != null)
+            //    {
+            //        var newToken = TokenWithWhitespace(tokenWhitespace, token, kind);
+            //        node = node.ReplaceToken(token, newToken);
+            //    }
+            //}
+
+
+            //var list = rDomItem.TokenWhitespaceList.OfType<TokenWhitespace<TSyntax>>();
+            //foreach (var tokenWhitespace in list)
+            //{
+            //    if (!string.IsNullOrEmpty(tokenWhitespace.LeadingWhitespace) || !string.IsNullOrEmpty(tokenWhitespace.TrailingWhitespace))
+            //    {
+            //        var oldToken = tokenWhitespace.Token;
+            //        var itemTokens = node.ChildTokens()
+            //                        .Where(x => x.RawKind == oldToken.RawKind);
+            //        if (itemTokens.Any())
+            //        {
+            //            var kind = (SyntaxKind)oldToken.RawKind;
+            //            var token = GetNewToken(tokenWhitespace, itemTokens.Single(), kind);
+            //            node = tokenWhitespace.WithDelegate(node, token);
+            //        }
+            //    }
+            //}
+            return node;
+        }
+
+
+        private static SyntaxToken TokenWithWhitespace(TokenWhitespace tokenWhitespace,
+            SyntaxToken itemToken, SyntaxKind kind)
+        {
+            var newLeading = GetWhitespaceTriviaList(itemToken.LeadingTrivia, tokenWhitespace.LeadingWhitespace);
+            var newTrailing = GetWhitespaceTriviaList(itemToken.TrailingTrivia, tokenWhitespace.TrailingWhitespace);
+
+            //var newLeading = itemToken.LeadingTrivia;
+            //if (!string.IsNullOrEmpty(tokenWhitespace.LeadingWhitespace))
+            //{ newLeading = newLeading.AddRange(SyntaxFactory.ParseLeadingTrivia(tokenWhitespace.LeadingWhitespace)); }
+
+            //var newTrailing = itemToken.TrailingTrivia;
+            //if (!string.IsNullOrEmpty(tokenWhitespace.TrailingWhitespace))
+            //{ newTrailing = newTrailing.AddRange(SyntaxFactory.ParseTrailingTrivia(tokenWhitespace.TrailingWhitespace)); }
+
+            var newToken = SyntaxFactory.Token(newLeading, kind, newTrailing);
+
+            return newToken;
+        }
+
+        private static SyntaxTriviaList GetWhitespaceTriviaList(SyntaxTriviaList existingTriviaList, string tokenWhitespace)
+        {
+            var newTriviaList = existingTriviaList;
+            if (!string.IsNullOrEmpty(tokenWhitespace))
+            {
+                var newWhitespaceList = SyntaxFactory.ParseLeadingTrivia(tokenWhitespace);
+                var existingWhite = newTriviaList.Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia);
+                foreach (var white in existingWhite)
+                { newTriviaList = newTriviaList.Remove(white); }
+                newTriviaList = newTriviaList.AddRange(newWhitespaceList);
+            }
+            return newTriviaList;
         }
 
         public static SyntaxTriviaList LeadingTrivia(IDom item)
@@ -180,74 +336,74 @@ namespace RoslynDom.CSharp
         }
 
 
-//        private static XmlTextSyntax MakeXmlDocumentationExterior()
-//        {
-//            return SyntaxFactory.XmlText()
-//                    .WithTextTokens(
-//                        SyntaxFactory.TokenList(
-//                            SyntaxFactory.XmlTextLiteral(
-//                                SyntaxFactory.TriviaList(
-//                                    SyntaxFactory.DocumentationCommentExterior(
-//                                        @"///")),
-//                                @" ",
-//                                @" ",
-//                                SyntaxFactory.TriviaList())));
+        //        private static XmlTextSyntax MakeXmlDocumentationExterior()
+        //        {
+        //            return SyntaxFactory.XmlText()
+        //                    .WithTextTokens(
+        //                        SyntaxFactory.TokenList(
+        //                            SyntaxFactory.XmlTextLiteral(
+        //                                SyntaxFactory.TriviaList(
+        //                                    SyntaxFactory.DocumentationCommentExterior(
+        //                                        @"///")),
+        //                                @" ",
+        //                                @" ",
+        //                                SyntaxFactory.TriviaList())));
 
-//        }
+        //        }
 
-//        private static XmlElementEndTagSyntax GetEndTag(string name)
-//        {
-//            return SyntaxFactory.XmlElementEndTag(
-//                     SyntaxFactory.XmlName(
-//                         SyntaxFactory.Identifier(
-//                             name)));
-//        }
+        //        private static XmlElementEndTagSyntax GetEndTag(string name)
+        //        {
+        //            return SyntaxFactory.XmlElementEndTag(
+        //                     SyntaxFactory.XmlName(
+        //                         SyntaxFactory.Identifier(
+        //                             name)));
+        //        }
 
-//        private static XmlElementStartTagSyntax GetStartTag(string name)
-//        {
-//            return SyntaxFactory.XmlElementStartTag(
-//                     SyntaxFactory.XmlName(
-//                         SyntaxFactory.Identifier(
-//                             name)));
-//        }
+        //        private static XmlElementStartTagSyntax GetStartTag(string name)
+        //        {
+        //            return SyntaxFactory.XmlElementStartTag(
+        //                     SyntaxFactory.XmlName(
+        //                         SyntaxFactory.Identifier(
+        //                             name)));
+        //        }
 
-//        private static SyntaxToken XmlTextLiteral(string content)
-//        {
-//            return SyntaxFactory.XmlTextLiteral(
-//                            SyntaxFactory.TriviaList(
-//                                SyntaxFactory.DocumentationCommentExterior(
-//                                    @"    ///")),
-//                            " " + content,
-//                            " " + content,
-//                            SyntaxFactory.TriviaList());
-//        }
+        //        private static SyntaxToken XmlTextLiteral(string content)
+        //        {
+        //            return SyntaxFactory.XmlTextLiteral(
+        //                            SyntaxFactory.TriviaList(
+        //                                SyntaxFactory.DocumentationCommentExterior(
+        //                                    @"    ///")),
+        //                            " " + content,
+        //                            " " + content,
+        //                            SyntaxFactory.TriviaList());
+        //        }
 
-//        private static SyntaxToken XmlNewLine()
-//        {
-//            return SyntaxFactory.XmlTextNewLine(
-//                             SyntaxFactory.TriviaList(),
-//                             @"
-//",
-//                             @"
-//",
-//                             SyntaxFactory.TriviaList());
-//        }
-//        //private static XmlNodeSyntax MakeSummaryNode(string text)
-//        //{
-//        //    var element = SyntaxFactory.XmlElement(GetStartTag("summary"), GetEndTag("summary"));
-//        //    element = element.WithContent(
-//        //        SyntaxFactory.SingletonList<XmlNodeSyntax>(
-//        //            SyntaxFactory.XmlText()
-//        //            .WithTextTokens(
-//        //                SyntaxFactory.TokenList(
-//        //                    new[]{
-//        //                    XmlNewLine(),
-//        //                    XmlTextLiteral(text),
-//        //                    XmlNewLine(),
-//        //                    XmlTextLiteral("") }
-//        //                    ))));
-//        //    return element;
-//        //}
+        //        private static SyntaxToken XmlNewLine()
+        //        {
+        //            return SyntaxFactory.XmlTextNewLine(
+        //                             SyntaxFactory.TriviaList(),
+        //                             @"
+        //",
+        //                             @"
+        //",
+        //                             SyntaxFactory.TriviaList());
+        //        }
+        //        //private static XmlNodeSyntax MakeSummaryNode(string text)
+        //        //{
+        //        //    var element = SyntaxFactory.XmlElement(GetStartTag("summary"), GetEndTag("summary"));
+        //        //    element = element.WithContent(
+        //        //        SyntaxFactory.SingletonList<XmlNodeSyntax>(
+        //        //            SyntaxFactory.XmlText()
+        //        //            .WithTextTokens(
+        //        //                SyntaxFactory.TokenList(
+        //        //                    new[]{
+        //        //                    XmlNewLine(),
+        //        //                    XmlTextLiteral(text),
+        //        //                    XmlNewLine(),
+        //        //                    XmlTextLiteral("") }
+        //        //                    ))));
+        //        //    return element;
+        //        //}
 
         public static SyntaxTokenList SyntaxTokensForAccessModifier(AccessModifier accessModifier)
         {
@@ -282,10 +438,5 @@ namespace RoslynDom.CSharp
         //    return ret;
         //}
 
-        public static ExpressionSyntax GetCondition(IHasCondition itemAsT)
-        { return (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition); }
-
-        public static StatementSyntax GetStatement(IStatementBlock itemAsT)
-        { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock); }
     }
 }

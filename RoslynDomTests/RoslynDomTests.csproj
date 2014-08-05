@@ -92,6 +92,7 @@
     <Compile Include="TestFile.cs" />
     <Compile Include="TestUtilities.cs" />
     <Compile Include="RDomUtilitiesTests.cs" />
+    <Compile Include="WhitespaceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

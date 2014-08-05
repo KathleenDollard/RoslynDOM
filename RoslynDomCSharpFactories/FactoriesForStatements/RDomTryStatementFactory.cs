@@ -75,7 +75,7 @@ namespace RoslynDom.CSharp
                      .WithFinally(fnally)
                      .WithBlock(block);
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
 
         private FinallyClauseSyntax BuildFinallySyntax(ITryStatement itemAsT)

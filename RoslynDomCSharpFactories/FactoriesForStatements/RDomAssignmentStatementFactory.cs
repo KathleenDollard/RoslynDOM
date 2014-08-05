@@ -55,11 +55,11 @@ namespace RoslynDom.CSharp
                             (ExpressionSyntax)leftSyntax, (ExpressionSyntax)expressionSyntax);
             var node = SyntaxFactory.ExpressionStatement(assignmentSyntax);
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
 
         }
 
-    
+
 
     }
 }

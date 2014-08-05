@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
             { node = SyntaxFactory.EmptyStatement(); }// This shold not happen 
             else
             {
-                var statement = RoslynCSharpUtilities.BuildStatement(item.Statements, item.HasBlock);
+                var statement = RoslynCSharpUtilities.BuildStatement(item.Statements, item);
                 var condition = RDomCSharp.Factory.BuildSyntax(item.Condition);
                 node = makeSyntaxDelegate((ExpressionSyntax)condition, statement);
             }
@@ -50,7 +50,7 @@ namespace RoslynDom.CSharp
             var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(item);
             node = node.WithLeadingTrivia(leadingTrivia);
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 }

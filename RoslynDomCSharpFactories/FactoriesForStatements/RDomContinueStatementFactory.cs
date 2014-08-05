@@ -30,7 +30,7 @@ namespace RoslynDom.CSharp
             var itemAsT = item as IContinueStatement;
             var node = SyntaxFactory.ContinueStatement();
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 }

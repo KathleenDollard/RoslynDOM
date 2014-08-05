@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IUsingStatement;
-            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT.HasBlock);
+            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT);
             var node = SyntaxFactory.UsingStatement(statement);
             if (itemAsT.Variable != null)
             {
@@ -71,7 +71,7 @@ namespace RoslynDom.CSharp
                 node = node.WithExpression(expressionSyntax);
             }
 
-            return itemAsT.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
     }
 }

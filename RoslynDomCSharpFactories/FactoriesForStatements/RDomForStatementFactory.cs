@@ -51,7 +51,7 @@ namespace RoslynDom.CSharp
             var incrementorSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Incrementor);
             node = node.WithIncrementors(SyntaxFactory.SeparatedList<ExpressionSyntax>(new ExpressionSyntax[] { (ExpressionSyntax)incrementorSyntax }));
 
-            return item.PrepareForBuildSyntaxOutput(node);
+            return node.PrepareForBuildSyntaxOutput(item);
         }
 
 
