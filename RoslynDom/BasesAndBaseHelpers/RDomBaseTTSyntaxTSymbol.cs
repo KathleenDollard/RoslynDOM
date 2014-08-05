@@ -16,7 +16,6 @@ namespace RoslynDom
         private SyntaxNode _rawSyntax;
         private TSymbol _symbol;
         private string _containingTypeName;
-        private List<TokenWhitespace> _tokenTrivia = new List<TokenWhitespace>();
 
         protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
              : base()
@@ -35,11 +34,6 @@ namespace RoslynDom
             _rawSyntax = oldRDom._rawSyntax;
             _originalRawSyntax = oldRDom._originalRawSyntax;
             _symbol = oldRDom._symbol;
-
-            var whitespace = RoslynDomUtilities.CopyMembers(oldRDom._tokenTrivia);
-            _tokenTrivia.AddRange(whitespace);
-            LeadingWhitespace = oldRDom.LeadingWhitespace;
-            TrailingWhitespace = oldRDom.TrailingWhitespace;
 
             // TODO: SameIntent tests broke when I removed this, although it appears to be done in the base. 
             var thisAsHasName = this as IHasName;
@@ -66,13 +60,7 @@ namespace RoslynDom
 
         public virtual TSymbol TypedSymbol
         { get { return _symbol; } }
-
-        public IList<TokenWhitespace> TokenWhitespaceList
-        { get { return _tokenTrivia; } }
-
-        public string LeadingWhitespace { get; set; }
-        public string TrailingWhitespace { get; set; }
-
+       
         protected virtual AccessModifier GetAccessibility()
         {
             if (Symbol == null) { return AccessModifier.NotApplicable; }
@@ -87,16 +75,7 @@ namespace RoslynDom
         /// </summary>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public override object RequestValue(string propertyName)
-        {
-            if (ReflectionUtilities.CanGetProperty(this, propertyName))
-            {
-                var value = ReflectionUtilities.GetPropertyValue(this, propertyName);
-                return value;
-            }
-            return null;
-        }
-
+ 
 
     }
 

@@ -10,15 +10,24 @@ namespace RoslynDom
     public abstract class RDomBase<T> : RDomBase, IDom<T>, IRoslynHasSymbol
           where T : class, IDom<T>
     {
-      //  private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
+        //  private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
+        private List<TokenWhitespace> _tokenTrivia = new List<TokenWhitespace>();
 
         protected RDomBase()
           : base()
         { }
 
-        protected RDomBase(T oldRDom)
-         : base(oldRDom)
-        { }
+        protected RDomBase(T oldIDom)
+         : base(oldIDom)
+        {
+            var oldRDom = oldIDom as RDomBase<T>;
+            var whitespace = RoslynDomUtilities.CopyMembers(oldRDom._tokenTrivia);
+            _tokenTrivia.AddRange(whitespace);
+
+            LeadingWhitespace = oldRDom.LeadingWhitespace;
+            TrailingWhitespace = oldRDom.TrailingWhitespace;
+
+        }
 
         public abstract ISymbol Symbol { get; }
 
@@ -54,10 +63,25 @@ namespace RoslynDom
         /// <param name="other"></param>
         /// <param name="skipPublicAnnotations"></param>
         /// <returns></returns>
+
         protected virtual bool CheckSameIntent(T other, bool skipPublicAnnotations)
         {
             return true;
         }
+        public IList<TokenWhitespace> TokenWhitespaceList
+        { get { return _tokenTrivia; } }
 
+        public string LeadingWhitespace { get; set; }
+        public string TrailingWhitespace { get; set; }
+
+        public override object RequestValue(string propertyName)
+        {
+            if (ReflectionUtilities.CanGetProperty(this, propertyName))
+            {
+                var value = ReflectionUtilities.GetPropertyValue(this, propertyName);
+                return value;
+            }
+            return null;
+        }
     }
 }

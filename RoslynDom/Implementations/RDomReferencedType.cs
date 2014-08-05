@@ -5,7 +5,14 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomReferencedType : RDomBase, IReferencedType
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// This does not inherit from <see cref="RDomBase{T, TSymbol}"/> because
+    /// it does not have a property SyntaxNode to reference. 
+    /// </remarks>
+    public class RDomReferencedType : RDomBase<IReferencedType>, IReferencedType
     {
         // I'm still evolving how types are handled.
         private ImmutableArray<SyntaxReference> _raw;
@@ -48,23 +55,23 @@ namespace RoslynDom
         public virtual bool Matches(IReferencedType other)
         { return this.Name == other.Name; }
 
-        public IReferencedType Copy()
-        {
-            return new RDomReferencedType(this);
-        }
+        //public IReferencedType Copy()
+        //{
+        //    return new RDomReferencedType(this);
+        //}
 
-        protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
-        {
-            var thisAsT = this as IPublicAnnotation;
-            var otherAsT = other as IPublicAnnotation;
-            if (!CheckSameIntent(other as IReferencedType, skipPublicAnnotations)) { return false; }
-            return (StandardSameIntent.CheckSameIntent(thisAsT, otherAsT, skipPublicAnnotations))  ;
-        }
+        //protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
+        //{
+        //    var thisAsT = this as IPublicAnnotation;
+        //    var otherAsT = other as IPublicAnnotation;
+        //    if (!CheckSameIntent(other as IReferencedType, skipPublicAnnotations)) { return false; }
+        //    return (StandardSameIntent.CheckSameIntent(thisAsT, otherAsT, skipPublicAnnotations))  ;
+        //}
 
-        protected virtual bool CheckSameIntent(IReferencedType other, bool skipPublicAnnotations)
-        {
-            return true;
-        }
+        //protected virtual bool CheckSameIntent(IReferencedType other, bool skipPublicAnnotations)
+        //{
+        //    return true;
+        //}
 
         public override object RawItem
         {
@@ -80,7 +87,7 @@ namespace RoslynDom
             { throw new NotImplementedException(); }
         }
 
-        public ISymbol Symbol
+        public override ISymbol Symbol
         { get { return _symbol; } }
 
         public string Name { get; set; }
