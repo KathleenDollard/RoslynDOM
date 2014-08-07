@@ -23,11 +23,17 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            newItem.TypeParameters.AddOrMoveRange(typeParameters);
+            //var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
+            //newItem.TypeParameters.AddOrMoveRange(typeParameters);
 
-           // newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
-            newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
+            // newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
+            //newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
+            var returnType = Corporation
+                            .CreateFrom<IMisc>(syntax.ReturnType, newItem, model)
+                            .FirstOrDefault()
+                            as IReferencedType;
+            newItem.ReturnType = returnType;
+
             // TODO: Assign IsNew, question on insider's list
             newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
             var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
@@ -49,7 +55,7 @@ namespace RoslynDom.CSharp
                             .WithModifiers(modifiers);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsMethod.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             var parameterSyntaxList = itemAsMethod.Parameters
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
@@ -57,7 +63,7 @@ namespace RoslynDom.CSharp
                         .ToList();
             if (parameterSyntaxList.Any()) { node = node.WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterSyntaxList))); }
 
-            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+            //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             //node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsMethod.Statements));
             node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsMethod.Statements, itemAsMethod));

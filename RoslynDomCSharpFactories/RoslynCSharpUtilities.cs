@@ -59,7 +59,7 @@ namespace RoslynDom.CSharp
             {
                 statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
                 // Block tokens are held in parent
-                statement = BuildSyntaxHelpers.BuildTokenWhitespace(statement, parent, false);
+                statement = BuildSyntaxHelpers.BuildTokenWhitespace(statement, parent);
             }
             else if (statements.Count() == 1)
             { statement = (StatementSyntax)statementSyntaxList.First(); }

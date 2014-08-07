@@ -7,11 +7,39 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class RDomBase<T> : RDomBase, IDom<T>, IRoslynHasSymbol
+    // Provides a Roslyn specific non-generic base class
+    public abstract class RoslynRDomBase : RDomBase, IRoslynHasSymbol
+    {
+        protected RoslynRDomBase()
+          : base()
+        { }
+
+        protected RoslynRDomBase(IDom oldIDom)
+         : base(oldIDom)
+        {
+            var oldRDom = oldIDom as RoslynRDomBase;
+            if (oldRDom.TokenWhitespaceSet != null)
+            { TokenWhitespaceSet = oldRDom.TokenWhitespaceSet.Copy(); }
+        }
+
+        public abstract ISymbol Symbol { get; }
+
+        public TokenWhitespaceSet TokenWhitespaceSet { get; set; }
+
+        public override object RequestValue(string propertyName)
+        {
+            if (ReflectionUtilities.CanGetProperty(this, propertyName))
+            {
+                var value = ReflectionUtilities.GetPropertyValue(this, propertyName);
+                return value;
+            }
+            return null;
+        }
+    }
+
+    public abstract class RDomBase<T> : RoslynRDomBase, IDom<T>
           where T : class, IDom<T>
     {
-        //  private ISameIntent<T> sameIntent = SameIntent_Factory.SameIntent<T>();
-        private List<TokenWhitespace> _tokenTrivia = new List<TokenWhitespace>();
 
         protected RDomBase()
           : base()
@@ -21,15 +49,9 @@ namespace RoslynDom
          : base(oldIDom)
         {
             var oldRDom = oldIDom as RDomBase<T>;
-            var whitespace = RoslynDomUtilities.CopyMembers(oldRDom._tokenTrivia);
-            _tokenTrivia.AddRange(whitespace);
-
-            LeadingWhitespace = oldRDom.LeadingWhitespace;
-            TrailingWhitespace = oldRDom.TrailingWhitespace;
-
+            if (oldRDom.TokenWhitespaceSet != null)
+            { TokenWhitespaceSet = oldRDom.TokenWhitespaceSet.Copy(); }
         }
-
-        public abstract ISymbol Symbol { get; }
 
         public virtual T Copy()
         {
@@ -68,20 +90,6 @@ namespace RoslynDom
         {
             return true;
         }
-        public IList<TokenWhitespace> TokenWhitespaceList
-        { get { return _tokenTrivia; } }
-
-        public string LeadingWhitespace { get; set; }
-        public string TrailingWhitespace { get; set; }
-
-        public override object RequestValue(string propertyName)
-        {
-            if (ReflectionUtilities.CanGetProperty(this, propertyName))
-            {
-                var value = ReflectionUtilities.GetPropertyValue(this, propertyName);
-                return value;
-            }
-            return null;
-        }
+ 
     }
 }

@@ -23,10 +23,17 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
+            //var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
 
             newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
-            newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
+
+            //newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
+            var type = Corporation
+                            .CreateFrom<IMisc>(syntax.Type, newItem, model)
+                            .FirstOrDefault()
+                            as IReferencedType;
+            newItem.Type = type;
+
             newItem.IsStatic = newItem.Symbol.IsStatic;
             // TODO: Assign IsNew, question on insider's list
             var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
@@ -47,7 +54,7 @@ namespace RoslynDom.CSharp
                             .WithModifiers(modifiers);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 

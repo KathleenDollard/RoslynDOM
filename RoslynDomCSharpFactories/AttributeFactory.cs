@@ -60,7 +60,8 @@ namespace RoslynDom.CSharp
                                         (AttributeSyntax)BuildSyntaxHelpers.PrepareForBuildItemSyntaxOutput(node, item)
                                     }));
 
-            return new SyntaxNode[] { nodeList };
+            return nodeList.PrepareForBuildSyntaxOutput(item);
+            //return new SyntaxNode[] { nodeList };
         }
 
         //public IEnumerable<SyntaxNode> BuildSyntax(AttributeList attributeList)
@@ -108,7 +109,7 @@ namespace RoslynDom.CSharp
             { node = node.WithNameColon(SyntaxFactory.NameColon(argNameSyntax)); }
             else if (atttributeValue.Style == AttributeValueStyle.Equals)
             { node = node.WithNameEquals(SyntaxFactory.NameEquals(argNameSyntax)); }
-            return node;
+            return BuildSyntaxHelpers.PrepareForBuildItemSyntaxOutput(node, atttributeValue);
         }
 
         private static ExpressionSyntax BuildArgValueExpression(IAttributeValue atttributeValue, SyntaxKind kind)
@@ -133,6 +134,7 @@ namespace RoslynDom.CSharp
         private IAttribute CreateFromItem(AttributeSyntax attributeSyntax, IDom parent, SemanticModel model)
         {
             var newItem = new RDomAttribute(attributeSyntax, parent, model);
+            CreateFromWorker.StandardInitialize(newItem,attributeSyntax, parent, model);
             newItem.Name = attributeSyntax.Name.ToString();
             var values = MakeAttributeValues(attributeSyntax, newItem, model);
             foreach (var value in values)
@@ -143,8 +145,16 @@ namespace RoslynDom.CSharp
         private IEnumerable<IAttribute> CreateFromList(AttributeListSyntax syntaxAsList, IDom parent, SemanticModel model)
         {
             var list = new List<IAttribute>();
+            var whitespaceSet = CreateFromWorker.GetWhitespaceSet(syntaxAsList, false);
             foreach (var attSyntax in syntaxAsList.Attributes)
-            { list.Add(CreateFromItem(attSyntax, parent, model)); }
+            {
+                var attr = CreateFromItem(attSyntax, parent, model);
+                var rDomAttr = attr as IRoslynDom;
+                //rDomAttr.TokenWhitespaceSet.LeadingWhitespace = whitespaceSet.LeadingWhitespace;
+                //rDomAttr.TokenWhitespaceSet.TrailingWhitespace = whitespaceSet.TrailingWhitespace;
+                rDomAttr.TokenWhitespaceSet.TokenWhitespaceList.InsertRange(0, whitespaceSet.TokenWhitespaceList);
+                list.Add(attr);
+            }
             return list;
         }
 
@@ -159,6 +169,7 @@ namespace RoslynDom.CSharp
                 {
                     var newAttributeValue = new RDomAttributeValue(arg, parent, model);
                     InitializeAttributeValue(newAttributeValue, arg, model);
+                    CreateFromWorker.StandardInitialize(newAttributeValue, arg, parent, model);
                     ret.Add(newAttributeValue);
                 }
             }
@@ -171,7 +182,7 @@ namespace RoslynDom.CSharp
             var tuple = GetAttributeValueName(rawItem);
             newItem.Name = tuple.Item1;
             newItem.Style = tuple.Item2;
-            var tuple2 = GetAttributeValueValue(rawItem, model);
+            var tuple2 = GetAttributeValueValue(rawItem,newItem,  model);
             newItem.Value = tuple2.Item1;
             newItem.ValueType = tuple2.Item2;
             newItem.Type = newItem.Value.GetType();
@@ -201,7 +212,7 @@ namespace RoslynDom.CSharp
         }
 
         private Tuple<object, LiteralKind> GetAttributeValueValue(
-                      SyntaxNode argNode, SemanticModel model)
+                      SyntaxNode argNode, IDom newItem,  SemanticModel model)
         {
             var arg = argNode as AttributeArgumentSyntax;
             Guardian.Assert.IsNotNull(arg, nameof(arg));
@@ -219,34 +230,40 @@ namespace RoslynDom.CSharp
                 if (typeExpression != null)
                 {
                     literalKind = LiteralKind.Type;
-                    value = GetTypeExpressionValue(typeExpression, model);
+                    value = GetTypeExpressionValue(typeExpression, newItem, model);
                 }
             }
             return Tuple.Create(value, literalKind);
         }
 
-        private object GetTypeExpressionValue(TypeOfExpressionSyntax typeExpression, SemanticModel model)
+        private object GetTypeExpressionValue(TypeOfExpressionSyntax typeExpression, IDom newItem, SemanticModel model)
         {
-            object value = null;
-            var typeSyntax = typeExpression.Type;
-            var predefinedTypeSyntax = typeSyntax as PredefinedTypeSyntax;
-            var identifierNameSyntax = typeSyntax as IdentifierNameSyntax;
-            if (predefinedTypeSyntax != null)
-            {
-                var typeInfo = model.GetTypeInfo(predefinedTypeSyntax);
-                value = new RDomReferencedType(typeInfo, null);
-            }
-            else if (identifierNameSyntax != null)
-            {
-                var typeInfo = model.GetTypeInfo(identifierNameSyntax);
-                value = new RDomReferencedType(typeInfo, null);
-            }
-            else
-            {
-                // I don't know how to get here, but if I get here, I want to know it :)
-                throw new InvalidOperationException();
-            }
-            return value;
+            var returnType = Corporation
+                 .CreateFrom<IMisc>(typeExpression.Type, newItem, model)
+                 .FirstOrDefault()
+                 as IReferencedType;
+            return returnType;
+
+            //object value = null;
+            //var typeSyntax = typeExpression.Type;
+            //var predefinedTypeSyntax = typeSyntax as PredefinedTypeSyntax;
+            //var identifierNameSyntax = typeSyntax as IdentifierNameSyntax;
+            //if (predefinedTypeSyntax != null)
+            //{
+            //    var typeInfo = model.GetTypeInfo(predefinedTypeSyntax);
+            //    value = new RDomReferencedType(typeInfo, null);
+            //}
+            //else if (identifierNameSyntax != null)
+            //{
+            //    var typeInfo = model.GetTypeInfo(identifierNameSyntax);
+            //    value = new RDomReferencedType(typeInfo, null);
+            //}
+            //else
+            //{
+            //    // I don't know how to get here, but if I get here, I want to know it :)
+            //    throw new InvalidOperationException();
+            //}
+            //return value;
         }
 
         private object GetLiteralValue(LiteralExpressionSyntax literalExpression, ref LiteralKind literalKind)

@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface ITypeParameter : IMisc, IDom<ITypeParameter>, IReferencedType 
+    public interface ITypeParameter : IMisc, IDom<ITypeParameter>, IHasName
     {
         Variance Variance { get; set; }
         bool HasConstructorConstraint { get; set; }

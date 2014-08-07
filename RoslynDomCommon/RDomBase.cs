@@ -30,7 +30,7 @@ namespace RoslynDom
             var oldRDom = (RDomBase)oldIDom;
 
             var oldAsHasName = oldIDom as IHasName;
-            var thisAsHasName = oldIDom as IHasName;
+            var thisAsHasName = this as IHasName;
             if (oldAsHasName != null && thisAsHasName != null)
             { thisAsHasName.Name = oldAsHasName.Name; }
 

@@ -11,6 +11,8 @@ namespace RoslynDom
         where T : class, IType<T>
     {
         private RDomList<ITypeMemberCommentWhite> _members;
+        private RDomList<IReferencedType> _implementedInterfaces;
+        private IEnumerable<IReferencedType> _allImplementedInterfaces;
         private MemberKind _memberKind;        // This should remain readonly
         private StemMemberKind _stemMemberKind;// This should remain readonly
         private RDomList<ITypeParameter> _typeParameters;
@@ -37,10 +39,11 @@ namespace RoslynDom
             _stemMemberKind = oldRDom._stemMemberKind;
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
-            var newMembers = RoslynDomUtilities.CopyMembers(oldRDom._members);
-            MembersAll.AddOrMoveRange(newMembers);
-            var newTypeParameters = RoslynDomUtilities.CopyMembers(oldRDom._typeParameters);
-            TypeParameters.AddOrMoveRange(newTypeParameters);
+            MembersAll.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._members));
+            TypeParameters.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._typeParameters));
+
+            _implementedInterfaces.AddOrMoveRange(oldRDom._implementedInterfaces.Select(x => x.Copy()));
+            // TODO: _allImplementedInterfaces = oldRDom._allImplementedInterfaces.Select(x => x.Copy());
         }
 
         protected override void Initialize()
@@ -48,6 +51,11 @@ namespace RoslynDom
             base.Initialize();
             _members = new RDomList<ITypeMemberCommentWhite>(this);
             _typeParameters = new RDomList<ITypeParameter>(this);
+            _implementedInterfaces = new RDomList<IReferencedType>(this);
+            var thisAsHasInterfaces = this as IHasImplementedInterfaces;
+            var typeSymbol = Symbol as ITypeSymbol;
+            if (typeSymbol == null) throw new NotImplementedException();
+            // TODO: _allImplementedInterfaces = typeSymbol.AllInterfaces
         }
 
         public override IEnumerable<IDom> Children
@@ -111,6 +119,22 @@ namespace RoslynDom
 
         public IEnumerable<IField> Fields
         { get { return Members.OfType<IField>().ToList(); } }
+
+        // This is not yet editale because it is non-trivial to ensure 
+        // correct interface usage (appearing once, etc). These semantics
+        // may also change as "all" is confusing with other use in RoslynDon
+        public RDomList<IReferencedType> ImplementedInterfaces
+        { get { return _implementedInterfaces; } }
+        public IEnumerable<IReferencedType> AllImplementedInterfaces
+        {
+            get
+            {
+                // TODO: Figure out all interfaces or don't support
+                throw new NotImplementedException();
+            }
+        }
+
+
         public AttributeList Attributes
         { get { return _attributes; } }
 

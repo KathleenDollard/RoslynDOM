@@ -37,7 +37,14 @@ namespace RoslynDom.CSharp
 
                 if (decl.Initializer != null)
                 { newItem.Initializer = Corporation.CreateFrom<IExpression>(decl.Initializer.Value, newItem, model).FirstOrDefault(); }
-                newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
+
+                //newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
+                var returnType = Corporation
+                                 .CreateFrom<IMisc>(rawField.Declaration.Type, newItem, model)
+                                 .FirstOrDefault()
+                                 as IReferencedType;
+                newItem.ReturnType= returnType;
+
                 var fieldSymbol = newItem.Symbol as IFieldSymbol;
                 newItem.IsStatic = fieldSymbol.IsStatic;
                 // TODO: Assign IsNew, question on insider's list
@@ -65,7 +72,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsField.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 

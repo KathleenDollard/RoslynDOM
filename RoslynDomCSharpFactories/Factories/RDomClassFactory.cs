@@ -16,7 +16,7 @@ namespace RoslynDom.CSharp
         private static string nameof<T>(T value) { return ""; }
 
         internal static RDomClass CreateFromInternal(SyntaxNode syntaxNode, IDom parent, SemanticModel model,
-               ICreateFromWorker  createFromWorker, RDomCorporation corporation)
+               ICreateFromWorker createFromWorker, RDomCorporation corporation)
         {
             var syntax = syntaxNode as ClassDeclarationSyntax;
             var newItem = new RDomClass(syntaxNode, parent, model);
@@ -24,11 +24,17 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
+            //var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
+            //newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<ITypeMemberCommentWhite>(x, newItem, model));
             newItem.MembersAll.AddOrMoveRange(members);
-            newItem.BaseType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.BaseType);
+
+            //newItem.BaseType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.BaseType);
+            if (syntax.BaseList != null)
+            {
+                newItem.BaseType = corporation.CreateFrom<IMisc>(syntax.BaseList.Types.First(), newItem, model).Single()
+                                    as IReferencedType;
+            }
             newItem.IsAbstract = newItem.Symbol.IsAbstract;
             newItem.IsSealed = newItem.Symbol.IsSealed;
             newItem.IsStatic = newItem.Symbol.IsStatic;
@@ -36,7 +42,7 @@ namespace RoslynDom.CSharp
             return newItem;
         }
 
-        public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item, 
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item,
             ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
         {
             var modifiers = item.BuildModfierSyntax();
@@ -46,7 +52,7 @@ namespace RoslynDom.CSharp
             var itemAsClass = item as IClass;
             Guardian.Assert.IsNotNull(itemAsClass, nameof(itemAsClass));
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             var membersSyntax = itemAsClass.Members
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
@@ -89,7 +95,7 @@ namespace RoslynDom.CSharp
         }
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
-            return RDomClassFactoryHelper.BuildSyntax((RDomClass)item, BuildSyntaxWorker, Corporation );
+            return RDomClassFactoryHelper.BuildSyntax((RDomClass)item, BuildSyntaxWorker, Corporation);
         }
     }
 

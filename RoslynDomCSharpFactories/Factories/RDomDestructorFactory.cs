@@ -38,7 +38,7 @@ namespace RoslynDom.CSharp
                             .WithModifiers(modifiers);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 

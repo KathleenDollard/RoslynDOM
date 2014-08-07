@@ -8,8 +8,6 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class IfStatementTokens : TokenWhitespaceList<IfStatementSyntax>
-    { }
 
     public class RDomIfStatementFactory
          : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>

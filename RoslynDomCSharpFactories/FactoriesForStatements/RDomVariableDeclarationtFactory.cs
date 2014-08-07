@@ -30,45 +30,19 @@ namespace RoslynDom.CSharp
 
             var rawCatchDeclaration = syntaxNode as CatchDeclarationSyntax;
             if (rawCatchDeclaration != null)
-            { return CreateFromCatchDeclaration(rawCatchDeclaration, parent, model); }
+            {
+                return new IMisc[] { GetNewVariable(
+                  rawCatchDeclaration.Type, rawCatchDeclaration, parent, model) };
+            }
 
             var rawForEachSyntax = syntaxNode as ForEachStatementSyntax;
             if (rawForEachSyntax != null)
-            { return CreateFromForEach(rawForEachSyntax, parent, model); }
-
+            {
+                return new IMisc[] { GetNewVariable(
+                  rawForEachSyntax.Type, rawForEachSyntax, parent, model) };
+            }
 
             throw new InvalidOperationException();
-        }
-
-        private IEnumerable<IMisc> CreateFromCatchDeclaration(CatchDeclarationSyntax syntax, IDom parent, SemanticModel model)
-        {
-            var newItems = GetWithIdAndType(syntax.Identifier, syntax.Type, syntax, parent, model);
-            return newItems;
-        }
-
-        private IEnumerable<IMisc> CreateFromForEach(ForEachStatementSyntax syntax, IDom parent, SemanticModel model)
-        {
-            var newItems = GetWithIdAndType(syntax.Identifier, syntax.Type, syntax, parent, model);
-            return newItems;
-        }
-
-        private IEnumerable<IMisc> GetWithIdAndType(SyntaxToken identifier, TypeSyntax type, SyntaxNode node, IDom parent, SemanticModel model)
-        {
-            var list = new List<IMisc>();
-            var newItem = new RDomVariableDeclaration(node, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, node, parent, model);
-            list.Add(newItem);
-            newItem.Name = identifier.ToString();
-            ISymbol typeSymbol = null;
-            if (newItem.TypedSymbol != null)
-            { typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type; }
-            if (typeSymbol == null)
-            { typeSymbol = model.GetDeclaredSymbol(node); }
-            if (typeSymbol == null)
-            { typeSymbol = model.GetTypeInfo(type).Type; }
-            newItem.Type = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
-            InitializeVariable(newItem, type.ToString(),typeSymbol, node, model);
-            return list;
         }
 
         private IEnumerable<IMisc> CreateFromVariableDeclaration(VariableDeclarationSyntax syntax, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -77,15 +51,8 @@ namespace RoslynDom.CSharp
             var declarators = syntax.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                var newItem = new RDomVariableDeclaration(decl, parent, model);
-                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+                var newItem = GetNewVariable(syntax.Type, decl, parent, model);
                 list.Add(newItem);
-                newItem.Name = newItem.TypedSymbol.Name;
-                var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type;
-                InitializeVariable(newItem, syntax.Type.ToString(), typeSymbol, decl, model);
-                //newItem.IsImplicitlyTyped = (syntax.Type.ToString() == "var");
-                //var typeSymbol = ((ILocalSymbol)newItem.TypedSymbol).Type;
-                //newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, typeSymbol);
                 if (decl.Initializer != null)
                 {
                     var equalsClause = decl.Initializer;
@@ -95,33 +62,26 @@ namespace RoslynDom.CSharp
             return list;
         }
 
-        public void InitializeVariable(IVariable newItem, string declaredType, ISymbol typeSymbol, SyntaxNode node, SemanticModel model)
+        public IVariable GetNewVariable(TypeSyntax typeSyntax,
+            SyntaxNode node, IDom parent, SemanticModel model)
         {
+            var newItem = new RDomVariableDeclaration(node, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, node, parent, model);
+            newItem.Name = newItem.TypedSymbol.Name;
+            var declaredType = typeSyntax.ToString();
+            var returnType = Corporation
+                            .CreateFrom<IMisc>(typeSyntax, newItem, model)
+                            .FirstOrDefault()
+                            as IReferencedType;
+            newItem.Type = returnType;
 
-            //ISymbol symbol = null;
-            //ISymbol typeSymbol = null;
-            //var itemAsIDom = newItem as IRoslynHasSymbol;
-            //if (itemAsIDom != null)
-            //{ symbol = itemAsIDom.Symbol; }
-            //if (symbol != null)
-            //{ typeSymbol = ((ILocalSymbol)symbol).Type; }
-            //if (typeSymbol == null)
-            //{ typeSymbol = model.GetDeclaredSymbol(node); }
-            //if (typeSymbol == null)
-            //{
-            //    var syntax = node as VariableDeclarationSyntax;
-            //    if (syntax == null) syntax = node.Parent as VariableDeclarationSyntax;
-            //    if (syntax != null)
-            //    { typeSymbol = model.GetTypeInfo(syntax.Type).Type; }
-            //}
-
-            newItem.Type = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
             newItem.IsImplicitlyTyped = (declaredType == "var");
             if (!newItem.IsImplicitlyTyped && declaredType != newItem.Type.Name)
             {
                 var test = Mappings.AliasFromSystemType(newItem.Type.Name);
                 if (declaredType == test) newItem.IsAliased = true;
             }
+            return newItem;
         }
 
 

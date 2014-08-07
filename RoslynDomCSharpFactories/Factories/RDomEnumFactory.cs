@@ -27,7 +27,16 @@ namespace RoslynDom.CSharp
             if (symbol != null)
             {
                 var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
-                newItem.UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
+                // TODO: underlying type should be set to Int when there is not type specified,there is always an underlying type
+                if (syntax.BaseList != null)
+                {
+                    //newItem.UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
+                    var type = corporation
+                                    .CreateFrom<IMisc>(syntax.BaseList.Types.First(), newItem, model)
+                                    .FirstOrDefault()
+                                    as IReferencedType;
+                    newItem.UnderlyingType = type;
+                }
             }
 
             foreach (var member in syntax.Members)
@@ -52,7 +61,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.EnumDeclaration(identifier)
                 .WithModifiers(modifiers);
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
             var itemAsEnum = item as IEnum;
             Guardian.Assert.IsNotNull(itemAsEnum, nameof(itemAsEnum));
 

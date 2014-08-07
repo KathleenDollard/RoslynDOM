@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RoslynDom.Common;
 
 namespace RoslynDom.Common
@@ -11,6 +12,7 @@ namespace RoslynDom.Common
 
     public interface ICatchStatement : IStatement, IHasCondition, IStatementBlock, IDom<ICatchStatement >
     {
+        // There will always be an exception type. There might also be a variable
         IVariableDeclaration Variable { get; set; }
         IReferencedType ExceptionType { get; set; }
 

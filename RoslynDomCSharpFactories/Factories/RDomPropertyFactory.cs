@@ -24,8 +24,13 @@ namespace RoslynDom.CSharp
             newItem.Name = newItem.TypedSymbol.Name;
             newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
 
-            // TODO: Type parameters and constraints
-            newItem.PropertyType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
+            //newItem.PropertyType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
+            var type = Corporation
+                            .CreateFrom<IMisc>(syntax.Type, newItem, model)
+                            .FirstOrDefault()
+                            as IReferencedType;
+            newItem.ReturnType = type;
+
             newItem.IsAbstract = newItem.Symbol.IsAbstract;
             newItem.IsVirtual = newItem.Symbol.IsVirtual;
             newItem.IsOverride = newItem.Symbol.IsOverride;
@@ -57,7 +62,7 @@ namespace RoslynDom.CSharp
                             .WithModifiers(modifiers);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsProperty.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             var accessors = SyntaxFactory.List<AccessorDeclarationSyntax>();
             var getAccessorSyntax = RDomCSharp.Factory.BuildSyntaxGroup(itemAsProperty.GetAccessor).FirstOrDefault();

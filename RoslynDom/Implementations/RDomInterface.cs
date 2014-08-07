@@ -14,21 +14,7 @@ namespace RoslynDom
              : base(oldRDom)
         { }
 
-        public IEnumerable<IReferencedType> AllImplementedInterfaces
-        {
-            get
-            {
-                return this.ImpementedInterfacesFrom(true);
-            }
-        }
-
-        public IEnumerable<IReferencedType> ImplementedInterfaces
-        {
-            get
-            {
-                return this.ImpementedInterfacesFrom(false);
-            }
-        }
+    
 
     }
 }

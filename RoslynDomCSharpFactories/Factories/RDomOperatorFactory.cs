@@ -23,11 +23,18 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
+            //var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
 
             newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
             newItem.Operator  = Mappings.OperatorFromCSharpKind(syntax.OperatorToken.CSharpKind());
-            newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
+
+            //newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
+            var returnType = Corporation
+                             .CreateFrom<IMisc>(syntax.ReturnType, newItem, model)
+                             .FirstOrDefault()
+                             as IReferencedType;
+            newItem.Type = returnType;
+
             newItem.IsStatic = newItem.Symbol.IsStatic;
 
             return newItem;
@@ -45,7 +52,7 @@ namespace RoslynDom.CSharp
                             .WithModifiers(modifiers);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 

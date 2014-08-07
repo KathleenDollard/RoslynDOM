@@ -23,7 +23,7 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
+            //var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
 
             newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
             newItem.IsStatic = newItem.Symbol.IsStatic;
@@ -64,7 +64,7 @@ namespace RoslynDom.CSharp
                             .WithModifiers(modifiers);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsConstructor.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             var parameterSyntaxList = itemAsConstructor.Parameters
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))

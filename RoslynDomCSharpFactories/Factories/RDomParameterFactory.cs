@@ -22,7 +22,13 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
+            //newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
+            var type = Corporation
+                             .CreateFrom<IMisc>(syntax.Type, newItem, model)
+                             .FirstOrDefault()
+                             as IReferencedType;
+            newItem.Type = type;
+
             newItem.IsOut = newItem.TypedSymbol.RefKind == RefKind.Out;
             newItem.IsRef = newItem.TypedSymbol.RefKind == RefKind.Ref;
             newItem.IsParamArray = newItem.TypedSymbol.IsParams;
@@ -42,7 +48,7 @@ namespace RoslynDom.CSharp
                         .WithType(syntaxType);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             var modifiers = SyntaxFactory.TokenList();
             if (itemAsT.IsOut) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.OutKeyword)); }

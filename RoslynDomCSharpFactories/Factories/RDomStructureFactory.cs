@@ -23,8 +23,8 @@ namespace RoslynDom.CSharp
             createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
+            //var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
+            //newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
 
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<ITypeMemberCommentWhite>(x, newItem, model));
             newItem.MembersAll.AddOrMoveRange(members);
@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.StructDeclaration(identifier)
                 .WithModifiers(modifiers);
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(attributes.WrapInAttributeList()); }
+            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
             var itemAsStruct = item as IStructure;
             Guardian.Assert.IsNotNull(itemAsStruct, nameof(itemAsStruct));
             var membersSyntax = itemAsStruct.Members

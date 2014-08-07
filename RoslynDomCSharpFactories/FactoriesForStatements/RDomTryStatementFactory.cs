@@ -31,10 +31,16 @@ namespace RoslynDom.CSharp
                 CreateFromWorker.InitializeStatements(newCatch, ctch.Block, newCatch, model);
                 if (ctch.Declaration != null)
                 {
-                    var variable = GetDeclaration(newCatch, ctch, model);
-                    newCatch.Variable = variable;
-                    var typeSymbol = model.GetTypeInfo(ctch.Declaration.Type).Type;
-                    newCatch.ExceptionType = new RDomReferencedType(typeSymbol.DeclaringSyntaxReferences, typeSymbol);
+                    var type = Corporation
+                                  .CreateFrom<IMisc>(ctch.Declaration.Type, newCatch, model)
+                                  .FirstOrDefault()
+                                  as IReferencedType;
+                    newCatch.ExceptionType = type;
+                    if (!string.IsNullOrWhiteSpace(ctch.Declaration.Identifier.ToString()))
+                    {
+                        newCatch.Variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
+                        newCatch.Variable.Type = type;
+                    }
                 }
                 if (ctch.Filter != null)
                 { newCatch.Condition = Corporation.CreateFrom<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault(); }
@@ -50,18 +56,38 @@ namespace RoslynDom.CSharp
             return newItem;
         }
 
-        private IVariableDeclaration GetDeclaration(RDomCatchStatement newCatch,
-            CatchClauseSyntax ctch, SemanticModel model)
-        {
-            if (string.IsNullOrWhiteSpace(ctch.Declaration.Identifier.ToString())) return null;
-            ISymbol typeSymbol = model.GetDeclaredSymbol(ctch.Declaration);
-            if (typeSymbol == null)
-            { typeSymbol = model.GetTypeInfo(ctch.Declaration.Type).Type; }
-            // TODO: Reconsider Symbol being write only or have an overridable way to retrieve
-            // newCatch.Symbol = typeSymbol;
-            var variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
-            return variable;
-        }
+        //private IVariableDeclaration GetDeclaration(RDomCatchStatement newCatch,
+        //    CatchClauseSyntax ctch, SemanticModel model)
+        //{
+        //    if (ctch.Declaration.Type != null)
+        //    { return GetDeclarationFromType(newCatch, ctch, model); }
+        //    if (!string.IsNullOrWhiteSpace(ctch.Declaration.Identifier.ToString()))
+        //    { return GetDeclarationFromIdentifier(newCatch, ctch, model); }
+        //    throw new NotImplementedException();
+        //}
+
+        //private IVariableDeclaration GetDeclarationFromType(RDomCatchStatement newCatch, CatchClauseSyntax ctch, SemanticModel model)
+        //{
+        //    var variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
+        //    var type = Corporation
+        //                  .CreateFrom<IMisc>(ctch.Declaration.Type, newCatch, model)
+        //                  .FirstOrDefault()
+        //                  as IReferencedType;
+        //    variable.Type = type;
+        //    return variable;
+        //}
+
+        //private IVariableDeclaration GetDeclarationFromIdentifier(RDomCatchStatement newCatch, CatchClauseSyntax ctch, SemanticModel model)
+        //{
+        //    throw new NotImplementedException();
+        //    ISymbol typeSymbol = model.GetDeclaredSymbol(ctch.Declaration);
+        //    if (typeSymbol == null)
+        //    { typeSymbol = model.GetTypeInfo(ctch.Declaration.Type).Type; }
+        //    // TODO: Reconsider Symbol being write only or have an overridable way to retrieve
+        //    // newCatch.Symbol = typeSymbol;
+        //    var variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
+        //    return variable;
+        //}
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {

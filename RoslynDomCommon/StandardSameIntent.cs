@@ -88,7 +88,7 @@ namespace RoslynDom.Common
                     return false;
                 // if (!Check<T, IHasGroup> not tested, groups aren't important for same intent
                 if (!Check<T, IHasImplementedInterfaces>(one, other,
-                    (x, y) => CheckChildrenAnyOrder(x.AllImplementedInterfaces, y.AllImplementedInterfaces)))
+                    (x, y) => CheckChildrenAnyOrder(x.ImplementedInterfaces, y.ImplementedInterfaces)))
                     return false;
                 if (!Check<T, IHasName>(one, other,
                     (x, y) => x.Name == y.Name))
@@ -323,6 +323,10 @@ namespace RoslynDom.Common
             private bool CheckChildrenAnyOrder<T>(IEnumerable<T> oneList, IEnumerable<T> otherList)
                         where T : class, IDom
             {
+                if (oneList == null && otherList == null) return true;
+                if (oneList == null && otherList != null) return false;
+                if (oneList != null && otherList == null) return false;
+
                 if (oneList.Count() != otherList.Count()) return false;
                 foreach (var item in oneList)
                 {

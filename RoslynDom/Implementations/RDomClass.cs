@@ -20,7 +20,7 @@ namespace RoslynDom
         internal RDomClass(RDomClass oldRDom)
            : base(oldRDom)
         {
-            BaseType = oldRDom.BaseType.Copy();
+            if (oldRDom.BaseType != null) { BaseType = oldRDom.BaseType.Copy(); }
             IsAbstract = oldRDom.IsAbstract;
             IsSealed = oldRDom.IsSealed;
             IsStatic = oldRDom.IsStatic;
@@ -58,13 +58,7 @@ namespace RoslynDom
         public IReferencedType BaseType { get; set; }
 
         public IEnumerable<IConstructor> Constructors
-        {  get { return Members.OfType<IConstructor>(); } }
-
-        public IEnumerable<IReferencedType> ImplementedInterfaces
-        { get { return this.ImpementedInterfacesFrom(false); } }
-
-        public IEnumerable<IReferencedType> AllImplementedInterfaces
-        { get { return this.ImpementedInterfacesFrom(true); } }
+        { get { return Members.OfType<IConstructor>(); } }
 
         public string ClassName { get { return this.Name; } }
     }

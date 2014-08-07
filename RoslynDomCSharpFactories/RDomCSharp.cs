@@ -176,7 +176,7 @@ namespace RoslynDom.CSharp
             var item = child as IRoslynDom;
             if (item == null) return;
             // Eventually flesh this out to all trivia types
-            foreach (var ws in item.TokenWhitespaceList)
+            foreach (var ws in item.TokenWhitespaceSet.TokenWhitespaceList )
             {
                 sb.AppendLine(indent + "- WS - " + ws.Token.ToString() + " - Leading='" + ws.LeadingWhitespace.Normalize() + "'; Trailing='" + ws.TrailingWhitespace.Normalize() + "'");
             }

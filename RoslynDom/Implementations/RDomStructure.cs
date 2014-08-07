@@ -39,10 +39,5 @@ namespace RoslynDom
         public IEnumerable<IConstructor> Constructors
         { get { return Members.OfType<IConstructor>(); } }
 
-        public IEnumerable<IReferencedType> ImplementedInterfaces
-        { get { return this.ImpementedInterfacesFrom(false); } }
-
-        public IEnumerable<IReferencedType> AllImplementedInterfaces
-        { get { return this.ImpementedInterfacesFrom(true); } }
-    }
+      }
 }

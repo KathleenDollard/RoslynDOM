@@ -5,59 +5,80 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public abstract class TokenWhitespace
+    public class TokenWhitespaceSet
+    {
+        private List<TokenWhitespace> _tokenTrivia = new List<TokenWhitespace>();
+
+        public TokenWhitespaceSet(bool includeLeadingTrailing)
+        { IncludeLeadingTrailing = includeLeadingTrailing;     }
+
+      /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldTokenWS"></param>
+        /// <remarks>
+        /// This hijacks an idea from IDom functionality, but is not itself an IDom object (and should not be as it is implementation detail)
+        /// </remarks>  
+        private TokenWhitespaceSet(TokenWhitespaceSet oldTokenWS)
+        {
+            var whitespace = RoslynDomUtilities.CopyMembers(oldTokenWS._tokenTrivia);
+            _tokenTrivia.AddRange(whitespace);
+
+            IncludeLeadingTrailing = oldTokenWS.IncludeLeadingTrailing;
+            LeadingWhitespace = oldTokenWS.LeadingWhitespace;
+            TrailingWhitespace = oldTokenWS.TrailingWhitespace;
+        }
+
+        public TokenWhitespaceSet Copy()
+        {
+            return new TokenWhitespaceSet(this);
+        }
+
+  
+        public string LeadingWhitespace { get; set; }
+        public string TrailingWhitespace { get; set; }
+        public bool IncludeLeadingTrailing { get; set; }
+
+        public List<TokenWhitespace> TokenWhitespaceList
+        { get { return _tokenTrivia; } }
+    }
+
+    public class TokenWhitespace
     {
 
         public TokenWhitespace(SyntaxToken token, string leadingWhitespace, string trailingWhitespace)
         {
             Token = token;
-            LeadingWhitespace = leadingWhitespace;
-            TrailingWhitespace = trailingWhitespace;
+            LeadingWhitespace = leadingWhitespace == null ? "" : leadingWhitespace;
+            TrailingWhitespace = trailingWhitespace == null ? "" : trailingWhitespace;
         }
+
 
         public TokenWhitespace(SyntaxToken token)
         {
-            Token= token;
+            Token = token;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldTokenWS"></param>
+        /// <remarks>
+        /// This hijacks some IDom functionality, but is not itself an IDom object (and should not be as it is implementation detail)
+        /// </remarks>  
+        public TokenWhitespace(TokenWhitespace oldTokenWS)
+        {
+            Token = oldTokenWS.Token;
+            this.LeadingWhitespace = oldTokenWS.LeadingWhitespace;
+            this.TrailingWhitespace = oldTokenWS.TrailingWhitespace;
+        }
         public SyntaxToken Token { get; private set; }
-        public string LeadingWhitespace { get;  set; }
-        public string TrailingWhitespace { get;  set; }
+        public string LeadingWhitespace { get; set; }
+        public string TrailingWhitespace { get; set; }
     }
 
-    public class TokenWhitespace<TSyntaxNode> : TokenWhitespace
-        where TSyntaxNode : SyntaxNode 
-    {
-        public TokenWhitespace(SyntaxToken token, string leadingWhitespace, string trailingWhitespace,
-            Func<TSyntaxNode, SyntaxToken, TSyntaxNode> withDelegate)
-            : base(token, leadingWhitespace, trailingWhitespace)
-        {
-            WithDelegate = withDelegate;
-        }
-
-        public Func<TSyntaxNode, SyntaxToken, TSyntaxNode> WithDelegate { get; private set; }
-    }
-
-    public class TokenWhitespaceList<TSyntaxNode> : IEnumerable<TokenWhitespace>
-        where TSyntaxNode : SyntaxNode
-    {
-        private List<TokenWhitespace> _list = new List<TokenWhitespace>();
-
-        public TokenWhitespace this[int rawKind]
-        {
-            get { return _list.Where(x => x.Token.RawKind == rawKind).FirstOrDefault(); }
-        }
-
-        public IEnumerator<TokenWhitespace> GetEnumerator()
-        { return _list.GetEnumerator(); }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        { return GetEnumerator(); }
-
-        public void Add(TokenWhitespace<TSyntaxNode> item)
-        { _list.Add(item); }
-    }
 }

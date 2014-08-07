@@ -186,5 +186,31 @@ namespace RoslynDom.CSharp
             throw new InvalidOperationException();
         }
 
+
+        private static List<Tuple<SyntaxKind, Variance>> GenericVarianceMap = new List<Tuple<SyntaxKind, Variance>>()
+        {
+            Tuple.Create( SyntaxKind.InKeyword,     Variance.In),
+            Tuple.Create( SyntaxKind.OutKeyword,             Variance.Out)
+        };
+
+        public static Variance VarianceFromVarianceKind(SyntaxKind kind)
+        {
+            foreach (var tuple in GenericVarianceMap)
+            {
+                if (tuple.Item1 == kind) { return tuple.Item2; }
+            }
+            return Variance.None;
+        }
+
+        public static SyntaxKind VarianceKindFromVariance(Variance variance)
+        {
+           
+            foreach (var tuple in GenericVarianceMap)
+            {
+                if (tuple.Item2 == variance)
+                { return tuple.Item1; }
+            }
+            return SyntaxKind.None ;
+        }
     }
 }

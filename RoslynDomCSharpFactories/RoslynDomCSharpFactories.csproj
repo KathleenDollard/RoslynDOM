@@ -62,6 +62,7 @@
     <Compile Include="Factories\RDomOperatorFactory.cs" />
     <Compile Include="Factories\RDomConversionOperatorFactory.cs" />
     <Compile Include="Factories\RDomDestructorFactory.cs" />
+    <Compile Include="Factories\RDomTypeParameterFactory.cs" />
     <Compile Include="ICSharpCreateFromWorker.cs" />
     <Compile Include="BuildSyntaxWorker.cs" />
     <Compile Include="CommentWhiteFactory.cs" />
