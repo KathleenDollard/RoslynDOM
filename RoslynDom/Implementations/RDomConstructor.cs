@@ -30,6 +30,7 @@ namespace RoslynDom
 
             ConstructorInitializerType = oldRDom.ConstructorInitializerType;
             AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             IsStatic = oldRDom.IsStatic;
         }
 
@@ -72,6 +73,7 @@ namespace RoslynDom
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
+        public AccessModifier DeclaredAccessModifier { get; set; }
 
         public bool IsStatic { get; set; }
         public RDomList<IParameter> Parameters

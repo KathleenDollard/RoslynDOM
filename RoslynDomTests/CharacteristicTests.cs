@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using ApprovalTests;
+using ApprovalTests.StatePrinter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
 using RoslynDom.Common;
@@ -41,7 +43,7 @@ public string Bar;
             var field = root.Classes.First().Fields.First();
             var retType = field.ReturnType;
             Assert.IsNotNull(retType);
-            Assert.AreEqual("String", retType.Name, "Name");
+            Assert.AreEqual("string", retType.Name, "Name");
             Assert.AreEqual("System.String", retType.QualifiedName, "QualifiedName");
             Assert.AreEqual("String", retType.OuterName, "OuterName");
             Assert.AreEqual("System", retType.Namespace, "Namespace");
@@ -60,7 +62,7 @@ public int Bar{get;};
             var property = root.Classes.First().Properties.First();
             var retType = property.ReturnType;
             Assert.IsNotNull(retType);
-            Assert.AreEqual("Int32", retType.Name, "Name");
+            Assert.AreEqual("int", retType.Name, "Name");
             Assert.AreEqual("System.Int32", retType.QualifiedName, "QualifiedName");
             Assert.AreEqual("Int32", retType.OuterName, "OuterName");
             Assert.AreEqual("System", retType.Namespace, "Namespace");
@@ -293,9 +295,9 @@ public interface Foo1
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var members = root.Interfaces.First().Members.ToArray();
-            Assert.AreEqual(AccessModifier.Public, members[0].AccessModifier);
-            Assert.AreEqual(AccessModifier.Public, members[1].AccessModifier);
-            Assert.AreEqual(AccessModifier.Public, members[2].AccessModifier);
+            Assert.AreEqual(AccessModifier.None, members[0].AccessModifier);
+            Assert.AreEqual(AccessModifier.None, members[1].AccessModifier);
+            Assert.AreEqual(AccessModifier.None, members[2].AccessModifier);
         }
         #endregion
 
@@ -674,7 +676,7 @@ public enum Foo1 : byte {}
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var en = root.Enums.First();
-            Assert.AreEqual("Byte", en.UnderlyingType.Name);
+            Assert.AreEqual("byte", en.UnderlyingType.Name);
             Assert.AreEqual("System.Byte", en.UnderlyingType.QualifiedName);
 
         }
@@ -770,8 +772,7 @@ public class Foo2 : Foo1 {}
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var classes = root.Classes.ToArray();
-            Assert.IsNotNull(classes[0].BaseType);
-            Assert.AreEqual("System.Object", classes[0].BaseType.QualifiedName);
+            Assert.IsNull(classes[0].BaseType);
             Assert.IsNotNull(classes[1].BaseType);
             Assert.AreEqual("Foo1", classes[1].BaseType.QualifiedName);
 
@@ -793,22 +794,23 @@ public class Foo
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+           // StatePrinterApprovals.Verify(root);
             var methods = root.Classes.First().Methods.ToArray();
             Assert.AreEqual(0, methods[0].Parameters.Count());
             Assert.AreEqual(1, methods[1].Parameters.Count());
             Assert.AreEqual(2, methods[2].Parameters.Count());
             Assert.AreEqual(3, methods[3].Parameters.Count());
-            ParameterCheck(methods[1].Parameters.First(), 0, "i", "Int32");
-            ParameterCheck(methods[2].Parameters.First(), 0, "i", "Int32");
-            ParameterCheck(methods[2].Parameters.Last(), 1, "s", "String");
+            ParameterCheck(methods[1].Parameters.First(), 0, "i", "int");
+            ParameterCheck(methods[2].Parameters.First(), 0, "i", "int");
+            ParameterCheck(methods[2].Parameters.Last(), 1, "s", "string");
             var parameters = methods[3].Parameters.ToArray();
-            ParameterCheck(parameters[0], 0, "i", "Int32", isRef: true);
-            ParameterCheck(parameters[1], 1, "s", "String", isOut: true);
-            ParameterCheck(parameters[2], 2, "moreStrings", "String[]", isParamArray: true);
+            ParameterCheck(parameters[0], 0, "i", "int", isRef: true);
+            ParameterCheck(parameters[1], 1, "s", "string", isOut: true);
+            ParameterCheck(parameters[2], 2, "moreStrings", "string[]", isParamArray: true);
             parameters = methods[4].Parameters.ToArray();
             ParameterCheck(parameters[0], 0, "a", "A");
-            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true);
-            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true);
+            ParameterCheck(parameters[1], 1, "i", "int", isOptional: true);
+            ParameterCheck(parameters[2], 2, "s", "string", isOptional: true);
 
         }
 
@@ -823,7 +825,7 @@ public class Foo
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameter = root.Classes.First().Methods.First().Parameters.First();
-            ParameterCheck(parameter, 0, "moreStrings", "String[]", isParamArray: true);
+            ParameterCheck(parameter, 0, "moreStrings", "string[]", isParamArray: true);
 
         }
 
@@ -839,8 +841,8 @@ public static class Foo
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
             ParameterCheck(parameters[0], 0, "a", "A");
-            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true);
-            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true);
+            ParameterCheck(parameters[1], 1, "i", "int", isOptional: true);
+            ParameterCheck(parameters[2], 2, "s", "string", isOptional: true);
 
         }
 

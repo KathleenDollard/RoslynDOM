@@ -1,6 +1,9 @@
 ﻿using System.Linq;
+using ApprovalTests;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
+using RoslynDom.Common;
 using RoslynDom.CSharp;
 
 namespace RoslynDomTests
@@ -54,12 +57,12 @@ namespace RoslynDomTests
         public void Can_change_attribute_name_and_output()
         {
             var csharpCode = @"
-            [Foo(""Fred"", bar: 3, bar2 = 3.14, bar3=true)] 
+            [Foo(""Fred"", bar : 3, bar2 = 3.14, bar3=true)] 
             public class Bar
             {
-                public string FooBar() {}
-            }           
-            ";
+                public string FooBar()
+                {}
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var attribute1 = class1.Attributes.Attributes.First();
@@ -68,37 +71,35 @@ namespace RoslynDomTests
             attribute2.Name = "Foo2";
             Assert.IsFalse(attribute1.SameIntent(attribute2));
             Assert.AreEqual("Foo2", attribute2.Name);
-            // TODO: Fix ws bug that collapses ws around : and = in attributes. This test is hacked to fix
-            var expected = "\r\n            [Foo2(\"Fred\", bar:3, bar2=3.14, bar3=true)] \r\n";
+            var expected = "            [Foo2(\"Fred\", bar : 3, bar2 = 3.14, bar3=true)] \r\n";
             var actual = RDomCSharp.Factory.BuildSyntax(attribute2).ToFullString();
-            var expectedClass = "[Foo(\"Fred\", bar:3, bar2=3.14, bar3=true)]\r\npublic class Bar\r\n{\r\n    public String FooBar()\r\n    {\r\n    }\r\n}";
-            var actualClass = RDomCSharp.Factory.BuildSyntax(class1).ToFullString();
+            var syntax1 = RDomCSharp.Factory.BuildSyntax(class1);
+            var actualClass = syntax1.ToFullString();
             Assert.AreEqual(expected, actual);
-            Assert.AreEqual(expectedClass, actualClass);
+            Assert.AreEqual(csharpCode, actualClass);
         }
 
         [TestMethod, TestCategory(MutabilityCategory)]
         public void Can_change_class_name_and_output()
         {
-            var csharpCode = @"
-            [ Foo ( ""Fred"" , bar:3 , bar2=3.14 ) ] 
+            var csharpCode =
+@"            [ Foo ( ""Fred"" , bar:3 , bar2=3.14 ) ] 
             public class Bar
             {
                 [Bar(bar:42)] 
                 public string FooBar() {}
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var class2 = root.RootClasses.First().Copy() as RDomClass;
             Assert.IsTrue(class1.SameIntent(class2));
             class2.Name = "Bar2";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("class Bar", "class Bar2");
             Assert.IsFalse(class1.SameIntent(class2));
             Assert.AreEqual("Bar2", class2.Name);
             var origCode = RDomCSharp.Factory.BuildSyntax(class1).ToFullString();
             var newCode = RDomCSharp.Factory.BuildSyntax(class2).ToFullString();
-            var expected = "[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}";
-            Assert.AreEqual(expected, newCode);
+            Assert.AreEqual(csharpCodeChanged, newCode);
         }
 
         [TestMethod, TestCategory(MutabilityCategory)]
@@ -116,12 +117,14 @@ namespace RoslynDomTests
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var class1 = root.RootClasses.First();
             var class2 = root.RootClasses.First().Copy() as RDomClass;
+            var newCode = RDomCSharp.Factory.BuildSyntax(class2).ToFullString();
             Assert.IsTrue(class1.SameIntent(class2));
             class2.Name = "Bar2";
             Assert.IsFalse(class1.SameIntent(class2));
             Assert.AreEqual("Bar2", class2.Name);
-            var newCode = RDomCSharp.Factory.BuildSyntax(class2).ToString();
-            Assert.AreEqual("[Foo(\"Fred\", bar: 3, bar2 = 3.14)]\r\npublic class Bar2\r\n{\r\n    private Int32 fooish;\r\n\r\n    [Bar(bar: 42)]\r\n    public String FooBar()\r\n    {\r\n    }\r\n}", newCode);
+            newCode = RDomCSharp.Factory.BuildSyntax(class2).ToFullString();
+            var expected = "            [Foo(\"Fred\", bar:3, bar2=3.14)] \r\n            public class Bar2<T>\r\n            {\r\n                private int fooish;\r\n                [Bar( bar:42)] \r\n                public string FooBar() {}\r\n            }           \r\n";
+            Assert.AreEqual(expected , newCode);
         }
 
         [TestMethod, TestCategory(MutabilityCategory)]
@@ -246,12 +249,10 @@ namespace RoslynDomTests
             public class Bar{}           
             public struct Bar2{}           
             public enum Bar3{}           
-            public interface Bar4{}           
-            ";
+            public interface Bar4{}";
             var rDomRoot = RDomCSharp.Factory.GetRootFromString(csharpCode) as RDomRoot;
             var output = RDomCSharp.Factory .BuildSyntax(rDomRoot);
-            var expectedCode = "\r\n            using System;\r\n            using System.Data;\r\n            public class Bar{}           \r\n            public struct Bar2{}           \r\n            public enum Bar3{}           \r\n            public interface Bar4{}           \r\n";
-            Assert.AreEqual(expectedCode,output.ToFullString() );
+            Assert.AreEqual(csharpCode, output.ToFullString() );
         }
         #endregion
     }

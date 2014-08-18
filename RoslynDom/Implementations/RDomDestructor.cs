@@ -70,13 +70,21 @@ namespace RoslynDom
             }
         }
 
+        public AccessModifier DeclaredAccessModifier
+        {
+            get
+            { return AccessModifier; }
+            set
+            {  // noop 
+            }
+        }
         public RDomList<IParameter> Parameters
         { get { return _parameters; } }
 
         public RDomList<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
-        public IEnumerable <IStatement> Statements
+        public IEnumerable<IStatement> Statements
         { get { return _statements.OfType<IStatement>().ToList(); } }
 
         public bool HasBlock

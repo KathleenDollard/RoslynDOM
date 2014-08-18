@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ApprovalTests;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
@@ -259,12 +260,18 @@ namespace RoslynDomTests
             }
 
             ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
             var csharpCodeChanged = csharpCode.ReplaceFirst(@"string bar, int bar2", @"int bar2, string bar");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+      
+        }
+
+        private void AssertSameIntent(bool shouldMatch, string a, string b)
+        {
+            var root1 = RDomCSharp.Factory.GetRootFromString(a);
+            Assert.IsTrue(root1.SameIntent(root1.Copy()), "a =" + a);
+            var root2 = RDomCSharp.Factory.GetRootFromString(b);
+            Assert.IsTrue(root2.SameIntent(root2.Copy()), "b = " + b);
+            Assert.AreEqual(shouldMatch, root1.SameIntent(root2), string.Format("{0} \r\n ----------- \r\n{1}", a, b));
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]

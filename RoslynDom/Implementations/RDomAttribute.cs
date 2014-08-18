@@ -13,8 +13,7 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         { }
 
-        internal RDomAttribute(
-            RDomAttribute oldRDom)
+        internal RDomAttribute(RDomAttribute oldRDom)
             : base(oldRDom)
         {
             var newAttributeValues = RoslynDomUtilities.CopyMembers(oldRDom._attributeValues);
@@ -23,7 +22,6 @@ namespace RoslynDom
         }
 
         public string Name { get; set; }
-
 
         public string OuterName
         { get { return RoslynUtilities.GetOuterName(this); } }

@@ -1,6 +1,6 @@
 namespace RoslynDom.Common
 {
-    public interface IEnumValue : IDom<IEnumValue >, IHasAttributes , IHasName
+    public interface IEnumMember : IDom<IEnumMember >, IHasAttributes , IHasName, IMisc
     {
         IExpression Expression { get; set; }
     }

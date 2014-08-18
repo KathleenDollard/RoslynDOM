@@ -12,10 +12,28 @@ namespace RoslynDom.CSharp
     public class RDomNamespaceStemMemberFactory
            : RDomStemMemberFactory<RDomNamespace, NamespaceDeclarationSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomNamespaceStemMemberFactory(RDomCorporation corporation)
          : base(corporation)
         { }
 
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+            if (_whitespaceLookup == null)
+            {
+                _whitespaceLookup = new WhitespaceKindLookup();
+                _whitespaceLookup.Add(LanguageElement.NamespaceKeyword, SyntaxKind.NamespaceKeyword);
+                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                _whitespaceLookup.Add(LanguageElement.NamespaceStartDelimiter, SyntaxKind.OpenBraceToken);
+                _whitespaceLookup.Add(LanguageElement.NamespaceEndDelimiter, SyntaxKind.CloseBraceToken);
+                _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
         protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as NamespaceDeclarationSyntax;
@@ -29,6 +47,7 @@ namespace RoslynDom.CSharp
             {
                 var newItem = new RDomNamespace(syntaxNode, parent, model, name, group);
                 CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+                CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
                 // At this point, item is the last newItem
                 if (item != null) item.StemMembersAll.AddOrMove(newItem);
@@ -47,12 +66,15 @@ namespace RoslynDom.CSharp
             // The inner holds the children, the outer is returned.  
             return outerNamespace;
         }
+
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsNamespace = item as INamespace;
             var identifier = SyntaxFactory.IdentifierName(itemAsNamespace.Name);
             var node = SyntaxFactory.NamespaceDeclaration(identifier);
                         Guardian.Assert.IsNotNull(itemAsNamespace, nameof(itemAsNamespace));
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsNamespace.Whitespace2Set, WhitespaceLookup);
+
             var usingsSyntax = itemAsNamespace.UsingDirectives
                         .Select(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .OfType<UsingDirectiveSyntax>()

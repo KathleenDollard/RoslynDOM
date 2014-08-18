@@ -11,15 +11,31 @@ namespace RoslynDom.CSharp
     public class RDomTryStatementFactory
          : RDomStatementFactory<RDomTryStatement, TryStatementSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomTryStatementFactory(RDomCorporation corporation)
             : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as TryStatementSyntax;
             var newItem = new RDomTryStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.InitializeStatements(newItem, syntax.Block, newItem, model);
             var catchSyntaxList = syntax.ChildNodes()
                                     .Where(x => x.CSharpKind() == SyntaxKind.CatchClause)
@@ -101,6 +117,7 @@ namespace RoslynDom.CSharp
                      .WithFinally(fnally)
                      .WithBlock(block);
 
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
 

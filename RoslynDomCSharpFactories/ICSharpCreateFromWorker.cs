@@ -37,5 +37,12 @@ namespace RoslynDom.CSharp
         //           Func<TSyntaxNode, SyntaxToken, TSyntaxNode> withDelegate)
         //           where TSyntaxNode : SyntaxNode;
 
+        void StoreWhitespace(IDom newItem, SyntaxNode syntaxNode, LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup);
+
+        void StoreWhitespaceForToken(IDom newItem, SyntaxToken token, LanguagePart languagePart, LanguageElement languageElement);
+
+        void StoreWhitespaceForFirstAndLastToken(IDom newItem, SyntaxNode node,
+             LanguagePart languagePart,
+             LanguageElement languageElement);
     }
 }

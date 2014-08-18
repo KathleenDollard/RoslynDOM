@@ -15,6 +15,7 @@ namespace RoslynDom.CSharp
     public class StructuredDocumentationFactory
                 : RDomMiscFactory<IStructuredDocumentation, SyntaxNode>
     {
+
         public StructuredDocumentationFactory(RDomCorporation corporation)
             : base(corporation)
         { }
@@ -48,8 +49,8 @@ namespace RoslynDom.CSharp
                     newItem.Document = docString;
                 }
             }
- 
-            return newItem ;
+
+            return newItem;
         }
 
         [ExcludeFromCodeCoverage]

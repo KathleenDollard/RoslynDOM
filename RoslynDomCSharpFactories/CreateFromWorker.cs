@@ -79,6 +79,25 @@ namespace RoslynDom.CSharp
 
             var accessibility = itemAsHasSymbol.Symbol.DeclaredAccessibility;
             itemHasAccessModifier.AccessModifier = Mappings.AccessModifierFromAccessibility(accessibility);
+            var tokens = syntaxNode.ChildTokens();
+            if (tokens.Any(x => x.CSharpKind() == SyntaxKind.PublicKeyword))
+            { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Public; }
+            else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.PrivateKeyword))
+            { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Private; }
+            else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.ProtectedKeyword && x.CSharpKind() == SyntaxKind.InternalKeyword))
+            { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.ProtectedOrInternal; }
+            else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.ProtectedKeyword))
+            { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Protected; }
+            else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.InternalKeyword))
+            { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Internal; }
+            else
+            { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.None; }
+        }
+
+        public void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        {
+            var publicAnnotations = GetPublicAnnotations(syntaxNode, item, model);
+            item.PublicAnnotations.Add(publicAnnotations);
         }
 
         private void InitializeAttributes(IHasAttributes itemAsHasAttributes, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -116,13 +135,13 @@ namespace RoslynDom.CSharp
 
             var symbol = ((IRoslynHasSymbol)itemAsT).Symbol as INamedTypeSymbol;
             var interfaces = symbol.Interfaces;
+            var baseType = symbol.BaseType;
             var baseList = node.ChildNodes().OfType<BaseListSyntax>().SingleOrDefault();
             if (baseList != null)
             {
                 IEnumerable<TypeSyntax> types = baseList.Types;
-                if (node is ClassDeclarationSyntax)
+                if (node is ClassDeclarationSyntax && baseType.Name == types.First().ToString())
                 {
-                    // TODO: Manage base here?
                     types = types.Skip(1);
                 }
                 foreach (var b in types)
@@ -159,13 +178,7 @@ namespace RoslynDom.CSharp
             item.IsStatic = itemAsDom.Symbol.IsStatic;
         }
 
-        private void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            var publicAnnotations = GetPublicAnnotations(syntaxNode, item, model);
-            item.PublicAnnotations.Add(publicAnnotations);
-        }
-
-        private void InitializeStructuredDocumentation(IHasStructuredDocumentation item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+         private void InitializeStructuredDocumentation(IHasStructuredDocumentation item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             if (item == null) return;
             var structuredDocumentation = GetStructuredDocumenation(syntaxNode, item, model).FirstOrDefault();
@@ -189,93 +202,155 @@ namespace RoslynDom.CSharp
                 newItem.TokenWhitespaceSet.LeadingWhitespace = whitespace.LeadingWhitespace;
                 newItem.TokenWhitespaceSet.TrailingWhitespace = whitespace.TrailingWhitespace;
             }
-
-
-            //var firstToken = syntaxNode.DescendantTokens().First();
-            //var lastToken = syntaxNode.DescendantTokens().Last();
-            //foreach (var token in syntaxNode.ChildTokens())
-            //{
-            //    // First and last whitespace are handled special because same whitespace appears at beginning 
-            //    // and end regardless of whether the same tokens appear. But this needs to be turned off 
-            //    // for statement blocks
-            //    if (includeLeadingTrailing && (token == firstToken && token == lastToken)) continue;
-            //    if (includeLeadingTrailing && token == firstToken)
-            //    {   // just add last token
-            //        var newTokenWhitespace = new TokenWhitespace(token, null,
-            //            GetWhitespaceString(token.TrailingTrivia, false));
-            //        newItem.TokenWhitespaceList.Add(newTokenWhitespace);
-            //    }
-            //    else if (includeLeadingTrailing && token == lastToken)
-            //    {   // just add last token
-            //        var newTokenWhitespace = new TokenWhitespace(token,
-            //            GetWhitespaceString(token.LeadingTrivia, false), null);
-            //        newItem.TokenWhitespaceList.Add(newTokenWhitespace);
-            //    }
-            //    else
-            //    {
-            //        var newTokenWhitespace = new TokenWhitespace(token,
-            //            GetWhitespaceString(token.LeadingTrivia, false),
-            //            GetWhitespaceString(token.TrailingTrivia, false));
-            //        newItem.TokenWhitespaceList.Add(newTokenWhitespace);
-            //    }
-            //}
-            //if (includeLeadingTrailing)
-            //{
-            //    newItem.LeadingWhitespace = GetWhitespaceString(firstToken.LeadingTrivia, true);
-            //    newItem.TrailingWhitespace = GetWhitespaceString(lastToken.TrailingTrivia, false);
-            //}
         }
+
+        //public TokenWhitespaceSet GetWhitespaceSet(SyntaxNode syntaxNode, bool includeLeadingTrailing)
+        //{
+        //    var set = new TokenWhitespaceSet(includeLeadingTrailing);
+        //    var firstToken = syntaxNode.DescendantTokens().First();
+        //    var lastToken = syntaxNode.DescendantTokens().Last();
+        //    foreach (var token in syntaxNode.ChildTokens())
+        //    {
+        //        // First and last whitespace are handled special because same whitespace appears at beginning 
+        //        // and end regardless of whether the same tokens appear. But this needs to be turned off 
+        //        // for statement blocks
+        //        if (includeLeadingTrailing && (token == firstToken && token == lastToken)) continue;
+        //        if (includeLeadingTrailing && token == firstToken)
+        //        {   // just add last token
+        //            set.TokenWhitespaceList.Add(new TokenWhitespace(token, null,
+        //                GetWhitespaceString(token.TrailingTrivia, false)));
+        //        }
+        //        else if (includeLeadingTrailing && token == lastToken)
+        //        {   // just add last token
+        //            set.TokenWhitespaceList.Add(new TokenWhitespace(token,
+        //                GetWhitespaceString(token.LeadingTrivia, false), null));
+        //        }
+        //        else
+        //        {
+        //            set.TokenWhitespaceList.Add(new TokenWhitespace(token,
+        //                GetWhitespaceString(token.LeadingTrivia, false),
+        //                GetWhitespaceString(token.TrailingTrivia, false)));
+        //        }
+        //    }
+        //    if (includeLeadingTrailing)
+        //    {
+        //        if (firstToken.HasLeadingTrivia)
+        //        { set.LeadingWhitespace = GetWhitespaceString(firstToken.LeadingTrivia, true); }
+        //        else
+        //        {
+        //            // If there is a previous token, 
+        //            var prevToken = syntaxNode
+        //                            .Parent
+        //                            .ChildNodesAndTokens()
+        //                            .PreviousSiblings(syntaxNode)
+        //                            .LastOrDefault();
+        //            if (prevToken != null && prevToken.IsToken)
+        //            {
+        //                set.LeadingWhitespace = GetWhitespaceString(
+        //                        prevToken.AsToken().TrailingTrivia
+        //                        , true);
+        //            }
+        //        }
+        //        set.TrailingWhitespace = GetWhitespaceString(lastToken.TrailingTrivia, false);
+        //    }
+        //    return set;
+        //}
 
         public TokenWhitespaceSet GetWhitespaceSet(SyntaxNode syntaxNode, bool includeLeadingTrailing)
         {
-            var set = new TokenWhitespaceSet(includeLeadingTrailing);
-            var firstToken = syntaxNode.DescendantTokens().First();
-            var lastToken = syntaxNode.DescendantTokens().Last();
-            foreach (var token in syntaxNode.ChildTokens())
+            var set = new TokenWhitespaceSet(false);
+            //var firstToken = syntaxNode.DescendantTokens().First();
+            //var lastToken = syntaxNode.DescendantTokens().Last();
+            var nodeLeadingWS = syntaxNode
+                            .GetLeadingTrivia()
+                            .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia);
+            var nodeTrailingWS = syntaxNode
+                            .GetTrailingTrivia()
+                            .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia);
+            foreach (var nodeOrToken in syntaxNode.ChildNodesAndTokens())
             {
-                // First and last whitespace are handled special because same whitespace appears at beginning 
-                // and end regardless of whether the same tokens appear. But this needs to be turned off 
-                // for statement blocks
-                if (includeLeadingTrailing && (token == firstToken && token == lastToken)) continue;
-                if (includeLeadingTrailing && token == firstToken)
-                {   // just add last token
-                    set.TokenWhitespaceList.Add(new TokenWhitespace(token, null,
-                        GetWhitespaceString(token.TrailingTrivia, false)));
-                }
-                else if (includeLeadingTrailing && token == lastToken)
-                {   // just add last token
-                    set.TokenWhitespaceList.Add(new TokenWhitespace(token,
-                        GetWhitespaceString(token.LeadingTrivia, false), null));
-                }
+                var leadingWS = "";
+                if (nodeOrToken != syntaxNode.ChildNodesAndTokens().First()
+                    || nodeOrToken.HasLeadingTrivia)
+                { leadingWS = GetWhitespaceString(nodeOrToken.GetLeadingTrivia(), true); }
                 else
-                {
-                    set.TokenWhitespaceList.Add(new TokenWhitespace(token,
-                        GetWhitespaceString(token.LeadingTrivia, false),
-                        GetWhitespaceString(token.TrailingTrivia, false)));
-                }
-            }
-            if (includeLeadingTrailing)
-            {
-                if (firstToken.HasLeadingTrivia)
-                { set.LeadingWhitespace = GetWhitespaceString(firstToken.LeadingTrivia, true); }
+                { leadingWS = SpecialLeadingWhitespace(syntaxNode, nodeLeadingWS); }
+
+                var trailingWS = "";
+                if (nodeOrToken != syntaxNode.ChildNodesAndTokens().Last()
+                    || nodeOrToken.HasTrailingTrivia)
+                { trailingWS = GetWhitespaceString(nodeOrToken.GetTrailingTrivia(), false); }
                 else
-                {
-                    // If there is a previous token, 
-                    var prevToken = syntaxNode
-                                    .Parent
-                                    .ChildNodesAndTokens()
-                                    .PreviousSiblings(syntaxNode)
-                                    .LastOrDefault();
-                    if (prevToken != null && prevToken.IsToken)
-                    {
-                        set.LeadingWhitespace = GetWhitespaceString(
-                                prevToken.AsToken().TrailingTrivia
-                                , true);
-                    }
-                }
-                set.TrailingWhitespace = GetWhitespaceString(lastToken.TrailingTrivia, false);
+                { trailingWS = SpecialTrailingWhitespace(syntaxNode, nodeTrailingWS); }
+
+                set.TokenWhitespaceList.Add(new TokenWhitespace(nodeOrToken,
+                    leadingWS, trailingWS));
             }
+
+
+            // TODO: Expect to remove any leading or multiple trailing EOL so that they can be stand alone whitespace. This will not ocdur on nested elements so is problematic
             return set;
+        }
+
+        private string SpecialLeadingWhitespace(SyntaxNode syntaxNode, IEnumerable<SyntaxTrivia> nodeLeadingWS)
+        {
+            var leadingWS = "";
+            if (nodeLeadingWS.Any())
+            {
+                leadingWS = String.Join("",
+                                nodeLeadingWS
+                                    .Select(x => x.ToFullString()));
+            }
+            else
+            {
+                // If there is a previous token, 
+                var parentNodesAndTokens = syntaxNode
+                                .Parent
+                                .ChildNodesAndTokens();
+                var prevNodeOrToken = parentNodesAndTokens
+                                .PreviousSiblings(syntaxNode)
+                                .LastOrDefault();
+                if (prevNodeOrToken != null && IsPunctuation(prevNodeOrToken))
+                {
+                    leadingWS = GetWhitespaceString(
+                            prevNodeOrToken.AsToken().TrailingTrivia
+                            , true);
+                }
+            }
+            return leadingWS;
+        }
+
+        private string SpecialTrailingWhitespace(SyntaxNode syntaxNode, IEnumerable<SyntaxTrivia> nodeTrailingWS)
+        {
+            var trailingWS = "";
+            if (nodeTrailingWS.Any())
+            {
+                trailingWS = String.Join("",
+                                nodeTrailingWS
+                                    .Select(x => x.ToFullString()));
+            }
+            else
+            {
+                // If there is a previous token, 
+                var parentNodesAndTokens = syntaxNode
+                                .Parent
+                                .ChildNodesAndTokens();
+                var nextNodeOrToken = parentNodesAndTokens
+                                .FollowingSiblings(syntaxNode)
+                                .FirstOrDefault();
+                if (nextNodeOrToken != null && IsPunctuation(nextNodeOrToken))
+                {
+                    trailingWS = GetWhitespaceString(
+                            nextNodeOrToken.AsToken().LeadingTrivia
+                            , true);
+                }
+            }
+            return trailingWS;
+        }
+
+        private bool IsPunctuation(SyntaxNodeOrToken nextNodeOrToken)
+        {
+            return (",.{}]();".Contains(nextNodeOrToken.ToString().Trim()));
         }
 
         public string GetWhitespaceString(SyntaxTriviaList triviaList, bool removeEol)
@@ -289,7 +364,7 @@ namespace RoslynDom.CSharp
                 var list = new List<SyntaxTrivia>();
                 foreach (var item in wsTrivia)
                 {
-                    if (item.CSharpKind() == SyntaxKind.EndOfLineTrivia) // empty the list and start over
+                    if (item.CSharpKind() == SyntaxKind.EndOfLineTrivia) // empty the list and start over, but don't record in leading
                     { list = new List<SyntaxTrivia>(); }
                     else { list.Add(item); }
                 }
@@ -338,6 +413,117 @@ namespace RoslynDom.CSharp
             Guardian.Assert.IsNotNull(ret, nameof(ret));
             return new List<TKind>() { };
         }
+
+        //public void StoreWhitespace(IDom newItem, SyntaxNode syntaxNode, LanguagePart languagePart, IEnumerable<Tuple<LanguageElement, SyntaxKind>> whitespaceLookup)
+        //{
+        //    foreach (var tuple in whitespaceLookup)
+        //    {
+        //        StoreWhitespaceItem(newItem, syntaxNode, languagePart, tuple.Item1, tuple.Item2);
+        //    }
+        //}
+
+        //private void StoreWhitespaceItem(IDom newItem, SyntaxNode syntaxNode, 
+        //        LanguagePart languagePart, LanguageElement languageElement, SyntaxKind kind)
+        //{
+        //    var tokens = syntaxNode.ChildTokens().Where(x => x.CSharpKind() == kind);
+        //    if (tokens.Any())
+        //    {
+        //        var token = tokens.Single();
+        //        var newWS = new Whitespace2(languagePart, languageElement);
+        //        newWS.LeadingWhitespace = token.LeadingTrivia
+        //                                    .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia)
+        //                                    .Select(x => x.ToString())
+        //                                    .JoinString();
+        //        newWS.TrailingWhitespace = token.TrailingTrivia
+        //                                    .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia
+        //                                            || x.CSharpKind() == SyntaxKind.EndOfLineTrivia)
+        //                                    .Select(x => x.ToString())
+        //                                    .JoinString();
+        //        // TODO: Add EOL comments here
+        //        newItem.Whitespace2Set[languageElement] = newWS;
+        //    }
+
+        public void StoreWhitespace(IDom newItem, SyntaxNode syntaxNode, LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup)
+        {
+            if (syntaxNode == null) return;
+
+            // For now, all expressions are held as strings, so we just care about first/last
+            var nodeAsExpressionSyntax = syntaxNode as ExpressionSyntax;
+            if (nodeAsExpressionSyntax is ExpressionSyntax)
+            {
+                StoreWhitespaceForExpression(newItem, nodeAsExpressionSyntax, languagePart);
+                return;
+            }
+
+            var lookForIdentifier = whitespaceLookup.Lookup(LanguageElement.Identifier) != SyntaxKind.None;
+            lookForIdentifier = StoreWhitespaceForChildren(newItem, syntaxNode,
+                                    languagePart, whitespaceLookup, lookForIdentifier);
+            if (lookForIdentifier)
+            { StoreWhitespaceForIdentifierNode(newItem, syntaxNode, languagePart); }
+        }
+
+        private void StoreWhitespaceForExpression(IDom newItem, ExpressionSyntax syntaxNode,
+               LanguagePart languagePart)
+        {
+                StoreWhitespaceForFirstAndLastToken(newItem, syntaxNode,
+                        languagePart, LanguageElement.Expression );
+        }
+
+        private void StoreWhitespaceForIdentifierNode(IDom newItem, SyntaxNode syntaxNode,
+                    LanguagePart languagePart)
+        {
+            // assume if it was a token we already found it
+            var idNode = syntaxNode.ChildNodes().OfType<NameSyntax>().FirstOrDefault();
+            if (idNode != null)
+            {
+                StoreWhitespaceForFirstAndLastToken(newItem, idNode,
+                        languagePart, LanguageElement.Identifier);
+            }
+        }
+
+        private bool StoreWhitespaceForChildren(IDom newItem, SyntaxNode syntaxNode,
+                    LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup, bool lookForIdentifier)
+        {
+            foreach (var token in syntaxNode.ChildTokens())
+            {
+                var kind = token.CSharpKind();
+                var languageElement = whitespaceLookup.Lookup(kind);
+                if (languageElement == LanguageElement.Identifier)
+                { lookForIdentifier = false; }
+                if (languageElement != LanguageElement.NotApplicable)
+                { StoreWhitespaceForToken(newItem, token, languagePart, languageElement); }
+            }
+
+            return lookForIdentifier;
+        }
+
+        public void StoreWhitespaceForToken(IDom newItem, SyntaxToken token,
+                    LanguagePart languagePart, LanguageElement languageElement)
+        {
+            var newWS = new Whitespace2(LanguagePart.Current, languageElement);
+            newWS.LeadingWhitespace = token.LeadingTrivia
+                                        .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia)
+                                        .Select(x => x.ToString())
+                                        .JoinString();
+            newWS.TrailingWhitespace = token.TrailingTrivia
+                                        .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia
+                                                || x.CSharpKind() == SyntaxKind.EndOfLineTrivia)
+                                        .Select(x => x.ToString())
+                                        .JoinString();
+            // TODO: Add EOL comments here
+            newItem.Whitespace2Set[languageElement] = newWS;
+        }
+
+        public void StoreWhitespaceForFirstAndLastToken(IDom newItem, SyntaxNode node,
+                LanguagePart languagePart, 
+                LanguageElement languageElement)
+
+
+        {
+            StoreWhitespaceForToken(newItem, node.GetFirstToken(), languagePart, languageElement);
+            StoreWhitespaceForToken(newItem, node.GetLastToken(), languagePart, languageElement);
+        }
+
 
 
         //public TokenWhitespace MakeTokenWhitespace<TSyntaxNode>(SyntaxToken token,

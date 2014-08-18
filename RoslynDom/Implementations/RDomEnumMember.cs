@@ -5,15 +5,15 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    public class RDomEnumValue : RDomBase<IEnumValue, ISymbol>, IEnumValue
+    public class RDomEnumMember : RDomBase<IEnumMember, ISymbol>, IEnumMember
     {
         private AttributeList _attributes = new AttributeList();
 
-        public RDomEnumValue(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        public RDomEnumMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
-        internal RDomEnumValue(RDomEnumValue oldRDom)
+        internal RDomEnumMember(RDomEnumMember oldRDom)
              : base(oldRDom)
         {
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));

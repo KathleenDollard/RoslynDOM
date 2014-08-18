@@ -2,7 +2,7 @@
 {
     public enum AccessModifier
     {
-        NotApplicable = 0,
+        None = 0,
         Private,
         ProtectedAndInternal,
         ProtectedAndFriend = 2,

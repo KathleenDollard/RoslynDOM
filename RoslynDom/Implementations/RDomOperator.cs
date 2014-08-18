@@ -26,6 +26,7 @@ namespace RoslynDom
             StatementsAll.AddOrMoveRange(newStatements);
             IsStatic = oldRDom.IsStatic;
             AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             Operator = oldRDom.Operator;
         }
 
@@ -65,6 +66,7 @@ namespace RoslynDom
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
+        public AccessModifier DeclaredAccessModifier { get; set; }
 
         public Operator Operator { get; set; }
         public IReferencedType Type { get; set; }

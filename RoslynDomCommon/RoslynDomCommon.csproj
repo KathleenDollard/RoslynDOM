@@ -68,12 +68,15 @@
     <Compile Include="CharacteristicInterfaces\ISupportsSameIntent.cs" />
     <Compile Include="Enums\ConstructorInitializerType.cs" />
     <Compile Include="Enums\ExpressionType.cs" />
+    <Compile Include="Enums\LanguageElement.cs" />
+    <Compile Include="Enums\LanguagePart.cs" />
     <Compile Include="Enums\LiteralKind.cs" />
     <Compile Include="Enums\AssignmentOperator.cs" />
     <Compile Include="Enums\Operator.cs" />
     <Compile Include="Enums\StatementKind.cs" />
     <Compile Include="Enums\MemberKind.cs" />
     <Compile Include="Enums\StemMemberKind.cs" />
+    <Compile Include="Enums\VariableKind.cs" />
     <Compile Include="Enums\Variance.cs" />
     <Compile Include="Enums\AccessModifier.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -143,6 +146,7 @@
     <Compile Include="RDomBase.cs" />
     <Compile Include="RDomList.cs" />
     <Compile Include="StandardSameIntent.cs" />
+    <Compile Include="Whitespace2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfaceCommonality.cd" />

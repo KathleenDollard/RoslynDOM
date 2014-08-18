@@ -32,7 +32,8 @@ namespace RoslynDom.CSharp
         }
 
         public static IEnumerable<SyntaxNode> BuildSyntax<T>
-            (T item, Func<ExpressionSyntax, StatementSyntax, SyntaxNode> makeSyntaxDelegate)
+            (T item, Func<ExpressionSyntax, StatementSyntax, SyntaxNode> makeSyntaxDelegate,
+            WhitespaceKindLookup whitespaceLookup)
             where T : ILoop<T>
         {
 
@@ -42,7 +43,7 @@ namespace RoslynDom.CSharp
             { node = SyntaxFactory.EmptyStatement(); }// This shold not happen 
             else
             {
-                var statement = RoslynCSharpUtilities.BuildStatement(item.Statements, item);
+                var statement = RoslynCSharpUtilities.BuildStatement(item.Statements, item, whitespaceLookup);
                 var condition = RDomCSharp.Factory.BuildSyntax(item.Condition);
                 node = makeSyntaxDelegate((ExpressionSyntax)condition, statement);
             }

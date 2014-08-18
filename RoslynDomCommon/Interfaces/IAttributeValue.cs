@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface IAttributeValue : IDom<IAttributeValue>, IHasName
+    public interface IAttributeValue : IDom<IAttributeValue>, IHasName, IMisc
     {
         LiteralKind ValueType { get; set; }
         object Value { get; set; }

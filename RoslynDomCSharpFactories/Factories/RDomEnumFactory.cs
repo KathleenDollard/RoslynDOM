@@ -15,11 +15,32 @@ namespace RoslynDom.CSharp
         [ExcludeFromCodeCoverage]
         private static string nameof<T>(T value) { return ""; }
 
-        public static RDomEnum CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICreateFromWorker createFromWorker, RDomCorporation corporation)
+        private static WhitespaceKindLookup _whitespaceLookup;
+
+        private static WhitespaceKindLookup whitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.EnumKeyword, SyntaxKind.EnumKeyword);
+                    _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.Add(LanguageElement.EnumValuesStartDelimiter, SyntaxKind.OpenBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.EnumValuesEndDelimiter, SyntaxKind.CloseBraceToken);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
+
+        public static RDomEnum CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
         {
             var syntax = syntaxNode as EnumDeclarationSyntax;
             var newItem = new RDomEnum(syntaxNode, parent, model);
             createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            createFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
 
             newItem.Name = newItem.TypedSymbol.Name;
 
@@ -39,34 +60,38 @@ namespace RoslynDom.CSharp
                 }
             }
 
-            foreach (var member in syntax.Members)
-            {
-                var newEnumValue = new RDomEnumValue(member, newItem, model);
-                createFromWorker.StandardInitialize(newEnumValue, member, newItem, model);
-                newEnumValue.Name = member.Identifier.ToString();
-                if (member.EqualsValue != null)
-                {
-                    newEnumValue.Expression = corporation.CreateFrom<IExpression>(member.EqualsValue.Value, newItem, model).FirstOrDefault();
-                }
-                newItem.Values.AddOrMove(newEnumValue);
-            }
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<IMisc>(x, newItem, model))
+                            .OfType<IEnumMember>();
+            newItem.Members.AddOrMoveRange(members);
 
             return newItem;
         }
 
+  
         public static IEnumerable<SyntaxNode> BuildSyntax(RDomEnum item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
         {
+            var itemAsT = item as IEnum;
+            Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
+
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
             var node = SyntaxFactory.EnumDeclaration(identifier)
                 .WithModifiers(modifiers);
+
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
-            var itemAsEnum = item as IEnum;
-            Guardian.Assert.IsNotNull(itemAsEnum, nameof(itemAsEnum));
 
-            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+            var memberList = itemAsT.Members
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                        .OfType<EnumMemberDeclarationSyntax>()
+                        .ToList();
+            if (memberList.Any())
+            {
+                var memberListSyntax = SyntaxFactory.SeparatedList(memberList);
+                node = node.WithMembers(memberListSyntax);
+            }
 
+            node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
     }

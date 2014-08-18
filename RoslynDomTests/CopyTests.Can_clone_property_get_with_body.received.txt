@@ -1,0 +1,9 @@
+﻿
+            public class Bar
+            {
+               private string firstName;
+               private string lastName;
+               public string Foo
+               { get {                  var x = ", ";                  var ret = lastName + x + firstName;                  return ret;
+}}
+            }

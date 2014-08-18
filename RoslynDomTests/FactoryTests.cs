@@ -98,11 +98,11 @@ namespace RoslynDomTests
             Assert.IsNull(RDomCSharp.Factory.BuildSyntax(null));
         }
 
-        [TestMethod, TestCategory(GeneralFactoryCategory)]
-        public void BuildSyntaxGroup_returns_empty_list_for_null()
-        {
-            Assert.IsFalse(RDomCSharp.Factory.BuildSyntaxGroup(null).Any());
-        }
+        //[TestMethod, TestCategory(GeneralFactoryCategory)]
+        //public void BuildSyntaxGroup_returns_empty_list_for_null()
+        //{
+        //    Assert.IsFalse(RDomCSharp.Factory.BuildSyntaxGroup(null).Any());
+        //}
 
 
         [TestMethod, TestCategory(GeneralFactoryCategory)]
@@ -198,6 +198,14 @@ namespace RoslynDomTests
             }
 
             public object RawItem
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public Whitespace2Set Whitespace2Set
             {
                 get
                 {
@@ -925,6 +933,7 @@ namespace Foo
             // Check output
             expected = "";
             var actual = RDomCSharp.Factory.BuildSyntax(root);
+            var actualCode = actual.ToFullString();
             Assert.AreEqual(expected, actual);
         }
         #endregion
@@ -983,9 +992,9 @@ namespace Foo
                         // Comment and whitespace
                         var xx = new String('a', 4);
                         ret = ""abc"" + Foo();
+                        // comment
                         if (!string.IsNullOrEmpty(firstName))
                         { ret = firstName + lastName; }
-                        // comment
                         var x = "", "";
                         uint y = 42;
                         x = lastName + x + firstName;

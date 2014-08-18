@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
@@ -52,6 +53,11 @@ namespace RoslynDom.Common
             var pos = input.LastIndexOf(delimiter, StringComparison.Ordinal);
             if (pos < 0) return "";
             return input.Substring(0, pos);
+        }
+
+        public static string JoinString(this IEnumerable<string> stringList)
+        {
+            return string.Join("", stringList);
         }
     }
 }

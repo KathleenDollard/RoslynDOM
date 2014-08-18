@@ -21,6 +21,7 @@ namespace RoslynDom
             Parameters.AddOrMoveRange(newParameters);
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             GetAccessor = oldRDom.GetAccessor == null ? null : oldRDom.GetAccessor.Copy();
             SetAccessor = oldRDom.SetAccessor == null ? null : oldRDom.SetAccessor.Copy();
             ReturnType = oldRDom.ReturnType;
@@ -81,6 +82,7 @@ namespace RoslynDom
         public IReferencedType PropertyType { get; set; }
 
         public AccessModifier AccessModifier { get; set; }
+        public AccessModifier DeclaredAccessModifier { get; set; }
         public IAccessor GetAccessor { get; set; }
         public IAccessor SetAccessor { get; set; }
 

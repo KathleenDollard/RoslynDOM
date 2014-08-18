@@ -12,15 +12,31 @@ namespace RoslynDom.CSharp
     public class RDomUsingStatementFactory
                 : RDomStatementFactory<RDomUsingStatement, UsingStatementSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomUsingStatementFactory(RDomCorporation corporation)
             : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as UsingStatementSyntax;
             var newItem = new RDomUsingStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             // if there is both a declaration and an expression, I'm terribly confused
             var declaration = syntax.Declaration;
             var expression = syntax.Expression;
@@ -47,7 +63,7 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IUsingStatement;
-            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT);
+            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup );
             var node = SyntaxFactory.UsingStatement(statement);
             if (itemAsT.Variable != null)
             {
@@ -71,6 +87,7 @@ namespace RoslynDom.CSharp
                 node = node.WithExpression(expressionSyntax);
             }
 
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
     }

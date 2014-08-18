@@ -11,9 +11,26 @@ namespace RoslynDom.CSharp
     public class RDomVariableDeclarationFactory
         : RDomMiscFactory<RDomVariableDeclaration, VariableDeclaratorSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomVariableDeclarationFactory(RDomCorporation corporation)
             : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.Add(LanguageElement.EqualsAssignmentOperator, SyntaxKind.EqualsToken);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
@@ -31,15 +48,17 @@ namespace RoslynDom.CSharp
             var rawCatchDeclaration = syntaxNode as CatchDeclarationSyntax;
             if (rawCatchDeclaration != null)
             {
-                return new IMisc[] { GetNewVariable(
-                  rawCatchDeclaration.Type, rawCatchDeclaration, parent, model) };
+                return new IMisc[] { SetupNewVariable(VariableKind.Catch,
+                     new RDomVariableDeclaration(rawCatchDeclaration, parent, model),
+                     rawCatchDeclaration.Type, rawCatchDeclaration, parent, model) };
             }
 
             var rawForEachSyntax = syntaxNode as ForEachStatementSyntax;
             if (rawForEachSyntax != null)
             {
-                return new IMisc[] { GetNewVariable(
-                  rawForEachSyntax.Type, rawForEachSyntax, parent, model) };
+                return new IMisc[] { SetupNewVariable(VariableKind.ForEach ,
+                    new RDomVariableDeclaration(rawForEachSyntax, parent, model),
+                    rawForEachSyntax.Type, rawForEachSyntax, parent, model ) };
             }
 
             throw new InvalidOperationException();
@@ -48,24 +67,33 @@ namespace RoslynDom.CSharp
         private IEnumerable<IMisc> CreateFromVariableDeclaration(VariableDeclarationSyntax syntax, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var list = new List<IMisc>();
+            var nodeWhitespace = CreateFromWorker.GetWhitespaceSet(syntax, false);
             var declarators = syntax.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
-                var newItem = GetNewVariable(syntax.Type, decl, parent, model);
+                var newItem = SetupNewVariable(VariableKind.Local,
+                    new RDomDeclarationStatement(decl, parent, model),
+                    syntax.Type, decl, parent, model);
+                var rDomItem = newItem as IRoslynDom;
+                rDomItem.TokenWhitespaceSet.TokenWhitespaceList.InsertRange(0, nodeWhitespace.TokenWhitespaceList);
                 list.Add(newItem);
+               // CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+                CreateFromWorker.StoreWhitespace(newItem, decl, LanguagePart.Current, WhitespaceLookup);
                 if (decl.Initializer != null)
                 {
                     var equalsClause = decl.Initializer;
                     newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
+                    CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model);
+                    CreateFromWorker.StoreWhitespace(newItem, decl.Initializer, LanguagePart.Current, WhitespaceLookup);
+                    CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
                 }
             }
             return list;
         }
 
-        public IVariable GetNewVariable(TypeSyntax typeSyntax,
+        public IVariable SetupNewVariable(VariableKind variableKind, RDomBaseVariable newItem, TypeSyntax typeSyntax,
             SyntaxNode node, IDom parent, SemanticModel model)
         {
-            var newItem = new RDomVariableDeclaration(node, parent, model);
             CreateFromWorker.StandardInitialize(newItem, node, parent, model);
             newItem.Name = newItem.TypedSymbol.Name;
             var declaredType = typeSyntax.ToString();
@@ -74,6 +102,7 @@ namespace RoslynDom.CSharp
                             .FirstOrDefault()
                             as IReferencedType;
             newItem.Type = returnType;
+            newItem.VariableKind = variableKind;
 
             newItem.IsImplicitlyTyped = (declaredType == "var");
             if (!newItem.IsImplicitlyTyped && declaredType != newItem.Type.Name)
@@ -88,24 +117,57 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IVariableDeclaration;
-            var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
             TypeSyntax typeSyntax;
-            // TODO: Type alias are not currently being used. Could be brute forced here, but I'd rather run a simplifier for real world scenarios
             if (itemAsT.IsImplicitlyTyped)
             { typeSyntax = SyntaxFactory.IdentifierName("var"); }
             else
             { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Type)); }
-            var nodeDeclarator = SyntaxFactory.VariableDeclarator(itemAsT.Name);
+            switch (itemAsT.VariableKind)
+            {
+                case VariableKind.Unknown:
+                    throw new NotImplementedException();
+                // This is NOT symmetric. The local declaration does not call back to this class for BuildSyntax
+                case VariableKind.Local:
+                    return BuildSyntaxLocal(itemAsT, typeSyntax);
+                //case VariableKind.Using:
+                //    return BuildSyntaxUsing(itemAsT, typeSyntax);
+                case VariableKind.Catch:
+                    return BuildSyntaxCatch(itemAsT, typeSyntax);
+                //case VariableKind.For:
+                //    return BuildSyntaxFor(itemAsT, typeSyntax);
+                case VariableKind.ForEach:
+                    return BuildSyntaxForEach(itemAsT, typeSyntax);
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        private IEnumerable<SyntaxNode> BuildSyntaxLocal(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
+        {
+            var node = SyntaxFactory.VariableDeclarator(itemAsT.Name);
             if (itemAsT.Initializer != null)
             {
-                var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Initializer);
-                nodeDeclarator = nodeDeclarator.WithInitializer(SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax));
+                var expressionSyntax = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Initializer);
+                expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, itemAsT.Whitespace2Set[LanguageElement.Expression]);
+                var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionSyntax);
+                equalsValueClause = BuildSyntaxHelpers.AttachWhitespace(equalsValueClause, itemAsT.Whitespace2Set, WhitespaceLookup);
+                node = node.WithInitializer(equalsValueClause);
             }
-            var nodeDeclaratorInList = SyntaxFactory.SeparatedList(SyntaxFactory.List<VariableDeclaratorSyntax>(new VariableDeclaratorSyntax[] { (VariableDeclaratorSyntax)nodeDeclarator }));
-            var nodeDeclaration = SyntaxFactory.VariableDeclaration(typeSyntax, nodeDeclaratorInList);
-            var node = SyntaxFactory.LocalDeclarationStatement(nodeDeclaration);
 
-            return node.PrepareForBuildSyntaxOutput(item);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
+            return node.PrepareForBuildSyntaxOutput(itemAsT);
         }
+
+        private IEnumerable<SyntaxNode> BuildSyntaxForEach(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
+        {
+            throw new NotImplementedException();
+        }
+
+        private IEnumerable<SyntaxNode> BuildSyntaxCatch(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }

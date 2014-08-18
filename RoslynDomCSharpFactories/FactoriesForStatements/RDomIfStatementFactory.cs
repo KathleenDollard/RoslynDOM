@@ -13,24 +13,41 @@ namespace RoslynDom.CSharp
          : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
     {
 
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomIfStatementFactory(RDomCorporation corporation)
          : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.IfKeyword, SyntaxKind.IfKeyword );
+                    _whitespaceLookup.Add(LanguageElement.ConditionalStartDelimiter , SyntaxKind.OpenParenToken );
+                    _whitespaceLookup.Add(LanguageElement.ConditionalEndDelimiter, SyntaxKind.CloseParenToken );
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter , SyntaxKind.CloseBraceToken);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as IfStatementSyntax;
             var newItem = new RDomIfStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             newItem.Condition = Corporation.CreateFrom<IExpression>(syntax.Condition, newItem, model).FirstOrDefault();
             CreateFromWorker.InitializeStatements(newItem, syntax.Statement, newItem, model);
 
-            //newItem.TokenWhitespaceList.Add(CreateFromWorker.MakeTokenWhitespace<IfStatementSyntax>(
-            //    syntax.IfKeyword, (n, t) => n.WithIfKeyword(t)));
-            //newItem.TokenWhitespaceList.Add(CreateFromWorker.MakeTokenWhitespace<IfStatementSyntax>(
-            //    syntax.OpenParenToken, (n, t) => n.WithOpenParenToken(t)));
-            //newItem.TokenWhitespaceList.Add(CreateFromWorker.MakeTokenWhitespace<IfStatementSyntax>(
-            //    syntax.CloseParenToken, (n, t) => n.WithCloseParenToken(t)));
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Statement, LanguagePart.Block, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Condition, LanguagePart.Current, WhitespaceLookup);
 
             var elseIfSyntaxList = GetElseIfSyntaxList(syntax);
             foreach (var elseIf in elseIfSyntaxList.Skip(1))  // The first is the root if
@@ -78,6 +95,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.IfStatement(GetCondition(itemAsT), GetStatement(itemAsT));
             if (elseSyntax != null) { node = node.WithElse(elseSyntax); }
 
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
 
@@ -102,10 +120,15 @@ namespace RoslynDom.CSharp
             return elseClause;
         }
 
-        private static ExpressionSyntax GetCondition(IHasCondition itemAsT)
-        { return (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition); }
+        private ExpressionSyntax GetCondition(IHasCondition itemAsT)
+        {
+            var expression = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition);
+            expression = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expression, 
+                        itemAsT.Whitespace2Set[LanguageElement.Expression]);
+            return expression;
+        }
 
-        private static StatementSyntax GetStatement(IStatementBlock itemAsT)
-        { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT); }
+        private StatementSyntax GetStatement(IStatementBlock itemAsT)
+        { return RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup);        }
     }
 }

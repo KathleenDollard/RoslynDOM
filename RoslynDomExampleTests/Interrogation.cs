@@ -154,7 +154,7 @@ namespace RoslynDomExampleTests
             var parameters = method.Parameters.ToArray();
             Assert.AreEqual(2, parameters.Count());
             Assert.AreEqual("FooMethod", method.Name);
-            Assert.AreEqual("String", method.ReturnType.Name);
+            Assert.AreEqual("string", method.ReturnType.Name);
             Assert.AreEqual(AccessModifier.Public, method.AccessModifier);
             Assert.IsFalse(method.IsAbstract);
             Assert.IsFalse(method.IsExtensionMethod);
@@ -164,10 +164,10 @@ namespace RoslynDomExampleTests
             Assert.IsFalse(method.IsVirtual);
             Assert.IsFalse(method.IsVirtual);
             Assert.AreEqual("bar1", parameters[0].Name);
-            Assert.AreEqual("Int32", parameters[0].Type.Name);
+            Assert.AreEqual("int", parameters[0].Type.Name);
             Assert.AreEqual(0, parameters[0].Ordinal);
             Assert.AreEqual("bar2", parameters[1].Name);
-            Assert.AreEqual("String", parameters[1].Type.Name);
+            Assert.AreEqual("string", parameters[1].Type.Name);
             Assert.AreEqual(1, parameters[1].Ordinal);
             Assert.IsFalse(parameters[1].IsOptional);
             Assert.IsFalse(parameters[1].IsOut);

@@ -50,20 +50,16 @@ namespace RoslynDom
     public class TokenWhitespace
     {
 
-        public TokenWhitespace(SyntaxToken token, string leadingWhitespace, string trailingWhitespace)
+        public TokenWhitespace(SyntaxNodeOrToken nodeOrToken, string leadingWhitespace, string trailingWhitespace)
         {
-            Token = token;
+            NodeOrToken = nodeOrToken;
             LeadingWhitespace = leadingWhitespace == null ? "" : leadingWhitespace;
             TrailingWhitespace = trailingWhitespace == null ? "" : trailingWhitespace;
+            Marker =Guid.NewGuid();
         }
 
 
-        public TokenWhitespace(SyntaxToken token)
-        {
-            Token = token;
-        }
-
-        /// <summary>
+            /// <summary>
         /// 
         /// </summary>
         /// <param name="oldTokenWS"></param>
@@ -72,13 +68,21 @@ namespace RoslynDom
         /// </remarks>  
         public TokenWhitespace(TokenWhitespace oldTokenWS)
         {
-            Token = oldTokenWS.Token;
+            NodeOrToken = oldTokenWS.NodeOrToken;
             this.LeadingWhitespace = oldTokenWS.LeadingWhitespace;
             this.TrailingWhitespace = oldTokenWS.TrailingWhitespace;
+            this.Marker = oldTokenWS.Marker;
         }
-        public SyntaxToken Token { get; private set; }
+        public SyntaxNodeOrToken NodeOrToken { get; private set; }
         public string LeadingWhitespace { get; set; }
         public string TrailingWhitespace { get; set; }
+
+        public Guid Marker { get; private set; }  
+
+        public override string ToString()
+        {
+            return base.ToString() + "{" + NodeOrToken.ToString() + "}";
+        }
     }
 
 }

@@ -27,6 +27,7 @@ namespace RoslynDom
             StatementsAll.AddOrMoveRange(newStatements);
 
             AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             if (oldRDom.ReturnType != null)
             { ReturnType = oldRDom.ReturnType.Copy(); }
             HasBlock = oldRDom.HasBlock;
@@ -66,6 +67,7 @@ namespace RoslynDom
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
+        public AccessModifier DeclaredAccessModifier { get; set; }
         public IReferencedType ReturnType { get; set; }
    
         public RDomList<IStatementCommentWhite> StatementsAll

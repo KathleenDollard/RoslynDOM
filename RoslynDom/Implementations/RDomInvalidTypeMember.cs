@@ -18,6 +18,7 @@ namespace RoslynDom
         {
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
         }
         protected override void Initialize()
         {
@@ -35,6 +36,7 @@ namespace RoslynDom
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
+        public AccessModifier DeclaredAccessModifier { get; set; }
 
         public MemberKind MemberKind
         {

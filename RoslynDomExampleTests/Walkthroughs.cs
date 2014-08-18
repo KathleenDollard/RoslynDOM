@@ -49,7 +49,7 @@ namespace RoslynDomExampleTests
             // Explore variables that have any uint type
             var uintVars = root
                 .Descendants.OfType<IVariable>()
-                .Where(x => x.Type.Name.StartsWith("UInt"))
+                .Where(x => x.Type.Name.StartsWith("uint"))
                 .ToArray();
             Assert.AreEqual(3, uintVars.Count());
             Assert.AreEqual("y", uintVars[0].Name);
@@ -60,7 +60,7 @@ namespace RoslynDomExampleTests
             // Explore variables that have any uint type
             var uintCode = (from c in root.Descendants.OfType<IStatementContainer>()
                             from v in c.Descendants.OfType<IVariable>()
-                            where v.Type.Name.StartsWith("UInt")
+                            where v.Type.Name.StartsWith("uint")
                             select new
                             {
                                 containerName = c.Name,
@@ -99,9 +99,9 @@ namespace RoslynDomExampleTests
 
             var literals = implicitlyTyped
                         .Where(x => x.Initializer.ExpressionType == ExpressionType.Literal &&
-                                        (x.Type.Name == "String"
-                                        || x.Type.Name.StartsWith("Int")
-                                        || x.Type.Name.StartsWith("UInt")
+                                        (x.Type.Name == "string"
+                                        || x.Type.Name.StartsWith("int")
+                                        || x.Type.Name.StartsWith("uint")
                                         || x.Type.Name == "DateTime")// for VB
                     );
             var candidates = implicitlyTyped.Except(instantiations).Except(literals);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -10,9 +11,26 @@ namespace RoslynDom.CSharp
     public class RDomFieldTypeMemberFactory
           : RDomTypeMemberFactory<RDomField, VariableDeclaratorSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomFieldTypeMemberFactory(RDomCorporation corporation)
          : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+            if (_whitespaceLookup == null)
+            {
+                _whitespaceLookup = new WhitespaceKindLookup();
+                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {
@@ -32,6 +50,8 @@ namespace RoslynDom.CSharp
                 var newItem = new RDomField(decl, parent, model);
                 list.Add(newItem);
                 CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+                CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
+                CreateFromWorker.StoreWhitespace(newItem, decl, LanguagePart.Current, WhitespaceLookup);
 
                 newItem.Name = newItem.TypedSymbol.Name;
 
@@ -58,23 +78,25 @@ namespace RoslynDom.CSharp
             return list;
         }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+           public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsField = item as IField;
             var nameSyntax = SyntaxFactory.Identifier(itemAsField.Name);
-            var returnType = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsField.ReturnType).First();
+            var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsField.ReturnType).First();
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsField);
             var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
-            var variableNode = SyntaxFactory.VariableDeclaration(returnType)
+            var variableNode = SyntaxFactory.VariableDeclaration(returnTypeSyntax)
                .WithVariables(
                         SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
                             SyntaxFactory.VariableDeclarator(nameSyntax)));
             var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsField.Whitespace2Set, WhitespaceLookup);
+
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsField.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
-            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+            //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             return node.PrepareForBuildSyntaxOutput(item);
         }

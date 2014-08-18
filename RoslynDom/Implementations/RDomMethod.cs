@@ -29,6 +29,7 @@ namespace RoslynDom
             StatementsAll.AddOrMoveRange(newStatements);
 
             AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             ReturnType = oldRDom.ReturnType;
             IsAbstract = oldRDom.IsAbstract;
             IsVirtual = oldRDom.IsVirtual;
@@ -72,12 +73,12 @@ namespace RoslynDom
 
         public string OuterName
         { get { return RoslynUtilities.GetOuterName(this); } }
-
-
+        
         public AttributeList Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
+        public AccessModifier DeclaredAccessModifier { get; set; }
         public IReferencedType ReturnType { get; set; }
         public bool IsAbstract { get; set; }
         public bool IsVirtual { get; set; }
@@ -121,5 +122,6 @@ namespace RoslynDom
             }
             return base.RequestValue(name);
         }
+
     }
 }

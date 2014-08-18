@@ -48,24 +48,32 @@ namespace RoslynDom.CSharp
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
         }
 
-        public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, IStatementBlock parent)
+        public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, 
+                IStatementBlock parent, WhitespaceKindLookup whitespaceLookup)
         {
-            StatementSyntax statement;
+            StatementSyntax statementBlock;
             var statementSyntaxList = statements
                          .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                          .ToList();
             var hasBlock = parent.HasBlock;
             if (hasBlock || statements.Count() > 1)
             {
-                statement = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
+                statementBlock = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
+                statementBlock = BuildSyntaxHelpers.AttachWhitespace(statementBlock, parent.Whitespace2Set, whitespaceLookup);
                 // Block tokens are held in parent
-                statement = BuildSyntaxHelpers.BuildTokenWhitespace(statement, parent);
+                //statement = BuildSyntaxHelpers.BuildTokenWhitespace(statement, parent);
             }
             else if (statements.Count() == 1)
-            { statement = (StatementSyntax)statementSyntaxList.First(); }
+            {
+                statementBlock = (StatementSyntax)statementSyntaxList.First();
+                statementBlock = BuildSyntaxHelpers.AttachWhitespace(statementBlock, parent.Whitespace2Set, whitespaceLookup);
+            }
             else
-            { statement = SyntaxFactory.EmptyStatement(); }
-            return statement;
+            {
+                statementBlock = SyntaxFactory.EmptyStatement();
+                statementBlock = BuildSyntaxHelpers.AttachWhitespace(statementBlock, parent.Whitespace2Set, whitespaceLookup);
+            }
+            return statementBlock;
         }
 
         public static string Simplify(SyntaxNode node)

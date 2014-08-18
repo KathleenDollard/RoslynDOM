@@ -30,6 +30,7 @@ namespace RoslynDom
         {
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             ReturnType = oldRDom.ReturnType;
             IsStatic = oldRDom.IsStatic;
             IsReadOnly = oldRDom.IsReadOnly;
@@ -47,6 +48,7 @@ namespace RoslynDom
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
+        public AccessModifier DeclaredAccessModifier { get; set; }
 
         public IReferencedType ReturnType { get; set; }
 

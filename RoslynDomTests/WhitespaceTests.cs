@@ -34,17 +34,9 @@ public class Class1
             ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var statements = root.Classes.First().Methods.First().Statements.ToArray();
-            var expected1 = @"                   if (x == 42){Console.WriteLine();}";
-            var expected2 = 
-@"                   if (x == 42)
-            { Console.WriteLine(); }
-            ";
-            var expected3 =
-@"                   if (x == 42)
-                    {
-                        Console.WriteLine();
-                    }
-            ";
+            var expected1 = "        if (x == 42){Console.WriteLine();}\r\n";
+            var expected2 = "        if (x == 42)\r\n        {  Console.WriteLine(); }\r\n";
+            var expected3 = "        if (x == 42)\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n";
             var actual = RDomCSharp.Factory.BuildSyntax(root);
             var actual1 = RDomCSharp.Factory.BuildSyntax(statements[1]);
             var actual2 = RDomCSharp.Factory.BuildSyntax(statements[2]);
@@ -52,9 +44,9 @@ public class Class1
             // Problem was managing Whitespace trivia and NOT ALSO EOL trivia for each token. 
             // Partially fixed in CreateFrom. Either there is a bug there ors omethign is 
             // funny in BUildSyntax, which might be the presence of two WS.
-            Assert.AreEqual(expected1.ToString(), actual1.ToFullString());
-            Assert.AreEqual(expected2.ToString(), actual2.ToFullString());
-            Assert.AreEqual(expected3.ToString(), actual3.ToFullString());
+            Assert.AreEqual(expected1, actual1.ToFullString());
+            Assert.AreEqual(expected2, actual2.ToFullString());
+            Assert.AreEqual(expected3, actual3.ToFullString());
         }
     }
 }

@@ -30,6 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Common.0.7.4052301-beta\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
@@ -62,7 +65,7 @@
     <Compile Include="Implementations\RDomAttributeValue.cs" />
     <Compile Include="Implementations\RDomAttribute.cs" />
     <Compile Include="Implementations\RDomClass.cs" />
-    <Compile Include="Implementations\RDomEnumValue.cs" />
+    <Compile Include="Implementations\RDomEnumMember.cs" />
     <Compile Include="Implementations\RDomEnum.cs" />
     <Compile Include="Implementations\RDomArgument.cs" />
     <Compile Include="Implementations\RDomField.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="StatementImplementations\RDomCheckedStatement.cs" />
     <Compile Include="StatementImplementations\RDomLockStatement.cs" />
     <Compile Include="StatementImplementations\RDomUsingStatement.cs" />
+    <Compile Include="BasesAndBaseHelpers\RDomBaseVariable.cs" />
     <Compile Include="StatementImplementations\RDomVariableDeclaration.cs" />
     <Compile Include="StatementImplementations\RDomForStatement.cs" />
     <Compile Include="StatementImplementations\RDomDoStatement.cs" />

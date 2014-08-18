@@ -21,7 +21,8 @@ namespace RoslynDom
         internal void ConfigureContainer(RDomCorporation corporation)
         {
             var types = AllClasses.FromAssembliesInBasePath()
-                          .Where(x => x.Namespace.StartsWith("RoslynDom"));
+                          .Where(x => x.Namespace != null 
+                                    && x.Namespace.StartsWith("RoslynDom"));
             // TODO: *** Load other things, at least SameIntent and IWorker
             LoadIntoContainerWithArgument<IRDomFactory, RDomCorporation>(types, corporation);
             LoadIntoContainer<IContainerCheck>(types);

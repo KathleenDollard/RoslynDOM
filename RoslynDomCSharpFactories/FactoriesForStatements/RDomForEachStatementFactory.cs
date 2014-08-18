@@ -11,15 +11,31 @@ namespace RoslynDom.CSharp
     public class RDomForEachStatementFactory
          : RDomStatementFactory<RDomForEachStatement, ForEachStatementSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomForEachStatementFactory(RDomCorporation corporation)
          : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ForEachStatementSyntax;
             var newItem = new RDomForEachStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
             newItem.TestAtEnd = false; // restating the obvious
 
@@ -46,7 +62,7 @@ namespace RoslynDom.CSharp
             //{ typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
 
             return LoopFactoryHelper.BuildSyntax<IForEachStatement>
-                (itemAsT, (c, s) => SyntaxFactory.ForEachStatement(typeSyntax, itemAsT.Variable.Name, c,s)) ;
+                (itemAsT, (c, s) => SyntaxFactory.ForEachStatement(typeSyntax, itemAsT.Variable.Name, c,s),WhitespaceLookup) ;
 
         }
 

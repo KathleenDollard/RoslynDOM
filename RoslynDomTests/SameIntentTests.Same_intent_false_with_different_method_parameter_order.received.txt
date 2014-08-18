@@ -1,0 +1,13 @@
+﻿
+            public class Class1 
+            {
+                public void Bar(string bar, int bar2) {}
+            }
+
+            
+ becomes 
+
+            public class Class1 
+            {
+                public void Bar(int bar2, string bar) {}
+            }

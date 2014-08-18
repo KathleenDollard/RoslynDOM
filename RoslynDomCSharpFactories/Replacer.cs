@@ -13,10 +13,32 @@ namespace RoslynDom.CSharp
     public static class SyntaxReplacer
     {
         // TODO: Do variations later 
-        public static TNode ReplaceToken<TNode>(this TNode node, SyntaxToken oldToken, SyntaxToken newToken)
+        public static TNode ReplaceNodeOrToken<TNode>(this TNode node, SyntaxNodeOrToken oldNodeOrToken, SyntaxNodeOrToken newNodeOrToken)
              where TNode : SyntaxNode
         {
-            return Replace(node, tokens: new[] { oldToken }, computeReplacementToken: (o, r) => newToken);
+            if (oldNodeOrToken.IsNode)
+            {
+                var oldNode = oldNodeOrToken.AsNode();
+                var newNode = newNodeOrToken.AsNode();
+                return Replace(node, childNodes: new[] { oldNode }, computeReplacementNode: (o, r) => newNode);
+            }
+            else
+            {
+                var oldToken = oldNodeOrToken.AsToken();
+                var newToken = newNodeOrToken.AsToken();
+                return Replace(node, tokens: new[] { oldToken }, computeReplacementToken: (o, r) => newToken);
+            }
+        }
+        public static TNode ReplaceNode<TNode>(this TNode node, SyntaxNode oldNode, SyntaxNode newNode)
+                where TNode : SyntaxNode
+        {
+            return Replace(node, childNodes: new[] { oldNode }, computeReplacementNode: (o, r) => newNode);
+        }
+
+        public static TNode ReplaceToken<TNode>(this TNode node,  SyntaxToken oldToken, SyntaxToken newToken)
+                 where TNode : SyntaxNode
+        {
+                return Replace(node, tokens: new[] { oldToken }, computeReplacementToken: (o, r) => newToken);
         }
 
         private static TNode Replace<TNode>(
@@ -29,7 +51,7 @@ namespace RoslynDom.CSharp
             Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia> computeReplacementTrivia = null)
             where TNode : SyntaxNode
         {
-            var replacer = new Replacer<TNode>(
+            var replacer = new Replacer(
                 childNodes, computeReplacementNode,
                 tokens, computeReplacementToken,
                 trivia, computeReplacementTrivia);
@@ -44,10 +66,9 @@ namespace RoslynDom.CSharp
             }
         }
 
-        private class Replacer<TNode> : CSharpSyntaxRewriter
-                 where TNode : SyntaxNode
+        private class Replacer : CSharpSyntaxRewriter
         {
-            private readonly Func<TNode, TNode, SyntaxNode> computeReplacementNode;
+            private readonly Func<SyntaxNode, SyntaxNode, SyntaxNode> computeReplacementNode;
             private readonly Func<SyntaxToken, SyntaxToken, SyntaxToken> computeReplacementToken;
             private readonly Func<SyntaxTrivia, SyntaxTrivia, SyntaxTrivia> computeReplacementTrivia;
 
@@ -99,7 +120,7 @@ namespace RoslynDom.CSharp
 
                     if (this.nodeSet.Contains(node) && this.computeReplacementNode != null)
                     {
-                        rewritten = this.computeReplacementNode((TNode)node, (TNode)rewritten);
+                        rewritten = this.computeReplacementNode(node, rewritten);
                     }
                 }
 

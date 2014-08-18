@@ -162,9 +162,9 @@ namespace RoslynDom.Common
                     return false;
                 if (!Check<T, IEnum>(one, other,
                      (x, y) => Check(x.UnderlyingType, y.UnderlyingType)
-                     && CheckChildrenInOrder(x.Values, y.Values)))
+                     && CheckChildrenInOrder(x.Members, y.Members)))
                     return false;
-                if (!Check<T, IEnumValue>(one, other,
+                if (!Check<T, IEnumMember>(one, other,
                      (x, y) => Check(x.Expression, y.Expression)))
                     return false;
                 if (!Check<T, IField>(one, other,

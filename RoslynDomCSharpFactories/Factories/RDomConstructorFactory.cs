@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -10,9 +11,28 @@ namespace RoslynDom.CSharp
     public class RDomConstructorTypeMemberFactory
           : RDomTypeMemberFactory<RDomConstructor, ConstructorDeclarationSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomConstructorTypeMemberFactory(RDomCorporation corporation)
          : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+            if (_whitespaceLookup == null)
+            {   
+                _whitespaceLookup = new WhitespaceKindLookup();
+                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
+                _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
+                _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+                _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
@@ -20,6 +40,7 @@ namespace RoslynDom.CSharp
             var newItem = new RDomConstructor(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
 
             newItem.Name = newItem.TypedSymbol.Name;
 
@@ -42,11 +63,11 @@ namespace RoslynDom.CSharp
                 { newItem.ConstructorInitializerType = ConstructorInitializerType.This; }
                 else
                 { newItem.ConstructorInitializerType = ConstructorInitializerType.Base; }
-                foreach (var arg in initializerSyntax.ArgumentList.Arguments )
+                foreach (var arg in initializerSyntax.ArgumentList.Arguments)
                 {
                     var newArg = new RDomArgument(arg, newItem, model);
                     // I don't think constructor arguments can be out or ref
-                    newArg.ValueExpression= Corporation.CreateFrom<IExpression>(arg.Expression, newItem, model).FirstOrDefault();
+                    newArg.ValueExpression = Corporation.CreateFrom<IExpression>(arg.Expression, newItem, model).FirstOrDefault();
                     newItem.InitializationArguments.AddOrMove(newArg);
                 }
             }
@@ -62,6 +83,7 @@ namespace RoslynDom.CSharp
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsConstructor);
             var node = SyntaxFactory.ConstructorDeclaration(nameSyntax)
                             .WithModifiers(modifiers);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsConstructor.Whitespace2Set, WhitespaceLookup);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsConstructor.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
@@ -75,7 +97,7 @@ namespace RoslynDom.CSharp
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             //node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsConstructor.Statements));
-            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsConstructor.Statements, itemAsConstructor));
+            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsConstructor.Statements, itemAsConstructor, WhitespaceLookup));
 
             // TODO: typeParameters  and constraintClauses 
 

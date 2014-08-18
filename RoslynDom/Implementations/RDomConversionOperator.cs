@@ -19,6 +19,8 @@ namespace RoslynDom
         internal RDomConversionOperator(RDomConversionOperator oldRDom)
              : base(oldRDom)
         {
+            AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             Parameters.AddOrMoveRange(newParameters);
@@ -64,7 +66,9 @@ namespace RoslynDom
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
-     
+
+        public AccessModifier DeclaredAccessModifier { get; set; }
+
         public IReferencedType Type { get; set; }
         public bool IsImplicit { get; set; }
         public bool IsStatic { get; set; }

@@ -7,11 +7,12 @@ namespace RoslynDom
     {
         public RDomUsingDirective(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         internal RDomUsingDirective(RDomUsingDirective oldRDom)
             : base(oldRDom)
         {
+            Initialize();
             Alias = oldRDom.Alias;
         }
 

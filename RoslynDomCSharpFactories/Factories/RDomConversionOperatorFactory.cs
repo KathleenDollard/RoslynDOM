@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -10,9 +11,26 @@ namespace RoslynDom.CSharp
     public class RDomConversionOperatorTypeMemberFactory
           : RDomTypeMemberFactory<RDomConversionOperator, ConversionOperatorDeclarationSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomConversionOperatorTypeMemberFactory(RDomCorporation corporation)
          : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+            if (_whitespaceLookup == null)
+            {
+                _whitespaceLookup = new WhitespaceKindLookup();
+                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+                _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
@@ -20,6 +38,7 @@ namespace RoslynDom.CSharp
             var newItem = new RDomConversionOperator(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
 
             newItem.Name = newItem.TypedSymbol.Name;
 
@@ -52,6 +71,7 @@ namespace RoslynDom.CSharp
             var kind = itemAsT.IsImplicit ? SyntaxKind.ImplicitKeyword : SyntaxKind.ExplicitKeyword;
             var node = SyntaxFactory.ConversionOperatorDeclaration(SyntaxFactory.Token(kind), typeSyntax)
                             .WithModifiers(modifiers);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
@@ -59,7 +79,7 @@ namespace RoslynDom.CSharp
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
            // node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsT.Statements));
-            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT));
+            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup));
 
             // TODO: typeParameters  and constraintClauses 
 

@@ -127,7 +127,7 @@ namespace RoslynDom.CSharp
              Tuple.Create(Accessibility. Protected , AccessModifier. Protected ),
              Tuple.Create(Accessibility. Internal , AccessModifier. Internal ),
              Tuple.Create(Accessibility. Friend , AccessModifier. Friend ),
-             Tuple.Create(Accessibility. NotApplicable, AccessModifier. NotApplicable),
+             Tuple.Create(Accessibility. NotApplicable, AccessModifier. None),
              Tuple.Create(Accessibility. ProtectedOrInternal , AccessModifier. ProtectedOrInternal ),
              Tuple.Create(Accessibility. ProtectedOrFriend , AccessModifier. ProtectedOrFriend),
              Tuple.Create(Accessibility. Public , AccessModifier. Public )

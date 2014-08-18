@@ -182,8 +182,9 @@ public class Bar
             Assert.IsInstanceOfType(statements[0], typeof(RDomInvocationStatement));
             Assert.IsInstanceOfType(statements[1], typeof(RDomInvocationStatement));
             // TODO: Solve simplification problem.
-            var actual = RoslynCSharpUtilities.Simplify(output);
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        Console.WriteLine();\r\n        Math.Pow(4, 2);\r\n    }\r\n}";
+            //var actual = RoslynCSharpUtilities.Simplify(output);
+            var actual = output.ToFullString();
+            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                    Console.WriteLine();\r\n                    Math.Pow(4, 2);\r\n                }\r\n            }           \r\n";
             Assert.AreEqual(expectedString, actual);
         }
 
@@ -209,9 +210,8 @@ public class Bar
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomReturnStatement));
-            // TODO: Solve simplification problem.
-            var actual = RoslynCSharpUtilities.Simplify(output);
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        return;\r\n    }\r\n\r\n    public Int32 Foo()\r\n    {\r\n        return 42;\r\n    }\r\n}";
+            var actual = output.ToFullString();
+            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                  return;\r\n                }\r\n                public int Foo()\r\n                {\r\n                  return 42;\r\n                }\r\n            }           \r\n";
             Assert.AreEqual(expectedString, actual);
         }
 
@@ -236,8 +236,8 @@ public class Bar
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomWhileStatement));
-            var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        while (true)\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n    }\r\n}";
+            var actual = output.ToFullString();
+            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                    while (true)\r\n                    {\r\n                        Console.WriteLine();\r\n                    }\r\n                }\r\n            }           \r\n";
             Assert.AreEqual(expectedString, actual);
         }
 
@@ -263,7 +263,7 @@ public class Bar
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomDoStatement));
-            var actual = output.ToString();
+            var actual = output.ToFullString();
             var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        do\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n        while (true);\r\n    }\r\n}";
             Assert.AreEqual(expectedString, actual);
         }
@@ -344,8 +344,8 @@ public class Bar
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
-            var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (var i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
+            var actual = output.ToFullString();
+            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                    foreach (var i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n                    {\r\n                        Console.WriteLine(i);\r\n                    }\r\n                }\r\n            }           \r\n";
             Assert.AreEqual(expectedString, actual);
         }
 
@@ -371,8 +371,8 @@ public class Bar
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
-            var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
+            var actual = output.ToFullString();
+            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                    foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n                    {\r\n                        Console.WriteLine(i);\r\n                    }\r\n                }\r\n            }           \r\n";
             Assert.AreEqual(expectedString, actual);
         }
 

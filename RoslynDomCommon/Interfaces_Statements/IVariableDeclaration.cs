@@ -13,6 +13,7 @@ namespace RoslynDom.Common
         IReferencedType Type { get; set; }
         bool IsImplicitlyTyped { get; set; }
         bool IsAliased { get; set; }
+        VariableKind VariableKind { get; }
     }
 
     public interface IVariableDeclaration : IVariable, IDom<IVariableDeclaration>, IMisc

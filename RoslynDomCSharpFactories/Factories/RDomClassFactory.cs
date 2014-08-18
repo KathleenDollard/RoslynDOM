@@ -11,16 +11,43 @@ namespace RoslynDom.CSharp
 {
     internal static class RDomClassFactoryHelper
     {
-        [ExcludeFromCodeCoverage]
         // until move to C# 6 - I want to support name of as soon as possible
+
+        [ExcludeFromCodeCoverage]
         private static string nameof<T>(T value) { return ""; }
 
+        private static WhitespaceKindLookup _whitespaceLookup;
+
+        private static WhitespaceKindLookup whitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.ClassKeyword, SyntaxKind.ClassKeyword);
+                    _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.Add(LanguageElement.ClassStartDelimiter, SyntaxKind.OpenBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.ClassEndDelimiter, SyntaxKind.CloseBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.TypeParameterStartDelimiter, SyntaxKind.LessThanToken);
+                    _whitespaceLookup.Add(LanguageElement.TypeParameterEndDelimiter, SyntaxKind.GreaterThanToken);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.OopModifiers);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
+
         internal static RDomClass CreateFromInternal(SyntaxNode syntaxNode, IDom parent, SemanticModel model,
-               ICreateFromWorker createFromWorker, RDomCorporation corporation)
+               ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
         {
             var syntax = syntaxNode as ClassDeclarationSyntax;
             var newItem = new RDomClass(syntaxNode, parent, model);
             createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            createFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
+            createFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 
             newItem.Name = newItem.TypedSymbol.Name;
 
@@ -42,13 +69,16 @@ namespace RoslynDom.CSharp
             return newItem;
         }
 
-        public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item,
+             public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item,
             ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
+
             var node = SyntaxFactory.ClassDeclaration(identifier)
                 .WithModifiers(modifiers);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
+
             var itemAsClass = item as IClass;
             Guardian.Assert.IsNotNull(itemAsClass, nameof(itemAsClass));
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
@@ -59,11 +89,41 @@ namespace RoslynDom.CSharp
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
 
-            // TODO: Class type members and type constraints
+            var typeParametersAndConstraints = itemAsClass.TypeParameters
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                        .ToList();
+            var typeParameters = typeParametersAndConstraints
+                        .OfType<TypeParameterSyntax>()
+                        .ToList();
+            var typeConstraintClauses = typeParametersAndConstraints
+                        .OfType<TypeParameterConstraintClauseSyntax>()
+                        .ToList();
+            if (typeParameters.Any())
+            {
+               var typeParameterListSyntax = SyntaxFactory.TypeParameterList(SyntaxFactory.SeparatedList<TypeParameterSyntax>(typeParameters));
+                typeParameterListSyntax = BuildSyntaxHelpers.AttachWhitespace(typeParameterListSyntax, item.Whitespace2Set, whitespaceLookup);
+                node = node.WithTypeParameterList(typeParameterListSyntax);
+            }
+
+            var clauses = new List<TypeParameterConstraintClauseSyntax>();
+            foreach (var typeParameter in typeParameters)
+            {
+                var name = typeParameter.Identifier.ToString();
+                var constraint = typeConstraintClauses
+                              .Where(x => x.Name.ToString() == name)
+                              .ToList()
+                              .SingleOrDefault();
+                if (constraint != null)
+                { clauses.Add(constraint); }
+            }
+            if (clauses.Any())
+            { node.WithConstraintClauses(SyntaxFactory.List(clauses)); }
 
             return node.PrepareForBuildSyntaxOutput(item);
         }
     }
+
+
     public class RDomClassTypeMemberFactory
            : RDomTypeMemberFactory<RDomClass, ClassDeclarationSyntax>
     {

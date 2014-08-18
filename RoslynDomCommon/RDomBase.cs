@@ -23,12 +23,12 @@ namespace RoslynDom
         private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase()
-        { }
+        { Whitespace2Set = new Whitespace2Set(); }
 
-        protected RDomBase(IDom oldIDom)
+        protected RDomBase(IDom oldIDom) : this()
         {
             var oldRDom = (RDomBase)oldIDom;
-
+            Whitespace2Set = oldIDom.Whitespace2Set.Copy();
             var oldAsHasName = oldIDom as IHasName;
             var thisAsHasName = this as IHasName;
             if (oldAsHasName != null && thisAsHasName != null)
@@ -49,7 +49,8 @@ namespace RoslynDom
         /// <summary>
         /// Must at least set the Name property
         /// </summary>
-        protected virtual void Initialize() { }
+        protected virtual void Initialize()
+        {}
 
         /// <summary>
         /// 
@@ -171,5 +172,8 @@ namespace RoslynDom
                 return list;
             }
         }
+
+        public Whitespace2Set Whitespace2Set { get; private set; }
+
     }
 }

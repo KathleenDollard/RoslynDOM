@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using ApprovalTests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom;
 using RoslynDom.CSharp;
@@ -125,6 +126,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+           // Approvals.Verify(root);
             var inter = root.Interfaces.First();
             var symbol = ((IRoslynHasSymbol)inter).Symbol;
             Assert.AreEqual("MyInterface", inter.Name);

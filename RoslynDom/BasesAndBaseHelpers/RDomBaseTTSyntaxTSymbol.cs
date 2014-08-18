@@ -61,9 +61,10 @@ namespace RoslynDom
         public virtual TSymbol TypedSymbol
         { get { return _symbol; } }
        
+        // TODO: Why are we calculating this instead of storing it?
         protected virtual AccessModifier GetAccessibility()
         {
-            if (Symbol == null) { return AccessModifier.NotApplicable; }
+            if (Symbol == null) { return AccessModifier.None; }
             return (AccessModifier)Symbol.DeclaredAccessibility;
         }
 

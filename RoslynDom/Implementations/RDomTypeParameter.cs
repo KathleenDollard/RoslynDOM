@@ -20,7 +20,7 @@ namespace RoslynDom
 
         public RDomTypeParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        { Initialize(); }
 
         public RDomTypeParameter(RDomTypeParameter oldRDom)
              : base(oldRDom)

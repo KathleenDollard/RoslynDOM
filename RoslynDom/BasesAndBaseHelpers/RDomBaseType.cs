@@ -39,6 +39,7 @@ namespace RoslynDom
             _stemMemberKind = oldRDom._stemMemberKind;
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
+            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             MembersAll.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._members));
             TypeParameters.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._typeParameters));
 
@@ -130,7 +131,7 @@ namespace RoslynDom
             get
             {
                 // TODO: Figure out all interfaces or don't support
-                throw new NotImplementedException();
+                return null;
             }
         }
 
@@ -139,6 +140,8 @@ namespace RoslynDom
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
+
+        public AccessModifier DeclaredAccessModifier { get; set; }
 
         public MemberKind MemberKind
         { get { return _memberKind; } }

@@ -9,7 +9,7 @@ namespace RoslynDom
     
         public static AccessModifier GetAccessibilityFromSymbol(ISymbol symbol)
         {
-            if (symbol == null) { return AccessModifier.NotApplicable; }
+            if (symbol == null) { return AccessModifier.None; }
             return (AccessModifier)symbol.DeclaredAccessibility;
         }
 

@@ -11,15 +11,31 @@ namespace RoslynDom.CSharp
     public class RDomForStatementFactory
          : RDomStatementFactory<RDomForStatement, ForStatementSyntax>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public RDomForStatementFactory(RDomCorporation corporation)
          : base(corporation)
         { }
+
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ForStatementSyntax;
             var newItem = new RDomForStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
             newItem.TestAtEnd = false;
             var decl = syntax.Declaration.Variables.First();
@@ -32,9 +48,11 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IForStatement;
-            var node = LoopFactoryHelper.BuildSyntax<IForStatement>(itemAsT, (c, s) => SyntaxFactory.ForStatement(s).WithCondition(c)).First() as ForStatementSyntax;
+            var node = LoopFactoryHelper.BuildSyntax<IForStatement>(itemAsT,
+                (c, s) => SyntaxFactory.ForStatement(s).WithCondition(c), WhitespaceLookup)
+                .First() as ForStatementSyntax;
 
-            var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable );
+            var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable);
             //// TODO: Try to share this code with DeclarationSyntaxStatementFactory
             //TypeSyntax typeSyntax;
             //if (itemAsT.Variable.IsImplicitlyTyped)
@@ -51,6 +69,7 @@ namespace RoslynDom.CSharp
             var incrementorSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Incrementor);
             node = node.WithIncrementors(SyntaxFactory.SeparatedList<ExpressionSyntax>(new ExpressionSyntax[] { (ExpressionSyntax)incrementorSyntax }));
 
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
 

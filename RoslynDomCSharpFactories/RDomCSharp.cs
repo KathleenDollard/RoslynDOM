@@ -63,7 +63,7 @@ namespace RoslynDom.CSharp
             return root;
         }
 
-        public IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
+        internal IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
         {
             IEnumerable<SyntaxNode> syntaxNodes;
             if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }
@@ -93,14 +93,14 @@ namespace RoslynDom.CSharp
             return BuildSyntaxHelpers.Format(syntax, item);
         }
 
-        private bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> syntaxNode)
+        private bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> node)
              where TKind : class, IDom
         {
-            syntaxNode = null;
+            node = null;
             var itemAsKind = item as TKind;
             if (itemAsKind == null) { return false; }
             //var corporation = RDomFactoryHelper.GetHelper<TKind>();
-            syntaxNode = _helper.BuildSyntaxGroup(item);
+            node = _helper.BuildSyntaxGroup(item);
             return true;
         }
 
@@ -178,7 +178,7 @@ namespace RoslynDom.CSharp
             // Eventually flesh this out to all trivia types
             foreach (var ws in item.TokenWhitespaceSet.TokenWhitespaceList )
             {
-                sb.AppendLine(indent + "- WS - " + ws.Token.ToString() + " - Leading='" + ws.LeadingWhitespace.Normalize() + "'; Trailing='" + ws.TrailingWhitespace.Normalize() + "'");
+                sb.AppendLine(indent + "- WS - " + ws.NodeOrToken.ToString() + " - Leading='" + ws.LeadingWhitespace.Normalize() + "'; Trailing='" + ws.TrailingWhitespace.Normalize() + "'");
             }
         }
     }
