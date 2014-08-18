@@ -75,7 +75,7 @@ namespace RoslynDom.CSharp
                     new RDomDeclarationStatement(decl, parent, model),
                     syntax.Type, decl, parent, model);
                 var rDomItem = newItem as IRoslynDom;
-                rDomItem.TokenWhitespaceSet.TokenWhitespaceList.InsertRange(0, nodeWhitespace.TokenWhitespaceList);
+                //rDomItem.TokenWhitespaceSet.TokenWhitespaceList.InsertRange(0, nodeWhitespace.TokenWhitespaceList);
                 list.Add(newItem);
                // CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
                 CreateFromWorker.StoreWhitespace(newItem, decl, LanguagePart.Current, WhitespaceLookup);

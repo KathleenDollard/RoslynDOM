@@ -43,7 +43,7 @@ namespace RoslynDom.CSharp
 
             // VariableDeclarationFactory does most of the work, and at present returns a single
             // DeclarationStatement, and possibly a comment
-            var newItems = Corporation.CreateFrom<IMisc>(rawDeclaration.Declaration, parent, model);
+            var newItems = Corporation.CreateFrom<IMisc>(rawDeclaration.Declaration, parent, model, true);
             foreach (var newItem in newItems.OfType<IDeclarationStatement>())
             {
                 CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);

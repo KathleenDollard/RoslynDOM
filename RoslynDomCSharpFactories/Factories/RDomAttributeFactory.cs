@@ -146,9 +146,7 @@ namespace RoslynDom.CSharp
             {
                 var attr = CreateFromItem(attSyntax, parent, model);
                 var rDomAttr = attr as IRoslynDom;
-                //rDomAttr.TokenWhitespaceSet.LeadingWhitespace = whitespaceSet.LeadingWhitespace;
-                //rDomAttr.TokenWhitespaceSet.TrailingWhitespace = whitespaceSet.TrailingWhitespace;
-                rDomAttr.TokenWhitespaceSet.TokenWhitespaceList.InsertRange(0, whitespaceSet.TokenWhitespaceList);
+                //rDomAttr.TokenWhitespaceSet.TokenWhitespaceList.InsertRange(0, whitespaceSet.TokenWhitespaceList);
                 list.Add(attr);
             }
             return list;

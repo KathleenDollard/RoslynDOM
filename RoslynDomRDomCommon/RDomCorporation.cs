@@ -33,22 +33,28 @@ namespace RoslynDom
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="TKind">
-        /// This is the Kind as it will be placed in a container, NOT the specific type. 
-        /// For example IStemMemberCommentWhite.
-        /// <para/>
-        /// This distinction is not important for most classes, but is critical for the four
-        /// classes that can be either stem or type members (class, struct, interface, enum),
-        /// so it's best to be in the habit of requesting the correct thing. 
-        /// </typeparam>
-        /// <param name="node"></param>
-        /// <param name="parent"></param>
-        /// <param name="model"></param>
-        /// <returns></returns>
         public IEnumerable<TKind> CreateFrom<TKind>(SyntaxNode node, IDom parent, SemanticModel model)
+              where TKind : class
+        {
+            return CreateFrom<TKind>(node, parent, model, false);
+        }
+        
+        /// <summary>
+         /// 
+         /// </summary>
+         /// <typeparam name="TKind">
+         /// This is the Kind as it will be placed in a container, NOT the specific type. 
+         /// For example IStemMemberCommentWhite.
+         /// <para/>
+         /// This distinction is not important for most classes, but is critical for the four
+         /// classes that can be either stem or type members (class, struct, interface, enum),
+         /// so it's best to be in the habit of requesting the correct thing. 
+         /// </typeparam>
+         /// <param name="node"></param>
+         /// <param name="parent"></param>
+         /// <param name="model"></param>
+         /// <returns></returns>
+        public IEnumerable<TKind> CreateFrom<TKind>(SyntaxNode node, IDom parent, SemanticModel model, bool skipCommentWhitespace)
             where TKind : class
         {
             Initialize();
@@ -58,7 +64,7 @@ namespace RoslynDom
             {
                 if (candidate.CanCreateFrom(node))
                 {
-                    var items = candidate.CreateFrom(node, parent, model);
+                    var items = candidate.CreateFrom(node, parent, model, skipCommentWhitespace );
                     return items.Cast<TKind>()
                                 .ToList();
                 }

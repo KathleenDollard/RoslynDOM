@@ -90,7 +90,7 @@ namespace RoslynDom.CSharp
         /// Use CanCreate and Priority to control how your factory is selected. Highest priority wins and 
         /// you can add to the enum values (as in Normal + 1)
         /// </remarks>
-        public IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        public IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, bool skipWhitespace)
         {
             var ret = new List<TKind>();
 
@@ -102,11 +102,13 @@ namespace RoslynDom.CSharp
             //    && typeofT != typeof(IPublicAnnotation)
             //    && typeofT != typeof(IStructuredDocumentation)
             //    && !typeofT.IsAssignableFrom(typeof(ICommentWhite))); // Declaration statement comment white is done on variable
-            if (typeof(T) != typeof(ICommentWhite)
-                        && typeof(T) != typeof(IAttribute)
-                        && typeof(T) != typeof(IPublicAnnotation)
-                        && typeof(T) != typeof(IStructuredDocumentation)
-                        && !typeof(T).IsAssignableFrom(typeof(ICommentWhite)))
+            if (!skipWhitespace
+                && typeof(T) != typeof(ICommentWhite)
+                && typeof(T) != typeof(IAttribute)
+                && typeof(T) != typeof(IPublicAnnotation)
+                && typeof(T) != typeof(IStructuredDocumentation)
+                && !typeof(IReferencedType).IsAssignableFrom(typeof(T))
+                && !typeof(T).IsAssignableFrom(typeof(ICommentWhite)))
             {
                 var newItem = newItems.FirstOrDefault();
                 if (newItem != null)

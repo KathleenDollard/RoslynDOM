@@ -12,7 +12,7 @@ namespace RoslynDom
     {
         bool CanCreateFrom(SyntaxNode syntaxNode);
         bool CanBuildSyntax(IDom item);
-        IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
+        IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, bool skipCommentWhitespace);
         RDomPriority Priority { get; }
                 IEnumerable<SyntaxNode> BuildSyntax(IDom item);
     }

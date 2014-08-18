@@ -942,6 +942,7 @@ namespace Foo
         public void Can_get_members_with_comments_and_whitespace_from_typeContainer()
         {
             var csharpCode = @"
+             #region Fred   
                 public class Bar
                 {
                     private string firstName;
@@ -952,7 +953,8 @@ namespace Foo
                         // comment
                     public string Foo()
                     {}
-                }";
+                }
+            #endregion";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
 
             // Check that all were found

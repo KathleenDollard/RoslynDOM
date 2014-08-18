@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TriviaManager.cs" />
     <Compile Include="WhitespaceLookups.cs" />
     <Compile Include="ContainerCheck.cs" />
     <Compile Include="Factories\RDomConstructorFactory.cs" />
