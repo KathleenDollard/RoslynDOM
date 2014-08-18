@@ -39,7 +39,6 @@ namespace RoslynDom.CSharp
         {
             var list = new List<IStatementCommentWhite>();
             var rawDeclaration = syntaxNode as LocalDeclarationStatementSyntax;
-            var nodeWhitespaceList = new List<TokenWhitespace>(CreateFromWorker.GetWhitespaceSet(rawDeclaration, false).TokenWhitespaceList);
 
             // VariableDeclarationFactory does most of the work, and at present returns a single
             // DeclarationStatement, and possibly a comment

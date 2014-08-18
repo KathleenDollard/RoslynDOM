@@ -18,13 +18,9 @@ namespace RoslynDom
          : base(oldIDom)
         {
             var oldRDom = oldIDom as RoslynRDomBase;
-            if (oldRDom.TokenWhitespaceSet != null)
-            { TokenWhitespaceSet = oldRDom.TokenWhitespaceSet.Copy(); }
         }
 
         public abstract ISymbol Symbol { get; }
-
-        public TokenWhitespaceSet TokenWhitespaceSet { get; set; }
 
         public override object RequestValue(string propertyName)
         {
@@ -49,8 +45,6 @@ namespace RoslynDom
          : base(oldIDom)
         {
             var oldRDom = oldIDom as RDomBase<T>;
-            if (oldRDom.TokenWhitespaceSet != null)
-            { TokenWhitespaceSet = oldRDom.TokenWhitespaceSet.Copy(); }
         }
 
         public virtual T Copy()

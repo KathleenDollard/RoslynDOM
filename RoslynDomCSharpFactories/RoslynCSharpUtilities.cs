@@ -61,7 +61,6 @@ namespace RoslynDom.CSharp
                 statementBlock = SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
                 statementBlock = BuildSyntaxHelpers.AttachWhitespace(statementBlock, parent.Whitespace2Set, whitespaceLookup);
                 // Block tokens are held in parent
-                //statement = BuildSyntaxHelpers.BuildTokenWhitespace(statement, parent);
             }
             else if (statements.Count() == 1)
             {

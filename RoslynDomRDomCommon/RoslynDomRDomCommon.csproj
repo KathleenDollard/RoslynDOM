@@ -67,7 +67,6 @@
     <Compile Include="RDomCorporation.cs" />
     <Compile Include="RoslynDomUtilities.cs" />
     <Compile Include="RoslynRDomUtilities.cs" />
-    <Compile Include="TokenWhitespace.cs" />
     <Compile Include="Worker.cs" />
   </ItemGroup>
   <ItemGroup>

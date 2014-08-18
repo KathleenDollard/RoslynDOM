@@ -10,8 +10,6 @@ namespace RoslynDom
     {
         ISymbol Symbol { get; }
         SyntaxNode TypedSyntax { get; }
-        TokenWhitespaceSet TokenWhitespaceSet { get; set; }
-     
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]

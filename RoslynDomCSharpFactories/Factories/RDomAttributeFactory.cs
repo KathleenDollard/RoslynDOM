@@ -141,12 +141,10 @@ namespace RoslynDom.CSharp
         private IEnumerable<IAttribute> CreateFromList(AttributeListSyntax syntaxAsList, IDom parent, SemanticModel model)
         {
             var list = new List<IAttribute>();
-            var whitespaceSet = CreateFromWorker.GetWhitespaceSet(syntaxAsList, false);
             foreach (var attSyntax in syntaxAsList.Attributes)
             {
                 var attr = CreateFromItem(attSyntax, parent, model);
                 var rDomAttr = attr as IRoslynDom;
-                //rDomAttr.TokenWhitespaceSet.TokenWhitespaceList.InsertRange(0, whitespaceSet.TokenWhitespaceList);
                 list.Add(attr);
             }
             return list;

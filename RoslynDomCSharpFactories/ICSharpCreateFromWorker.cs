@@ -9,7 +9,6 @@ namespace RoslynDom.CSharp
 {
     internal interface ICSharpCreateFromWorker : ICreateFromWorker
     {
-        TokenWhitespaceSet GetWhitespaceSet(SyntaxNode syntaxNode, bool includeLeadingTrailing);
         string GetWhitespaceString(SyntaxTriviaList triviaList, bool removeEol);
 
         IEnumerable<ICommentWhite> GetCommentWhite<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
@@ -32,10 +31,6 @@ namespace RoslynDom.CSharp
                   IEnumerable<MemberDeclarationSyntax> memberSyntaxes,
                   IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
                   SemanticModel model);
-
-        //TokenWhitespace MakeTokenWhitespace<TSyntaxNode>(SyntaxToken token,
-        //           Func<TSyntaxNode, SyntaxToken, TSyntaxNode> withDelegate)
-        //           where TSyntaxNode : SyntaxNode;
 
         void StoreWhitespace(IDom newItem, SyntaxNode syntaxNode, LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup);
 
