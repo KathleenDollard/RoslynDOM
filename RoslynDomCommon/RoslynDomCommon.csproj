@@ -37,8 +37,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeList.cs" />
+    <Compile Include="BaseInterfaces\IDirective.cs" />
     <Compile Include="BaseInterfaces\ICommentWhite.cs" />
-    <Compile Include="BaseInterfaces\IComment.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IDefineDirective.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IElseIfDirective.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IEndIfDirective.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IUndefineDirective.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IIfDirective.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IElseDirective.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IRegionEnd.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IRegionStart.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IComment.cs" />
     <Compile Include="BaseInterfaces\IStatementCommentWhite.cs" />
     <Compile Include="BaseInterfaces\IStatementContainer.cs" />
     <Compile Include="BaseInterfaces\IStemMember.cs" />

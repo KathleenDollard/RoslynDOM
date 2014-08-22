@@ -69,8 +69,8 @@ namespace RoslynDom.CSharp
             return newItem;
         }
 
-             public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item,
-            ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
+        public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item,
+       ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
         {
             var modifiers = item.BuildModfierSyntax();
             var identifier = SyntaxFactory.Identifier(item.Name);
@@ -100,7 +100,7 @@ namespace RoslynDom.CSharp
                         .ToList();
             if (typeParameters.Any())
             {
-               var typeParameterListSyntax = SyntaxFactory.TypeParameterList(SyntaxFactory.SeparatedList<TypeParameterSyntax>(typeParameters));
+                var typeParameterListSyntax = SyntaxFactory.TypeParameterList(SyntaxFactory.SeparatedList<TypeParameterSyntax>(typeParameters));
                 typeParameterListSyntax = BuildSyntaxHelpers.AttachWhitespace(typeParameterListSyntax, item.Whitespace2Set, whitespaceLookup);
                 node = node.WithTypeParameterList(typeParameterListSyntax);
             }

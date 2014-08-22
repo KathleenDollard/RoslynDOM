@@ -36,6 +36,7 @@ namespace RoslynDom.CSharp
         {
             return syntaxNode is VariableDeclarationSyntax
                 || syntaxNode is CatchDeclarationSyntax
+                || syntaxNode is ForStatementSyntax
                 || syntaxNode is ForEachStatementSyntax;
         }
 
@@ -43,7 +44,10 @@ namespace RoslynDom.CSharp
         {
             var rawVariableDeclaration = syntaxNode as VariableDeclarationSyntax;
             if (rawVariableDeclaration != null)
-            { return CreateFromVariableDeclaration(rawVariableDeclaration, syntaxNode, parent, model); }
+            {
+                return CreateFromVariableDeclaration(rawVariableDeclaration, syntaxNode, parent, model,
+                    (s, p, m) => new RDomDeclarationStatement(s, p,m));
+            }
 
             var rawCatchDeclaration = syntaxNode as CatchDeclarationSyntax;
             if (rawCatchDeclaration != null)
@@ -61,29 +65,39 @@ namespace RoslynDom.CSharp
                     rawForEachSyntax.Type, rawForEachSyntax, parent, model ) };
             }
 
+            var rawForSyntax = syntaxNode as ForStatementSyntax;
+            if (rawForSyntax != null)
+            {
+                return CreateFromVariableDeclaration(rawForSyntax.Declaration, syntaxNode, parent, model,
+                         (s, p, m) => new RDomVariableDeclaration(s, p, m));
+            }
+
             throw new InvalidOperationException();
         }
 
-        private IEnumerable<IMisc> CreateFromVariableDeclaration(VariableDeclarationSyntax syntax, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        private IEnumerable<IMisc> CreateFromVariableDeclaration(
+                VariableDeclarationSyntax syntax, SyntaxNode syntaxNode, IDom parent, SemanticModel model,
+                Func<SyntaxNode, IDom, SemanticModel, RDomBaseVariable> makeNewDelegate)
         {
             var list = new List<IMisc>();
             var declarators = syntax.Variables.OfType<VariableDeclaratorSyntax>();
             foreach (var decl in declarators)
             {
                 var newItem = SetupNewVariable(VariableKind.Local,
-                    new RDomDeclarationStatement(decl, parent, model),
+                    makeNewDelegate(decl, parent, model),
                     syntax.Type, decl, parent, model);
                 var rDomItem = newItem as IRoslynDom;
                 list.Add(newItem);
-               // CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+                // CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
                 CreateFromWorker.StoreWhitespace(newItem, decl, LanguagePart.Current, WhitespaceLookup);
                 if (decl.Initializer != null)
                 {
                     var equalsClause = decl.Initializer;
                     newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
                     CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model);
-                    CreateFromWorker.StoreWhitespace(newItem, decl.Initializer, LanguagePart.Current, WhitespaceLookup);
-                    CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
+                    //CreateFromWorker.StoreWhitespace(newItem, decl.Initializer, LanguagePart.Expression, WhitespaceLookup);
+                    CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Expression, LanguageElement.EqualsAssignmentOperator);
+                    CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Expression, LanguageElement.Expression);
                 }
             }
             return list;
@@ -123,20 +137,20 @@ namespace RoslynDom.CSharp
             switch (itemAsT.VariableKind)
             {
                 case VariableKind.Unknown:
-                    throw new NotImplementedException();
+                { throw new NotImplementedException(); }
                 // This is NOT symmetric. The local declaration does not call back to this class for BuildSyntax
                 case VariableKind.Local:
-                    return BuildSyntaxLocal(itemAsT, typeSyntax);
+                { return BuildSyntaxLocal(itemAsT, typeSyntax); }
                 //case VariableKind.Using:
                 //    return BuildSyntaxUsing(itemAsT, typeSyntax);
                 case VariableKind.Catch:
-                    return BuildSyntaxCatch(itemAsT, typeSyntax);
-                //case VariableKind.For:
-                //    return BuildSyntaxFor(itemAsT, typeSyntax);
-                case VariableKind.ForEach:
-                    return BuildSyntaxForEach(itemAsT, typeSyntax);
+                { return BuildSyntaxCatch(itemAsT, typeSyntax); }
+                case VariableKind.For:
+                { return BuildSyntaxFor(itemAsT, typeSyntax); }
+                //case VariableKind.ForEach:
+                //{ return BuildSyntaxForEach(itemAsT, typeSyntax); }
                 default:
-                    throw new InvalidOperationException();
+                { throw new InvalidOperationException(); }
             }
         }
 
@@ -147,18 +161,23 @@ namespace RoslynDom.CSharp
             {
                 var expressionSyntax = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Initializer);
                 expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, itemAsT.Whitespace2Set[LanguageElement.Expression]);
-                var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionSyntax);
-                equalsValueClause = BuildSyntaxHelpers.AttachWhitespace(equalsValueClause, itemAsT.Whitespace2Set, WhitespaceLookup);
+                var equalsToken = SyntaxFactory.Token(SyntaxKind.EqualsToken);
+                equalsToken = BuildSyntaxHelpers.AttachWhitespaceToToken(equalsToken, itemAsT.Whitespace2Set[LanguageElement.EqualsAssignmentOperator]);
+                var equalsValueClause = SyntaxFactory.EqualsValueClause(equalsToken, expressionSyntax);
+                //equalsValueClause = BuildSyntaxHelpers.AttachWhitespace(equalsValueClause, itemAsT.Whitespace2Set, WhitespaceLookup);
                 node = node.WithInitializer(equalsValueClause);
             }
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-            return node.PrepareForBuildSyntaxOutput(itemAsT);
+            // Not a statement, so should not call PrepareForBuildSyntaxOutput
+            return new SyntaxNode[] { node };
         }
 
-        private IEnumerable<SyntaxNode> BuildSyntaxForEach(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
+        private IEnumerable<SyntaxNode> BuildSyntaxFor(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
         {
-            throw new NotImplementedException();
+            var ret = BuildSyntaxLocal(itemAsT, typeSyntax);
+
+            return ret;
         }
 
         private IEnumerable<SyntaxNode> BuildSyntaxCatch(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)

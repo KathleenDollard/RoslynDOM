@@ -13,9 +13,24 @@ namespace RoslynDom.CSharp
     public class PublicAnnotationFactory
         : RDomMiscFactory<IPublicAnnotation, SyntaxNode>
     {
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public PublicAnnotationFactory(RDomCorporation corporation)
             : base(corporation)
         { }
+        
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
 
         public override RDomPriority Priority
         { get { return 0; } }
@@ -95,6 +110,7 @@ namespace RoslynDom.CSharp
                     // Reuse the evaluation work done in attribute to follow same rules
                     var tempAttribute = Corporation.CreateFrom<IAttribute>(attribSyntax, null, null).FirstOrDefault();
                     var newPublicAnnotation = new PublicAnnotation(tempAttribute.Name.ToString());
+                    newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
                     foreach (var attributeValue in tempAttribute.AttributeValues)
                     {
                         newPublicAnnotation.AddItem(attributeValue.Name ?? "", attributeValue.Value);

@@ -16,10 +16,25 @@ namespace RoslynDom.CSharp
                 : RDomMiscFactory<IStructuredDocumentation, SyntaxNode>
     {
 
+        private static WhitespaceKindLookup _whitespaceLookup;
+
         public StructuredDocumentationFactory(RDomCorporation corporation)
             : base(corporation)
         { }
 
+        private WhitespaceKindLookup WhitespaceLookup
+        {
+            get
+            {
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookup;
+            }
+        }
+        
         public override RDomPriority Priority
         { get { return 0; } }
 
@@ -39,13 +54,35 @@ namespace RoslynDom.CSharp
                 var docString = symbol.GetDocumentationCommentXml();
                 if (!string.IsNullOrEmpty(docString))
                 {
+                    IEnumerable<SyntaxTrivia> leadingTrivia = syntaxNode.GetLeadingTrivia();
+                    if ( leadingTrivia
+                                    .Any(x => x.CSharpKind() == SyntaxKind.MultiLineDocumentationCommentTrivia))
+                    {throw new NotImplementedException();}
+                   
+                    var trivia = leadingTrivia
+                                    .Where(x => x.CSharpKind() == SyntaxKind.SingleLineDocumentationCommentTrivia)
+                                    .First();
+                    var precedingTrivia = leadingTrivia.PreviousSiblings<SyntaxTrivia>(trivia)
+                                    .LastOrDefault();
+                    var leadingWs = "";
+                    if (precedingTrivia != null && precedingTrivia.CSharpKind() == SyntaxKind.WhitespaceTrivia )
+                    { leadingWs = precedingTrivia.ToFullString(); }
                     var xDocument = XDocument.Parse(docString);
                     var summaryNode = xDocument.DescendantNodes()
                                         .OfType<XElement>()
                                         .Where(x => x.Name == "summary")
                                         .Select(x => x.Value);
-                    var description = summaryNode.FirstOrDefault().Replace("/r", "").Replace("\n", "").Trim();
-                    newItem.Description = description;
+                    var newWs=new Whitespace2(LanguagePart.Current, LanguageElement.DocumentationComment);
+                    newWs.LeadingWhitespace = leadingWs;
+                    newItem.Whitespace2Set.Add(newWs);
+
+                    var description = summaryNode.FirstOrDefault().Replace("\r", "").Replace("\n", "");
+                    leadingWs = description.SubstringBefore(description.Trim());
+                    newWs = new Whitespace2(LanguagePart.Inner, LanguageElement.DocumentationComment);
+                    newWs.LeadingWhitespace = leadingWs;
+                    newItem.Whitespace2Set.Add(newWs);
+
+                    newItem.Description = description.Trim();
                     newItem.Document = docString;
                 }
             }

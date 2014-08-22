@@ -31,11 +31,16 @@ namespace RoslynDom.Common
         IEnumerator IEnumerable.GetEnumerator()
         { return list.GetEnumerator(); }
 
+        public void Add(Whitespace2 item)
+        {
+            this[item.LanguagePart, item.LanguageElement] = item;
+        }
+
         public void AddRange(IEnumerable<Whitespace2> newItems)
         {
             foreach (var item in newItems)
             {
-                this[item.LanguageElement] = item;
+                this[item.LanguagePart, item.LanguageElement] = item;
             }
         }
 
@@ -43,12 +48,30 @@ namespace RoslynDom.Common
         {
             get
             {
-                return list.Where(x => x.LanguageElement == languageElement).FirstOrDefault();
+                return this[LanguagePart.Current, languageElement];
             }
             set
             {
-                var old = this[languageElement];
-                var pos = list.IndexOf(old);
+                this[LanguagePart.Current, languageElement] = value;
+            }
+        }
+
+
+        public Whitespace2 this[LanguagePart languagePart, LanguageElement languageElement]
+        {
+            get
+            {
+                return list
+                        .Where(x => x.LanguageElement == languageElement
+                          && x.LanguagePart == languagePart)
+                        .FirstOrDefault();
+            }
+            set
+            {
+                var old = this[languagePart, languageElement];
+                var pos = -1;
+                if (old != null)
+                { pos = list.IndexOf(old); }
                 if (pos < 0)
                 { list.Add(value); }
                 else
@@ -76,6 +99,16 @@ namespace RoslynDom.Common
             LanguageElement = languageElement;
         }
 
+        public Whitespace2(LanguagePart languagePart, LanguageElement languageElement,
+            string leadingWS, string trailingWS, string trailingComment)
+        {
+            LanguagePart = languagePart;
+            LanguageElement = languageElement;
+            LeadingWhitespace = leadingWS;
+            TrailingWhitespace = trailingWS;
+            TrailingComment = trailingComment;
+        }
+
         public Whitespace2(Whitespace2 old)
         {
             LanguagePart = old.LanguagePart;
@@ -96,7 +129,7 @@ namespace RoslynDom.Common
 
         public override string ToString()
         {
-            return string.Format(@"Whitespace: {0} Leading: '{1}' Trailing: '{2}' Comment: '{3}'", LanguageElement, LeadingWhitespace, TrailingWhitespace, TrailingComment);
+            return string.Format(@"Whitespace: {0}/{1} Leading: '{2}' Trailing: '{3}' Comment: '{4}'", LanguagePart, LanguageElement, LeadingWhitespace, TrailingWhitespace, TrailingComment);
         }
     }
 }

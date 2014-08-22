@@ -8,6 +8,8 @@ namespace RoslynDom.Common
 {
     public enum LanguageElement
     {
+        Comment,
+        DocumentationComment,
         EndOfLine,
 
         AttributeSurroundStart,
@@ -90,6 +92,7 @@ namespace RoslynDom.Common
         Public,
 
         Identifier,
+        Type,
 
         Abstract,
         Override,
@@ -123,8 +126,13 @@ namespace RoslynDom.Common
         // Variance - replace enum?
 
         IfKeyword,
+        ElseKeyword,
+        DoKeyword,
+        ForKeyword,
+        ForEachKeyword,
+        InKeyword,
+        WhileKeyword,
         ConditionalStartDelimiter,
         ConditionalEndDelimiter,
-
     }
 }

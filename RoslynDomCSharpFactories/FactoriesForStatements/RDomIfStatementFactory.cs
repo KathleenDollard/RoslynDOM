@@ -26,7 +26,8 @@ namespace RoslynDom.CSharp
                 if (_whitespaceLookup == null)
                 {
                     _whitespaceLookup = new WhitespaceKindLookup();
-                    _whitespaceLookup.Add(LanguageElement.IfKeyword, SyntaxKind.IfKeyword );
+                    _whitespaceLookup.Add(LanguageElement.IfKeyword, SyntaxKind.IfKeyword);
+                    _whitespaceLookup.Add(LanguageElement.ElseKeyword, SyntaxKind.ElseKeyword);
                     _whitespaceLookup.Add(LanguageElement.ConditionalStartDelimiter , SyntaxKind.OpenParenToken );
                     _whitespaceLookup.Add(LanguageElement.ConditionalEndDelimiter, SyntaxKind.CloseParenToken );
                     _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
@@ -55,7 +56,10 @@ namespace RoslynDom.CSharp
                 var newElse = new RDomElseIfStatement(elseIf, newItem, model);
                 CreateFromWorker.StandardInitialize(newElse, syntaxNode, newElse, model);
                 CreateFromWorker.InitializeStatements(newElse, elseIf.Statement, newElse, model);
+                CreateFromWorker.StoreWhitespace(newElse, elseIf, LanguagePart.Current, WhitespaceLookup);
                 newElse.Condition = Corporation.CreateFrom<IExpression>(elseIf.Condition, newElse, model).FirstOrDefault();
+                CreateFromWorker.StoreWhitespace(newElse, elseIf.Statement, LanguagePart.Block, WhitespaceLookup);
+                CreateFromWorker.StoreWhitespace(newElse, elseIf.Condition, LanguagePart.Current, WhitespaceLookup);
                 newItem.Elses.AddOrMove(newElse);
             }
             var lastElseIf = elseIfSyntaxList.Last();
@@ -63,7 +67,9 @@ namespace RoslynDom.CSharp
             {
                 var newElse = new RDomElseStatement(syntax, newItem, model);
                 CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+                CreateFromWorker.StoreWhitespace(newElse, lastElseIf, LanguagePart.Current, WhitespaceLookup);
                 CreateFromWorker.InitializeStatements(newElse, lastElseIf.Else.Statement, newElse, model);
+                CreateFromWorker.StoreWhitespace(newElse, lastElseIf.Statement, LanguagePart.Block, WhitespaceLookup);
                 newItem.Elses.AddOrMove(newElse);
             }
             return newItem;
@@ -113,6 +119,7 @@ namespace RoslynDom.CSharp
                     // build if statement and put in else clause
                     statement = SyntaxFactory.IfStatement(GetCondition(elseIf), statement)
                                 .WithElse(elseClause);
+                    statement = BuildSyntaxHelpers.AttachWhitespace(statement, nestedElse.Whitespace2Set, WhitespaceLookup);
                 }
                 var newElseClause = SyntaxFactory.ElseClause(statement);
                 elseClause = newElseClause;

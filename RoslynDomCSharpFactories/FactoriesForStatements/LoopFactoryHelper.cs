@@ -20,38 +20,42 @@ namespace RoslynDom.CSharp
 
         public static IStatement CreateItemFrom<T>(
             T newItem, ExpressionSyntax condition, StatementSyntax statement, IDom parent, SemanticModel model,
-            RDomCorporation corporation, ICreateFromWorker createFromWorker)
+            RDomCorporation corporation, ICSharpCreateFromWorker createFromWorker, WhitespaceKindLookup whitespaceLookup)
             where T : ILoop<T>
         {
+            newItem.Condition = corporation.CreateFrom<IExpression>(condition, newItem, model).FirstOrDefault();
             createFromWorker.InitializeStatements(newItem, statement, newItem, model);
 
-            newItem.Condition = corporation.CreateFrom<IExpression>(condition, newItem, model).FirstOrDefault();
             Guardian.Assert.IsNotNull(condition, nameof(condition));
+
+            createFromWorker.StoreWhitespace(newItem, statement, LanguagePart.Block, whitespaceLookup);
+            createFromWorker.StoreWhitespace(newItem, condition, LanguagePart.Current, whitespaceLookup);
 
             return newItem;
         }
 
         public static IEnumerable<SyntaxNode> BuildSyntax<T>
-            (T item, Func<ExpressionSyntax, StatementSyntax, SyntaxNode> makeSyntaxDelegate,
+            (T itemAsT, Func<ExpressionSyntax, StatementSyntax, SyntaxNode> makeSyntaxDelegate,
             WhitespaceKindLookup whitespaceLookup)
             where T : ILoop<T>
         {
 
             SyntaxNode node;
-            if (item.Condition == null)
+            if (itemAsT.Condition == null)
             // TODO: Isn't conditin null in a ForEach?
             { node = SyntaxFactory.EmptyStatement(); }// This shold not happen 
             else
             {
-                var statement = RoslynCSharpUtilities.BuildStatement(item.Statements, item, whitespaceLookup);
-                var condition = RDomCSharp.Factory.BuildSyntax(item.Condition);
+                var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, whitespaceLookup);
+                var condition = RDomCSharp.Factory.BuildSyntax(itemAsT.Condition);
                 node = makeSyntaxDelegate((ExpressionSyntax)condition, statement);
             }
 
-            var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(item);
+            var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(itemAsT);
             node = node.WithLeadingTrivia(leadingTrivia);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, whitespaceLookup);
 
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(itemAsT);
         }
     }
 }

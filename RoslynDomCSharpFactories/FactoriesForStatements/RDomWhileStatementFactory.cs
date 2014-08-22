@@ -38,7 +38,9 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
             newItem.TestAtEnd = false; // restating the obvious
-            return LoopFactoryHelper.CreateItemFrom<IWhileStatement>(newItem, syntax.Condition, syntax.Statement, parent, model, Corporation, CreateFromWorker);
+            return LoopFactoryHelper.CreateItemFrom<IWhileStatement>(newItem, 
+                    syntax.Condition, syntax.Statement, parent, model, 
+                    Corporation, CreateFromWorker, WhitespaceLookup );
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)

@@ -10,9 +10,15 @@ namespace RoslynDom.Common
     {
         Block,
         Current,
+        Inner,
+        Variable,
+        Condition,
+        Incrementor,
+        Type,
         AccessorList,
         AttributeList,
         AttributeArgumentList,
-        AttributeName
+        AttributeName,
+        Expression
     }
 }

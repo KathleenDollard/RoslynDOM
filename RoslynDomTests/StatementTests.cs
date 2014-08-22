@@ -32,8 +32,7 @@ namespace RoslynDomTests
                   Foo2();
                   return true;
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
@@ -45,8 +44,7 @@ namespace RoslynDomTests
             Assert.IsInstanceOfType(statements[3], typeof(RDomInvocationStatement));
             Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
             Assert.AreEqual(12, root.Descendants.Count());
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        if (true)\r\n        {\r\n        }\r\n\r\n        var x = \", \";\r\n        x = lastName + x + firstName;\r\n        Foo2();\r\n        return true;\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, output.ToString());
+            Assert.AreEqual(csharpCode , output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -66,18 +64,14 @@ namespace RoslynDomTests
                   XYZ xyz = new XYZ();
                   Bar z = Bar(w, x);
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(8, statements.Count());
             Assert.AreEqual(8, statements.OfType<RDomDeclarationStatement>().Count());
-            // TODO: Solve simplification problem.
-            var actual = RoslynCSharpUtilities.Simplify(output);
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        var w = \", \";\r\n        string x = \", \";\r\n        var a1 = 42;\r\n        int a2 = 42;\r\n        Int32 a3 = 42;\r\n        var y = new Bar(4, \"Fred\");\r\n        XYZ xyz = new XYZ();\r\n        Bar z = Bar(w, x);\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -99,8 +93,7 @@ namespace RoslynDomTests
                     if (z == 1) Console.WriteLine();
                     if (z == 2) Console.Write();
                 }
-            }           
-            ";
+            }";
 
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
@@ -117,9 +110,7 @@ namespace RoslynDomTests
             Assert.IsInstanceOfType((statements[0] as IIfStatement).Elses.Last().Statements.Last(), typeof(RDomInvocationStatement));
 
             // TODO: Solve simplification problem.
-            var actual = RoslynCSharpUtilities.Simplify(output);
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        if (z == 1)\r\n        {\r\n            var x = 42;\r\n        }\r\n        else if (z == 2)\r\n        {\r\n            var x = 43;\r\n            y = x + x;\r\n        }\r\n        else\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n\r\n        if (z == 1)\r\n            Console.WriteLine();\r\n        if (z == 2)\r\n            Console.Write();\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -143,8 +134,7 @@ public class Bar
         z = Console.WriteLine();
         {}
     }
-}           
-            ";
+}";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
@@ -155,10 +145,7 @@ public class Bar
             Assert.IsInstanceOfType(statements[2], typeof(RDomBlockStatement));
             Assert.AreEqual(3, ((IBlockStatement)statements[0]).Statements.Count());
             Assert.AreEqual(4, ((IBlockStatement)((IBlockStatement)statements[0]).Statements.Last()).Statements.Count());
-            // TODO: Solve simplification problem.
-            var actual = RoslynCSharpUtilities.Simplify(output);
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        {\r\n            var z;\r\n            var z;\r\n            {\r\n                z = 43;\r\n                z = x + y;\r\n                z = x + y;\r\n                z = x + y;\r\n            }\r\n        }\r\n\r\n        z = Console.WriteLine();\r\n        {\r\n        }\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -172,8 +159,7 @@ public class Bar
                     Console.WriteLine();
                     Math.Pow(4, 2);
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
@@ -181,11 +167,7 @@ public class Bar
             Assert.AreEqual(2, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomInvocationStatement));
             Assert.IsInstanceOfType(statements[1], typeof(RDomInvocationStatement));
-            // TODO: Solve simplification problem.
-            //var actual = RoslynCSharpUtilities.Simplify(output);
-            var actual = output.ToFullString();
-            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                    Console.WriteLine();\r\n                    Math.Pow(4, 2);\r\n                }\r\n            }           \r\n";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -202,17 +184,14 @@ public class Bar
                 {
                   return 42;
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomReturnStatement));
-            var actual = output.ToFullString();
-            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                  return;\r\n                }\r\n                public int Foo()\r\n                {\r\n                  return 42;\r\n                }\r\n            }           \r\n";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -228,17 +207,14 @@ public class Bar
                         Console.WriteLine();
                     }
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomWhileStatement));
-            var actual = output.ToFullString();
-            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                    while (true)\r\n                    {\r\n                        Console.WriteLine();\r\n                    }\r\n                }\r\n            }           \r\n";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -253,19 +229,17 @@ public class Bar
                     {
                         Console.WriteLine();
                     }
-                    while (true)
+                    while (true);
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomDoStatement));
-            var actual = output.ToFullString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        do\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n        while (true);\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
+
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -282,17 +256,14 @@ public class Bar
                         Console.WriteLine(i);
                     }
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForStatement));
-            var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        for (int i = 0; i < 10; i++)\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -309,17 +280,14 @@ public class Bar
                         Console.WriteLine(i);
                     }
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForStatement));
-            var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        for (var i = 0; i < 10; i++)\r\n        {\r\n            Console.WriteLine(i);\r\n        }\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -336,17 +304,14 @@ public class Bar
                         Console.WriteLine(i);
                     }
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
-            var actual = output.ToFullString();
-            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                    foreach (var i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n                    {\r\n                        Console.WriteLine(i);\r\n                    }\r\n                }\r\n            }           \r\n";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -363,17 +328,14 @@ public class Bar
                         Console.WriteLine(i);
                     }
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
-            var actual = output.ToFullString();
-            var expectedString = "\r\n            public class Bar\r\n            {\r\n                public void Foo()\r\n                {\r\n                    foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n                    {\r\n                        Console.WriteLine(i);\r\n                    }\r\n                }\r\n            }           \r\n";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -400,8 +362,7 @@ public class Bar
                     finally
                     { var d = 3; }
                 }
-            }           
-            ";
+            }";
  
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
@@ -409,9 +370,7 @@ public class Bar
             var statements = method.Statements.ToArray();
             Assert.AreEqual(1, statements.Count());
             Assert.IsInstanceOfType(statements[0], typeof(RDomTryStatement));
-            var actual = output.ToString();
-            var expectedString = "public class Bar\r\n{\r\n    public Void Foo()\r\n    {\r\n        try\r\n        {\r\n            foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })\r\n            {\r\n                Console.WriteLine(i);\r\n            }\r\n        }\r\n        catch\r\n        {\r\n            var a = 3;\r\n        }\r\n        catch\r\n        {\r\n            var b = 3;\r\n        }\r\n        catch\r\n        {\r\n            var c = 3;\r\n        }\r\n        finally\r\n        {\r\n            var d = 3;\r\n        }\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, actual);
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
 
         //try
@@ -448,8 +407,7 @@ public class Bar
                             return true;
                     }   
                 }
-            }           
-            ";
+            }";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var output = RDomCSharp.Factory.BuildSyntax(root);
             var property = root.RootClasses.First().Properties.First();
@@ -467,8 +425,7 @@ public class Bar
             Assert.IsInstanceOfType(statements[2], typeof(RDomIfStatement));
             Assert.IsInstanceOfType(statements[3], typeof(RDomDeclarationStatement));
             Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
-            var expectedString = "public class Bar\r\n{\r\n    public String Foo\r\n    {\r\n        get\r\n        {\r\n            if (true)\r\n            {\r\n            }\r\n\r\n            var x = \", \";\r\n            x = lastName + x + firstName;\r\n            Foo2();\r\n            return true;\r\n        }\r\n\r\n        set\r\n        {\r\n            Foo2();\r\n            x = lastName + x + firstName;\r\n            if (true)\r\n            {\r\n            }\r\n\r\n            var x = \", \";\r\n            return true;\r\n        }\r\n    }\r\n}";
-            Assert.AreEqual(expectedString, output.ToString());
+            Assert.AreEqual(csharpCode, output.ToFullString());
         }
         #endregion
     }

@@ -15,6 +15,8 @@ namespace RoslynDom.CSharp
 {
     public static class BuildSyntaxHelpers
     {
+        // it doesn't feel like this belongs here, but until the design of PrepareForBuildSyntaxOutput solidifies, leaving it
+        private static TriviaManager triviaManager = new TriviaManager();
 
         [ExcludeFromCodeCoverage]
         private static string nameof<T>(T value) { return ""; }
@@ -70,7 +72,7 @@ namespace RoslynDom.CSharp
         }
 
 
-         private class RDomWhitespaceHandledAnnotation
+        private class RDomWhitespaceHandledAnnotation
         {
             public const string Kind = "RDomWhitespaceHandled";
             public static SyntaxAnnotation Create()
@@ -78,7 +80,7 @@ namespace RoslynDom.CSharp
             //public static Guid GetMarker(SyntaxAnnotation annotation)
             //{ return Guid.Parse(annotation.Data); }
         }
-   
+
 
         public static SyntaxTriviaList LeadingTrivia(IDom item)
         {
@@ -132,10 +134,22 @@ namespace RoslynDom.CSharp
                 {
                     var itemAsComment = item as IComment;
                     Guardian.Assert.IsNotNull(itemAsComment, nameof(itemAsComment));
-                    var comment = "";
-                    if (itemAsComment.IsMultiline) { comment = "/* " + itemAsComment.Text + "*/"; }
-                    else { comment = "// " + itemAsComment.Text; }
-                    ret.Add(SyntaxFactory.Comment(comment));
+                    var innerWs = itemAsComment.Whitespace2Set[LanguagePart.Inner, LanguageElement.Comment];
+                    var comment = innerWs.LeadingWhitespace + itemAsComment.Text + innerWs.TrailingWhitespace;
+                    if (itemAsComment.IsMultiline) { comment = "/*" + comment + "*/"; }
+                    else { comment = "//" + comment; }
+                    var commentSyntax = SyntaxFactory.Comment(comment);
+
+                    // Assume just one whitespace
+                    var whitespace = itemAsComment.Whitespace2Set.FirstOrDefault();
+                    if (whitespace != null)
+                    {
+                        // for now assume only whitespace before and newline after
+                        ret.Add(SyntaxFactory.Whitespace(whitespace.LeadingWhitespace));
+                        ret.Add(commentSyntax);
+                    }
+                    else
+                    { ret.Add(commentSyntax); }
                     ret.Add(SyntaxFactory.EndOfLine("\r\n"));
                 }
             }
@@ -146,37 +160,43 @@ namespace RoslynDom.CSharp
         {
             switch (kind)
             {
-                case LiteralKind.String:
-                case LiteralKind.Unknown:
-                    return SyntaxFactory.Literal(value.ToString());
-                case LiteralKind.Numeric:
-                    if (GeneralUtilities.IsInteger(value))
-                    { return SyntaxFactory.Literal(Convert.ToInt32(value)); }
-                    if (GeneralUtilities.IsFloatingPint(value))
-                    { return SyntaxFactory.Literal(Convert.ToDouble(value)); }
-                    if (value is uint)
-                    { return SyntaxFactory.Literal(Convert.ToUInt32(value)); }
-                    if (value is long)
-                    { return SyntaxFactory.Literal(Convert.ToInt64(value)); }
-                    if (value is ulong)
-                    { return SyntaxFactory.Literal(Convert.ToUInt64(value)); }
-                    else
-                    { return SyntaxFactory.Literal(Convert.ToDecimal(value)); }
-                case LiteralKind.Boolean:
-                case LiteralKind.Type:
-                // Need to create an expression so handled separately and should not call this
-                default:
-                    break;
+            case LiteralKind.String:
+            case LiteralKind.Unknown:
+                return SyntaxFactory.Literal(value.ToString());
+            case LiteralKind.Numeric:
+                if (GeneralUtilities.IsInteger(value))
+                { return SyntaxFactory.Literal(Convert.ToInt32(value)); }
+                if (GeneralUtilities.IsFloatingPint(value))
+                { return SyntaxFactory.Literal(Convert.ToDouble(value)); }
+                if (value is uint)
+                { return SyntaxFactory.Literal(Convert.ToUInt32(value)); }
+                if (value is long)
+                { return SyntaxFactory.Literal(Convert.ToInt64(value)); }
+                if (value is ulong)
+                { return SyntaxFactory.Literal(Convert.ToUInt64(value)); }
+                else
+                { return SyntaxFactory.Literal(Convert.ToDecimal(value)); }
+            case LiteralKind.Boolean:
+            case LiteralKind.Type:
+            // Need to create an expression so handled separately and should not call this
+            default:
+                break;
             }
             throw new NotImplementedException();
         }
 
-        public static SyntaxTriviaList BuildStructuredDocumentationSyntax(IHasStructuredDocumentation itemHasStructDoc)
+        public static IEnumerable<SyntaxTrivia> BuildStructuredDocumentationSyntax(IHasStructuredDocumentation itemHasStructDoc)
         {
-            var ret = SyntaxFactory.TriviaList();
-            if (itemHasStructDoc == null || string.IsNullOrWhiteSpace(itemHasStructDoc.Description)) return ret;
-            var description = "\r\n" + itemHasStructDoc.Description + "\r\n";
+            var ret = new List<SyntaxTrivia>();
+            if (itemHasStructDoc == null ||
+                (itemHasStructDoc.StructuredDocumentation.Document  == null
+                && string.IsNullOrEmpty(itemHasStructDoc.Description)))
+            { return ret; }
+            var itemStructDoc = itemHasStructDoc.StructuredDocumentation;
+            var leadingWs = "";
+            var innerLeadingWs = " ";
             XDocument xDoc = null;
+
             if (itemHasStructDoc.StructuredDocumentation == null)
             {
                 xDoc = new XDocument();
@@ -184,7 +204,22 @@ namespace RoslynDom.CSharp
             else
             {
                 xDoc = XDocument.Parse(itemHasStructDoc.StructuredDocumentation.Document);
+                leadingWs = itemStructDoc.Whitespace2Set[LanguageElement.DocumentationComment].LeadingWhitespace;
+                innerLeadingWs = itemStructDoc.Whitespace2Set[LanguagePart.Inner, LanguageElement.DocumentationComment].LeadingWhitespace;
             }
+            var description = "\r\n" + innerLeadingWs + itemHasStructDoc.Description + "\r\n";
+
+            SetDescriptionInXDoc(xDoc, description);
+            string newDocAsString = PrefixLinesWithDocCommentPrefix(leadingWs, xDoc);
+
+            var triviaList = SyntaxFactory.ParseLeadingTrivia(newDocAsString);
+            if (triviaList.Any())
+            { return triviaList; }
+            return ret;
+        }
+
+        private static void SetDescriptionInXDoc(XDocument xDoc, string description)
+        {
             var oldParent = xDoc.DescendantNodes().OfType<XElement>().Where(x => x.Name == "member").FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(description))
             {
@@ -200,6 +235,10 @@ namespace RoslynDom.CSharp
                     oldParent.AddFirst(newSummary);
                 }
             }
+        }
+
+        private static string PrefixLinesWithDocCommentPrefix(string leadingWs, XDocument xDoc)
+        {
             // No doubt I'll feel dirty in the morning, but the manual alternative is awful
             var oldDocsAsString = xDoc.ToString();
             var lines = oldDocsAsString.Split(new string[] { "\r\n" }, StringSplitOptions.None);
@@ -208,13 +247,12 @@ namespace RoslynDom.CSharp
             {
                 var useLine = line.Trim();
                 if (useLine.StartsWith("<member") || useLine.StartsWith("</member")) continue;
-                newDocAsString += "/// " + useLine + "\r\n";
+                newDocAsString += leadingWs + "/// " + useLine + "\r\n";
             }
-            var triviaList = SyntaxFactory.ParseLeadingTrivia(newDocAsString);
-            if (triviaList.Any())
-            { return triviaList; }
-            return ret;
+
+            return newDocAsString;
         }
+
 
 
         //        private static XmlTextSyntax MakeXmlDocumentationExterior()
@@ -291,20 +329,20 @@ namespace RoslynDom.CSharp
             var tokenList = SyntaxFactory.TokenList();
             switch (accessModifier)
             {
-                case AccessModifier.None:
-                    return tokenList;
-                case AccessModifier.Private:
-                    return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-                case AccessModifier.ProtectedOrInternal:
-                    return tokenList.AddRange(new SyntaxToken[] { SyntaxFactory.Token(SyntaxKind.ProtectedKeyword), SyntaxFactory.Token(SyntaxKind.InternalKeyword) });
-                case AccessModifier.Protected:
-                    return tokenList.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
-                case AccessModifier.Internal:
-                    return tokenList.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-                case AccessModifier.Public:
-                    return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-                default:
-                    throw new InvalidOperationException();
+            case AccessModifier.None:
+                return tokenList;
+            case AccessModifier.Private:
+                return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
+            case AccessModifier.ProtectedOrInternal:
+                return tokenList.AddRange(new SyntaxToken[] { SyntaxFactory.Token(SyntaxKind.ProtectedKeyword), SyntaxFactory.Token(SyntaxKind.InternalKeyword) });
+            case AccessModifier.Protected:
+                return tokenList.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
+            case AccessModifier.Internal:
+                return tokenList.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
+            case AccessModifier.Public:
+                return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+            default:
+                throw new InvalidOperationException();
             }
         }
         //public static BlockSyntax BuildStatementBlock(this IEnumerable<IStatement> statements)
@@ -319,97 +357,130 @@ namespace RoslynDom.CSharp
         //    return ret;
         //}
 
+        //public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Set whitespace2Set, WhitespaceKindLookup whitespaceLookup)
+        //     where T : SyntaxNode
+        //{
+        //    var ret = syntaxNode;
+        //    foreach (var whitespace2 in whitespace2Set)
+        //    {
+        //        ret = AttachWhitespaceItem(ret, whitespace2, whitespaceLookup);
+        //    }
+        //    return ret;
+        //}
+
+        //private static T AttachWhitespaceItem<T>(T syntaxNode, Whitespace2 whitespace2, WhitespaceKindLookup whitespaceLookup)
+        //     where T : SyntaxNode
+        //{
+        //    var ret = syntaxNode;
+        //    var kind = whitespaceLookup.Lookup(whitespace2.LanguageElement);
+        //    var tokens = syntaxNode.ChildTokens().Where(x => x.CSharpKind() == kind);
+        //    if (!tokens.Any() && whitespace2.LanguageElement == LanguageElement.Identifier)
+        //    {
+        //        var nameNode = syntaxNode.ChildNodes().OfType<NameSyntax>().FirstOrDefault();
+        //        if (nameNode != null)
+        //        { tokens = nameNode.DescendantTokens().Where(x => x.CSharpKind() == kind); }
+        //    }
+        //    // Sometimes the token won't be there due to changes in the tree. 
+        //    if (tokens.Any())
+        //    {
+        //        var newToken = tokens.First();
+        //        var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
+        //                   .Concat(newToken.LeadingTrivia);
+        //        var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
+        //                   .Concat(newToken.TrailingTrivia);
+        //        // Manage EOL comment here
+        //        newToken = newToken
+        //                    .WithLeadingTrivia(leadingTrivia)
+        //                    .WithTrailingTrivia(trailingTrivia);
+        //        ret = ret.ReplaceToken(tokens.First(), newToken);
+        //    }
+        //    return ret;
+        //}
+
+        //public static T AttachWhitespaceToFirst<T>(T syntaxNode, Whitespace2 whitespace2)
+        //        where T : SyntaxNode
+        //{
+        //    if (whitespace2 == null) { return syntaxNode; }
+        //    var token = syntaxNode.GetFirstToken();
+        //    var newToken = token;
+        //    var ret = syntaxNode;
+        //    var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
+        //               .Concat(newToken.LeadingTrivia);
+        //    //var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
+        //    //           .Concat(newToken.TrailingTrivia);
+        //    // Manage EOL comment here
+        //    //newToken = newToken
+        //    //            .WithLeadingTrivia(leadingTrivia)
+        //    //            .WithTrailingTrivia(trailingTrivia);
+        //    newToken = newToken
+        //               .WithLeadingTrivia(leadingTrivia);
+        //    ret = ret.ReplaceToken(token, newToken);
+        //    return ret;
+        //}
+
+        //public static T AttachWhitespaceToLast<T>(T syntaxNode, Whitespace2 whitespace2)
+        //         where T : SyntaxNode
+        //{
+        //    if (whitespace2 == null) { return syntaxNode; }
+        //    var token = syntaxNode.GetLastToken();
+        //    var newToken = token;
+        //    var ret = syntaxNode;
+        //    //var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
+        //    //           .Concat(newToken.LeadingTrivia);
+        //    var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
+        //               .Concat(newToken.TrailingTrivia);
+        //    // Manage EOL comment here
+        //    //newToken = newToken
+        //    //            .WithLeadingTrivia(leadingTrivia)
+        //    //            .WithTrailingTrivia(trailingTrivia);
+        //    newToken = newToken
+        //                .WithTrailingTrivia(trailingTrivia);
+        //    ret = ret.ReplaceToken(token, newToken);
+        //    return ret;
+        //}
+
+        //public static T AttachWhitespaceToFirstAndLast<T>(T syntaxNode, Whitespace2 whitespace2)
+        // where T : SyntaxNode
+        //{
+        //    if (whitespace2 == null) { return syntaxNode; }
+        //    syntaxNode = AttachWhitespaceToFirst(syntaxNode, whitespace2);
+        //    syntaxNode = AttachWhitespaceToLast(syntaxNode, whitespace2);
+        //    return syntaxNode;
+        //}
+
+
         public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Set whitespace2Set, WhitespaceKindLookup whitespaceLookup)
-             where T : SyntaxNode
+               where T : SyntaxNode
         {
-            var ret = syntaxNode;
-            foreach (var whitespace2 in whitespace2Set)
-            {
-                ret = AttachWhitespaceItem(ret, whitespace2, whitespaceLookup);
-            }
-            return ret;
+            return triviaManager.AttachWhitespace(syntaxNode, whitespace2Set, whitespaceLookup);
         }
 
-        private static T AttachWhitespaceItem<T>(T syntaxNode, Whitespace2 whitespace2, WhitespaceKindLookup whitespaceLookup)
-             where T : SyntaxNode
+        public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Set whitespace2Set, WhitespaceKindLookup whitespaceLookup, LanguagePart languagePart)
+               where T : SyntaxNode
         {
-            var ret = syntaxNode;
-            var kind = whitespaceLookup.Lookup(whitespace2.LanguageElement);
-            var tokens = syntaxNode.ChildTokens().Where(x => x.CSharpKind() == kind);
-            if (!tokens.Any() && whitespace2.LanguageElement == LanguageElement.Identifier)
-            {
-                var nameNode = syntaxNode.ChildNodes().OfType<NameSyntax>().FirstOrDefault();
-                if (nameNode != null)
-                { tokens = nameNode.DescendantTokens().Where(x => x.CSharpKind() == kind); }
-            }
-            // Sometimes the token won't be there due to changes in the tree. 
-            if (tokens.Any())
-            {
-                var newToken = tokens.First();
-                var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
-                           .Concat(newToken.LeadingTrivia);
-                var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
-                           .Concat(newToken.TrailingTrivia);
-                // Manage EOL comment here
-                newToken = newToken
-                            .WithLeadingTrivia(leadingTrivia)
-                            .WithTrailingTrivia(trailingTrivia);
-                ret = ret.ReplaceToken(tokens.First(), newToken);
-            }
-            return ret;
+            return triviaManager.AttachWhitespace(syntaxNode, whitespace2Set, whitespaceLookup, languagePart );
         }
 
         public static T AttachWhitespaceToFirst<T>(T syntaxNode, Whitespace2 whitespace2)
-                where T : SyntaxNode
+            where T : SyntaxNode
         {
-            if (whitespace2 == null) { return syntaxNode; }
-            var token = syntaxNode.GetFirstToken();
-            var newToken = token;
-            var ret = syntaxNode;
-            var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
-                       .Concat(newToken.LeadingTrivia);
-            //var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
-            //           .Concat(newToken.TrailingTrivia);
-            // Manage EOL comment here
-            //newToken = newToken
-            //            .WithLeadingTrivia(leadingTrivia)
-            //            .WithTrailingTrivia(trailingTrivia);
-            newToken = newToken
-                       .WithLeadingTrivia(leadingTrivia);
-            ret = ret.ReplaceToken(token, newToken);
-            return ret;
+            return triviaManager.AttachWhitespaceToFirst(syntaxNode, whitespace2);
         }
 
         public static T AttachWhitespaceToLast<T>(T syntaxNode, Whitespace2 whitespace2)
                  where T : SyntaxNode
         {
-            if (whitespace2 == null) { return syntaxNode; }
-            var token = syntaxNode.GetLastToken();
-            var newToken = token;
-            var ret = syntaxNode;
-            //var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
-            //           .Concat(newToken.LeadingTrivia);
-            var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
-                       .Concat(newToken.TrailingTrivia);
-            // Manage EOL comment here
-            //newToken = newToken
-            //            .WithLeadingTrivia(leadingTrivia)
-            //            .WithTrailingTrivia(trailingTrivia);
-            newToken = newToken
-                        .WithTrailingTrivia(trailingTrivia);
-            ret = ret.ReplaceToken(token, newToken);
-            return ret;
+            return triviaManager.AttachWhitespaceToLast(syntaxNode, whitespace2);
         }
 
         public static T AttachWhitespaceToFirstAndLast<T>(T syntaxNode, Whitespace2 whitespace2)
          where T : SyntaxNode
         {
-            if (whitespace2 == null) { return syntaxNode; }
-            syntaxNode = AttachWhitespaceToFirst(syntaxNode, whitespace2);
-            syntaxNode = AttachWhitespaceToLast(syntaxNode, whitespace2);
-            return syntaxNode;
+            return triviaManager.AttachWhitespaceToFirstAndLast(syntaxNode, whitespace2);
         }
-
-
+        internal static SyntaxToken AttachWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
+        {
+            return triviaManager.AttachWhitespaceToToken(token, whitespace2);
+        }
     }
 }

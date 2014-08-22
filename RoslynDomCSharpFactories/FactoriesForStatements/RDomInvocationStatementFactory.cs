@@ -43,7 +43,9 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as ExpressionStatementSyntax;
             var newItem = new RDomInvocationStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+            //CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, syntax, LanguagePart.Current,
+                                    LanguageElement.Expression);
 
             var expression = syntax.Expression;
             newItem.Invocation = Corporation.CreateFrom<IExpression>(expression, newItem, model).FirstOrDefault();
@@ -57,7 +59,9 @@ namespace RoslynDom.CSharp
             var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Invocation);
             var node = SyntaxFactory.ExpressionStatement((ExpressionSyntax)expressionSyntax);
 
-            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
+            node = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(node,
+                        itemAsT.Whitespace2Set[LanguageElement.Expression]);
+            //node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
 

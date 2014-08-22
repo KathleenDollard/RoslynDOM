@@ -14,8 +14,8 @@ namespace RoslynDomTests
         [TestMethod]
         public void Can_load_and_retrieve_structured_comments()
         {
-            var csharpCode = @"
-                        public class Foo
+            var csharpCode =
+@"                        public class Foo
                         {
                             /// <summary>
                             /// This is a test
@@ -35,11 +35,10 @@ namespace RoslynDomTests
             Assert.AreEqual(expected, method.Description);
             Assert.AreEqual(expected, method2.Description);
             Assert.IsTrue(method.SameIntent(method2));
-            var expectedOutput = "public class Foo\r\n{\r\n    /// <summary>\r\n    /// This is a test\r\n    /// </summary>\r\n    /// <param name=\"dummy\">With a dummy parameter</param>\r\n    public Void Foo3(String dummy)\r\n    {\r\n        Console.WriteLine(42);\r\n    }\r\n}";
-            var actual1 = RDomCSharp.Factory.BuildSyntax(root).ToString();
-            var actual2 = RDomCSharp.Factory.BuildSyntax(root2).ToString();
-            Assert.AreEqual(expectedOutput, actual1);
-            Assert.AreEqual(expectedOutput, actual2);
+            var actual1 = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+            var actual2 = RDomCSharp.Factory.BuildSyntax(root2).ToFullString();
+            Assert.AreEqual(csharpCode, actual1);
+            Assert.AreEqual(csharpCode, actual2);
 
         }
     }

@@ -1,0 +1,4 @@
+csharpCode
+"\r\n            namespace Namespace1\r\n            {\r\n                public interface Bar\r\n                {\r\n                    string Foo { get; set; }\r\n                }  \r\n            }"
+actual
+"\r\n            namespace Namespace1                {\r\n                public interface Bar\r\n                {\r\n                    string Foo { get; set; }\r\n                }  \r\n            }"

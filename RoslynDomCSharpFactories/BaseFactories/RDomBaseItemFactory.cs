@@ -95,20 +95,23 @@ namespace RoslynDom.CSharp
             var ret = new List<TKind>();
 
             var newItems = CreateListFrom(syntaxNode, parent, model);
-            // Whitespace and comments have to appear before new items 
-            //var typeofT = typeof(T);
-            //if (typeofT != typeof(ICommentWhite)
-            //    && typeofT != typeof(IAttribute)
-            //    && typeofT != typeof(IPublicAnnotation)
-            //    && typeofT != typeof(IStructuredDocumentation)
-            //    && !typeofT.IsAssignableFrom(typeof(ICommentWhite))); // Declaration statement comment white is done on variable
-            if (!skipWhitespace
-                && typeof(T) != typeof(ICommentWhite)
-                && typeof(T) != typeof(IAttribute)
-                && typeof(T) != typeof(IPublicAnnotation)
-                && typeof(T) != typeof(IStructuredDocumentation)
-                && !typeof(IReferencedType).IsAssignableFrom(typeof(T))
-                && !typeof(T).IsAssignableFrom(typeof(ICommentWhite)))
+            //// Whitespace and comments have to appear before new items 
+            ////var typeofT = typeof(T);
+            ////if (typeofT != typeof(ICommentWhite)
+            ////    && typeofT != typeof(IAttribute)
+            ////    && typeofT != typeof(IPublicAnnotation)
+            ////    && typeofT != typeof(IStructuredDocumentation)
+            ////    && !typeofT.IsAssignableFrom(typeof(ICommentWhite))); // Declaration statement comment white is done on variable
+            //if (!skipWhitespace
+            //    && typeof(T) != typeof(ICommentWhite)
+            //    && typeof(T) != typeof(IAttribute)
+            //    && typeof(T) != typeof(IPublicAnnotation)
+            //    && typeof(T) != typeof(IStructuredDocumentation)
+            //    && !typeof(IReferencedType).IsAssignableFrom(typeof(T))
+            //    && !typeof(T).IsAssignableFrom(typeof(ICommentWhite)))
+            if (typeof(IStatement).IsAssignableFrom(typeof(T))
+                || typeof(ITypeMember).IsAssignableFrom(typeof(T))
+                || typeof(IStemMember).IsAssignableFrom(typeof(T)))
             {
                 var newItem = newItems.FirstOrDefault();
                 if (newItem != null)
