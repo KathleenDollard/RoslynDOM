@@ -607,23 +607,23 @@ public string Bar2 {get;};
 public string Bar3() {};
 }
 ";
-            Assert.Inconclusive();
+            //Assert.Inconclusive();
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var field = root.Classes.First().Fields.First();
             var retType = field.ReturnType;
-            var RawItem = retType.RawItem;
-            Assert.IsNotNull(RawItem, "field");
-            Assert.IsTrue(RawItem is ImmutableArray<SyntaxReference>, "field");
+            var rawItem = retType.RawItem;
+            Assert.IsNotNull(rawItem, "field");
+            Assert.IsTrue(rawItem is PredefinedTypeSyntax, "field");
             var property = root.Classes.First().Properties.First();
             retType = property.ReturnType;
-            RawItem = retType.RawItem;
-            Assert.IsNotNull(RawItem, "property");
-            Assert.IsTrue(RawItem is ImmutableArray<SyntaxReference>, "property");
+            rawItem = retType.RawItem;
+            Assert.IsNotNull(rawItem, "property");
+            Assert.IsTrue(rawItem is PredefinedTypeSyntax, "property");
             var method = root.Classes.First().Methods.First();
             retType = method.ReturnType;
-            RawItem = retType.RawItem;
-            Assert.IsNotNull(RawItem, "method");
-            Assert.IsTrue(RawItem is ImmutableArray<SyntaxReference>, "method");
+            rawItem = retType.RawItem;
+            Assert.IsNotNull(rawItem, "method");
+            Assert.IsTrue(rawItem is PredefinedTypeSyntax, "method");
         }
         #endregion
 
@@ -939,6 +939,40 @@ namespace Foo
         [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_members_with_comments_and_whitespace_from_typeContainer()
         {
+            //Assert.Inconclusive();
+            var csharpCode = @"
+                public class Bar
+                {
+                    private string firstName;
+
+                        // Comment and whitespace
+                    private string lastName;
+
+                        // comment
+                    public string Foo()
+                    {}
+                }";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+
+            // Check that all were found
+            var members = root.Classes.First().MembersAll.ToArray();
+            Assert.AreEqual(7, members.Count());
+
+            // Check some reality stuff
+            Assert.AreEqual(1, ((IVerticalWhitespace)members[1]).Count);
+            Assert.IsFalse(((IVerticalWhitespace)members[1]).IsElastic);
+            var expected = "Comment and whitespace";
+            Assert.AreEqual(expected, ((IComment)members[2]).Text);
+            Assert.IsFalse(((IComment)members[2]).IsMultiline);
+
+            // Check output
+            var actual = RDomCSharp.Factory.BuildSyntax(root);
+            Assert.AreEqual(csharpCode , actual.ToFullString());
+        }
+
+        [TestMethod, TestCategory(StemContainerCategory)]
+        public void Can_get_members_with_region()
+        {
             Assert.Inconclusive();
             var csharpCode = @"
              #region Fred   
@@ -969,7 +1003,7 @@ namespace Foo
 
             // Check output
             var actual = RDomCSharp.Factory.BuildSyntax(root);
-            Assert.AreEqual(csharpCode , actual.ToFullString());
+            Assert.AreEqual(csharpCode, actual.ToFullString());
         }
 
         [TestMethod, TestCategory(StemContainerCategory)]

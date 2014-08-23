@@ -1,3 +1,0 @@
-﻿
-            [Foo("Fred", bar:3, bar2:"George")] 
-            public class Bar{}

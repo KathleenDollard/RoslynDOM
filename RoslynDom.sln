@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeCoverage.runsettings = CodeCoverage.runsettings
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomExampleTests", "RoslynDomExampleTests\RoslynDomExampleTests.csproj", "{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{8AE6F765-35A1-492F-84A1-86807155AA2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AE6F765-35A1-492F-84A1-86807155AA2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8AE6F765-35A1-492F-84A1-86807155AA2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

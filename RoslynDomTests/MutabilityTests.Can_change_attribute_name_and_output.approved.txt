@@ -1,7 +1,0 @@
-﻿ 
-            [Foo("Fred", bar : 3, bar2 = 3.14, bar3=true)] 
-            public class Bar
-            {
-                public string FooBar()
-                {}
-            }
