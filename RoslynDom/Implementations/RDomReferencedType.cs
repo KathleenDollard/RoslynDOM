@@ -13,21 +13,6 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         { Initialize(); }
 
-
-        //public RDomReferencedType(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
-        //{
-        //    _raw = raw;
-        //    _symbol = symbol;
-        //    Initialize();
-        //}
-
-        //public RDomReferencedType(TypeInfo typeInfo, ISymbol symbol)
-        //{
-        //    _typeInfo = typeInfo;
-        //    _symbol = symbol == null ? typeInfo.Type : symbol;
-        //    Initialize();
-        //}
-
         public RDomReferencedType(RDomReferencedType oldRDom)
              : base(oldRDom)
         {
@@ -41,15 +26,36 @@ namespace RoslynDom
         }
 
         public string Name { get; set; }
+        public bool DisplayAlias { get; set; }
+         public bool IsArray { get; set; }
 
         public string OuterName
-        { get { return Name; } }
+        {
+            get
+            {
+                var containingType = (string.IsNullOrEmpty(ContainingTypeName))
+                                            ? ""
+                                            : ContainingTypeName + ".";
+                 return containingType + Name;
+            }
+        }
 
         public string QualifiedName
-        { get { return Name; } }
+        {
+            get
+            {
+                var containingType = (string.IsNullOrEmpty(ContainingTypeName))
+                                            ? ""
+                                            : ContainingTypeName + ".";
+                var ns = (string.IsNullOrEmpty(Namespace))
+                            ? ""
+                            : Namespace + ".";
+                return ns + containingType + Name;
+            }
+        }
 
         public string Namespace { get; set; }
 
-
+        public string ContainingTypeName { get; set; }
     }
 }

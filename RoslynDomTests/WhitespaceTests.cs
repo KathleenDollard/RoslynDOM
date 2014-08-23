@@ -24,7 +24,7 @@ public class Class1
         var x = 3;
         if (x == 42){Console.WriteLine();}
         if (x == 42)
-        { Console.WriteLine(); }
+        {  Console.WriteLine(); }
         if (x == 42)
         {
             Console.WriteLine();

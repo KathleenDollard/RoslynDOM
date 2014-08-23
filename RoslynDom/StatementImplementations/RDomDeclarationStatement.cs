@@ -21,5 +21,10 @@ namespace RoslynDom
         {
             return (IDeclarationStatement)base.Copy();
         }
+
+        public override string ToString()
+        {
+            return base.ToString() + " {" + Type.Name + "}";
+        }
     }
 }

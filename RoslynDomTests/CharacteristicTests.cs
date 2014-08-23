@@ -43,7 +43,7 @@ public string Bar;
             var field = root.Classes.First().Fields.First();
             var retType = field.ReturnType;
             Assert.IsNotNull(retType);
-            Assert.AreEqual("string", retType.Name, "Name");
+            Assert.AreEqual("String", retType.Name, "Name");
             Assert.AreEqual("System.String", retType.QualifiedName, "QualifiedName");
             Assert.AreEqual("String", retType.OuterName, "OuterName");
             Assert.AreEqual("System", retType.Namespace, "Namespace");
@@ -62,7 +62,7 @@ public int Bar{get;};
             var property = root.Classes.First().Properties.First();
             var retType = property.ReturnType;
             Assert.IsNotNull(retType);
-            Assert.AreEqual("int", retType.Name, "Name");
+            Assert.AreEqual("Int32", retType.Name, "Name");
             Assert.AreEqual("System.Int32", retType.QualifiedName, "QualifiedName");
             Assert.AreEqual("Int32", retType.OuterName, "OuterName");
             Assert.AreEqual("System", retType.Namespace, "Namespace");
@@ -72,10 +72,6 @@ public int Bar{get;};
         [TestMethod, TestCategory(ReturnedTypeCategory)]
         public void Can_get_method_return_type()
         {
-            // This test is failing and I believe it to be due to a temporary CTP bug. So, I made it inconclusive
-            // to avoid confusing people interested in the library release
-            //Assert.Inconclusive();
-
             var csharpCode = @"
                         public class Foo
 {
@@ -88,9 +84,28 @@ public Namespace1.A  Bar() {};
             Assert.IsNotNull(retType);
             Assert.AreEqual("A", retType.Name, "Name");
             Assert.AreEqual("Namespace1.A", retType.QualifiedName, "QualifiedName");
-            Assert.AreEqual("Namespace1.A", retType.OuterName, "OuterName");
+            Assert.AreEqual("A", retType.OuterName, "OuterName");
         }
 
+        [TestMethod, TestCategory(ReturnedTypeCategory)]
+        public void Can_get_method_predefined_return_type()
+        {
+            var csharpCode = @"
+using System;
+public class Foo
+{
+   public string  Bar() {};
+   public String  Bar() {};
+}
+";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var method1 = root.Classes.First().Methods.First();
+            var method2 = root.Classes.First().Methods.Last();
+            var retType1 = method1.ReturnType;
+            var retType2 = method2.ReturnType;
+            Assert.AreEqual("String", retType1.Name);
+            Assert.AreEqual("String", retType2.Name);
+        }
         #endregion
 
         #region access modifier tests
@@ -676,7 +691,7 @@ public enum Foo1 : byte {}
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var en = root.Enums.First();
-            Assert.AreEqual("byte", en.UnderlyingType.Name);
+            Assert.AreEqual("Byte", en.UnderlyingType.Name);
             Assert.AreEqual("System.Byte", en.UnderlyingType.QualifiedName);
 
         }
@@ -797,23 +812,62 @@ public class Foo
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-           // StatePrinterApprovals.Verify(root);
+            // StatePrinterApprovals.Verify(root);
             var methods = root.Classes.First().Methods.ToArray();
             Assert.AreEqual(0, methods[0].Parameters.Count());
             Assert.AreEqual(1, methods[1].Parameters.Count());
             Assert.AreEqual(2, methods[2].Parameters.Count());
             Assert.AreEqual(3, methods[3].Parameters.Count());
-            ParameterCheck(methods[1].Parameters.First(), 0, "i", "int");
-            ParameterCheck(methods[2].Parameters.First(), 0, "i", "int");
-            ParameterCheck(methods[2].Parameters.Last(), 1, "s", "string");
+            ParameterCheck(methods[1].Parameters.First(), 0, "i", "Int32");
+            ParameterCheck(methods[2].Parameters.First(), 0, "i", "Int32");
+            ParameterCheck(methods[2].Parameters.Last(), 1, "s", "String");
             var parameters = methods[3].Parameters.ToArray();
-            ParameterCheck(parameters[0], 0, "i", "int", isRef: true);
-            ParameterCheck(parameters[1], 1, "s", "string", isOut: true);
-            ParameterCheck(parameters[2], 2, "moreStrings", "string[]", isParamArray: true);
+            ParameterCheck(parameters[0], 0, "i", "Int32", isRef: true);
+            ParameterCheck(parameters[1], 1, "s", "String", isOut: true);
+            ParameterCheck(parameters[2], 2, "moreStrings", "String", isParamArray: true, isArray: true);
             parameters = methods[4].Parameters.ToArray();
             ParameterCheck(parameters[0], 0, "a", "A");
-            ParameterCheck(parameters[1], 1, "i", "int", isOptional: true);
-            ParameterCheck(parameters[2], 2, "s", "string", isOptional: true);
+            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true);
+            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true);
+
+        }
+
+        [TestMethod, TestCategory(ParameterAndMethodCategory)]
+        public void Can_get_array_parameter_for_method()
+        {
+            var csharpCode = @"
+public class Foo  
+{
+   public string Foo2(int[] i){}
+}
+";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var methods = root.Classes.First().Methods.ToArray();
+            ParameterCheck(methods[0].Parameters.First(), 0, "i", "Int32", isArray: true);
+
+        }
+
+        [TestMethod, TestCategory(ParameterAndMethodCategory)]
+        public void Can_get_array_parameters_for_method()
+        {
+            var csharpCode = @"
+public class Foo  
+{
+   public string Foo2(int[] i){}
+   public string Foo3(int i, string[] s){}
+   public string Foo4(ref int[] i, out string[] s, params string[] moreStrings){}
+}
+";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            // StatePrinterApprovals.Verify(root);
+            var methods = root.Classes.First().Methods.ToArray();
+            ParameterCheck(methods[0].Parameters.First(), 0, "i", "Int32", isArray: true);
+            ParameterCheck(methods[1].Parameters.First(), 0, "i", "Int32");
+            ParameterCheck(methods[1].Parameters.Last(), 1, "s", "String", isArray: true);
+            var parameters = methods[2].Parameters.ToArray();
+            ParameterCheck(parameters[0], 0, "i", "Int32", isRef: true, isArray: true);
+            ParameterCheck(parameters[1], 1, "s", "String", isOut: true, isArray: true);
+            ParameterCheck(parameters[2], 2, "moreStrings", "String", isArray: true, isParamArray: true);
 
         }
 
@@ -828,7 +882,7 @@ public class Foo
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameter = root.Classes.First().Methods.First().Parameters.First();
-            ParameterCheck(parameter, 0, "moreStrings", "string[]", isParamArray: true);
+            ParameterCheck(parameter, 0, "moreStrings", "String", isParamArray: true, isArray: true);
 
         }
 
@@ -844,8 +898,8 @@ public static class Foo
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
             ParameterCheck(parameters[0], 0, "a", "A");
-            ParameterCheck(parameters[1], 1, "i", "int", isOptional: true);
-            ParameterCheck(parameters[2], 2, "s", "string", isOptional: true);
+            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true);
+            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true);
 
         }
 
@@ -867,7 +921,8 @@ public static class Foo
 
         private void ParameterCheck(IParameter parm, int ordinal, string name, string typeName,
                 bool isOut = false, bool isRef = false, bool isParamArray = false,
-                bool isOptional = false)
+                bool isOptional = false,
+                bool isArray = false)
         {
             Assert.AreEqual(name, parm.Name);
             Assert.AreEqual(typeName, parm.Type.Name);
@@ -875,6 +930,7 @@ public static class Foo
             Assert.AreEqual(isRef, parm.IsRef);
             Assert.AreEqual(isParamArray, parm.IsParamArray);
             Assert.AreEqual(isOptional, parm.IsOptional);
+            Assert.AreEqual(isArray, parm.Type.IsArray);
             Assert.AreEqual(ordinal, parm.Ordinal);
         }
         #endregion
@@ -931,17 +987,17 @@ using System
 public class Foo  
 {
    public string Foo1;
-   public Int32 Foo2;
+   public int Foo2;
    public System.Diagnostics.Tracing.EventKeyword Foo3;
    public BadName Foo4;
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Fields.ToArray();
-            Assert.AreEqual("string", methods[0].RequestValue("TypeName"));
-            Assert.AreEqual("int", methods[1].RequestValue("TypeName"));
-            Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", methods[2].RequestValue("TypeName"));
-            Assert.AreEqual("BadName", methods[3].RequestValue("TypeName"));
+            var fields = root.Classes.First().Fields.ToArray();
+            Assert.AreEqual("String", fields[0].ReturnType.Name);
+            Assert.AreEqual("Int32", fields[1].ReturnType.Name);
+            Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", fields[2].ReturnType.QualifiedName);
+            Assert.AreEqual("BadName", fields[3].ReturnType.Name);
         }
 
         [TestMethod, TestCategory(ReturnTypeNameCategory)]
@@ -951,15 +1007,15 @@ public class Foo
 using System
 public class Foo  
 {
-   public void Foo3(string s, Int32 i, System.Diagnostics.Tracing.EventKeyword keyword, BadName whatever){}
+   public void Foo3(string s, int i, System.Diagnostics.Tracing.EventKeyword keyword, BadName whatever){}
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
-            Assert.AreEqual("string", parameters[0].RequestValue("TypeName"));
-            Assert.AreEqual("int", parameters[1].RequestValue("TypeName"));
-            Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", parameters[2].RequestValue("TypeName"));
-            Assert.AreEqual("BadName", parameters[3].RequestValue("TypeName"));
+            Assert.AreEqual("String", parameters[0].Type.Name);
+            Assert.AreEqual("Int32", parameters[1].Type.Name);
+            Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", parameters[2].Type.QualifiedName);
+            Assert.AreEqual("BadName", parameters[3].Type.Name);
         }
         #endregion
 
@@ -1121,12 +1177,12 @@ public class Foo
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var members = root.Classes.First().Members.ToArray();
             Assert.AreEqual(MemberKind.Property, members[0].MemberKind);
-            Assert.AreEqual(MemberKind.Method,   members[1].MemberKind);
-            Assert.AreEqual(MemberKind.Field,    members[2].MemberKind);
-            Assert.AreEqual(MemberKind.Class,    members[3].MemberKind);
-            Assert.AreEqual(MemberKind.Structure,members[4].MemberKind);
-            Assert.AreEqual(MemberKind.Interface,members[5].MemberKind);
-            Assert.AreEqual(MemberKind.Enum,     members[6].MemberKind);
+            Assert.AreEqual(MemberKind.Method, members[1].MemberKind);
+            Assert.AreEqual(MemberKind.Field, members[2].MemberKind);
+            Assert.AreEqual(MemberKind.Class, members[3].MemberKind);
+            Assert.AreEqual(MemberKind.Structure, members[4].MemberKind);
+            Assert.AreEqual(MemberKind.Interface, members[5].MemberKind);
+            Assert.AreEqual(MemberKind.Enum, members[6].MemberKind);
         }
 
         [TestMethod, TestCategory(MemberKindCategory)]
@@ -1189,7 +1245,7 @@ public class Foo
         #endregion
 
         #region property access
-        [TestMethod, TestCategory(PropertyAccessCategory )]
+        [TestMethod, TestCategory(PropertyAccessCategory)]
         public void Can_get_property_access()
         {
             var csharpCode = @"
@@ -1202,7 +1258,7 @@ public class Foo
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var properties = root.Classes.First().Properties .ToArray();
+            var properties = root.Classes.First().Properties.ToArray();
             Assert.IsTrue(properties[0].CanGet);
             Assert.IsTrue(properties[0].CanSet);
             Assert.IsTrue(properties[1].CanGet);
@@ -1215,7 +1271,7 @@ public class Foo
         #endregion
 
         #region miscellaneous
-        [TestMethod, TestCategory(MiscellaneousCategory )]
+        [TestMethod, TestCategory(MiscellaneousCategory)]
         public void Can_get_class_name_for_class()
         {
             var csharpCode = @"
@@ -1226,8 +1282,8 @@ public class Foo
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var cl =(RDomClass) root.Classes.First();
-            Assert.AreEqual("Foo",cl.ClassName) ;
+            var cl = (RDomClass)root.Classes.First();
+            Assert.AreEqual("Foo", cl.ClassName);
         }
 
         [TestMethod, TestCategory(MiscellaneousCategory)]
@@ -1249,7 +1305,7 @@ namespace Namespace1
             Assert.AreEqual("Foo2", ((RDomClass)cl[2]).ClassName);
         }
 
-  
+
         #endregion
     }
 }

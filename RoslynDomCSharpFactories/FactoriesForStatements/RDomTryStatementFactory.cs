@@ -24,6 +24,13 @@ namespace RoslynDom.CSharp
                 if (_whitespaceLookup == null)
                 {
                     _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.TryKeyword, SyntaxKind.TryKeyword);
+                    _whitespaceLookup.Add(LanguageElement.CatchKeyword, SyntaxKind.CatchKeyword);
+                    _whitespaceLookup.Add(LanguageElement.FinallyKeyword, SyntaxKind.FinallyKeyword);
+                    _whitespaceLookup.Add(LanguageElement.ConditionalStartDelimiter, SyntaxKind.OpenParenToken);
+                    _whitespaceLookup.Add(LanguageElement.ConditionalEndDelimiter, SyntaxKind.CloseParenToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
                 return _whitespaceLookup;
@@ -35,8 +42,10 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as TryStatementSyntax;
             var newItem = new RDomTryStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.InitializeStatements(newItem, syntax.Block, newItem, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Block, LanguagePart.Block, WhitespaceLookup);
+
             var catchSyntaxList = syntax.ChildNodes()
                                     .Where(x => x.CSharpKind() == SyntaxKind.CatchClause)
                                     .OfType<CatchClauseSyntax>();
@@ -45,6 +54,8 @@ namespace RoslynDom.CSharp
                 var newCatch = new RDomCatchStatement(ctch, newItem, model);
                 CreateFromWorker.StandardInitialize(newCatch, ctch, newItem, model);
                 CreateFromWorker.InitializeStatements(newCatch, ctch.Block, newCatch, model);
+                CreateFromWorker.StoreWhitespace(newCatch, ctch, LanguagePart.Current, WhitespaceLookup);
+                CreateFromWorker.StoreWhitespace(newCatch, ctch.Block, LanguagePart.Block, WhitespaceLookup);
                 if (ctch.Declaration != null)
                 {
                     var type = Corporation
@@ -52,6 +63,7 @@ namespace RoslynDom.CSharp
                                   .FirstOrDefault()
                                   as IReferencedType;
                     newCatch.ExceptionType = type;
+                    CreateFromWorker.StoreWhitespace(newCatch, ctch.Declaration, LanguagePart.Current, WhitespaceLookup);
                     if (!string.IsNullOrWhiteSpace(ctch.Declaration.Identifier.ToString()))
                     {
                         newCatch.Variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
@@ -59,7 +71,10 @@ namespace RoslynDom.CSharp
                     }
                 }
                 if (ctch.Filter != null)
-                { newCatch.Condition = Corporation.CreateFrom<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault(); }
+                {
+                    newCatch.Condition = Corporation.CreateFrom<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault();
+                    CreateFromWorker.StoreWhitespace(newCatch.Condition, ctch.Filter, LanguagePart.Current, WhitespaceLookup);
+                }
                 newItem.CatchesAll.AddOrMove(newCatch);
             }
             if (syntax.Finally != null)
@@ -67,6 +82,8 @@ namespace RoslynDom.CSharp
                 var newFinally = new RDomFinallyStatement(syntax.Finally, newItem, model);
                 CreateFromWorker.StandardInitialize(newFinally, syntax.Finally, parent, model);
                 CreateFromWorker.InitializeStatements(newFinally, syntax.Finally.Block, newFinally, model);
+                CreateFromWorker.StoreWhitespace(newFinally, syntax.Finally, LanguagePart.Current, WhitespaceLookup);
+                CreateFromWorker.StoreWhitespace(newFinally, syntax.Finally.Block, LanguagePart.Block, WhitespaceLookup);
                 newItem.Finally = newFinally;
             }
             return newItem;
@@ -112,6 +129,7 @@ namespace RoslynDom.CSharp
             var catches = BuildCatchSyntaxList(itemAsT);
             var fnally = BuildFinallySyntax(itemAsT);
             var block = BuildSyntaxWorker.GetStatementBlock(itemAsT.Statements);
+            block = BuildSyntaxHelpers.AttachWhitespace(block, itemAsT.Whitespace2Set, WhitespaceLookup);
 
             node = node.WithCatches(SyntaxFactory.List(catches))
                      .WithFinally(fnally)
@@ -126,7 +144,9 @@ namespace RoslynDom.CSharp
             var fnally = itemAsT.Finally;
             // TODO: Empty statement would return empty brackets here?
             var block = BuildSyntaxWorker.GetStatementBlock(fnally.Statements);
+            block = BuildSyntaxHelpers.AttachWhitespace(block, fnally.Whitespace2Set, WhitespaceLookup);
             var syntax = SyntaxFactory.FinallyClause(block);
+            syntax = BuildSyntaxHelpers.AttachWhitespace(syntax, fnally.Whitespace2Set, WhitespaceLookup);
             return syntax;
         }
 
@@ -142,11 +162,15 @@ namespace RoslynDom.CSharp
                     var declaration = SyntaxFactory.CatchDeclaration(typeSyntax);
                     if (ctch.Variable != null)
                     { declaration = declaration.WithIdentifier(SyntaxFactory.Identifier(ctch.Variable.Name)); }
+                    declaration = BuildSyntaxHelpers.AttachWhitespace(declaration, ctch.Whitespace2Set, WhitespaceLookup);
+                    syntax = syntax.WithDeclaration(declaration);
                 }
                 // TODO: Add catch filter for 6.0
                 // TODO: Empty statement would return empty brackets here?
                 var block = BuildSyntaxWorker.GetStatementBlock(ctch.Statements);
+                block = BuildSyntaxHelpers.AttachWhitespace(block, ctch.Whitespace2Set, WhitespaceLookup);
                 syntax = syntax.WithBlock(block);
+                syntax = BuildSyntaxHelpers.AttachWhitespace(syntax, ctch.Whitespace2Set, WhitespaceLookup);
                 ret.Add(syntax);
             }
 

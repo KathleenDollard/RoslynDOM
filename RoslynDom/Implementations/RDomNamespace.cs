@@ -22,13 +22,14 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
-        public Guid  Group { get; private set; }
+        public Guid Group { get; private set; }
 
 
         public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
+        { get { return QualifiedName; } }
 
-
+        public string ContainingTypeName
+        { get { return ""; } }
 
         public StemMemberKind StemMemberKind
         { get { return StemMemberKind.Namespace; } }

@@ -65,7 +65,7 @@ namespace RoslynDom.CSharp
             else if (statements.Count() == 1)
             {
                 statementBlock = (StatementSyntax)statementSyntaxList.First();
-                statementBlock = BuildSyntaxHelpers.AttachWhitespace(statementBlock, parent.Whitespace2Set, whitespaceLookup);
+                //statementBlock = BuildSyntaxHelpers.AttachWhitespace(statementBlock, parent.Whitespace2Set, whitespaceLookup);
             }
             else
             {

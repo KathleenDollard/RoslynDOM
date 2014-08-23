@@ -21,18 +21,19 @@ namespace RoslynDom.CSharp
         {
             get
             {
-            if (_whitespaceLookup == null)
-            {
-                _whitespaceLookup = new WhitespaceKindLookup();
-                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
-                _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
-                _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
-                _whitespaceLookup.Add(LanguageElement.ParameterStartDelimiter, SyntaxKind.OpenParenToken);
-                _whitespaceLookup.Add(LanguageElement.ParameterEndDelimiter, SyntaxKind.CloseParenToken);
-                _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
-                _whitespaceLookup.AddRange(WhitespaceKindLookup.OopModifiers);
-                _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
-                _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.ParameterStartDelimiter, SyntaxKind.OpenParenToken);
+                    _whitespaceLookup.Add(LanguageElement.ParameterEndDelimiter, SyntaxKind.CloseParenToken);
+                    _whitespaceLookup.Add(LanguageElement.NewSlot, SyntaxKind.NewKeyword );
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.OopModifiers);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
                 return _whitespaceLookup;
             }

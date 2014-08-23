@@ -42,6 +42,9 @@ namespace RoslynDom
         public string QualifiedName
         { get { return RoslynUtilities.GetQualifiedName(this); } }
 
+        public string ContainingTypeName
+        { get { return RoslynDomUtilities.GetContainingTypeName(this.Parent); } }
+
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 

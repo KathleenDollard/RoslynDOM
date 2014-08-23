@@ -8,19 +8,19 @@ namespace RoslynDom.Common
 {
 
 
-    public interface IIfStatement : IStatement, IStatementBlock, IHasCondition, IDom<IIfStatement>
+    public interface IIfStatement : IDom<IIfStatement>, IStatement, IStatementBlock, IHasCondition, IElseBaseStatement
     {
-        RDomList<IElseStatement> Elses { get; }
+        RDomList<IElseBaseStatement> Elses { get; }
         IFinalElseStatement Else { get; }
         IEnumerable<IElseIfStatement> ElseIfs { get; }
 
     }
 
-    public interface IElseIfStatement : IDom<IElseIfStatement>, IElseStatement, IHasCondition
+    public interface IElseIfStatement : IDom<IElseIfStatement>, IElseBaseStatement, IHasCondition
     { }
 
-    public interface IFinalElseStatement : IDom<IFinalElseStatement>, IElseStatement
+    public interface IFinalElseStatement : IDom<IFinalElseStatement>, IElseBaseStatement
     { }
-    public interface IElseStatement : IStatement, IStatementBlock
+    public interface IElseBaseStatement : IStatement, IStatementBlock
     { }
 }

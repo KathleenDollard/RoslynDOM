@@ -8,7 +8,7 @@ namespace RoslynDom
 {
     public class RDomIfStatement : RDomStatementBlockBase<IIfStatement>, IIfStatement
     {
-        private RDomList<IElseStatement> _elses;
+        private RDomList<IElseBaseStatement> _elses;
 
         public RDomIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
@@ -26,7 +26,7 @@ namespace RoslynDom
         protected override void Initialize()
         {
             base.Initialize();
-            _elses = new RDomList<IElseStatement>(this);
+            _elses = new RDomList<IElseBaseStatement>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -54,7 +54,7 @@ namespace RoslynDom
             }
         }
 
-        public RDomList<IElseStatement> Elses
+        public RDomList<IElseBaseStatement> Elses
         { get { return _elses; } }
 
         public IExpression Condition { get; set; }

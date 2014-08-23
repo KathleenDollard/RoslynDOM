@@ -24,7 +24,11 @@ namespace RoslynDom
             _originalRawSyntax = rawItem;
             Parent = parent;
             if (model != null)
-            { _symbol = (TSymbol)model.GetDeclaredSymbol(rawItem); }
+            {
+                _symbol = (TSymbol)model.GetDeclaredSymbol(rawItem);
+                if (_symbol == null)
+                { _symbol = (TSymbol)model.GetSymbolInfo(rawItem).Symbol; }
+            }
         }
 
         protected RDomBase(T oldIDom)

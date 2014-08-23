@@ -57,21 +57,29 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IDeclarationStatement;
             var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
-            var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.Type).First();
+            TypeSyntax typeSyntax;
+            if (itemAsT.IsImplicitlyTyped)
+            {
+                typeSyntax = SyntaxFactory.ParseTypeName("var");
+                typeSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast (typeSyntax, itemAsT.Type.Whitespace2Set.First());
+            }
+            else
+            { typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.Type).First(); }
 
             var variable = item as IVariableDeclaration;
             // This is a weakness in the current factory lookup - we can't just ask for a random factory
             // so to call the normal build syntax through the factory causes infinite recursion. 
             // TODO: Add the ability to request a random factory from the container (via the CSharp uber factory
-            var tempFactory =new RDomVariableDeclarationFactory(Corporation );
+            var tempFactory = new RDomVariableDeclarationFactory(Corporation);
             var nodeDeclarators = tempFactory.BuildSyntax(item);
             var nodeDeclarator = (VariableDeclaratorSyntax)nodeDeclarators.First();
-      
+
             var nodeDeclaratorInList = SyntaxFactory.SeparatedList(
                                 SyntaxFactory.List<VariableDeclaratorSyntax>(
                                     new VariableDeclaratorSyntax[]
                                             { nodeDeclarator }));
             var nodeDeclaration = SyntaxFactory.VariableDeclaration(typeSyntax, nodeDeclaratorInList);
+            nodeDeclaration = BuildSyntaxHelpers.AttachWhitespace(nodeDeclaration, itemAsT.Whitespace2Set, WhitespaceLookup);
             var node = SyntaxFactory.LocalDeclarationStatement(nodeDeclaration);
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);

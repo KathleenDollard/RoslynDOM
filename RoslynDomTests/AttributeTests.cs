@@ -601,7 +601,7 @@ namespace RoslynDomTests
             Assert.AreEqual(LiteralKind.Type, current.ValueType);
             var refType = current.Value as RDomReferencedType;
             Assert.IsNotNull(refType);
-            Assert.AreEqual("string", refType.Name);
+            Assert.AreEqual("String", refType.Name);
 
         }
 

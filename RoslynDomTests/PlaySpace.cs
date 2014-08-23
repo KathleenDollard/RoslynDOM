@@ -5,11 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace RoslynDom
 {
     namespace Common.Test
     {
+        [TestClass]
+        public class Playspace
+        {
+            [TestMethod]
+            public void Play()
+            {
+                var node = SyntaxFactory.ParseTypeName("System.Int32");
+            }
+        }
+
+
         public class Foo
         {
             int z;

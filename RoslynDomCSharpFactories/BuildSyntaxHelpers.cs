@@ -85,11 +85,8 @@ namespace RoslynDom.CSharp
         public static SyntaxTriviaList LeadingTrivia(IDom item)
         {
             var leadingTrivia = new List<SyntaxTrivia>();
-
-            leadingTrivia.AddRange(BuildSyntaxHelpers.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation));
-
             leadingTrivia.AddRange(BuildCommentWhite(item));
-
+            leadingTrivia.AddRange(BuildSyntaxHelpers.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation));
             return SyntaxFactory.TriviaList(leadingTrivia);
         }
 
@@ -464,6 +461,7 @@ namespace RoslynDom.CSharp
         public static T AttachWhitespaceToFirst<T>(T syntaxNode, Whitespace2 whitespace2)
             where T : SyntaxNode
         {
+            if (whitespace2 == null) return syntaxNode;
             return triviaManager.AttachWhitespaceToFirst(syntaxNode, whitespace2);
         }
 

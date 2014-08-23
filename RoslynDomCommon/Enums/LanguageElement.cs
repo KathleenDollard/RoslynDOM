@@ -134,5 +134,9 @@ namespace RoslynDom.Common
         WhileKeyword,
         ConditionalStartDelimiter,
         ConditionalEndDelimiter,
+        TryKeyword,
+        CatchKeyword,
+        FinallyKeyword,
+        NewSlot,
     }
 }

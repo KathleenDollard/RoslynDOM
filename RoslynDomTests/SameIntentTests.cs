@@ -658,7 +658,7 @@ namespace RoslynDomTests
             var property1 = root1.Classes.First().Properties.First();
             var property2 = root2.Classes.First().Properties.First();
             Assert.IsTrue(property1.SameIntent(property2));
-            var csharCodeChanged = csharpCode.ReplaceFirst("public ", "public new ");
+            var csharCodeChanged = csharpCode.ReplaceFirst("public string", "public new string");
             root2 = RDomCSharp.Factory.GetRootFromString(csharCodeChanged);
             property2 = root2.Classes.First().Properties.Last();
             Assert.IsFalse(property1.SameIntent(property2));

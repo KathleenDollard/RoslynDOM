@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomTests", "RoslynDom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomCommon", "RoslynDomCommon\RoslynDomCommon.csproj", "{4F7977ED-7D76-40B6-BFB8-185C2B5A04B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomExampleTests", "RoslynDomExampleTests\RoslynDomExampleTests.csproj", "{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomRDomCommon", "RoslynDomRDomCommon\RoslynDomRDomCommon.csproj", "{1E5B8601-B717-471D-A9EE-0C03D15491A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynDomCSharpFactories", "RoslynDomCSharpFactories\RoslynDomCSharpFactories.csproj", "{8AE6F765-35A1-492F-84A1-86807155AA2C}"
@@ -50,10 +48,6 @@ Global
 		{4F7977ED-7D76-40B6-BFB8-185C2B5A04B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F7977ED-7D76-40B6-BFB8-185C2B5A04B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F7977ED-7D76-40B6-BFB8-185C2B5A04B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2ADA8185-732B-48EA-A8E4-F1506D8A8C30}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E5B8601-B717-471D-A9EE-0C03D15491A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E5B8601-B717-471D-A9EE-0C03D15491A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E5B8601-B717-471D-A9EE-0C03D15491A5}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -122,6 +122,30 @@ namespace RoslynDomTests
         }
 
         [TestMethod, TestCategory(CopyCategory)]
+        public void Can_clone_method_with_array_return_type()
+        {
+            var cSharpMethodCode =
+@"               public string[] Foo(int id, string firstName, string lastName)
+                {  }
+";
+            var csharpCode =
+@"            public class Bar
+            {
+" + cSharpMethodCode +
+@"            }";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var method = root.RootClasses.First().Methods.First();
+            var newMethod = method.Copy();
+            Assert.IsNotNull(newMethod);
+            Assert.IsTrue(newMethod.SameIntent(newMethod)); // test identity
+            var outputOld = RDomCSharp.Factory.BuildSyntax(method);
+            var outputNew = RDomCSharp.Factory.BuildSyntax(newMethod);
+            Assert.AreEqual(outputOld.ToString(), outputNew.ToString());
+            Assert.AreEqual(cSharpMethodCode, outputOld.ToFullString());
+            Assert.AreEqual(cSharpMethodCode, outputNew.ToFullString());
+        }
+
+        [TestMethod, TestCategory(CopyCategory)]
         public void Can_clone_property()
         {
             var csharpCode = @"

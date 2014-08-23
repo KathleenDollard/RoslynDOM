@@ -21,12 +21,12 @@ namespace RoslynDom.CSharp
         {
             get
             {
-            if (_whitespaceLookup == null)
-            {
-                _whitespaceLookup = new WhitespaceKindLookup();
-                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
-                _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
-               _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+                if (_whitespaceLookup == null)
+                {
+                    _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
                 return _whitespaceLookup;
             }
@@ -63,7 +63,7 @@ namespace RoslynDom.CSharp
                                  .CreateFrom<IMisc>(rawField.Declaration.Type, newItem, model)
                                  .FirstOrDefault()
                                  as IReferencedType;
-                newItem.ReturnType= returnType;
+                newItem.ReturnType = returnType;
 
                 var fieldSymbol = newItem.Symbol as IFieldSymbol;
                 newItem.IsStatic = fieldSymbol.IsStatic;
@@ -72,13 +72,15 @@ namespace RoslynDom.CSharp
                 newItem.IsVolatile = fieldSymbol.IsVolatile;
                 newItem.IsReadOnly = fieldSymbol.IsReadOnly;
                 newItem.IsConstant = fieldSymbol.HasConstantValue;
+                // See note on IsNew on interface before changing
+                newItem.IsNew = rawField.Modifiers.Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
                 newItem.PublicAnnotations.Add(fieldPublicAnnotations);
 
             }
             return list;
         }
 
-           public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsField = item as IField;
             var nameSyntax = SyntaxFactory.Identifier(itemAsField.Name);

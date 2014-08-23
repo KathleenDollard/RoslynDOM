@@ -128,6 +128,13 @@ namespace RoslynDom.CSharp
             itemAsOO.IsVirtual = itemAsDom.Symbol.IsVirtual;
             itemAsOO.IsOverride = itemAsDom.Symbol.IsOverride;
             itemAsOO.IsSealed = itemAsDom.Symbol.IsSealed;
+            var itemAsCanBeNew = itemAsOO as ICanBeNew; 
+            if (itemAsCanBeNew != null)
+            {
+
+                // See note on IsNew on interface before changing
+                itemAsCanBeNew.IsNew = syntaxNode.ChildTokens().Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
+            }
         }
 
         private void InitializeImplementedInterfaces(IHasImplementedInterfaces itemAsT, SyntaxNode node, IDom parent, SemanticModel model)

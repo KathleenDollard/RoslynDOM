@@ -85,18 +85,20 @@ namespace RoslynDom
         public string OuterName
         { get { return RoslynUtilities.GetOuterName(this); } }
 
-
         public string QualifiedName
         { get { return RoslynUtilities.GetQualifiedName(this); } }
 
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 
-        public bool IsNested
-        { get { return (Parent is IType); } }
+        public string ContainingTypeName
+        { get { return RoslynDomUtilities.GetContainingTypeName(this.Parent); } }
 
         public IType ContainingType
         { get { return Parent as IType; } }
+
+        public bool IsNested
+        { get { return (Parent is IType); } }
 
         public RDomList<ITypeParameter> TypeParameters
         {

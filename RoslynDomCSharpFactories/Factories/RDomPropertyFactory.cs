@@ -27,6 +27,7 @@ namespace RoslynDom.CSharp
                     _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
                     _whitespaceLookup.Add(LanguageElement.AccessorGroupStartDelimiter, SyntaxKind.OpenBraceToken);
                     _whitespaceLookup.Add(LanguageElement.AccessorGroupEndDelimiter, SyntaxKind.CloseBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.NewSlot, SyntaxKind.NewKeyword);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.OopModifiers);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
@@ -44,7 +45,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StoreWhitespace(newItem, syntax.AccessorList, LanguagePart.AccessorList, WhitespaceLookup);
 
             newItem.Name = newItem.TypedSymbol.Name;
-            newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
+            //newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
 
             //newItem.PropertyType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
             var type = Corporation
@@ -53,12 +54,12 @@ namespace RoslynDom.CSharp
                             as IReferencedType;
             newItem.ReturnType = type;
 
-            newItem.IsAbstract = newItem.Symbol.IsAbstract;
-            newItem.IsVirtual = newItem.Symbol.IsVirtual;
-            newItem.IsOverride = newItem.Symbol.IsOverride;
-            newItem.IsSealed = newItem.Symbol.IsSealed;
-            newItem.IsStatic = newItem.Symbol.IsStatic;
-            // TODO: Assign IsNew, question on insider's list
+            //newItem.IsAbstract = newItem.Symbol.IsAbstract;
+            //newItem.IsVirtual = newItem.Symbol.IsVirtual;
+            //newItem.IsOverride = newItem.Symbol.IsOverride;
+            //newItem.IsSealed = newItem.Symbol.IsSealed;
+            //newItem.IsStatic = newItem.Symbol.IsStatic;
+
             var propSymbol = newItem.Symbol as IPropertySymbol;
             Guardian.Assert.IsNotNull(propSymbol, nameof(propSymbol));
 

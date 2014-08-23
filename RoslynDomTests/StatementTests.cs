@@ -83,7 +83,7 @@ namespace RoslynDomTests
                 public void Foo()
                 {
                     if (z == 1)
-                    {
+                                             {
                         var x = 42;
                     }
                     else if (z==2)
@@ -353,7 +353,7 @@ public class Bar
                             Console.WriteLine(i);
                         }
                     }
-                    catch (NotImplementedException)
+                    catch ( NotImplementedException )
                     { var a = 3; }
                     catch(DivideByZeroException ex)
                     { var b = 3; }
@@ -372,6 +372,7 @@ public class Bar
             Assert.IsInstanceOfType(statements[0], typeof(RDomTryStatement));
             Assert.AreEqual(csharpCode, output.ToFullString());
         }
+
 
         //try
         // break
