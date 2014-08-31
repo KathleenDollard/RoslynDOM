@@ -8,25 +8,26 @@ namespace RoslynDom
 {
     public class RDomIfStatement : RDomStatementBlockBase<IIfStatement>, IIfStatement
     {
-        private RDomList<IElseBaseStatement> _elses;
+        private RDomCollection<IElseBaseStatement> _elses;
 
         public RDomIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+           "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomIfStatement(RDomIfStatement oldRDom)
             : base(oldRDom)
         {
-            // Initialize called in base
+            Initialize();
             var newElses = RoslynDomUtilities.CopyMembers(oldRDom.Elses);
             Elses.AddOrMoveRange(newElses);
             Condition = oldRDom.Condition.Copy();
         }
 
-        protected override void Initialize()
+        protected void Initialize()
         {
-            base.Initialize();
-            _elses = new RDomList<IElseBaseStatement>(this);
+            _elses = new RDomCollection<IElseBaseStatement>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -54,7 +55,7 @@ namespace RoslynDom
             }
         }
 
-        public RDomList<IElseBaseStatement> Elses
+        public RDomCollection<IElseBaseStatement> Elses
         { get { return _elses; } }
 
         public IExpression Condition { get; set; }

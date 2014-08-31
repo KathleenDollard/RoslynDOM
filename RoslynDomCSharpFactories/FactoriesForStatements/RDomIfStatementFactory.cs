@@ -61,7 +61,8 @@ namespace RoslynDom.CSharp
                 {
                     var newElse = new RDomElseIfStatement(elseAsIf, newItem, model);
                     UpdateItem(newElse, elseAsIf.Statement, elseAsIf.Condition, elseAsIf, newItem, model);
-                    CreateFromWorker.StoreWhitespaceForToken(newElse, currentSyntax.Else.ElseKeyword, LanguagePart.Current, LanguageElement.ElseKeyword);
+                    CreateFromWorker.StoreWhitespaceForToken(newElse, currentSyntax.Else.ElseKeyword, 
+                                LanguagePart.Current, LanguageElement.ElseKeyword);
                     newItem.Elses.AddOrMove(newElse);
                     lastItem = newElse;
                     currentSyntax = elseAsIf;
@@ -70,7 +71,8 @@ namespace RoslynDom.CSharp
                 {
                     var newElse = new RDomElseStatement(currentSyntax.Else, newItem, model);
                     UpdateItem(newElse, currentSyntax.Else.Statement, null, currentSyntax.Else, newItem, model);
-                    CreateFromWorker.StoreWhitespaceForToken(newElse, currentSyntax.Else.ElseKeyword, LanguagePart.Inner, LanguageElement.ElseKeyword);
+                    CreateFromWorker.StoreWhitespaceForToken(newElse, currentSyntax.Else.ElseKeyword, 
+                                LanguagePart.Current, LanguageElement.ElseKeyword);
                     newItem.Elses.AddOrMove(newElse);
                     break;
                 }
@@ -86,7 +88,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
             CreateFromWorker.InitializeStatements(newItem, statement, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, statement, LanguagePart.Block, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, statement, LanguagePart.Current, WhitespaceLookup);
             var itemAsHasCondition = newItem as IHasCondition;
             if (itemAsHasCondition != null)
             {

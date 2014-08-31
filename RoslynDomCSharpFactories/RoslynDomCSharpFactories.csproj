@@ -74,7 +74,6 @@
     <Compile Include="BaseFactories\RDomExpressionFactory.cs" />
     <Compile Include="BuildSyntaxHelpers.cs" />
     <Compile Include="CreateFromWorker.cs" />
-    <Compile Include="FactoriesForStatements\LoopFactoryHelper.cs" />
     <Compile Include="FactoriesForStatements\RDomAssignmentStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomBlockStatementFactory.cs" />
     <Compile Include="FactoriesForStatements\RDomForEachStatementFactory.cs" />
@@ -113,7 +112,6 @@
     <Compile Include="Factories\RDomStructuredDocumentationFactory.cs" />
     <Compile Include="PublicAnnotationFactory.cs" />
     <Compile Include="RDomCSharp.cs" />
-    <Compile Include="Replacer.cs" />
     <Compile Include="RoslynCSharpUtilities.cs" />
     <Compile Include="BaseFactories\RDomBaseItemFactory.cs" />
     <Compile Include="ICSharpBuildSyntaxWorker.cs" />
@@ -138,6 +136,11 @@
       <Project>{cb000d47-6587-4706-9f3b-e474b5a43174}</Project>
       <Name>RoslynDom</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\RoslynDomCommon\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

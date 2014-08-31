@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
 using RoslynDom.Common;
 
@@ -41,6 +42,7 @@ namespace RoslynDom
 
         public static string GetQualifiedName(IDom item)
         {
+            if (item == null) throw new NotImplementedException();
             var name = "";
             var itemHasName = item as IHasName;
             if (itemHasName != null) name += itemHasName.Name;

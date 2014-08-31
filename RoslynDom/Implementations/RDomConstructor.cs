@@ -8,25 +8,28 @@ namespace RoslynDom
 {
     public class RDomConstructor : RDomBase<IConstructor, IMethodSymbol>, IConstructor
     {
-        private RDomList<IParameter> _parameters;
-        private RDomList<IArgument> _initializationArguments;
-        private RDomList<IStatementCommentWhite> _statements;
-        private AttributeList _attributes = new AttributeList();
+        private RDomCollection<IParameter> _parameters;
+        private RDomCollection<IArgument> _initializationArguments;
+        private RDomCollection<IStatementCommentWhite> _statements;
+        private AttributeCollection _attributes = new AttributeCollection();
 
         public RDomConstructor(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomConstructor(RDomConstructor oldRDom)
-             : base(oldRDom)
+           : base(oldRDom)
         {
+            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             Parameters.AddOrMoveRange(newParameters);
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
             StatementsAll.AddOrMoveRange(newStatements);
-            var newInitializationArguments = RoslynDomUtilities.CopyMembers(oldRDom._initializationArguments );
-            InitializationArguments .AddOrMoveRange(newInitializationArguments);
+            var newInitializationArguments = RoslynDomUtilities.CopyMembers(oldRDom._initializationArguments);
+            InitializationArguments.AddOrMoveRange(newInitializationArguments);
 
             ConstructorInitializerType = oldRDom.ConstructorInitializerType;
             AccessModifier = oldRDom.AccessModifier;
@@ -34,12 +37,11 @@ namespace RoslynDom
             IsStatic = oldRDom.IsStatic;
         }
 
-        protected override void Initialize()
+        protected void Initialize()
         {
-            base.Initialize();
-            _parameters = new RDomList<IParameter>(this);
-            _statements = new RDomList<IStatementCommentWhite>(this);
-            _initializationArguments = new RDomList<IArgument >(this);
+            _parameters = new RDomCollection<IParameter>(this);
+            _statements = new RDomCollection<IStatementCommentWhite>(this);
+            _initializationArguments = new RDomCollection<IArgument>(this);
         }
         public override IEnumerable<IDom> Children
         {
@@ -66,20 +68,20 @@ namespace RoslynDom
         public string OuterName
         { get { return RoslynUtilities.GetOuterName(this); } }
         public ConstructorInitializerType ConstructorInitializerType { get; set; }
-        public RDomList<IArgument> InitializationArguments
+        public RDomCollection<IArgument> InitializationArguments
         { get { return _initializationArguments; } }
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
         public AccessModifier DeclaredAccessModifier { get; set; }
 
         public bool IsStatic { get; set; }
-        public RDomList<IParameter> Parameters
+        public RDomCollection<IParameter> Parameters
         { get { return _parameters; } }
 
-        public RDomList<IStatementCommentWhite> StatementsAll
+        public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
         public IEnumerable<IStatement> Statements

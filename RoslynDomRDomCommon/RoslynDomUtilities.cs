@@ -60,19 +60,7 @@ namespace RoslynDom
             return (T)newItem;
         }
 
-        //public static string MakeOuterName(string outerTypeName, string name)
-        //{
-        //    return (string.IsNullOrWhiteSpace(outerTypeName) ? "" : outerTypeName + ".")
-        //              + name;
-        //}
-
-        //public static string MakeQualifiedName(string nspace, string outerTypeName, string name)
-        //{
-        //    return (string.IsNullOrWhiteSpace(nspace) ? "" : nspace + ".")
-        //              + MakeOuterName(outerTypeName, name);
-        //}
-
-        public static string GetNamespace(IDom item)
+         public static string GetNamespace(IDom item)
         {
             var ret = "";
             if (item == null) { return ret; }
@@ -99,23 +87,6 @@ namespace RoslynDom
             return ret;
         }
 
-        //public static Type FindFirstSyntaxNodeType(Type type)
-        //{
-        //    return FindFirstCastableType<SyntaxNode>(type);
-        //}
-
-        //public static Type FindFirstIDomType(Type type)
-        //{
-        //    return FindFirstCastableType<IDom>(type);
-        //}
-
-        //public static Type FindFirstCastableType<T>(Type type)
-        //{
-        //    if (type == typeof(object)) { return null; }
-        //    var retType = type.GenericTypeArguments.Where(x => typeof(T).IsAssignableFrom(x)).FirstOrDefault();
-        //    if (retType != null) { return retType; }
-        //    return FindFirstCastableType<T>(type.BaseType);
-        //}
-
+ 
     }
 }

@@ -8,18 +8,21 @@ namespace RoslynDom
 {
     public class RDomMethod : RDomBase<IMethod, IMethodSymbol>, IMethod
     {
-        private RDomList<IParameter> _parameters;
-        private RDomList<ITypeParameter> _typeParameters;
-        private RDomList<IStatementCommentWhite> _statements;
-        private AttributeList _attributes = new AttributeList();
+        private RDomCollection<IParameter> _parameters;
+        private RDomCollection<ITypeParameter> _typeParameters;
+        private RDomCollection<IStatementCommentWhite> _statements;
+        private AttributeCollection _attributes = new AttributeCollection();
 
         public RDomMethod(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+       "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomMethod(RDomMethod oldRDom)
              : base(oldRDom)
         {
+            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             Parameters.AddOrMoveRange(newParameters);
@@ -41,12 +44,11 @@ namespace RoslynDom
 
         }
 
-        protected override void Initialize()
+        protected  void Initialize()
         {
-            base.Initialize();
-            _typeParameters = new RDomList<ITypeParameter>(this);
-            _parameters = new RDomList<IParameter>(this);
-            _statements = new RDomList<IStatementCommentWhite>(this);
+            _typeParameters = new RDomCollection<ITypeParameter>(this);
+            _parameters = new RDomCollection<IParameter>(this);
+            _statements = new RDomCollection<IStatementCommentWhite>(this);
         }
         public override IEnumerable<IDom> Children
         {
@@ -74,7 +76,7 @@ namespace RoslynDom
         public string OuterName
         { get { return RoslynUtilities.GetOuterName(this); } }
         
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
@@ -89,13 +91,13 @@ namespace RoslynDom
 
         public bool IsExtensionMethod { get; set; }
 
-        public RDomList<ITypeParameter> TypeParameters
+        public RDomCollection<ITypeParameter> TypeParameters
         { get { return _typeParameters; } }
 
-        public RDomList<IParameter> Parameters
+        public RDomCollection<IParameter> Parameters
         { get { return _parameters; } }
 
-        public RDomList<IStatementCommentWhite> StatementsAll
+        public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
         public IEnumerable <IStatement> Statements
@@ -114,13 +116,13 @@ namespace RoslynDom
 
         public string Description { get; set; }
 
-        public override object RequestValue(string name)
+        public override object RequestValue(string propertyName)
         {
-            if (name == "TypeName")
+            if (propertyName == "TypeName")
             {
                 return ReturnType.QualifiedName;
             }
-            return base.RequestValue(name);
+            return base.RequestValue(propertyName);
         }
 
     }

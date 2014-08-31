@@ -12,10 +12,7 @@ namespace RoslynDom.CSharp
     public class RDomEnumMemberMiscFactory
        : RDomMiscFactory<RDomEnumMember, EnumMemberDeclarationSyntax>
     {
-        // until move to C# 6 - I want to support name of as soon as possible
-        [ExcludeFromCodeCoverage]
-        private static string nameof<T>(T value) { return ""; }
-
+   
         private static WhitespaceKindLookup _whitespaceLookup;
 
         public RDomEnumMemberMiscFactory(RDomCorporation corporation)
@@ -43,6 +40,7 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as EnumMemberDeclarationSyntax;
             var newItem = new RDomEnumMember(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StoreWhitespace(newItem, syntax,LanguagePart.Current,  WhitespaceLookup);
             MemberWhitespace(newItem, syntax);
 
             newItem.Name = syntax.Identifier.ToString();
@@ -74,19 +72,19 @@ namespace RoslynDom.CSharp
                 node = node.WithEqualsValue(equalsValueSyntax);
             }
 
-            // node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, WhitespaceLookup);
-            node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.EnumValueFirstToken]);
-            node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.EnumValueLastToken]);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, WhitespaceLookup);
+            //node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.EnumValueFirstToken]);
+            //node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.EnumValueLastToken]);
             return node.PrepareForBuildSyntaxOutput(item);
         }
 
         private void MemberWhitespace(RDomEnumMember newItem, EnumMemberDeclarationSyntax syntax)
         {
-            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetFirstToken(), LanguagePart.Current, LanguageElement.EnumValueFirstToken);
-            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetLastToken(), LanguagePart.Current, LanguageElement.EnumValueLastToken);
+            //CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetFirstToken(), LanguagePart.Current, LanguageElement.EnumValueFirstToken);
+            //CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetLastToken(), LanguagePart.Current, LanguageElement.EnumValueLastToken);
             if (syntax.EqualsValue != null)
             {
-                CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.EqualsValue.Value.GetLastToken(), LanguagePart.Current, LanguageElement.Identifier);
+                CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.EqualsValue.Value.GetLastToken(), LanguagePart.Current, LanguageElement.Expression);
                 CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.EqualsValue.EqualsToken, LanguagePart.Current, LanguageElement.EnumValueAssignOperator);
             }
 
@@ -98,9 +96,12 @@ namespace RoslynDom.CSharp
             if (prevNodeOrToken.CSharpKind() == sepKind)
             {
                 var commaToken = prevNodeOrToken.AsToken();
-                var whitespace2 = newItem.Whitespace2Set[LanguageElement.EnumValueFirstToken];
-                if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
-                { whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString(); }
+                var whitespace2 = newItem.Whitespace2Set[LanguageElement.Identifier];
+                var newLeadingWhitespace = commaToken.TrailingTrivia.ToString();;
+                if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace)
+                    || newLeadingWhitespace.EndsWith("\r\n"))
+                { whitespace2.LeadingWhitespace = newLeadingWhitespace 
+                                                  + whitespace2.LeadingWhitespace; }
             }
         }
     }

@@ -7,12 +7,14 @@ namespace RoslynDom
 {
     public class RDomParameter : RDomBase<IParameter, IParameterSymbol>, IParameter
     {
-        private AttributeList _attributes = new AttributeList();
+        private AttributeCollection _attributes = new AttributeCollection();
 
         public RDomParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { Initialize(); }
+        { }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+           "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomParameter(RDomParameter oldRDom)
            : base(oldRDom)
         {
@@ -30,7 +32,7 @@ namespace RoslynDom
         { get { return RoslynUtilities.GetOuterName(this); } }
 
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public IReferencedType Type { get; set; }
@@ -47,13 +49,13 @@ namespace RoslynDom
 
         // TODO: Default Values for parameters!!!
 
-        public override object RequestValue(string name)
+        public override object RequestValue(string propertyName)
         {
-            if (name == "TypeName")
+            if (propertyName == "TypeName")
             {
                 return Type.QualifiedName;
             }
-            return base.RequestValue(name);
+            return base.RequestValue(propertyName);
         }
     }
 

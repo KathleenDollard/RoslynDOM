@@ -57,7 +57,7 @@ namespace RoslynDom.CSharp
             if (syntaxAsList != null) { return CreateFromList(syntaxAsList, parent, model); }
             var attributeSyntax = syntaxNode as AttributeSyntax;
             if (attributeSyntax != null) { return new IAttribute[] { CreateFromItem(attributeSyntax, parent, model) }; }
-            return ExtractAttributes(syntaxNode, parent, model);
+            return null;
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
@@ -98,33 +98,15 @@ namespace RoslynDom.CSharp
             //return new SyntaxNode[] { nodeList };
         }
 
-        public IEnumerable<IAttribute> ExtractAttributes(SyntaxNode parentNode, IDom newParent, SemanticModel model)
-        {
-            var parentAsHasSymbol = newParent as IRoslynHasSymbol;
-            if (parentAsHasSymbol == null) { throw new InvalidOperationException(); }
-            var parentSymbol = parentAsHasSymbol.Symbol;
-            var symbolAttributes = parentSymbol.GetAttributes();
-            var list = new List<IAttribute>();
-            foreach (var attributeData in symbolAttributes)
-            {
-                // TODO: In those cases where we do have a symbol reference to the attribute, try to use it
-                var appRef = attributeData.ApplicationSyntaxReference;
-                var attribSyntax = parentNode.SyntaxTree.GetRoot().FindNode(appRef.Span) as AttributeSyntax;
-                var newItem = CreateFromItem(attribSyntax, newParent, model);
-                list.Add(newItem);
-            }
-            return list;
-        }
-
-        #region Private methods to support adding attributes
+         #region Private methods to support adding attributes
         private IAttribute CreateFromItem(AttributeSyntax syntax, IDom parent, SemanticModel model)
         {
             var newItem = new RDomAttribute(syntax, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, syntax.Parent, LanguagePart.AttributeList, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, syntax.ArgumentList, LanguagePart.AttributeArgumentList, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, syntax.Name, LanguagePart.AttributeName, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Parent, LanguagePart.Current, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.ArgumentList, LanguagePart.Current, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Name, LanguagePart.Current, WhitespaceLookup);
 
             newItem.Name = syntax.Name.ToString();
 

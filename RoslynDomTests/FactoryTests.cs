@@ -98,6 +98,7 @@ namespace RoslynDomTests
             Assert.IsNull(RDomCSharp.Factory.BuildSyntax(null));
         }
 
+        // TODO: Should this test pass, or be removed?
         //[TestMethod, TestCategory(GeneralFactoryCategory)]
         //public void BuildSyntaxGroup_returns_empty_list_for_null()
         //{
@@ -205,7 +206,7 @@ namespace RoslynDomTests
                 }
             }
 
-            public Whitespace2Set Whitespace2Set
+            public Whitespace2Collection Whitespace2Set
             {
                 get
                 {
@@ -607,7 +608,6 @@ public string Bar2 {get;};
 public string Bar3() {};
 }
 ";
-            //Assert.Inconclusive();
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var field = root.Classes.First().Fields.First();
             var retType = field.ReturnType;
@@ -939,7 +939,6 @@ namespace Foo
         [TestMethod, TestCategory(StemContainerCategory)]
         public void Can_get_members_with_comments_and_whitespace_from_typeContainer()
         {
-            //Assert.Inconclusive();
             var csharpCode = @"
                 public class Bar
                 {

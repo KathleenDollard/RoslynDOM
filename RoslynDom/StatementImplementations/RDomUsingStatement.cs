@@ -8,15 +8,18 @@ namespace RoslynDom
 {
     public class RDomUsingStatement : RDomBase<IUsingStatement, ISymbol>, IUsingStatement
     {
-        private RDomList<IStatementCommentWhite> _statements;
+        private RDomCollection<IStatementCommentWhite> _statements;
 
         public RDomUsingStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+           "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomUsingStatement(RDomUsingStatement oldRDom)
             : base(oldRDom)
         {
+            Initialize();
             var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
             StatementsAll.AddOrMoveRange(statements);
             HasBlock = oldRDom.HasBlock;
@@ -24,10 +27,9 @@ namespace RoslynDom
             if (oldRDom.Variable != null) Variable = oldRDom.Variable.Copy();
         }
 
-        protected override void Initialize()
+        protected void Initialize()
         {
-            base.Initialize();
-            _statements = new RDomList<IStatementCommentWhite>(this);
+            _statements = new RDomCollection<IStatementCommentWhite>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -56,7 +58,7 @@ namespace RoslynDom
         public IEnumerable<IStatement> Statements
         { get { return _statements.OfType<IStatement>().ToList(); } }
 
-        public RDomList<IStatementCommentWhite> StatementsAll
+        public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
         public IExpression Expression { get; set; }

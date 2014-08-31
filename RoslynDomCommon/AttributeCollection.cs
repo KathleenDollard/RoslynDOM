@@ -9,7 +9,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom.Common
 {
-    public class AttributeList : IEnumerable<IAttribute>
+    public class AttributeCollection : IEnumerable<IAttribute>
     {
         // TODO: Add the move semantics
         private IList<IAttribute> _attributes = new List<IAttribute>();
@@ -22,6 +22,7 @@ namespace RoslynDom.Common
 
         public void AddOrMoveAttributeRange(IEnumerable<IAttribute> attributes)
         {
+            if (attributes == null) throw new NotImplementedException();
             foreach (var attribute in attributes)
             { AddOrMoveAttribute(attribute); }
         }
@@ -29,17 +30,7 @@ namespace RoslynDom.Common
         public IEnumerable<IAttribute> Attributes
         { get { return _attributes; } }
 
-        //public AttributeList Copy()
-        //{
-        //    var list = new AttributeList();
-        //    foreach (var attribute in _attributes )
-        //    {
-        //        list.AddOrMoveAttribute(attribute.Copy());
-        //    }
-        //    return list;
-        //}
-
-        public IEnumerator<IAttribute> GetEnumerator()
+         public IEnumerator<IAttribute> GetEnumerator()
         { return _attributes.GetEnumerator(); }
 
         [ExcludeFromCodeCoverage]

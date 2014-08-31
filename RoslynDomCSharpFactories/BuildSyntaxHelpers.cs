@@ -49,38 +49,39 @@ namespace RoslynDom.CSharp
             return node;
         }
 
-        public static SyntaxNode Format(SyntaxNode node, IDom item)
-        {
-            var span = node.FullSpan;
-            node = Formatter.Format(node, span, new CustomWorkspace());
-            return node;
-        }
-
         public static SyntaxList<AttributeListSyntax> WrapInAttributeList(IEnumerable<SyntaxNode> attributes)
         {
             var node = SyntaxFactory.List<AttributeListSyntax>(attributes.OfType<AttributeListSyntax>());
             return node;
         }
 
-        public static SyntaxTokenList BuildModfierSyntax(this IHasAccessModifier hasAccessModifier)
+        public static SyntaxTokenList BuildModfierSyntax(this IDom item)
         {
-            var list = SyntaxFactory.TokenList();
+            var list = new List<SyntaxToken>();
+
+            var hasAccessModifier = item as IHasAccessModifier;
             if (hasAccessModifier != null && hasAccessModifier.DeclaredAccessModifier != AccessModifier.None)
-            { list = list.AddRange(SyntaxTokensForAccessModifier(hasAccessModifier.DeclaredAccessModifier)); }
-            // TODO: Static and other modifiers
-            return list;
+            { list.AddRange(SyntaxTokensForAccessModifier(hasAccessModifier.DeclaredAccessModifier)); }
+
+            var canBeStatic = item as ICanBeStatic;
+            if (canBeStatic != null && canBeStatic.IsStatic)
+            { list.Add(SyntaxFactory.Token(SyntaxKind.StaticKeyword)); }
+
+            var canBeNew = item as ICanBeNew;
+            if (canBeNew != null && canBeNew.IsNew)
+            { list.Add(SyntaxFactory.Token(SyntaxKind.NewKeyword)); }
+
+            var supportsOO = item as IOOTypeMember;
+            if (supportsOO != null)
+            {
+                if (supportsOO.IsAbstract) { list.Add(SyntaxFactory.Token(SyntaxKind.AbstractKeyword)); }
+                if (supportsOO.IsOverride) { list.Add(SyntaxFactory.Token(SyntaxKind.OverrideKeyword)); }
+                if (supportsOO.IsVirtual) { list.Add(SyntaxFactory.Token(SyntaxKind.VirtualKeyword)); }
+                if (supportsOO.IsSealed) { list.Add(SyntaxFactory.Token(SyntaxKind.SealedKeyword)); }
+            }
+
+            return SyntaxFactory.TokenList(list);
         }
-
-
-        private class RDomWhitespaceHandledAnnotation
-        {
-            public const string Kind = "RDomWhitespaceHandled";
-            public static SyntaxAnnotation Create()
-            { return new SyntaxAnnotation(Kind); }
-            //public static Guid GetMarker(SyntaxAnnotation annotation)
-            //{ return Guid.Parse(annotation.Data); }
-        }
-
 
         public static SyntaxTriviaList LeadingTrivia(IDom item)
         {
@@ -157,10 +158,10 @@ namespace RoslynDom.CSharp
         {
             switch (kind)
             {
-            case LiteralKind.String:
-            case LiteralKind.Unknown:
+                case LiteralKind.String:
+                case LiteralKind.Unknown:
                 return SyntaxFactory.Literal(value.ToString());
-            case LiteralKind.Numeric:
+                case LiteralKind.Numeric:
                 if (GeneralUtilities.IsInteger(value))
                 { return SyntaxFactory.Literal(Convert.ToInt32(value)); }
                 if (GeneralUtilities.IsFloatingPint(value))
@@ -173,10 +174,10 @@ namespace RoslynDom.CSharp
                 { return SyntaxFactory.Literal(Convert.ToUInt64(value)); }
                 else
                 { return SyntaxFactory.Literal(Convert.ToDecimal(value)); }
-            case LiteralKind.Boolean:
-            case LiteralKind.Type:
-            // Need to create an expression so handled separately and should not call this
-            default:
+                case LiteralKind.Boolean:
+                case LiteralKind.Type:
+                // Need to create an expression so handled separately and should not call this
+                default:
                 break;
             }
             throw new NotImplementedException();
@@ -186,7 +187,7 @@ namespace RoslynDom.CSharp
         {
             var ret = new List<SyntaxTrivia>();
             if (itemHasStructDoc == null ||
-                (itemHasStructDoc.StructuredDocumentation.Document  == null
+                (itemHasStructDoc.StructuredDocumentation.Document == null
                 && string.IsNullOrEmpty(itemHasStructDoc.Description)))
             { return ret; }
             var itemStructDoc = itemHasStructDoc.StructuredDocumentation;
@@ -250,212 +251,110 @@ namespace RoslynDom.CSharp
             return newDocAsString;
         }
 
-
-
-        //        private static XmlTextSyntax MakeXmlDocumentationExterior()
-        //        {
-        //            return SyntaxFactory.XmlText()
-        //                    .WithTextTokens(
-        //                        SyntaxFactory.TokenList(
-        //                            SyntaxFactory.XmlTextLiteral(
-        //                                SyntaxFactory.TriviaList(
-        //                                    SyntaxFactory.DocumentationCommentExterior(
-        //                                        @"///")),
-        //                                @" ",
-        //                                @" ",
-        //                                SyntaxFactory.TriviaList())));
-
-        //        }
-
-        //        private static XmlElementEndTagSyntax GetEndTag(string name)
-        //        {
-        //            return SyntaxFactory.XmlElementEndTag(
-        //                     SyntaxFactory.XmlName(
-        //                         SyntaxFactory.Identifier(
-        //                             name)));
-        //        }
-
-        //        private static XmlElementStartTagSyntax GetStartTag(string name)
-        //        {
-        //            return SyntaxFactory.XmlElementStartTag(
-        //                     SyntaxFactory.XmlName(
-        //                         SyntaxFactory.Identifier(
-        //                             name)));
-        //        }
-
-        //        private static SyntaxToken XmlTextLiteral(string content)
-        //        {
-        //            return SyntaxFactory.XmlTextLiteral(
-        //                            SyntaxFactory.TriviaList(
-        //                                SyntaxFactory.DocumentationCommentExterior(
-        //                                    @"    ///")),
-        //                            " " + content,
-        //                            " " + content,
-        //                            SyntaxFactory.TriviaList());
-        //        }
-
-        //        private static SyntaxToken XmlNewLine()
-        //        {
-        //            return SyntaxFactory.XmlTextNewLine(
-        //                             SyntaxFactory.TriviaList(),
-        //                             @"
-        //",
-        //                             @"
-        //",
-        //                             SyntaxFactory.TriviaList());
-        //        }
-        //        //private static XmlNodeSyntax MakeSummaryNode(string text)
-        //        //{
-        //        //    var element = SyntaxFactory.XmlElement(GetStartTag("summary"), GetEndTag("summary"));
-        //        //    element = element.WithContent(
-        //        //        SyntaxFactory.SingletonList<XmlNodeSyntax>(
-        //        //            SyntaxFactory.XmlText()
-        //        //            .WithTextTokens(
-        //        //                SyntaxFactory.TokenList(
-        //        //                    new[]{
-        //        //                    XmlNewLine(),
-        //        //                    XmlTextLiteral(text),
-        //        //                    XmlNewLine(),
-        //        //                    XmlTextLiteral("") }
-        //        //                    ))));
-        //        //    return element;
-        //        //}
-
         public static SyntaxTokenList SyntaxTokensForAccessModifier(AccessModifier accessModifier)
         {
             var tokenList = SyntaxFactory.TokenList();
             switch (accessModifier)
             {
-            case AccessModifier.None:
+                case AccessModifier.None:
                 return tokenList;
-            case AccessModifier.Private:
+                case AccessModifier.Private:
                 return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-            case AccessModifier.ProtectedOrInternal:
+                case AccessModifier.ProtectedOrInternal:
                 return tokenList.AddRange(new SyntaxToken[] { SyntaxFactory.Token(SyntaxKind.ProtectedKeyword), SyntaxFactory.Token(SyntaxKind.InternalKeyword) });
-            case AccessModifier.Protected:
+                case AccessModifier.Protected:
                 return tokenList.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
-            case AccessModifier.Internal:
+                case AccessModifier.Internal:
                 return tokenList.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-            case AccessModifier.Public:
+                case AccessModifier.Public:
                 return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-            default:
+                default:
                 throw new InvalidOperationException();
             }
         }
-        //public static BlockSyntax BuildStatementBlock(this IEnumerable<IStatement> statements)
-        //{
-        //    var statementSyntaxList = new List<StatementSyntax>();
-        //    foreach (var statement in statements)
-        //    {
-        //        //  statementSyntaxList.Add(RDomStatement statement.BuildSyntax());
-        //    }
-        //    //if (statementContainer.Statements.Count() == 0) { statements.Add(SyntaxFactory.EmptyStatement()); }
-        //    var ret = SyntaxFactory.Block(statementSyntaxList);
-        //    return ret;
-        //}
 
-        //public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Set whitespace2Set, WhitespaceKindLookup whitespaceLookup)
-        //     where T : SyntaxNode
-        //{
-        //    var ret = syntaxNode;
-        //    foreach (var whitespace2 in whitespace2Set)
-        //    {
-        //        ret = AttachWhitespaceItem(ret, whitespace2, whitespaceLookup);
-        //    }
-        //    return ret;
-        //}
+        public static BaseListSyntax GetBaseList(IHasImplementedInterfaces item)
+        {
+            var list = new List<TypeSyntax>();
+            var asClass = item as IClass;
+            if (asClass != null)
+            {
+                if (asClass.BaseType != null)
+                {
+                    var baseTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntax(asClass.BaseType);
+                    list.Add(baseTypeSyntax);
+                }
+            }
+            foreach (var interf in item.ImplementedInterfaces)
+            {
+                var interfTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntax(interf);
+                list.Add(interfTypeSyntax);
+            }
 
-        //private static T AttachWhitespaceItem<T>(T syntaxNode, Whitespace2 whitespace2, WhitespaceKindLookup whitespaceLookup)
-        //     where T : SyntaxNode
-        //{
-        //    var ret = syntaxNode;
-        //    var kind = whitespaceLookup.Lookup(whitespace2.LanguageElement);
-        //    var tokens = syntaxNode.ChildTokens().Where(x => x.CSharpKind() == kind);
-        //    if (!tokens.Any() && whitespace2.LanguageElement == LanguageElement.Identifier)
-        //    {
-        //        var nameNode = syntaxNode.ChildNodes().OfType<NameSyntax>().FirstOrDefault();
-        //        if (nameNode != null)
-        //        { tokens = nameNode.DescendantTokens().Where(x => x.CSharpKind() == kind); }
-        //    }
-        //    // Sometimes the token won't be there due to changes in the tree. 
-        //    if (tokens.Any())
-        //    {
-        //        var newToken = tokens.First();
-        //        var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
-        //                   .Concat(newToken.LeadingTrivia);
-        //        var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
-        //                   .Concat(newToken.TrailingTrivia);
-        //        // Manage EOL comment here
-        //        newToken = newToken
-        //                    .WithLeadingTrivia(leadingTrivia)
-        //                    .WithTrailingTrivia(trailingTrivia);
-        //        ret = ret.ReplaceToken(tokens.First(), newToken);
-        //    }
-        //    return ret;
-        //}
+            var colonToken = SyntaxFactory.Token(SyntaxKind.ColonToken);
+            colonToken = BuildSyntaxHelpers.AttachWhitespaceToToken(colonToken, item.Whitespace2Set[LanguageElement.BaseListPrefix]);
 
-        //public static T AttachWhitespaceToFirst<T>(T syntaxNode, Whitespace2 whitespace2)
-        //        where T : SyntaxNode
-        //{
-        //    if (whitespace2 == null) { return syntaxNode; }
-        //    var token = syntaxNode.GetFirstToken();
-        //    var newToken = token;
-        //    var ret = syntaxNode;
-        //    var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
-        //               .Concat(newToken.LeadingTrivia);
-        //    //var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
-        //    //           .Concat(newToken.TrailingTrivia);
-        //    // Manage EOL comment here
-        //    //newToken = newToken
-        //    //            .WithLeadingTrivia(leadingTrivia)
-        //    //            .WithTrailingTrivia(trailingTrivia);
-        //    newToken = newToken
-        //               .WithLeadingTrivia(leadingTrivia);
-        //    ret = ret.ReplaceToken(token, newToken);
-        //    return ret;
-        //}
+            return list.Any()
+                     ? SyntaxFactory.BaseList(colonToken, SyntaxFactory.SeparatedList(list))
+                     : null;
+        }
 
-        //public static T AttachWhitespaceToLast<T>(T syntaxNode, Whitespace2 whitespace2)
-        //         where T : SyntaxNode
-        //{
-        //    if (whitespace2 == null) { return syntaxNode; }
-        //    var token = syntaxNode.GetLastToken();
-        //    var newToken = token;
-        //    var ret = syntaxNode;
-        //    //var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
-        //    //           .Concat(newToken.LeadingTrivia);
-        //    var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
-        //               .Concat(newToken.TrailingTrivia);
-        //    // Manage EOL comment here
-        //    //newToken = newToken
-        //    //            .WithLeadingTrivia(leadingTrivia)
-        //    //            .WithTrailingTrivia(trailingTrivia);
-        //    newToken = newToken
-        //                .WithTrailingTrivia(trailingTrivia);
-        //    ret = ret.ReplaceToken(token, newToken);
-        //    return ret;
-        //}
+        public static TypeParameterListSyntax GetTypeParameterSyntaxList(
+                 IEnumerable<SyntaxNode> typeParamsAndConstraints, 
+                 Whitespace2Collection whitespace2Set,
+                 WhitespaceKindLookup whitespaceLookup)
+        {
+            var typeParameters = typeParamsAndConstraints
+                            .OfType<TypeParameterSyntax>()
+                            .ToList();
+            if (typeParameters.Any())
+            {
+                var typeParameterListSyntax = SyntaxFactory.TypeParameterList(
+                    SyntaxFactory.SeparatedList<TypeParameterSyntax>(typeParameters));
+                typeParameterListSyntax = AttachWhitespace(
+                            typeParameterListSyntax, whitespace2Set,
+                            whitespaceLookup);
+                return typeParameterListSyntax; ;
+            }
+            return null;
+        }
 
-        //public static T AttachWhitespaceToFirstAndLast<T>(T syntaxNode, Whitespace2 whitespace2)
-        // where T : SyntaxNode
-        //{
-        //    if (whitespace2 == null) { return syntaxNode; }
-        //    syntaxNode = AttachWhitespaceToFirst(syntaxNode, whitespace2);
-        //    syntaxNode = AttachWhitespaceToLast(syntaxNode, whitespace2);
-        //    return syntaxNode;
-        //}
+        public static SyntaxList<TypeParameterConstraintClauseSyntax> GetTypeParameterConstraintList(
+                 IEnumerable<SyntaxNode> typeParamsAndConstraints,
+                 Whitespace2Collection whitespace2Set,
+                 WhitespaceKindLookup whitespaceLookup)
+        {
+            var typeParameters = typeParamsAndConstraints
+                           .OfType<TypeParameterSyntax>()
+                           .ToList();
+            var typeConstraintClauses = typeParamsAndConstraints
+                    .OfType<TypeParameterConstraintClauseSyntax>()
+                    .ToList();
+            var clauses = new List<TypeParameterConstraintClauseSyntax>();
+            foreach (var typeParameter in typeParameters)
+            {
+                var name = typeParameter.Identifier.ToString();
+                var constraint = typeConstraintClauses
+                              .Where(x => x.Name.ToString() == name
+                                          && x.Constraints.Any())
+                              .ToList()
+                              .SingleOrDefault();
+                if (constraint != null)
+                { clauses.Add(constraint); }
+            }
+             return SyntaxFactory.List(clauses); 
+        }
 
-
-        public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Set whitespace2Set, WhitespaceKindLookup whitespaceLookup)
+        public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Collection whitespace2Set, WhitespaceKindLookup whitespaceLookup)
                where T : SyntaxNode
         {
             return triviaManager.AttachWhitespace(syntaxNode, whitespace2Set, whitespaceLookup);
         }
 
-        public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Set whitespace2Set, WhitespaceKindLookup whitespaceLookup, LanguagePart languagePart)
+        public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Collection whitespace2Set, WhitespaceKindLookup whitespaceLookup, LanguagePart languagePart)
                where T : SyntaxNode
         {
-            return triviaManager.AttachWhitespace(syntaxNode, whitespace2Set, whitespaceLookup, languagePart );
+            return triviaManager.AttachWhitespace(syntaxNode, whitespace2Set, whitespaceLookup, languagePart);
         }
 
         public static T AttachWhitespaceToFirst<T>(T syntaxNode, Whitespace2 whitespace2)

@@ -43,9 +43,6 @@ namespace RoslynDom.CSharp
             createFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
             newItem.Name = newItem.TypedSymbol.Name;
 
-            //var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            //newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
-
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<ITypeMemberCommentWhite>(x, newItem, model));
             newItem.MembersAll.AddOrMoveRange(members);
 
@@ -62,6 +59,9 @@ namespace RoslynDom.CSharp
                 .WithModifiers(modifiers);
             node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
 
+            var baseList = BuildSyntaxHelpers.GetBaseList(item);
+            if (baseList != null) { node = node.WithBaseList(baseList); }
+
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
             var itemAsStruct = item as IStructure;
@@ -70,7 +70,6 @@ namespace RoslynDom.CSharp
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
-            //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
             // TODO: Class type members and type constraints
             return node.PrepareForBuildSyntaxOutput(item);
         }

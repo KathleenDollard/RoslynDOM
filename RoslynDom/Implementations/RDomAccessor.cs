@@ -8,8 +8,8 @@ namespace RoslynDom
 {
     public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
     {
-        private RDomList<IStatementCommentWhite> _statements;
-        private AttributeList _attributes = new AttributeList();
+        private RDomCollection<IStatementCommentWhite> _statements;
+        private AttributeCollection _attributes = new AttributeCollection();
         private AccessorType _accessorType;
 
         public RDomPropertyAccessor(SyntaxNode rawItem, AccessorType accessorType, IDom parent, SemanticModel model)
@@ -19,9 +19,12 @@ namespace RoslynDom
             Initialize();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
                 : base(oldRDom)
         {
+            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
             StatementsAll.AddOrMoveRange(newStatements);
@@ -34,10 +37,9 @@ namespace RoslynDom
             _accessorType = oldRDom.AccessorType;
         }
 
-        protected override void Initialize()
+        protected  void Initialize()
         {
-            base.Initialize();
-            _statements = new RDomList<IStatementCommentWhite>(this);
+            _statements = new RDomCollection<IStatementCommentWhite>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -63,21 +65,21 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
         public AccessModifier DeclaredAccessModifier { get; set; }
         public IReferencedType ReturnType { get; set; }
    
-        public RDomList<IStatementCommentWhite> StatementsAll
+        public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
         public IEnumerable<IStatement> Statements
         { get { return _statements.OfType<IStatement>().ToList(); } }
 
-        public MemberKind MemberKind
-        { get { return MemberKind.Accessor; } }
+        //public MemberKind MemberKind
+        //{ get { return MemberKind.Accessor; } }
 
         public AccessorType AccessorType
         { get { return _accessorType; } }
@@ -91,13 +93,13 @@ namespace RoslynDom
         public string OuterName
         { get { return RoslynUtilities.GetOuterName(this); } }
 
-        public override object RequestValue(string name)
+        public override object RequestValue(string propertyName)
         {
-            if (name == "TypeName")
+            if (propertyName == "TypeName")
             {
                 return ReturnType.QualifiedName;
             }
-            return base.RequestValue(name);
+            return base.RequestValue(propertyName);
         }
     }
 }

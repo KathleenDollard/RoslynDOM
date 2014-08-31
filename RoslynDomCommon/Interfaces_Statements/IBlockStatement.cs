@@ -8,6 +8,6 @@ namespace RoslynDom.Common
 {
     public interface IBlockStatement : IStatement,  IDom<IBlockStatement>
     {
-        RDomList<IStatementCommentWhite> Statements { get; }
+        RDomCollection<IStatementCommentWhite> Statements { get; }
     }
 }

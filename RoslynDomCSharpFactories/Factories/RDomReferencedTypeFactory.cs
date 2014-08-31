@@ -94,52 +94,8 @@ namespace RoslynDom.CSharp
 
             newItem.Name = symbol.Name;
             if (symbol == null) throw new NotImplementedException();
-            //var arrayTypeSymbol = symbol as IArrayTypeSymbol;
-            //if (arrayTypeSymbol != null)
-            //{
-            //    symbol = arrayTypeSymbol.BaseType;
-            //}
             newItem.Namespace = symbol.ContainingNamespace.ToString();
         }
-
-        //private string GetName(TypeSyntax typeSyntax, ISymbol symbol)
-        //{
-        //    if (symbol == null) return null;
-        //    var arraySymbol = symbol as IArrayTypeSymbol;
-        //    if (arraySymbol == null) { return symbol.Name; }
-        //    return arraySymbol.ElementType.Name + "[]";
-        //}
-
-
-        //private string GetNamespace(ISymbol symbol)
-        //{ return symbol == null ? "" : GetNamespace(symbol.ContainingNamespace); }
-
-        //private string GetNamespace(INamespaceSymbol nspaceSymbol)
-        //{
-        //    if (nspaceSymbol == null) return "";
-        //    var parentName = GetNamespace(nspaceSymbol.ContainingNamespace);
-        //    if (!string.IsNullOrWhiteSpace(parentName))
-        //    { parentName = parentName + "."; }
-        //    return parentName + nspaceSymbol.Name;
-        //}
-
-        //private void StoreWhitespaceForToken(IDom newItem, SyntaxToken token, LanguageElement languageElement)
-        //{
-        //    var newWS = new Whitespace2(LanguagePart.Current, languageElement);
-        //    newWS.LeadingWhitespace = token.LeadingTrivia
-        //                                .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia)
-        //                                .Select(x => x.ToString())
-        //                                .JoinString();
-        //    newWS.TrailingWhitespace = token.TrailingTrivia
-        //                                .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia
-        //                                        || x.CSharpKind() == SyntaxKind.EndOfLineTrivia)
-        //                                .Select(x => x.ToString())
-        //                                .JoinString();
-        //    // TODO: Add EOL comments here
-        //    newItem.Whitespace2Set[languageElement] = newWS;
-        //}
-
-
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {

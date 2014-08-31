@@ -11,21 +11,17 @@ namespace RoslynDom
 
         public RDomReferencedType(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { Initialize(); }
+        {  }
 
         public RDomReferencedType(RDomReferencedType oldRDom)
              : base(oldRDom)
         {
+            if (oldRDom == null) throw new NotImplementedException ();
             Name = oldRDom.Name;
             Namespace = oldRDom.Namespace;
         }
 
-        protected override void Initialize()
-        {
-            base.Initialize();
-        }
-
-        public string Name { get; set; }
+          public string Name { get; set; }
         public bool DisplayAlias { get; set; }
          public bool IsArray { get; set; }
 

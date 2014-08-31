@@ -21,7 +21,6 @@ namespace RoslynDom.CSharp
             var newItem = new RDomRoot(syntaxNode, parent,model);
             // Root does not call StandardInitialize because the info is attched to the first item
             // and particularly, whitespace would be doubled. 
-            // CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             CreateFromWorker.InitializePublicAnnotations(newItem,  syntaxNode,  parent,  model);
 
             newItem.Name = "Root";

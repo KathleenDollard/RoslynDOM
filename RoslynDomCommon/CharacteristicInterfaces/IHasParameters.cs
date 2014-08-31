@@ -2,6 +2,6 @@
 {
     public interface IHasParameters : IDom
     {
-        RDomList<IParameter> Parameters { get; }
+        RDomCollection<IParameter> Parameters { get; }
     }
 }

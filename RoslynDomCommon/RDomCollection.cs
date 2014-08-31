@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public class RDomList<T> : IEnumerable<T>
+    public class RDomCollection<T> : IEnumerable<T>
         where T : class, IDom
     {
         private List<T> _list = new List<T>();
 
-        public RDomList(IDom parent)
+        public RDomCollection(IDom parent)
         { Parent = parent; }
 
         public IDom Parent { get; private set; }
@@ -35,6 +35,7 @@ namespace RoslynDom.Common
         public void AddOrMoveRange(IEnumerable<T> items)
         {
             // Don't use AddRange because we need to manage parents
+            if (items == null) throw new NotImplementedException();
             foreach (var item in items)
             { AddOrMove(item); }
         }
@@ -75,6 +76,7 @@ namespace RoslynDom.Common
  
         private void UpdateParent(T item)
         {
+            if (item == null) return; // this happens for accessors which use RDomList to manage parent
             // TODO: Remove item from the other list
             if (item.Parent != null && item.Parent != this.Parent && item.Parent.Parent != this.Parent) { throw new NotImplementedException(); }
 
@@ -82,8 +84,9 @@ namespace RoslynDom.Common
             SetParent(item, this.Parent);
         }
 
-        private void SetParent(T item, IDom parent)
+        private static void SetParent(T item, IDom parent)
         {
+            if (item == null) return; // this happens for accessors which use RDomList to manage parent
             ReflectionUtilities.SetPropertyValue(item, "Parent", parent);
         }
     }

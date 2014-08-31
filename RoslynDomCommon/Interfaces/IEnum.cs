@@ -1,8 +1,11 @@
 namespace RoslynDom.Common
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming",
+        "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "This refers to enums so seems correct")]
     public interface IEnum : IType<IEnum>
     {
         IReferencedType UnderlyingType { get; set; }
-        RDomList<IEnumMember> Members { get; }
+        RDomCollection<IEnumMember> Members { get; }
     }
 }

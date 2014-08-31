@@ -10,6 +10,7 @@ namespace RoslynDom.Common
     {
         public static IEnumerable<T> PreviousSiblings<T>(this IEnumerable<T> list, T item)
         {
+            if (list == null) throw new NotImplementedException();
             var ret = new List<T>();
             if (!list.Contains(item)) return ret;
             foreach (var member in list)
@@ -22,6 +23,7 @@ namespace RoslynDom.Common
 
         public static IEnumerable<T> FollowingSiblings<T>(this IEnumerable<T> list, T item)
         {
+            if (list == null) throw new NotImplementedException();
             var ret = new List<T>();
             if (!list.Contains(item)) return ret;
             var startTaking = false;
@@ -33,8 +35,11 @@ namespace RoslynDom.Common
             return ret;
         }
 
-        public static IEnumerable<T> PreviousSiblingsUntil<T>(this IEnumerable<T> list, T item, Func<T, bool> condition)
+        public static IEnumerable<T> PreviousSiblingsUntil<T>(this IEnumerable<T> list, 
+            T item, Func<T, bool> condition)
         {
+            if (list == null) throw new NotImplementedException();
+            if (condition == null) throw new NotImplementedException();
             var ret = new List<T>();
             if (!list.Contains(item)) return ret;
             var reversed = new List<T>(list);
@@ -55,6 +60,8 @@ namespace RoslynDom.Common
 
         public static IEnumerable<T> FollowingSiblingsUntil<T>(this IEnumerable<T> list, T item, Func<T, bool> condition)
         {
+            if (list == null) throw new NotImplementedException();
+            if (condition == null) throw new NotImplementedException();
             var ret = new List<T>();
             if (!list.Contains(item)) return ret;
             var startTaking = false;

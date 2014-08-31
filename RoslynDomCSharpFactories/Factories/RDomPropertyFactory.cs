@@ -42,23 +42,15 @@ namespace RoslynDom.CSharp
             var newItem = new RDomProperty(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, syntax.AccessorList, LanguagePart.AccessorList, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.AccessorList, LanguagePart.Current, WhitespaceLookup);
 
             newItem.Name = newItem.TypedSymbol.Name;
-            //newItem.AccessModifier = (AccessModifier)newItem.Symbol.DeclaredAccessibility;
 
-            //newItem.PropertyType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
             var type = Corporation
                             .CreateFrom<IMisc>(syntax.Type, newItem, model)
                             .FirstOrDefault()
                             as IReferencedType;
             newItem.ReturnType = type;
-
-            //newItem.IsAbstract = newItem.Symbol.IsAbstract;
-            //newItem.IsVirtual = newItem.Symbol.IsVirtual;
-            //newItem.IsOverride = newItem.Symbol.IsOverride;
-            //newItem.IsSealed = newItem.Symbol.IsSealed;
-            //newItem.IsStatic = newItem.Symbol.IsStatic;
 
             var propSymbol = newItem.Symbol as IPropertySymbol;
             Guardian.Assert.IsNotNull(propSymbol, nameof(propSymbol));
@@ -82,11 +74,8 @@ namespace RoslynDom.CSharp
             var nameSyntax = SyntaxFactory.Identifier(itemAsProperty.Name);
             var returnType = (TypeSyntax)RDomCSharp.Factory.BuildSyntax(itemAsProperty.ReturnType);
             var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax);
-            //if (itemAsProperty.AccessModifier != AccessModifier.None)
-            //{
-                var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsProperty);
-                node = node.WithModifiers(modifiers);
-            //}
+            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsProperty);
+            node = node.WithModifiers(modifiers);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsProperty.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
@@ -102,7 +91,6 @@ namespace RoslynDom.CSharp
             accessorList = BuildSyntaxHelpers.AttachWhitespace(accessorList, itemAsProperty.Whitespace2Set, WhitespaceLookup);
             if (accessors.Any()) { node = node.WithAccessorList(accessorList); }
 
-           // node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsProperty.Whitespace2Set, WhitespaceLookup);
 
             // TODO: parameters , typeParameters and constraintClauses 

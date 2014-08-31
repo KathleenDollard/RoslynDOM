@@ -27,12 +27,14 @@ namespace RoslynDom.CSharp
                     _whitespaceLookup = new WhitespaceKindLookup();
                     _whitespaceLookup.Add(LanguageElement.ClassKeyword, SyntaxKind.ClassKeyword);
                     _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.Add(LanguageElement.Sealed, SyntaxKind.SealedKeyword);
+                    _whitespaceLookup.Add(LanguageElement.Abstract, SyntaxKind.AbstractKeyword);
                     _whitespaceLookup.Add(LanguageElement.ClassStartDelimiter, SyntaxKind.OpenBraceToken);
                     _whitespaceLookup.Add(LanguageElement.ClassEndDelimiter, SyntaxKind.CloseBraceToken);
                     _whitespaceLookup.Add(LanguageElement.TypeParameterStartDelimiter, SyntaxKind.LessThanToken);
                     _whitespaceLookup.Add(LanguageElement.TypeParameterEndDelimiter, SyntaxKind.GreaterThanToken);
+                    _whitespaceLookup.Add(LanguageElement.BaseListPrefix, SyntaxKind.ColonToken);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
-                    _whitespaceLookup.AddRange(WhitespaceKindLookup.OopModifiers);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
@@ -51,17 +53,9 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            //var newTypeParameters = newItem.TypedSymbol.TypeParametersFrom();
-            //newItem.TypeParameters.AddOrMoveRange(newTypeParameters);
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<ITypeMemberCommentWhite>(x, newItem, model));
             newItem.MembersAll.AddOrMoveRange(members);
 
-            //newItem.BaseType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.BaseType);
-            if (syntax.BaseList != null)
-            {
-                newItem.BaseType = corporation.CreateFrom<IMisc>(syntax.BaseList.Types.First(), newItem, model).Single()
-                                    as IReferencedType;
-            }
             newItem.IsAbstract = newItem.Symbol.IsAbstract;
             newItem.IsSealed = newItem.Symbol.IsSealed;
             newItem.IsStatic = newItem.Symbol.IsStatic;
@@ -70,57 +64,52 @@ namespace RoslynDom.CSharp
         }
 
         public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item,
-       ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
+                     ICSharpBuildSyntaxWorker buildSyntaxWorker,
+                     RDomCorporation corporation)
         {
+            var itemAsT = item as IClass;
+            Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
+
             var modifiers = item.BuildModfierSyntax();
+            if (item.IsAbstract) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.AbstractKeyword)); }
+            if (item.IsSealed) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.SealedKeyword)); }
             var identifier = SyntaxFactory.Identifier(item.Name);
 
             var node = SyntaxFactory.ClassDeclaration(identifier)
                 .WithModifiers(modifiers);
-            node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
 
-            var itemAsClass = item as IClass;
-            Guardian.Assert.IsNotNull(itemAsClass, nameof(itemAsClass));
+            var baseList = BuildSyntaxHelpers.GetBaseList(item);
+            if (baseList != null) { node = node.WithBaseList(baseList); }
+
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
-            var membersSyntax = itemAsClass.Members
+            var membersSyntax = itemAsT.Members
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
 
-            var typeParametersAndConstraints = itemAsClass.TypeParameters
+            // This works oddly because it uncollapses the list
+            // This code is largely repeated in interface and method factories, but is very hard to refactor because of shallow Roslyn (Microsoft) architecture
+            var typeParamsAndConstraints = itemAsT.TypeParameters
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
-            var typeParameters = typeParametersAndConstraints
-                        .OfType<TypeParameterSyntax>()
-                        .ToList();
-            var typeConstraintClauses = typeParametersAndConstraints
-                        .OfType<TypeParameterConstraintClauseSyntax>()
-                        .ToList();
-            if (typeParameters.Any())
+
+            var typeParameterSyntaxList = BuildSyntaxHelpers.GetTypeParameterSyntaxList(
+                        typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
+            if (typeParameterSyntaxList != null)
             {
-                var typeParameterListSyntax = SyntaxFactory.TypeParameterList(SyntaxFactory.SeparatedList<TypeParameterSyntax>(typeParameters));
-                typeParameterListSyntax = BuildSyntaxHelpers.AttachWhitespace(typeParameterListSyntax, item.Whitespace2Set, whitespaceLookup);
-                node = node.WithTypeParameterList(typeParameterListSyntax);
+                node = node.WithTypeParameterList(typeParameterSyntaxList);
+                var clauses = BuildSyntaxHelpers.GetTypeParameterConstraintList(
+                          typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
+                if (clauses.Any())
+                { node = node.WithConstraintClauses(clauses); }
             }
 
-            var clauses = new List<TypeParameterConstraintClauseSyntax>();
-            foreach (var typeParameter in typeParameters)
-            {
-                var name = typeParameter.Identifier.ToString();
-                var constraint = typeConstraintClauses
-                              .Where(x => x.Name.ToString() == name)
-                              .ToList()
-                              .SingleOrDefault();
-                if (constraint != null)
-                { clauses.Add(constraint); }
-            }
-            if (clauses.Any())
-            { node.WithConstraintClauses(SyntaxFactory.List(clauses)); }
-
+            node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
+
     }
 
 

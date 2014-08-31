@@ -13,6 +13,8 @@ namespace RoslynDom
             Initialize();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomWhileStatement(RDomWhileStatement oldRDom)
             : base(oldRDom)
         { }

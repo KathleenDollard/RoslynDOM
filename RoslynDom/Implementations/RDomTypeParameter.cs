@@ -10,22 +10,18 @@ namespace RoslynDom
     // Doesn't currently follow pattern, ie. a syntax is not passed
     public class RDomTypeParameter : RDomBase<ITypeParameter, ISymbol>, ITypeParameter
     {
-        private RDomList<IReferencedType> _constraintTypes;
+        private RDomCollection<IReferencedType> _constraintTypes;
 
-        //public RDomTypeParameter(ImmutableArray<SyntaxReference> raw, ISymbol symbol)
-        //    : base(raw, symbol)
-        //{
-        //    // DO NOT call Initialize here. It is being called from the base RDomReferencedType class
-        //}
-
-        public RDomTypeParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
+         public RDomTypeParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
         public RDomTypeParameter(RDomTypeParameter oldRDom)
              : base(oldRDom)
         {
-            _constraintTypes = new RDomList<IReferencedType>(this);
+            if (oldRDom == null) throw new NotImplementedException();
+            Initialize();
+            _constraintTypes = new RDomCollection<IReferencedType>(this);
             Variance = oldRDom.Variance;
             Ordinal = oldRDom.Ordinal;
             HasConstructorConstraint = oldRDom.HasConstructorConstraint;
@@ -33,8 +29,6 @@ namespace RoslynDom
             HasValueTypeConstraint = oldRDom.HasValueTypeConstraint;
             var newConstraints = RoslynDomUtilities.CopyMembers(oldRDom._constraintTypes);
             ConstraintTypes.AddOrMoveRange(newConstraints);
-            //foreach (var constraint in newConstraints)
-            //{ AddConstraintType(constraint); }
         }
 
         ITypeParameter IDom<ITypeParameter>.Copy()
@@ -42,14 +36,13 @@ namespace RoslynDom
             return new RDomTypeParameter(this);
         }
 
-        protected override void Initialize()
+        protected  void Initialize()
         {
-            base.Initialize();
-            _constraintTypes = new RDomList<IReferencedType>(this);
+            _constraintTypes = new RDomCollection<IReferencedType>(this);
         }
 
 
-        public RDomList<IReferencedType> ConstraintTypes
+        public RDomCollection<IReferencedType> ConstraintTypes
         { get { return _constraintTypes; } }
 
         public bool HasConstructorConstraint { get; set; }

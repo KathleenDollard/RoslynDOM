@@ -19,10 +19,14 @@ namespace RoslynDom.Common
             return CreateFromList(rawItems, makeNewItems);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", 
+            "CA1006:DoNotNestGenericTypesInMemberSignatures",
+            Justification = "Apparently the problem is the Func returning a generic list. This is a good usage")]
         public static IEnumerable<T> CreateFromList<T, TRaw>(
                IEnumerable<TRaw> rawItems,
                Func<TRaw, IEnumerable<T>> makeNewItems)
         {
+            if (rawItems == null) throw new NotImplementedException();
             var ret = new List<T>();
             if (makeNewItems == null) throw new InvalidOperationException();
             foreach (var rawItem in rawItems)

@@ -9,7 +9,7 @@ namespace RoslynDom
     {
         public RDomStructure(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model, MemberKind.Structure, StemMemberKind.Structure)
-        { Initialize(); }
+        {  }
 
         internal RDomStructure(RDomStructure oldRDom)
             : base(oldRDom)

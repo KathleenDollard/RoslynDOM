@@ -1,2 +1,14 @@
-"\r\n                public class Bar\r\n                {\r\n                    private string firstName;\r\n\r\n                        // Comment and whitespace\r\n                    private string lastName;\r\n\r\n                        // comment\r\n                    public string Foo()\r\n                    {}\r\n                }"
-"\r\n                public class Bar\r\n                {\r\n                    private string firstName;\r\n\r\n                        // Comment and whitespace\r\n                    private string lastName;\r\n\r\n                        // comment\r\n                    public string Foo()\r\n                    {}\r\n                }"
+actual ,nq
+RoslynDom.RDomRoot : Root
+  RoslynDom.RDomVerticalWhiteSpace : 
+  RoslynDom.RDomClass : Bar
+    RoslynDom.RDomProperty : FooBar
+      RoslynDom.RDomPropertyAccessor : get_FooBar
+        RoslynDom.RDomDeclarationStatement : z {UInt16}
+          RoslynDom.RDomExpression : 432
+        RoslynDom.RDomReturnStatement : 
+          RoslynDom.RDomExpression : z.ToString()
+      RoslynDom.RDomPropertyAccessor : set_FooBar
+        RoslynDom.RDomAssignmentStatement : 
+          RoslynDom.RDomExpression : value
+

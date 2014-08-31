@@ -79,21 +79,7 @@ namespace RoslynDom.Common
         public void NeitherCreateFromNorListOverridden<TKind>(Type type, SyntaxNode item)
             { throw new InvalidOperationException(); }
 
-        ///// <summary>
-        ///// Call to inform of an unexpected null. 
-        ///// </summary>
-        ///// <param name="value"></param>
-        ///// <remarks>
-        ///// Please do not call on non-null values because this results in boxing
-        ///// </remarks>
-        //public void IsNotNull<T>(
-        //    T value,
-        //    [CallerMemberName] string callerName = "",
-        //    [CallerLineNumber] int callerLineNumber = 0)
-        //    where T : class
-        //{
-        //}
-
+     
         /// <summary>
         /// Call to inform of an unexpected null. 
         /// </summary>

@@ -7,12 +7,13 @@ namespace RoslynDom
 {
     public class RDomEnumMember : RDomBase<IEnumMember, ISymbol>, IEnumMember
     {
-        private AttributeList _attributes = new AttributeList();
+        private AttributeCollection _attributes = new AttributeCollection();
 
         public RDomEnumMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { Initialize(); }
+        {  }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal RDomEnumMember(RDomEnumMember oldRDom)
              : base(oldRDom)
         {
@@ -22,7 +23,7 @@ namespace RoslynDom
             Name = oldRDom.Name;
         }
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public string Name { get; set; }

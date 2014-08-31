@@ -25,6 +25,12 @@ namespace RoslynDom.CSharp
                 {
                     _whitespaceLookup = new WhitespaceKindLookup();
                     _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.Add(LanguageElement.Static, SyntaxKind.StaticKeyword);
+                    _whitespaceLookup.Add(LanguageElement.NewSlot, SyntaxKind.NewKeyword);
+                    _whitespaceLookup.Add(LanguageElement.Readonly, SyntaxKind.ReadOnlyKeyword);
+                    _whitespaceLookup.Add(LanguageElement.Constant, SyntaxKind.ConstKeyword);
+                    _whitespaceLookup.Add(LanguageElement.Volatile, SyntaxKind.VolatileKeyword );
+                    _whitespaceLookup.Add(LanguageElement.EqualsAssignmentOperator, SyntaxKind.EqualsToken);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
@@ -52,13 +58,16 @@ namespace RoslynDom.CSharp
                 CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
                 CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
                 CreateFromWorker.StoreWhitespace(newItem, decl, LanguagePart.Current, WhitespaceLookup);
-
+              
                 newItem.Name = newItem.TypedSymbol.Name;
 
                 if (decl.Initializer != null)
-                { newItem.Initializer = Corporation.CreateFrom<IExpression>(decl.Initializer.Value, newItem, model).FirstOrDefault(); }
+                {
+                    CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
+                    CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
+                    newItem.Initializer = Corporation.CreateFrom<IExpression>(decl.Initializer.Value, newItem, model).FirstOrDefault();
+                }
 
-                //newItem.ReturnType = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
                 var returnType = Corporation
                                  .CreateFrom<IMisc>(rawField.Declaration.Type, newItem, model)
                                  .FirstOrDefault()
@@ -67,8 +76,6 @@ namespace RoslynDom.CSharp
 
                 var fieldSymbol = newItem.Symbol as IFieldSymbol;
                 newItem.IsStatic = fieldSymbol.IsStatic;
-                // TODO: Assign IsNew, question on insider's list
-                // newItem.IsNew = fieldSymbol.i 
                 newItem.IsVolatile = fieldSymbol.IsVolatile;
                 newItem.IsReadOnly = fieldSymbol.IsReadOnly;
                 newItem.IsConstant = fieldSymbol.HasConstantValue;
@@ -86,19 +93,35 @@ namespace RoslynDom.CSharp
             var nameSyntax = SyntaxFactory.Identifier(itemAsField.Name);
             var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsField.ReturnType).First();
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsField);
+            if (itemAsField.IsReadOnly) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)); }
+            if (itemAsField.IsConstant)
+            {
+                modifiers = modifiers.Remove(modifiers.Where(x => x.CSharpKind() == SyntaxKind.StaticKeyword).First());
+                modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ConstKeyword));
+            }
+            if (itemAsField.IsVolatile) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.VolatileKeyword)); }
             var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
+            if (itemAsField.Initializer != null)
+            {
+                var expressionSyntax = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsField.Initializer);
+                expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, itemAsField.Whitespace2Set[LanguageElement.Expression]);
+                var equalsToken = SyntaxFactory.Token(SyntaxKind.EqualsToken);
+                equalsToken = BuildSyntaxHelpers.AttachWhitespaceToToken(equalsToken, itemAsField.Whitespace2Set[LanguageElement.EqualsAssignmentOperator]);
+                var equalsValueClause = SyntaxFactory.EqualsValueClause(equalsToken, expressionSyntax);
+                declaratorNode = declaratorNode.WithInitializer(equalsValueClause);
+            }
+            declaratorNode = BuildSyntaxHelpers.AttachWhitespace(declaratorNode, itemAsField.Whitespace2Set, WhitespaceLookup);
+
             var variableNode = SyntaxFactory.VariableDeclaration(returnTypeSyntax)
                .WithVariables(
-                        SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(
-                            SyntaxFactory.VariableDeclarator(nameSyntax)));
+                        SyntaxFactory.SingletonSeparatedList(declaratorNode));
+            variableNode = BuildSyntaxHelpers.AttachWhitespace(variableNode, itemAsField.Whitespace2Set, WhitespaceLookup);
             var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsField.Whitespace2Set, WhitespaceLookup);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsField.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
-
-            //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             return node.PrepareForBuildSyntaxOutput(item);
         }

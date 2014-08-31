@@ -25,6 +25,13 @@ namespace RoslynDom.CSharp
                 if (_whitespaceLookup == null)
                 {
                     _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.Using, SyntaxKind.UsingKeyword);
+                    _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.Add(LanguageElement.VariableStartDelimiter, SyntaxKind.OpenParenToken);
+                    _whitespaceLookup.Add(LanguageElement.VariableEndDelimiter, SyntaxKind.CloseParenToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.EqualsAssignmentOperator, SyntaxKind.EqualsToken);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
                 return _whitespaceLookup;
@@ -36,7 +43,9 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as UsingStatementSyntax;
             var newItem = new RDomUsingStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.InitializeStatements(newItem, syntax.Statement, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Statement, LanguagePart.Current, WhitespaceLookup);
             // if there is both a declaration and an expression, I'm terribly confused
             var declaration = syntax.Declaration;
             var expression = syntax.Expression;
@@ -54,29 +63,30 @@ namespace RoslynDom.CSharp
             else
             {
                 var expr = Corporation.CreateFrom<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
+                CreateFromWorker.StoreWhitespace(expr, syntax.Expression, LanguagePart.Current, WhitespaceLookup);
                 newItem.Expression = expr;
             }
 
-              return newItem;
+            return newItem;
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IUsingStatement;
-            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup );
+            var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup);
             var node = SyntaxFactory.UsingStatement(statement);
             if (itemAsT.Variable != null)
             {
-                var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable);
-                //TypeSyntax typeSyntax;
-                //// TODO: Try to move this to BuildSyntaxExtensions, shared with at least ForStatement, and probably VariableDeclarationStatement, perhaps call through IOC
-                //if (itemAsT.Variable.IsImplicitlyTyped)
-                //{ typeSyntax = SyntaxFactory.IdentifierName("var"); }
-                //else
-                //{ typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Type)); }
+                //var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable);
+                var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(
+                            itemAsT.Variable.IsImplicitlyTyped, itemAsT.Variable.Type);
                 var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Initializer);
+                var equalsValueClause = SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax);
+                equalsValueClause = BuildSyntaxHelpers.AttachWhitespace(equalsValueClause, itemAsT.Variable.Whitespace2Set, WhitespaceLookup);
+
                 var nodeDeclarator = SyntaxFactory.VariableDeclarator(itemAsT.Variable.Name);
-                nodeDeclarator = nodeDeclarator.WithInitializer(SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax));
+                nodeDeclarator = nodeDeclarator.WithInitializer(equalsValueClause);
+                nodeDeclarator = BuildSyntaxHelpers.AttachWhitespace(nodeDeclarator, itemAsT.Variable.Whitespace2Set, WhitespaceLookup);
                 var nodeDeclaratorInList = SyntaxFactory.SeparatedList(SyntaxFactory.List<VariableDeclaratorSyntax>(new VariableDeclaratorSyntax[] { (VariableDeclaratorSyntax)nodeDeclarator }));
                 var nodeDeclaration = SyntaxFactory.VariableDeclaration(typeSyntax, nodeDeclaratorInList);
                 node = node.WithDeclaration(nodeDeclaration);

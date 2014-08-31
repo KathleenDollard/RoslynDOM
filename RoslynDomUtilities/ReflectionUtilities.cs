@@ -57,6 +57,7 @@ namespace RoslynDom.Common
 
         public static MethodInfo FindMethod(Type type, string methodName, bool mightBePrivate, params Type[] parameterTypes)
         {
+            if (type == null) throw new NotImplementedException();
             var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static;
             if (mightBePrivate) { bindingFlags = bindingFlags | BindingFlags.NonPublic; }
             var methodInfo = type.GetMethod(methodName, bindingFlags, null, parameterTypes, null);
@@ -65,6 +66,7 @@ namespace RoslynDom.Common
 
         public static Type MakeGenericType(Type openType, params Type[] typeArguments)
         {
+            if (openType == null) throw new NotImplementedException();
             var newType = openType.MakeGenericType(typeArguments);
             return newType;
         }

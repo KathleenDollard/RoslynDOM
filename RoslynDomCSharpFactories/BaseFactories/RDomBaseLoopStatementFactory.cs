@@ -51,12 +51,7 @@ namespace RoslynDom.CSharp
 
         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
-            //public IStatement CreateItemFrom<T>(
-            //  T newItem, ExpressionSyntax condition, StatementSyntax statement, IDom parent, SemanticModel model,
-            //  RDomCorporation corporation, ICSharpCreateFromWorker createFromWorker, WhitespaceKindLookup whitespaceLookup)
-            //  where T : ILoop<T>
-            //{
-            var syntax = syntaxNode as TSyntax;
+              var syntax = syntaxNode as TSyntax;
             var newItem = MakeNewItem(syntax, parent, model);
             var condition = GetConditionFromSyntax(syntax);
             var statement = GetStatementFromSyntax(syntax);
@@ -68,7 +63,7 @@ namespace RoslynDom.CSharp
 
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, statement, LanguagePart.Block, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, statement, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, condition, LanguagePart.Current, WhitespaceLookup);
 
             return newItem;

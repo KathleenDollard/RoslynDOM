@@ -8,17 +8,20 @@ namespace RoslynDom
 {
     public class RDomConversionOperator : RDomBase<IConversionOperator, IMethodSymbol>, IConversionOperator
     {
-        private RDomList<IParameter> _parameters;
-        private RDomList<IStatementCommentWhite> _statements;
-        private AttributeList _attributes = new AttributeList();
+        private RDomCollection<IParameter> _parameters;
+        private RDomCollection<IStatementCommentWhite> _statements;
+        private AttributeCollection _attributes = new AttributeCollection();
 
         public RDomConversionOperator(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+       "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomConversionOperator(RDomConversionOperator oldRDom)
              : base(oldRDom)
         {
+            Initialize();
             AccessModifier = oldRDom.AccessModifier;
             DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
@@ -30,10 +33,9 @@ namespace RoslynDom
             Type = oldRDom.Type;
         }
 
-        protected override void Initialize()
+        protected  void Initialize()
         {
-            base.Initialize();
-            _statements = new RDomList<IStatementCommentWhite>(this);
+            _statements = new RDomCollection<IStatementCommentWhite>(this);
         }
         public override IEnumerable<IDom> Children
         {
@@ -62,7 +64,7 @@ namespace RoslynDom
         { get { return RoslynUtilities.GetOuterName(this); } }
 
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
@@ -72,10 +74,10 @@ namespace RoslynDom
         public IReferencedType Type { get; set; }
         public bool IsImplicit { get; set; }
         public bool IsStatic { get; set; }
-        public RDomList<IParameter> Parameters
+        public RDomCollection<IParameter> Parameters
         { get { return _parameters; } }
 
-        public RDomList<IStatementCommentWhite> StatementsAll
+        public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
         public IEnumerable<IStatement> Statements

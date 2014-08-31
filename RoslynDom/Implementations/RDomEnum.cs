@@ -5,10 +5,13 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming",
+       "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+       Justification = "Because this represents an enum, it's an appropriate name")]
     public class RDomEnum : RDomBase<IEnum, ISymbol>, IEnum
     {
-        private AttributeList _attributes = new AttributeList();
-        private RDomList<IEnumMember> _values;
+        private AttributeCollection _attributes = new AttributeCollection();
+        private RDomCollection<IEnumMember> _values;
 
         public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
@@ -17,6 +20,7 @@ namespace RoslynDom
         internal RDomEnum(RDomEnum oldRDom)
              : base(oldRDom)
         {
+            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             var newValues = RoslynDomUtilities.CopyMembers(oldRDom._values);
             Members.AddOrMoveRange(newValues);
@@ -25,13 +29,12 @@ namespace RoslynDom
             UnderlyingType = oldRDom.UnderlyingType;
         }
 
-        protected override void Initialize()
+        protected  void Initialize()
         {
-            _values = new RDomList<IEnumMember>(this);
-            base.Initialize();
+            _values = new RDomCollection<IEnumMember>(this);
         }
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public string Name { get; set; }
@@ -53,7 +56,7 @@ namespace RoslynDom
         public IType ContainingType
         { get { return Parent as IType; } }
 
-        public RDomList<IEnumMember> Members
+        public RDomCollection<IEnumMember> Members
         { get { return _values; } }
 
         public AccessModifier AccessModifier { get; set; }

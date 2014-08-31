@@ -17,20 +17,7 @@ namespace RoslynDom.CSharp
          : base(corporation)
         { }
 
-        private WhitespaceKindLookup WhitespaceLookup
-        {
-            get
-            {
-                if (_whitespaceLookup == null)
-                {
-                    _whitespaceLookup = new WhitespaceKindLookup();
-                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
-                }
-                return _whitespaceLookup;
-            }
-        }
-
-        public override RDomPriority Priority
+           public override RDomPriority Priority
         { get { return RDomPriority.Normal - 1; } }
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)
@@ -43,7 +30,6 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as ExpressionStatementSyntax;
             var newItem = new RDomInvocationStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            //CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, syntax, LanguagePart.Current,
                                     LanguageElement.Expression);
 
@@ -61,7 +47,6 @@ namespace RoslynDom.CSharp
 
             node = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(node,
                         itemAsT.Whitespace2Set[LanguageElement.Expression]);
-            //node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
 

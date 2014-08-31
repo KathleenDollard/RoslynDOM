@@ -35,30 +35,16 @@ namespace RoslynDom.CSharp
             }
         }
 
-        public static RDomEnum CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
+        public static RDomEnum CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model,
+            ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
         {
             var syntax = syntaxNode as EnumDeclarationSyntax;
             var newItem = new RDomEnum(syntaxNode, parent, model);
             createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             createFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
 
+            InitializeBaseList(syntax, newItem, model, createFromWorker, corporation);
             newItem.Name = newItem.TypedSymbol.Name;
-
-            var symbol = newItem.Symbol as INamedTypeSymbol;
-            if (symbol != null)
-            {
-                var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
-                // TODO: underlying type should be set to Int when there is not type specified,there is always an underlying type
-                if (syntax.BaseList != null)
-                {
-                    //newItem.UnderlyingType = new RDomReferencedType(underlyingNamedTypeSymbol.DeclaringSyntaxReferences, underlyingNamedTypeSymbol);
-                    var type = corporation
-                                    .CreateFrom<IMisc>(syntax.BaseList.Types.First(), newItem, model)
-                                    .FirstOrDefault()
-                                    as IReferencedType;
-                    newItem.UnderlyingType = type;
-                }
-            }
 
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<IMisc>(x, newItem, model))
                             .OfType<IEnumMember>();
@@ -67,7 +53,30 @@ namespace RoslynDom.CSharp
             return newItem;
         }
 
-  
+        private static void InitializeBaseList(EnumDeclarationSyntax syntax, RDomEnum newItem, SemanticModel model,
+            ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
+        {
+            var symbol = newItem.Symbol as INamedTypeSymbol;
+            if (symbol != null)
+            {
+                var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
+                // TODO: underlying type should be set to Int when there is not type specified,there is always an underlying type
+                if (syntax.BaseList != null)
+                {
+                    createFromWorker.StoreWhitespaceForToken(newItem, syntax.BaseList.ColonToken,
+                                  LanguagePart.Current, LanguageElement.BaseListPrefix);
+                    var type = corporation
+                                    .CreateFrom<IMisc>(syntax.BaseList.Types.First(), newItem, model)
+                                    .FirstOrDefault()
+                                    as IReferencedType;
+                    newItem.UnderlyingType = type;
+                    createFromWorker.StoreWhitespace(type, syntax.BaseList,
+                                  LanguagePart.Current, whitespaceLookup);
+                }
+            }
+        }
+
+
         public static IEnumerable<SyntaxNode> BuildSyntax(RDomEnum item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
         {
             var itemAsT = item as IEnum;
@@ -78,6 +87,9 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.EnumDeclaration(identifier)
                 .WithModifiers(modifiers);
 
+            var baseList = GetBaseList(itemAsT);
+            if (baseList != null) { node = node.WithBaseList(baseList); }
+     
             var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
@@ -93,6 +105,22 @@ namespace RoslynDom.CSharp
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
+        }
+
+        public static BaseListSyntax GetBaseList(IEnum item)
+        {
+            if (item.UnderlyingType != null)
+            {
+                var underlyingTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntax(item.UnderlyingType);
+                underlyingTypeSyntax = BuildSyntaxHelpers.AttachWhitespace(
+                    underlyingTypeSyntax, item.UnderlyingType.Whitespace2Set, whitespaceLookup);
+
+                var colonToken = SyntaxFactory.Token(SyntaxKind.ColonToken);
+                colonToken = BuildSyntaxHelpers.AttachWhitespaceToToken(colonToken, item.Whitespace2Set[LanguageElement.BaseListPrefix]);
+                return SyntaxFactory.BaseList(colonToken,
+                    SyntaxFactory.SingletonSeparatedList(underlyingTypeSyntax));
+            }
+            return null;
         }
     }
 

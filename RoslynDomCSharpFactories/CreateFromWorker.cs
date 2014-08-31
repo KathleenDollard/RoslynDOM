@@ -67,9 +67,8 @@ namespace RoslynDom.CSharp
             InitializeOOTypeMember(newItem as IOOTypeMember, syntaxNode, parent, model);
             InitializeStatic(newItem as ICanBeStatic, syntaxNode, parent, model);
             InitializeStructuredDocumentation(newItem as IHasStructuredDocumentation, syntaxNode, parent, model);
-            InitializeImplementedInterfaces(newItem as IHasImplementedInterfaces, syntaxNode, parent, model);
+            InitializeBaseList(newItem as IHasImplementedInterfaces, syntaxNode, parent, model);
             InitializeTypeParameters(newItem as IHasTypeParameters, syntaxNode, parent, model);
-           // InitializeWhitespace(newItem as IRoslynDom, syntaxNode, parent, model, true);
         }
 
         private void InitializeAccessModifiers(IHasAccessModifier itemHasAccessModifier, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -85,7 +84,7 @@ namespace RoslynDom.CSharp
             { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Public; }
             else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.PrivateKeyword))
             { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Private; }
-            else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.ProtectedKeyword && x.CSharpKind() == SyntaxKind.InternalKeyword))
+            else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.ProtectedKeyword) && tokens.Any(x => x.CSharpKind() == SyntaxKind.InternalKeyword))
             { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.ProtectedOrInternal; }
             else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.ProtectedKeyword))
             { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Protected; }
@@ -101,7 +100,8 @@ namespace RoslynDom.CSharp
             item.PublicAnnotations.Add(publicAnnotations);
         }
 
-        private void InitializeAttributes(IHasAttributes itemAsHasAttributes, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        private void InitializeAttributes(IHasAttributes itemAsHasAttributes,
+                    SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             if (itemAsHasAttributes == null) { return; }
             var attributes = new List<IAttribute>();
@@ -110,7 +110,6 @@ namespace RoslynDom.CSharp
             {
                 // Flatten list
                 // Force whitespace
-                //var tokenWS = 
                 if (attributeList != null)
                 {
                     var attr = Corporation.CreateFrom<IAttribute>(attributeList, itemAsHasAttributes, model);
@@ -124,11 +123,12 @@ namespace RoslynDom.CSharp
         {
             if (itemAsOO == null) { return; }
             var itemAsDom = itemAsOO as IRoslynHasSymbol;
-            itemAsOO.IsAbstract = itemAsDom.Symbol.IsAbstract;
+            //itemAsOO.IsAbstract = itemAsDom.Symbol.IsAbstract;
+            itemAsOO.IsAbstract = syntaxNode.ChildTokens().Any(x => x.CSharpKind() == SyntaxKind.AbstractKeyword);
             itemAsOO.IsVirtual = itemAsDom.Symbol.IsVirtual;
             itemAsOO.IsOverride = itemAsDom.Symbol.IsOverride;
             itemAsOO.IsSealed = itemAsDom.Symbol.IsSealed;
-            var itemAsCanBeNew = itemAsOO as ICanBeNew; 
+            var itemAsCanBeNew = itemAsOO as ICanBeNew;
             if (itemAsCanBeNew != null)
             {
 
@@ -137,7 +137,24 @@ namespace RoslynDom.CSharp
             }
         }
 
-        private void InitializeImplementedInterfaces(IHasImplementedInterfaces itemAsT, SyntaxNode node, IDom parent, SemanticModel model)
+        private static WhitespaceKindLookup _whitespaceLookupForImplementedInterfaces;
+        private static WhitespaceKindLookup whitespaceLookupForImplementedInterfaces
+        {
+            get
+            {
+                if (_whitespaceLookupForImplementedInterfaces == null)
+                {
+                    _whitespaceLookupForImplementedInterfaces = new WhitespaceKindLookup();
+                    _whitespaceLookupForImplementedInterfaces.Add(LanguageElement.Separator, SyntaxKind.CommaToken);
+                    _whitespaceLookupForImplementedInterfaces.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookupForImplementedInterfaces.AddRange(WhitespaceKindLookup.Eol);
+                }
+                return _whitespaceLookupForImplementedInterfaces;
+            }
+        }
+
+        private void InitializeBaseList(IHasImplementedInterfaces itemAsT,
+                SyntaxNode node, IDom parent, SemanticModel model)
         {
             if (itemAsT == null) return;
 
@@ -148,15 +165,42 @@ namespace RoslynDom.CSharp
             if (baseList != null)
             {
                 IEnumerable<TypeSyntax> types = baseList.Types;
+                StoreWhitespaceForToken(itemAsT, baseList.ColonToken, LanguagePart.Current, LanguageElement.BaseListPrefix);
                 if (node is ClassDeclarationSyntax && baseType.Name == types.First().ToString())
                 {
+                    var itemAsClass = itemAsT as RDomClass;
+                    var syntax = types.First();
+                    if (itemAsClass == null) throw new InvalidOperationException();
+                    var newBaseType = Corporation.CreateFrom<IMisc>(syntax, itemAsT, model).Single()
+                                            as IReferencedType;
+                    itemAsClass.BaseType = newBaseType;
+                    StoreWhitespace(newBaseType, syntax,
+                                  LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
                     types = types.Skip(1);
                 }
-                foreach (var b in types)
+                foreach (var implementedInterfaceSyntax in types)
                 {
-                    var newBase = Corporation.CreateFrom<IMisc>(b, itemAsT, model).Single()
+                    var newInterface = Corporation.CreateFrom<IMisc>(implementedInterfaceSyntax, itemAsT, model).Single()
                                     as IReferencedType;
-                    itemAsT.ImplementedInterfaces.AddOrMove(newBase);
+                    StoreWhitespace(newInterface, implementedInterfaceSyntax,
+                                  LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
+
+                    var whitespace2 = newInterface.Whitespace2Set[LanguageElement.Identifier];
+                    if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
+                    {
+                        var prevNodeOrToken = implementedInterfaceSyntax.Parent
+                                                  .ChildNodesAndTokens()
+                                                  .PreviousSiblings(implementedInterfaceSyntax)
+                                                  .LastOrDefault();
+                        var sepKind = whitespaceLookupForImplementedInterfaces.Lookup(LanguageElement.Separator);
+                        if (prevNodeOrToken.CSharpKind() == sepKind)
+                        {
+                            var commaToken = prevNodeOrToken.AsToken();
+                            whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();
+                        }
+                    }
+
+                    itemAsT.ImplementedInterfaces.AddOrMove(newInterface);
                 }
             }
         }
@@ -186,7 +230,7 @@ namespace RoslynDom.CSharp
             item.IsStatic = itemAsDom.Symbol.IsStatic;
         }
 
-         private void InitializeStructuredDocumentation(IHasStructuredDocumentation item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        private void InitializeStructuredDocumentation(IHasStructuredDocumentation item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             if (item == null) return;
             var structuredDocumentation = GetStructuredDocumenation(syntaxNode, item, model).FirstOrDefault();
@@ -197,92 +241,10 @@ namespace RoslynDom.CSharp
             }
         }
 
-         private string SpecialLeadingWhitespace(SyntaxNode syntaxNode, IEnumerable<SyntaxTrivia> nodeLeadingWS)
-        {
-            var leadingWS = "";
-            if (nodeLeadingWS.Any())
-            {
-                leadingWS = String.Join("",
-                                nodeLeadingWS
-                                    .Select(x => x.ToFullString()));
-            }
-            else
-            {
-                // If there is a previous token, 
-                var parentNodesAndTokens = syntaxNode
-                                .Parent
-                                .ChildNodesAndTokens();
-                var prevNodeOrToken = parentNodesAndTokens
-                                .PreviousSiblings(syntaxNode)
-                                .LastOrDefault();
-                if (prevNodeOrToken != null && IsPunctuation(prevNodeOrToken))
-                {
-                    leadingWS = GetWhitespaceString(
-                            prevNodeOrToken.AsToken().TrailingTrivia
-                            , true);
-                }
-            }
-            return leadingWS;
-        }
-
-        private string SpecialTrailingWhitespace(SyntaxNode syntaxNode, IEnumerable<SyntaxTrivia> nodeTrailingWS)
-        {
-            var trailingWS = "";
-            if (nodeTrailingWS.Any())
-            {
-                trailingWS = String.Join("",
-                                nodeTrailingWS
-                                    .Select(x => x.ToFullString()));
-            }
-            else
-            {
-                // If there is a previous token, 
-                var parentNodesAndTokens = syntaxNode
-                                .Parent
-                                .ChildNodesAndTokens();
-                var nextNodeOrToken = parentNodesAndTokens
-                                .FollowingSiblings(syntaxNode)
-                                .FirstOrDefault();
-                if (nextNodeOrToken != null && IsPunctuation(nextNodeOrToken))
-                {
-                    trailingWS = GetWhitespaceString(
-                            nextNodeOrToken.AsToken().LeadingTrivia
-                            , true);
-                }
-            }
-            return trailingWS;
-        }
-
-        private bool IsPunctuation(SyntaxNodeOrToken nextNodeOrToken)
-        {
-            return (",.{}]();".Contains(nextNodeOrToken.ToString().Trim()));
-        }
-
-        public string GetWhitespaceString(SyntaxTriviaList triviaList, bool removeEol)
-        {
-            var wsTrivia = triviaList
-                            .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia
-                                || x.CSharpKind() == SyntaxKind.EndOfLineTrivia);
-            if (removeEol)
-            {
-                // There might be multiple EOLs in the leading trivia that we need to strip here
-                var list = new List<SyntaxTrivia>();
-                foreach (var item in wsTrivia)
-                {
-                    if (item.CSharpKind() == SyntaxKind.EndOfLineTrivia) // empty the list and start over, but don't record in leading
-                    { list = new List<SyntaxTrivia>(); }
-                    else { list.Add(item); }
-                }
-                wsTrivia = list;
-            }
-            return string.Join("", wsTrivia.Select(x => x.ToString()));
-        }
-
-
         public void LoadStemMembers(IStemContainer newItem,
-                    IEnumerable<MemberDeclarationSyntax> memberSyntaxes,
-                    IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
-                    SemanticModel model)
+                   IEnumerable<MemberDeclarationSyntax> memberSyntaxes,
+                   IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
+                   SemanticModel model)
         {
             var usings = ListUtilities.CreateFromList(usingSyntaxes, x => Corporation.CreateFrom<IStemMemberCommentWhite>(x, newItem, model));
             var members = ListUtilities.CreateFromList(memberSyntaxes, x => Corporation.CreateFrom<IStemMemberCommentWhite>(x, newItem, model));
@@ -319,101 +281,17 @@ namespace RoslynDom.CSharp
             return new List<TKind>() { };
         }
 
-         public void StoreWhitespace(IDom newItem, SyntaxNode syntaxNode, LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup)
-        {            triviaManager.StoreWhitespace(newItem, syntaxNode, languagePart, whitespaceLookup);        }
+        public void StoreWhitespace(IDom newItem, SyntaxNode syntaxNode, LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup)
+        { triviaManager.StoreWhitespace(newItem, syntaxNode, languagePart, whitespaceLookup); }
 
-            public void StoreWhitespaceForToken(IDom newItem, SyntaxToken token,
-                    LanguagePart languagePart, LanguageElement languageElement)
-        {            triviaManager.StoreWhitespaceForToken(newItem, token, languagePart, languageElement);        }
+        public void StoreWhitespaceForToken(IDom newItem, SyntaxToken token,
+                LanguagePart languagePart, LanguageElement languageElement)
+        { triviaManager.StoreWhitespaceForToken(newItem, token, languagePart, languageElement); }
 
         public void StoreWhitespaceForFirstAndLastToken(IDom newItem, SyntaxNode node,
-                LanguagePart languagePart, 
+                LanguagePart languagePart,
                 LanguageElement languageElement)
-        {triviaManager.StoreWhitespaceForFirstAndLastToken(newItem, node, languagePart, languageElement);}
-
-      // public void StoreWhitespace(IDom newItem, SyntaxNode syntaxNode, LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup)
-        //{
-        //    if (syntaxNode == null) return;
-
-        //    // For now, all expressions are held as strings, so we just care about first/last
-        //    var nodeAsExpressionSyntax = syntaxNode as ExpressionSyntax;
-        //    if (nodeAsExpressionSyntax is ExpressionSyntax)
-        //    {
-        //        StoreWhitespaceForExpression(newItem, nodeAsExpressionSyntax, languagePart);
-        //        return;
-        //    }
-
-        //    var lookForIdentifier = whitespaceLookup.Lookup(LanguageElement.Identifier) != SyntaxKind.None;
-        //    lookForIdentifier = StoreWhitespaceForChildren(newItem, syntaxNode,
-        //                            languagePart, whitespaceLookup, lookForIdentifier);
-        //    if (lookForIdentifier)
-        //    { StoreWhitespaceForIdentifierNode(newItem, syntaxNode, languagePart); }
-        //}
-
-        //private void StoreWhitespaceForExpression(IDom newItem, ExpressionSyntax syntaxNode,
-        //       LanguagePart languagePart)
-        //{
-        //        StoreWhitespaceForFirstAndLastToken(newItem, syntaxNode,
-        //                languagePart, LanguageElement.Expression );
-        //}
-
-        //private void StoreWhitespaceForIdentifierNode(IDom newItem, SyntaxNode syntaxNode,
-        //            LanguagePart languagePart)
-        //{
-        //    // assume if it was a token we already found it
-        //    var idNode = syntaxNode.ChildNodes().OfType<NameSyntax>().FirstOrDefault();
-        //    if (idNode != null)
-        //    {
-        //        StoreWhitespaceForFirstAndLastToken(newItem, idNode,
-        //                languagePart, LanguageElement.Identifier);
-        //    }
-        //}
-
-        //private bool StoreWhitespaceForChildren(IDom newItem, SyntaxNode syntaxNode,
-        //            LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup, bool lookForIdentifier)
-        //{
-        //    foreach (var token in syntaxNode.ChildTokens())
-        //    {
-        //        var kind = token.CSharpKind();
-        //        var languageElement = whitespaceLookup.Lookup(kind);
-        //        if (languageElement == LanguageElement.Identifier)
-        //        { lookForIdentifier = false; }
-        //        if (languageElement != LanguageElement.NotApplicable)
-        //        { StoreWhitespaceForToken(newItem, token, languagePart, languageElement); }
-        //    }
-
-        //    return lookForIdentifier;
-        //}
-
-        //public void StoreWhitespaceForToken(IDom newItem, SyntaxToken token,
-        //            LanguagePart languagePart, LanguageElement languageElement)
-        //{
-        //    var newWS = new Whitespace2(LanguagePart.Current, languageElement);
-        //    var region = token.LeadingTrivia.Where(x => x.CSharpKind() == SyntaxKind.RegionDirectiveTrivia).FirstOrDefault();
-        //    var structure = region.GetStructure();
-        //    newWS.LeadingWhitespace = token.LeadingTrivia
-        //                                .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia)
-        //                                .Select(x => x.ToString())
-        //                                .JoinString();
-        //    newWS.TrailingWhitespace = token.TrailingTrivia
-        //                                .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia
-        //                                        || x.CSharpKind() == SyntaxKind.EndOfLineTrivia)
-        //                                .Select(x => x.ToString())
-        //                                .JoinString();
-        //    // TODO: Add EOL comments here
-        //    newItem.Whitespace2Set[languageElement] = newWS;
-        //}
-
-        //public void StoreWhitespaceForFirstAndLastToken(IDom newItem, SyntaxNode node,
-        //        LanguagePart languagePart, 
-        //        LanguageElement languageElement)
-
-
-        //{
-        //    StoreWhitespaceForToken(newItem, node.GetFirstToken(), languagePart, languageElement);
-        //    StoreWhitespaceForToken(newItem, node.GetLastToken(), languagePart, languageElement);
-        //}
-
+        { triviaManager.StoreWhitespaceForFirstAndLastToken(newItem, node, languagePart, languageElement); }
 
     }
 }

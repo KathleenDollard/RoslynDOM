@@ -7,24 +7,30 @@ namespace RoslynDom
 {
     public class RDomInvalidMember : RDomBase<IInvalidMember, ISymbol>, IInvalidMember
     {
-        private AttributeList _attributes = new AttributeList();
+        private AttributeCollection _attributes = new AttributeCollection();
 
         public RDomInvalidMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        {
+            Initialize();
+        }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", 
+            "CA1811:AvoidUncalledPrivateCode", Justification ="Called via Reflection")]
         internal RDomInvalidMember(RDomInvalidMember oldRDom)
              : base(oldRDom)
         {
+            Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             AccessModifier = oldRDom.AccessModifier;
             DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
         }
-        protected override void Initialize()
-        {
-            base.Initialize();
-            AccessModifier = GetAccessibility();
-        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", 
+            "CA1822:MarkMembersAsStatic",
+            Justification ="Follows general pattern, but is currently unused, may later remove")]
+        protected void Initialize()
+        { }
 
         public string Name { get; set; }
 
@@ -32,7 +38,7 @@ namespace RoslynDom
         { get { return RoslynUtilities.GetOuterName(this); } }
 
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }

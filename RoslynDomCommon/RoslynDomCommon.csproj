@@ -36,7 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeList.cs" />
+    <Compile Include="AttributeCollection.cs" />
     <Compile Include="BaseInterfaces\IDirective.cs" />
     <Compile Include="BaseInterfaces\ICommentWhite.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IDefineDirective.cs" />
@@ -117,7 +117,6 @@
     <Compile Include="Interfaces_Statements\IReturnStatement.cs" />
     <Compile Include="Interfaces_Statements\IThrowStatement.cs" />
     <Compile Include="Interfaces_Statements\ITryStatement.cs" />
-    <Compile Include="Interfaces_Statements\ISpecialStatement.cs" />
     <Compile Include="Interfaces_Statements\IIfStatement.cs" />
     <Compile Include="Interfaces\IAccessor.cs" />
     <Compile Include="Interfaces\IAttributeValue.cs" />
@@ -153,9 +152,9 @@
     <Compile Include="PublicAnnotation.cs" />
     <Compile Include="PublicAnnotationList.cs" />
     <Compile Include="RDomBase.cs" />
-    <Compile Include="RDomList.cs" />
+    <Compile Include="RDomCollection.cs" />
     <Compile Include="StandardSameIntent.cs" />
-    <Compile Include="Whitespace2.cs" />
+    <Compile Include="WhiteSpace2Collection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="InterfaceCommonality.cd" />
@@ -167,7 +166,11 @@
       <Name>RoslynDomUtilities</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="CustomDictionary.xml">
+      <SubType>Designer</SubType>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

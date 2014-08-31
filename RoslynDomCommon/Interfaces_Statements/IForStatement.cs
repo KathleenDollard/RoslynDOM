@@ -6,6 +6,6 @@ namespace RoslynDom.Common
     {
         IVariableDeclaration Variable { get; set; }
  
-        IExpression  Incrementor { get; set; }
+        IExpression  Iterator { get; set; }
     }
 }

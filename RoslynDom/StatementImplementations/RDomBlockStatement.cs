@@ -6,26 +6,28 @@ namespace RoslynDom
 {
     public class RDomBlockStatement : RDomBase<IBlockStatement, ISymbol>, IBlockStatement
     {
-        private RDomList<IStatementCommentWhite> _statements;
+        private RDomCollection<IStatementCommentWhite> _statements;
 
         public RDomBlockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomBlockStatement(RDomBlockStatement oldRDom)
             : base(oldRDom)
         {
+            Initialize();
             var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
             Statements.AddOrMoveRange(statements);
         }
 
-        protected override void Initialize()
+        protected  void Initialize()
         {
-            base.Initialize();
-            _statements = new RDomList<IStatementCommentWhite>(this);
+            _statements = new RDomCollection<IStatementCommentWhite>(this);
         }
 
-        public RDomList<IStatementCommentWhite> Statements
+        public RDomCollection<IStatementCommentWhite> Statements
         { get { return _statements; } }
     }
 }

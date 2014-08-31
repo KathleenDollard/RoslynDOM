@@ -1,5 +1,8 @@
 ﻿namespace RoslynDom.Common
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", 
+        "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification ="This refers to the new (similar to newSlot), so New is correct")]
     public interface ICanBeNew : IDom
     {
         // While all type member OO items (property and method) are CanBeNew, not all 

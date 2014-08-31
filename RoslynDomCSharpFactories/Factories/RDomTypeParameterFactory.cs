@@ -25,6 +25,16 @@ namespace RoslynDom.CSharp
                 if (_whitespaceLookup == null)
                 {
                     _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+                    _whitespaceLookup.Add(LanguageElement.TypeParameterStart, SyntaxKind.LessThanToken);
+                    _whitespaceLookup.Add(LanguageElement.TypeParameterEnd, SyntaxKind.GreaterThanToken);
+                    _whitespaceLookup.Add(LanguageElement.ConstraintKeyword, SyntaxKind.WhereKeyword);
+                    _whitespaceLookup.Add(LanguageElement.ConstraintColon, SyntaxKind.ColonToken);
+                    _whitespaceLookup.Add(LanguageElement.ClassConstraint, SyntaxKind.ClassKeyword);
+                    _whitespaceLookup.Add(LanguageElement.ValueConstraint, SyntaxKind.StructKeyword);
+                    _whitespaceLookup.Add(LanguageElement.ConstructorConstraint, SyntaxKind.NewKeyword);
+                    // not attempting whitespace at constructor constraint right now because of low value and complexities with parens
+                    // ConstraintSeparator cannot be included here because it causes incorrect whitespace when storing ConstraintClause whitespace
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
                 return _whitespaceLookup;
@@ -36,7 +46,7 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as TypeParameterSyntax;
             var newItem = new RDomTypeParameter(syntax, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+            MemberWhitespace(newItem, syntax);
 
             var name = newItem.TypedSymbol.Name;
             newItem.Name = name;
@@ -47,6 +57,31 @@ namespace RoslynDom.CSharp
                         .Select(x => x.Identifier.ToString());
             newItem.Ordinal = typeParameterList.PreviousSiblings(name).Count();
 
+            InitializeConstraints(syntax, newItem, model, name);
+            return newItem;
+        }
+
+        private void MemberWhitespace(RDomTypeParameter newItem, TypeParameterSyntax syntax)
+        {
+            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+            var whitespace2 = newItem.Whitespace2Set[LanguageElement.Identifier];
+            if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
+            {
+                var prevNodeOrToken = syntax.Parent
+                                          .ChildNodesAndTokens()
+                                          .PreviousSiblings(syntax)
+                                          .LastOrDefault();
+                var sepKind = SyntaxKind.CommaToken;
+                if (prevNodeOrToken.CSharpKind() == sepKind)
+                {
+                    var commaToken = prevNodeOrToken.AsToken();
+                    whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();
+                }
+            }
+        }
+
+        private void InitializeConstraints(TypeParameterSyntax syntax, RDomTypeParameter newItem, SemanticModel model, string name)
+        {
             // parent is type parameter list. Parent parent contains constraints
             var syntaxParent = syntax.Parent.Parent;
             var constraintClauses = syntaxParent.ChildNodes()
@@ -57,41 +92,94 @@ namespace RoslynDom.CSharp
                         .FirstOrDefault();
             if (constraintClause != null)
             {
+                // The constraint clause must be set first because the constructor constraint may change it. 
+                CreateFromWorker.StoreWhitespace(newItem, constraintClause, LanguagePart.Constraint, WhitespaceLookup);
+                // Class/Struct whitespace managed in above call, type explicitly handled below, constructor not handled by current design
                 foreach (var constraint in constraintClause.Constraints)
                 {
                     var asClassStruct = constraint as ClassOrStructConstraintSyntax;
                     if (asClassStruct != null)
                     {
-                        if (asClassStruct.ClassOrStructKeyword.CSharpKind()
-                            == SyntaxKind.ClassKeyword)
-                        { newItem.HasReferenceTypeConstraint = true; }
-                        if (asClassStruct.ClassOrStructKeyword.CSharpKind()
-                             == SyntaxKind.StructKeyword)
-                        { newItem.HasValueTypeConstraint = true; }
+                        StoreClassOrStructureConstraint(newItem, asClassStruct.ClassOrStructKeyword.CSharpKind());
                         continue;
                     }
                     var asConstructor = constraint as ConstructorConstraintSyntax;
                     if (asConstructor != null)
                     {
-                        newItem.HasConstructorConstraint = true;
+                        StoreConstructorConstraint(asConstructor, newItem);
                         continue;
                     }
                     var asType = constraint as TypeConstraintSyntax;
                     if (asType != null)
                     {
-                        var newConstraintType = Corporation
-                                .CreateFrom<IMisc>(asType.Type, newItem, model)
-                                .FirstOrDefault()
-                                as IReferencedType;
-                        if (newConstraintType != null)
-                        { newItem.ConstraintTypes.AddOrMove(newConstraintType); }
+                        StoreTypeConstraint(asType, newItem, model);
                         continue;
                     }
                 }
 
             }
-            return newItem;
         }
+
+        private void StoreConstructorConstraint(ConstructorConstraintSyntax syntax,
+            RDomTypeParameter newItem)
+        {
+            newItem.HasConstructorConstraint = true;
+            CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, syntax, LanguagePart.Current, LanguageElement.ConstructorConstraint);
+            var whitespace2 = newItem.Whitespace2Set[LanguageElement.ConstructorConstraint];
+            if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
+            {
+                var prevNodeOrToken = syntax.Parent
+                                          .ChildNodesAndTokens()
+                                          .PreviousSiblings(syntax)
+                                          .LastOrDefault();
+                var sepKind = SyntaxKind.CommaToken;
+                if (prevNodeOrToken.CSharpKind() == sepKind)
+                {
+                    var commaToken = prevNodeOrToken.AsToken();
+                    whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();
+                }
+            }
+        }
+
+        private void StoreConstraintWhitespace(TypeConstraintSyntax syntax, IReferencedType newItem)
+        {
+            var whitespace2 = newItem.Whitespace2Set[LanguageElement.Identifier];
+            if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
+            {
+                var prevNodeOrToken = syntax.Parent
+                                          .ChildNodesAndTokens()
+                                          .PreviousSiblings(syntax)
+                                          .LastOrDefault();
+                var sepKind = SyntaxKind.CommaToken;
+                if (prevNodeOrToken.CSharpKind() == sepKind)
+                {
+                    var commaToken = prevNodeOrToken.AsToken();
+                    whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();
+                }
+            }
+
+        }
+
+        private void StoreTypeConstraint(TypeConstraintSyntax asType, RDomTypeParameter newItem, SemanticModel model)
+        {
+            var newConstraintType = Corporation
+                    .CreateFrom<IMisc>(asType.Type, newItem, model)
+                    .FirstOrDefault()
+                    as IReferencedType;
+            StoreConstraintWhitespace(asType, newConstraintType);
+            if (newConstraintType != null)
+            { newItem.ConstraintTypes.AddOrMove(newConstraintType); }
+        }
+
+        private static void StoreClassOrStructureConstraint(RDomTypeParameter newItem, SyntaxKind kind)
+        {
+            if (kind == SyntaxKind.ClassKeyword)
+            { newItem.HasReferenceTypeConstraint = true; }
+            if (kind == SyntaxKind.StructKeyword)
+            { newItem.HasValueTypeConstraint = true; }
+        }
+
+
 
         /// <summary>
         /// 
@@ -122,11 +210,9 @@ namespace RoslynDom.CSharp
         {
             var list = new List<TypeParameterConstraintSyntax>();
             if (itemAsT.HasValueTypeConstraint)
-            { list.Add(SyntaxFactory.ClassOrStructConstraint(SyntaxKind.ClassConstraint)); }
-            else if (itemAsT.HasReferenceTypeConstraint)
             { list.Add(SyntaxFactory.ClassOrStructConstraint(SyntaxKind.StructConstraint)); }
-            if (itemAsT.HasConstructorConstraint)
-            { list.Add(SyntaxFactory.ConstructorConstraint()); }
+            else if (itemAsT.HasReferenceTypeConstraint)
+            { list.Add(SyntaxFactory.ClassOrStructConstraint(SyntaxKind.ClassConstraint)); }
 
             foreach (var typeConstraint in itemAsT.ConstraintTypes)
             {
@@ -135,8 +221,19 @@ namespace RoslynDom.CSharp
                 var typeConstraintSyntax = SyntaxFactory.TypeConstraint(typeSyntax);
                 list.Add(typeConstraintSyntax);
             }
-            return SyntaxFactory.TypeParameterConstraintClause(name)
-                    .WithConstraints(SyntaxFactory.SeparatedList(list));
+
+            // New has to be last
+            if (itemAsT.HasConstructorConstraint)
+            {
+                var constructorConstraint = SyntaxFactory.ConstructorConstraint();
+                constructorConstraint = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(constructorConstraint, itemAsT.Whitespace2Set[LanguageElement.ConstructorConstraint]);
+                list.Add(constructorConstraint);
+            }
+
+            var syntax = SyntaxFactory.TypeParameterConstraintClause(name)
+                                 .WithConstraints(SyntaxFactory.SeparatedList(list));
+            syntax = BuildSyntaxHelpers.AttachWhitespace(syntax, itemAsT.Whitespace2Set, WhitespaceLookup, LanguagePart.Constraint);
+            return syntax;
         }
     }
 

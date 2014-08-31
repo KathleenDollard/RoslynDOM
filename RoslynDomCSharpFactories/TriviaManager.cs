@@ -82,11 +82,12 @@ namespace RoslynDom.CSharp
         internal void StoreWhitespaceForToken(IDom newItem, SyntaxToken token,
                     LanguagePart languagePart, LanguageElement languageElement)
         {
-            var newWS = new Whitespace2(LanguagePart.Current, languageElement);
+            if (languagePart == LanguagePart.None) { languagePart = LanguagePart.Current; }
+            var newWS = new Whitespace2(languagePart, languageElement);
             newWS.LeadingWhitespace = GetLeadingWhitespaceForToken(token.LeadingTrivia);
             newWS.TrailingWhitespace = GetTrailingWhitespaceForToken(token.TrailingTrivia);
             // TODO: Add EOL comments here
-            newItem.Whitespace2Set[languageElement] = newWS;
+            newItem.Whitespace2Set[languagePart, languageElement] = newWS;
         }
 
         internal void StoreWhitespaceForComment(IDom newItem, IEnumerable<SyntaxTrivia> precedingTrivia,
@@ -137,25 +138,24 @@ namespace RoslynDom.CSharp
                 LanguagePart languagePart,
                 LanguageElement languageElement)
         {
-            var newWS = new Whitespace2(LanguagePart.Current, languageElement);
+            if (languagePart == LanguagePart.None) languagePart = LanguagePart.Current;
+            var newWS = new Whitespace2(languagePart , languageElement);
             var firstToken = node.GetFirstToken();
             var lastToken = node.GetLastToken();
             newWS.LeadingWhitespace = GetLeadingWhitespaceForToken(firstToken.LeadingTrivia);
             newWS.TrailingWhitespace = GetTrailingWhitespaceForToken(lastToken.TrailingTrivia);
             // TODO: Add EOL comments here
-            newItem.Whitespace2Set[languageElement] = newWS;
-            //StoreWhitespaceForToken(newItem, node.GetFirstToken(), languagePart, languageElement);
-            //StoreWhitespaceForToken(newItem, node.GetLastToken(), languagePart, languageElement);
+            newItem.Whitespace2Set[languagePart, languageElement] = newWS;
         }
 
-        internal T AttachWhitespace<T>(T syntaxNode, Whitespace2Set whitespace2Set,
+        internal T AttachWhitespace<T>(T syntaxNode, Whitespace2Collection whitespace2Set,
                WhitespaceKindLookup whitespaceLookup)
         where T : SyntaxNode
         {
             return AttachWhitespace(syntaxNode, whitespace2Set, whitespaceLookup, LanguagePart.Current);
         }
 
-        internal T AttachWhitespace<T>(T syntaxNode, Whitespace2Set whitespace2Set,
+        internal T AttachWhitespace<T>(T syntaxNode, Whitespace2Collection whitespace2Set,
                 WhitespaceKindLookup whitespaceLookup, LanguagePart languagePart)
          where T : SyntaxNode
         {
@@ -229,13 +229,7 @@ namespace RoslynDom.CSharp
             var token = syntaxNode.GetFirstToken();
             var ret = syntaxNode.ReplaceToken(token, AttachLeadingWhitespaceToToken(token, whitespace2));
             return ret;
-            //var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
-            //           .Concat(newToken.LeadingTrivia);
-            //newToken = newToken
-            //           .WithLeadingTrivia(leadingTrivia);
-            //ret = ret.ReplaceToken(token, newToken);
-            //return ret;
-        }
+         }
 
         internal T AttachWhitespaceToLast<T>(T syntaxNode, Whitespace2 whitespace2)
                  where T : SyntaxNode
@@ -244,17 +238,11 @@ namespace RoslynDom.CSharp
             var token = syntaxNode.GetLastToken();
             var ret = syntaxNode.ReplaceToken(token, AttachTrailingWhitespaceToToken(token, whitespace2));
             return ret;
-            //var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
-            //           .Concat(newToken.TrailingTrivia);
-            //// Manage EOL comment here
-            //newToken = newToken
-            //            .WithTrailingTrivia(trailingTrivia);
-            //ret = ret.ReplaceToken(token, newToken);
-            //return ret;
-        }
+         }
 
         private SyntaxToken AttachLeadingWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
         {
+            if (token == null || whitespace2 == null) { return token;  }
             var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
                        .Concat(token.LeadingTrivia);
             return token.WithLeadingTrivia(leadingTrivia);
@@ -262,6 +250,7 @@ namespace RoslynDom.CSharp
 
         private SyntaxToken AttachTrailingWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
         {
+            if (token == null || whitespace2 == null) { return token; }
             var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
                        .Concat(token.TrailingTrivia);
             // Manage EOL comment here
@@ -270,6 +259,7 @@ namespace RoslynDom.CSharp
 
         internal SyntaxToken AttachWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
         {
+            if (token == null || whitespace2 == null) { return token; }
             token = AttachLeadingWhitespaceToToken(token, whitespace2);
             token = AttachTrailingWhitespaceToToken(token, whitespace2);
             return token;

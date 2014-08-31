@@ -6,10 +6,12 @@ namespace RoslynDom
 {
     public abstract class RDomBaseVariable : RDomBase<IVariableDeclaration, ISymbol>, IVariableDeclaration
     {
-        public RDomBaseVariable(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        protected RDomBaseVariable(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomBaseVariable(IVariableDeclaration oldRDom)
              : base(oldRDom)
         {

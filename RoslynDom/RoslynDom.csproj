@@ -79,7 +79,6 @@
     <Compile Include="Implementations\RDomOperator.cs" />
     <Compile Include="Implementations\RDomVerticalWhitespace.cs" />
     <Compile Include="IRoslynHasSymbol.cs" />
-    <Compile Include="RoslynDomSymbolUtilities.cs" />
     <Compile Include="RoslynUtilities.cs" />
     <Compile Include="StatementImplementations\RDomElseIfStatement.cs" />
     <Compile Include="StatementImplementations\RDomFinallyStatement.cs" />
@@ -139,6 +138,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ExpressionImplementations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\RoslynDomCommon\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -62,7 +62,6 @@ namespace RoslynDom.CSharp
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
-            //node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsT.Statements));
             node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup));
 
             return node.PrepareForBuildSyntaxOutput(item);

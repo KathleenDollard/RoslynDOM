@@ -17,21 +17,7 @@ namespace RoslynDom.CSharp
          : base(corporation)
         { }
 
-        private WhitespaceKindLookup WhitespaceLookup
-        {
-            get
-            {
-            if (_whitespaceLookup == null)
-            {
-                _whitespaceLookup = new WhitespaceKindLookup();
-                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
-                _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
-                }
-                return _whitespaceLookup;
-            }
-        }
-
-        protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+         protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as AttributeArgumentSyntax;
             var newItem = new RDomAttributeValue(syntaxNode, parent, model);
@@ -128,8 +114,7 @@ namespace RoslynDom.CSharp
             else
             {
                 style = AttributeValueStyle.Positional;
-                // TODO: Work harder at getting the real parameter name
-                //name = attributeSyntax.Name.ToString();
+                // TODO: Work harder at getting the real parameter name??
             }
             return Tuple.Create(name, style);
         }
@@ -181,7 +166,12 @@ namespace RoslynDom.CSharp
             if (atttributeValue.ValueType == LiteralKind.Boolean)
             { expr = SyntaxFactory.LiteralExpression(kind); }
             else if (atttributeValue.ValueType == LiteralKind.Type)
-            { expr = SyntaxFactory.TypeOfExpression(SyntaxFactory.IdentifierName(atttributeValue.Value.ToString())); }
+            {
+                var type = atttributeValue.Value as RDomReferencedType;
+                if (type == null) throw new InvalidOperationException();
+                var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
+                expr = SyntaxFactory.TypeOfExpression(typeSyntax);
+            }
             else
             {
                 var token = BuildSyntaxHelpers.GetTokenFromKind(atttributeValue.ValueType, atttributeValue.Value);

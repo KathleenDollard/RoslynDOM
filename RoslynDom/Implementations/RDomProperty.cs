@@ -7,16 +7,22 @@ namespace RoslynDom
 {
     public class RDomProperty : RDomBase<IProperty, IPropertySymbol>, IProperty
     {
-        private RDomList<IParameter> _parameters;
-        private AttributeList _attributes = new AttributeList();
+        private RDomCollection<IParameter> _parameters;
+        private AttributeCollection _attributes = new AttributeCollection();
+        // The RDomList is used for accessor to reuse the forced parenting in that class
+        private RDomCollection<IAccessor> _accessors; // Getter first, Setter last
+
 
         public RDomProperty(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomProperty(RDomProperty oldRDom)
             : base(oldRDom)
         {
+            Initialize();
             var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
             Parameters.AddOrMoveRange(newParameters);
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
@@ -35,10 +41,10 @@ namespace RoslynDom
             CanSet = oldRDom.CanSet;
         }
 
-        protected override void Initialize()
+        protected void Initialize()
         {
-            base.Initialize();
-            _parameters = new RDomList<IParameter>(this);
+            _parameters = new RDomCollection<IParameter>(this);
+            _accessors = new RDomCollection<IAccessor>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -76,15 +82,43 @@ namespace RoslynDom
         { get { return RoslynUtilities.GetOuterName(this); } }
 
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public IReferencedType PropertyType { get; set; }
 
         public AccessModifier AccessModifier { get; set; }
         public AccessModifier DeclaredAccessModifier { get; set; }
-        public IAccessor GetAccessor { get; set; }
-        public IAccessor SetAccessor { get; set; }
+        public IAccessor GetAccessor
+        {
+            get
+            {
+                return _accessors
+                      .Where(x => x.AccessorType == AccessorType.Get)
+                      .FirstOrDefault();
+            }
+            set
+            {
+                if (value == null) return;
+                _accessors.Remove(GetAccessor);
+                _accessors.AddOrMove(value);
+            }
+        }
+        public IAccessor SetAccessor
+        {
+            get
+            {
+                return _accessors
+                      .Where(x => x.AccessorType == AccessorType.Set)
+                      .FirstOrDefault();
+            }
+            set
+            {
+                if (value == null) return;
+                _accessors.Remove(SetAccessor );
+                _accessors.AddOrMove(value);
+            }
+        }
 
         public IReferencedType ReturnType
         {
@@ -118,7 +152,7 @@ namespace RoslynDom
         /// <br/>
         /// Can't test until VB is active
         /// </remarks>
-        public RDomList<IParameter> Parameters
+        public RDomCollection<IParameter> Parameters
         // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
         { get { return _parameters; } }
 
@@ -126,11 +160,11 @@ namespace RoslynDom
         public MemberKind MemberKind
         { get { return MemberKind.Property; } }
 
-        public override object RequestValue(string name)
+        public override object RequestValue(string propertyName)
         {
-            if (name == "TypeName")
+            if (propertyName == "TypeName")
             { return ReturnType.QualifiedName; }
-            return base.RequestValue(name);
+            return base.RequestValue(propertyName);
         }
         public IStructuredDocumentation StructuredDocumentation { get; set; }
 

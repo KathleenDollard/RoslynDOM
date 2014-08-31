@@ -7,7 +7,7 @@ namespace RoslynDom.Common
         object RawItem { get; }
         object OriginalRawItem { get; }
 
-        Whitespace2Set Whitespace2Set { get;  }
+        Whitespace2Collection Whitespace2Set { get;  }
  
         bool Matches(IDom other);
         IDom Parent { get; }

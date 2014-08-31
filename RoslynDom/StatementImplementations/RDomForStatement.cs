@@ -13,10 +13,12 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         { Initialize(); }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomForStatement(RDomForStatement oldRDom)
             : base(oldRDom)
         {
-            Incrementor = oldRDom.Incrementor.Copy();
+            Iterator = oldRDom.Iterator.Copy();
             Variable = oldRDom.Variable.Copy();
         }
 
@@ -25,7 +27,7 @@ namespace RoslynDom
             get
             {
                 var list = new List<IDom>();
-                list.Add(Incrementor);
+                list.Add(Iterator);
                 list.Add(Variable);
                 list.AddRange(base.Children);
                 return list;
@@ -37,14 +39,14 @@ namespace RoslynDom
             get
             {
                 var list = new List<IDom>();
-                list.Add(Incrementor);
+                list.Add(Iterator);
                 list.AddRange(Variable.DescendantsAndSelf);
                 list.AddRange(base.Descendants);
                 return list;
             }
         }
 
-        public IExpression Incrementor { get; set; }
+        public IExpression Iterator { get; set; }
 
 
         public IVariableDeclaration Variable { get; set; }

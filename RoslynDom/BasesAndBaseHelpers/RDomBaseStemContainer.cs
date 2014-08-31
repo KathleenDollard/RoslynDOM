@@ -11,18 +11,23 @@ namespace RoslynDom
         where TSymbol : ISymbol
         where T : class, IDom<T>
     {
-        private RDomList<IStemMemberCommentWhite> _members;
+        private RDomCollection<IStemMemberCommentWhite> _members;
 
         internal RDomBaseStemContainer(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+        {
+            Initialize();
+        }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability",
+            "CA1502:AvoidExcessiveComplexity", 
+            Justification = "This method is very complex, but is a core method, is short, and follows a pattern, so complexity is OK")]
         internal RDomBaseStemContainer(T oldIDom)
              : base(oldIDom)
         {
+            Initialize();
             // Really need to keep them in order so need to iterate entire list in order
             var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;
-            var newMembers = new List<IStemMember>();
             foreach (var member in oldRDom.StemMembersAll)
             {
                 //ordered in approx expectation of frequency
@@ -51,10 +56,9 @@ namespace RoslynDom
             return false;
         }
 
-        protected override void Initialize()
+        protected  void Initialize()
         {
-            _members = new RDomList<IStemMemberCommentWhite>(this);
-            base.Initialize();
+            _members = new RDomCollection<IStemMemberCommentWhite>(this);
         }
 
         public override IEnumerable<IDom> Children
@@ -89,7 +93,7 @@ namespace RoslynDom
         public void ClearStemMembers()
         { _members.Clear(); }
 
-        public RDomList<IStemMemberCommentWhite> StemMembersAll
+        public RDomCollection<IStemMemberCommentWhite> StemMembersAll
         { get { return _members; } }
 
         public IEnumerable<IStemMember> StemMembers

@@ -41,7 +41,6 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            //newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.Type);
             var type = Corporation
                              .CreateFrom<IMisc>(syntax.Type, newItem, model)
                              .FirstOrDefault()
@@ -78,7 +77,6 @@ namespace RoslynDom.CSharp
             if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
             if (modifiers.Any()) { node = node.WithModifiers(modifiers); }
 
-           // node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
             node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.ParameterFirstToken ]);
             node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.ParameterLastToken]);
             return node.PrepareForBuildSyntaxOutput(item);

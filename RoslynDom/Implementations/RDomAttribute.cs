@@ -5,6 +5,9 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", 
+        "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification ="Because this represents an attribute, it's an appropriate name")]
     public class RDomAttribute : RDomBase<IAttribute, ISymbol>, IAttribute
     {
         private List<IAttributeValue> _attributeValues = new List<IAttributeValue>();
@@ -13,6 +16,8 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         { }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomAttribute(RDomAttribute oldRDom)
             : base(oldRDom)
         {

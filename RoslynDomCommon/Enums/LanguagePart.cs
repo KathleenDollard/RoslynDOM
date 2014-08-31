@@ -8,17 +8,20 @@ namespace RoslynDom.Common
 {
     public enum LanguagePart
     {
+        None = 0,
         Block,
         Current,
         Inner,
         Variable,
         Condition,
-        Incrementor,
+        Iterator,
         Type,
         AccessorList,
         AttributeList,
         AttributeArgumentList,
         AttributeName,
-        Expression
+        Expression,
+        Constraint,
+        Initializer
     }
 }

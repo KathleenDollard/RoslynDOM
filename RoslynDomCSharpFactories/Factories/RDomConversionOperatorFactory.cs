@@ -42,11 +42,9 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            //var typeParameters = newItem.TypedSymbol.TypeParametersFrom();
 
             newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
 
-            //newItem.Type = new RDomReferencedType(newItem.TypedSymbol.DeclaringSyntaxReferences, newItem.TypedSymbol.ReturnType);
             var type = Corporation
                             .CreateFrom<IMisc>(syntax.Type, newItem, model)
                             .FirstOrDefault()
@@ -78,7 +76,6 @@ namespace RoslynDom.CSharp
 
             node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
-           // node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsT.Statements));
             node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup));
 
             // TODO: typeParameters  and constraintClauses 

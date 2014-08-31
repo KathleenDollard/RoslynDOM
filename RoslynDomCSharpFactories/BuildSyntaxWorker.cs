@@ -22,7 +22,7 @@ namespace RoslynDom.CSharp
         public RDomPriority Priority
         { get { return RDomPriority.Normal; } }
 
-        public SyntaxList<AttributeListSyntax> BuildAttributeSyntax(AttributeList attributes)
+        public SyntaxList<AttributeListSyntax> BuildAttributeSyntax(AttributeCollection attributes)
         {
             var ret = new List<SyntaxNode>();
             foreach (var attr in attributes)
@@ -45,18 +45,28 @@ namespace RoslynDom.CSharp
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
         }
 
-        public TypeSyntax GetVariableTypeSyntax(IVariable itemAsVariable)
+        public TypeSyntax GetVariableTypeSyntax(bool isImplicitlyTyped, IReferencedType type)
         {
-            if (itemAsVariable.IsImplicitlyTyped)
-            { return SyntaxFactory.IdentifierName("var"); }
-
-            var type = itemAsVariable.Type;
-            if (itemAsVariable.IsAliased)
+            TypeSyntax typeSyntax;
+            if (isImplicitlyTyped)
             {
-                var typeName = Mappings.AliasFromSystemType(type.Name);
-                return SyntaxFactory.IdentifierName(typeName);
+                typeSyntax = SyntaxFactory.ParseTypeName("var");
+                typeSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(typeSyntax, type.Whitespace2Set.First());
             }
-            return (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(type));
+            else
+            { typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First(); }
+            return typeSyntax;
+
+            //if (itemAsVariable.IsImplicitlyTyped)
+            //{ return SyntaxFactory.IdentifierName("var"); }
+
+            //var type = itemAsVariable.Type;
+            //if (itemAsVariable.IsAliased)
+            //{
+            //    var typeName = Mappings.AliasFromSystemType(type.Name);
+            //    return SyntaxFactory.IdentifierName(typeName);
+            //}
+            //return (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(type));
         }
     }
 }

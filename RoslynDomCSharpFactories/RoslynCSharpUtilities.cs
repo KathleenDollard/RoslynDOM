@@ -40,15 +40,7 @@ namespace RoslynDom.CSharp
             return nameToken.ValueText;
         }
 
-        public static BlockSyntax MakeStatementBlock(IEnumerable<IStatement> statements)
-        {
-            var statementSyntaxList = statements
-                            .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
-                            .ToList();
-            return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
-        }
-
-        public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, 
+           public static StatementSyntax BuildStatement(IEnumerable<IStatement> statements, 
                 IStatementBlock parent, WhitespaceKindLookup whitespaceLookup)
         {
             StatementSyntax statementBlock;
@@ -75,71 +67,5 @@ namespace RoslynDom.CSharp
             return statementBlock;
         }
 
-        public static string Simplify(SyntaxNode node)
-        {
-            var source = node.ToString();
-            var projectId = ProjectId.CreateNewId();
-            var documentId = DocumentId.CreateNewId(projectId);
-
-            var solution = new CustomWorkspace().CurrentSolution
-                .AddProject(projectId, "MyProject", "MyProject", LanguageNames.CSharp)
-                .AddMetadataReference(projectId, RoslynRDomUtilities.Mscorlib)
-                .AddMetadataReference(projectId, AppDomain.CurrentDomain.GetAssemblies()
-                    .Where(a => string.Compare(a.GetName().Name, "System", StringComparison.OrdinalIgnoreCase) == 0)
-                    .Select(a => new MetadataFileReference(a.Location)).Single())
-                .AddDocument(documentId, "MyFile.cs", source);
-            var document = solution.GetDocument(documentId);
-
-            // Format the document.
-            document = Formatter.FormatAsync(document).Result;
-
-            // Simplify names used in the document i.e. remove unnecessary namespace qualifiers.
-            var newRoot = (SyntaxNode)document.GetSyntaxRootAsync().Result;
-            newRoot = new SimplifyNamesAnnotionRewriter().Visit(newRoot);
-            document = document.WithSyntaxRoot(newRoot);
-
-            document = Simplifier.ReduceAsync(document).Result;
-            var ret = document.GetSyntaxRootAsync().Result.ToString();
-            return ret;
-        }
-
-        private class SimplifyNamesAnnotionRewriter : CSharpSyntaxRewriter
-        {
-            private SyntaxNode AnnotateNodeWithSimplifyAnnotation(SyntaxNode node)
-            {
-                return node.WithAdditionalAnnotations(Simplifier.Annotation);
-            }
-
-            public override SyntaxNode VisitAliasQualifiedName(AliasQualifiedNameSyntax node)
-            {
-                // not descending into node to simplify the whole expression
-                return AnnotateNodeWithSimplifyAnnotation(node);
-            }
-
-            public override SyntaxNode VisitQualifiedName(QualifiedNameSyntax node)
-            {
-                // not descending into node to simplify the whole expression
-                return AnnotateNodeWithSimplifyAnnotation(node);
-            }
-
-            public override SyntaxNode VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
-            {
-                // not descending into node to simplify the whole expression
-                return AnnotateNodeWithSimplifyAnnotation(node);
-            }
-
-            public override SyntaxNode VisitIdentifierName(IdentifierNameSyntax node)
-            {
-                // not descending into node to simplify the whole expression
-                return AnnotateNodeWithSimplifyAnnotation(node);
-            }
-
-            public override SyntaxNode VisitGenericName(GenericNameSyntax node)
-            {
-                // not descending into node to simplify the whole expression
-                return AnnotateNodeWithSimplifyAnnotation(node);
-            }
-        }
-
-    }
+     }
 }

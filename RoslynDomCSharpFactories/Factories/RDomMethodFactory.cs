@@ -29,7 +29,8 @@ namespace RoslynDom.CSharp
                     _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
                     _whitespaceLookup.Add(LanguageElement.ParameterStartDelimiter, SyntaxKind.OpenParenToken);
                     _whitespaceLookup.Add(LanguageElement.ParameterEndDelimiter, SyntaxKind.CloseParenToken);
-                    _whitespaceLookup.Add(LanguageElement.NewSlot, SyntaxKind.NewKeyword );
+                    _whitespaceLookup.Add(LanguageElement.NewSlot, SyntaxKind.NewKeyword);
+                    _whitespaceLookup.Add(LanguageElement.ThisForExtension, SyntaxKind.ThisKeyword);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.OopModifiers);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
@@ -46,7 +47,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, syntax.Body, LanguagePart.Block, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Body, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, syntax.ParameterList, LanguagePart.Current, WhitespaceLookup);
 
             newItem.Name = newItem.TypedSymbol.Name;
@@ -57,7 +58,6 @@ namespace RoslynDom.CSharp
                             as IReferencedType;
             newItem.ReturnType = returnType;
 
-            // TODO: Assign IsNew, question on insider's list
             newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
             var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
                                 .OfType<IParameter>();
@@ -69,35 +69,60 @@ namespace RoslynDom.CSharp
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
-            var itemAsMethod = item as IMethod;
-            var nameSyntax = SyntaxFactory.Identifier(itemAsMethod.Name);
+            var itemAsT = item as IMethod;
+            var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
 
-            var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsMethod.ReturnType).First();
-            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsMethod);
+            var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.ReturnType).First();
+            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
             var node = SyntaxFactory.MethodDeclaration(returnTypeSyntax, nameSyntax)
                             .WithModifiers(modifiers);
-            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsMethod.Whitespace2Set, WhitespaceLookup);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
 
-            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsMethod.Attributes);
+            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
-            var parameterSyntaxList = itemAsMethod.Parameters
+            var parameterList = itemAsT.Parameters
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .OfType<ParameterSyntax>()
                         .ToList();
-            //if (parameterSyntaxList.Any())
-            //{
-            var parameterListSyntax = SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterSyntaxList));
-            parameterListSyntax = BuildSyntaxHelpers.AttachWhitespace(parameterListSyntax, itemAsMethod.Whitespace2Set, WhitespaceLookup);
+            if (itemAsT.IsExtensionMethod)
+            {
+                // this this is a normal list, ref semantics
+                var firstParam = parameterList.FirstOrDefault();
+                parameterList.Remove(firstParam);
+                if (firstParam == null) { throw new InvalidOperationException("Extension methods must have at least one parameter"); }
+                // I'm cheating a bit here. Since the This keyword is an indicator of extension state on the method
+                // I'm hardcoding a single space. I don't see the complexity of dealing with this as worth it unless
+                // there's gnashing of teeth over this single space. The use of "this" on the parameter is not universal
+                // and VB marks the method. 
+                var thisModifier = SyntaxFactory.Token(SyntaxKind.ThisKeyword)
+                                        .WithTrailingTrivia(SyntaxFactory.ParseTrailingTrivia(" "));
+                var paramModifiers = firstParam.Modifiers.Insert(0, thisModifier);
+                firstParam = firstParam.WithModifiers(paramModifiers);
+                parameterList.Insert(0, firstParam);
+            }
+            var parameterListSyntax = SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterList));
+            parameterListSyntax = BuildSyntaxHelpers.AttachWhitespace(parameterListSyntax, itemAsT.Whitespace2Set, WhitespaceLookup);
             node = node.WithParameterList(parameterListSyntax);
-            //}
 
-            //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup));
 
-            //node = node.WithBody(RoslynCSharpUtilities.MakeStatementBlock(itemAsMethod.Statements));
-            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsMethod.Statements, itemAsMethod, WhitespaceLookup));
+            // This works oddly because it uncollapses the list
+            // This code is largely repeated in interface and class factories, but is very hard to refactor because of shallow Roslyn (Microsoft) architecture
+            var typeParamsAndConstraints = itemAsT.TypeParameters
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                        .ToList();
 
-            // TODO: typeParameters  and constraintClauses 
+            var typeParameterSyntaxList = BuildSyntaxHelpers.GetTypeParameterSyntaxList(
+                        typeParamsAndConstraints, itemAsT.Whitespace2Set, WhitespaceLookup);
+            if (typeParameterSyntaxList != null)
+            {
+                node = node.WithTypeParameterList(typeParameterSyntaxList);
+                var clauses = BuildSyntaxHelpers.GetTypeParameterConstraintList(
+                          typeParamsAndConstraints, itemAsT.Whitespace2Set, WhitespaceLookup);
+                if (clauses.Any())
+                { node = node.WithConstraintClauses(clauses); }
+            }
 
             return node.PrepareForBuildSyntaxOutput(item);
         }

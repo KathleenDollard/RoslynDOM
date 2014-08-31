@@ -88,16 +88,14 @@ namespace RoslynDom.CSharp
                     syntax.Type, decl, parent, model);
                 var rDomItem = newItem as IRoslynDom;
                 list.Add(newItem);
-                // CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
                 CreateFromWorker.StoreWhitespace(newItem, decl, LanguagePart.Current, WhitespaceLookup);
                 if (decl.Initializer != null)
                 {
                     var equalsClause = decl.Initializer;
                     newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
                     CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model);
-                    //CreateFromWorker.StoreWhitespace(newItem, decl.Initializer, LanguagePart.Expression, WhitespaceLookup);
-                    CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Expression, LanguageElement.EqualsAssignmentOperator);
-                    CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Expression, LanguageElement.Expression);
+                    CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
+                    CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
                 }
             }
             return list;
@@ -136,17 +134,17 @@ namespace RoslynDom.CSharp
             { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Type)); }
             switch (itemAsT.VariableKind)
             {
-                case VariableKind.Unknown:
-                { throw new NotImplementedException(); }
+                //case VariableKind.Unknown:
+                //{ throw new NotImplementedException(); }
                 // This is NOT symmetric. The local declaration does not call back to this class for BuildSyntax
                 case VariableKind.Local:
                 { return BuildSyntaxLocal(itemAsT, typeSyntax); }
                 //case VariableKind.Using:
                 //    return BuildSyntaxUsing(itemAsT, typeSyntax);
-                case VariableKind.Catch:
-                { return BuildSyntaxCatch(itemAsT, typeSyntax); }
-                case VariableKind.For:
-                { return BuildSyntaxFor(itemAsT, typeSyntax); }
+                //case VariableKind.Catch:
+                //{ return BuildSyntaxCatch(itemAsT, typeSyntax); }
+                //case VariableKind.For:
+                //{ return BuildSyntaxFor(itemAsT, typeSyntax); }
                 //case VariableKind.ForEach:
                 //{ return BuildSyntaxForEach(itemAsT, typeSyntax); }
                 default:
@@ -173,17 +171,17 @@ namespace RoslynDom.CSharp
             return new SyntaxNode[] { node };
         }
 
-        private IEnumerable<SyntaxNode> BuildSyntaxFor(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
-        {
-            var ret = BuildSyntaxLocal(itemAsT, typeSyntax);
+        //private IEnumerable<SyntaxNode> BuildSyntaxFor(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
+        //{
+        //    var ret = BuildSyntaxLocal(itemAsT, typeSyntax);
 
-            return ret;
-        }
+        //    return ret;
+        //}
 
-        private IEnumerable<SyntaxNode> BuildSyntaxCatch(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
-        {
-            throw new NotImplementedException();
-        }
+        //private IEnumerable<SyntaxNode> BuildSyntaxCatch(IVariableDeclaration itemAsT, TypeSyntax typeSyntax)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
 
     }

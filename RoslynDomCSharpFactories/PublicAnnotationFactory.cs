@@ -18,19 +18,6 @@ namespace RoslynDom.CSharp
         public PublicAnnotationFactory(RDomCorporation corporation)
             : base(corporation)
         { }
-        
-        private WhitespaceKindLookup WhitespaceLookup
-        {
-            get
-            {
-                if (_whitespaceLookup == null)
-                {
-                    _whitespaceLookup = new WhitespaceKindLookup();
-                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
-                }
-                return _whitespaceLookup;
-            }
-        }
 
         public override RDomPriority Priority
         { get { return 0; } }
@@ -47,7 +34,6 @@ namespace RoslynDom.CSharp
             var syntaxRoot = syntaxNode as CompilationUnitSyntax;
             if (syntaxRoot != null)
             {
-                // TODO: Review whether this is appropriate or necessary
                 list = GetPublicAnnotations(syntaxRoot);
             }
             else

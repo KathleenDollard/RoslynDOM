@@ -44,7 +44,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             CreateFromWorker.InitializeStatements(newItem, syntax.Block, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, syntax.Block, LanguagePart.Block, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Block, LanguagePart.Current, WhitespaceLookup);
 
             var catchSyntaxList = syntax.ChildNodes()
                                     .Where(x => x.CSharpKind() == SyntaxKind.CatchClause)
@@ -55,7 +55,7 @@ namespace RoslynDom.CSharp
                 CreateFromWorker.StandardInitialize(newCatch, ctch, newItem, model);
                 CreateFromWorker.InitializeStatements(newCatch, ctch.Block, newCatch, model);
                 CreateFromWorker.StoreWhitespace(newCatch, ctch, LanguagePart.Current, WhitespaceLookup);
-                CreateFromWorker.StoreWhitespace(newCatch, ctch.Block, LanguagePart.Block, WhitespaceLookup);
+                CreateFromWorker.StoreWhitespace(newCatch, ctch.Block, LanguagePart.Current, WhitespaceLookup);
                 if (ctch.Declaration != null)
                 {
                     var type = Corporation
@@ -83,44 +83,11 @@ namespace RoslynDom.CSharp
                 CreateFromWorker.StandardInitialize(newFinally, syntax.Finally, parent, model);
                 CreateFromWorker.InitializeStatements(newFinally, syntax.Finally.Block, newFinally, model);
                 CreateFromWorker.StoreWhitespace(newFinally, syntax.Finally, LanguagePart.Current, WhitespaceLookup);
-                CreateFromWorker.StoreWhitespace(newFinally, syntax.Finally.Block, LanguagePart.Block, WhitespaceLookup);
+                CreateFromWorker.StoreWhitespace(newFinally, syntax.Finally.Block, LanguagePart.Current, WhitespaceLookup);
                 newItem.Finally = newFinally;
             }
             return newItem;
         }
-
-        //private IVariableDeclaration GetDeclaration(RDomCatchStatement newCatch,
-        //    CatchClauseSyntax ctch, SemanticModel model)
-        //{
-        //    if (ctch.Declaration.Type != null)
-        //    { return GetDeclarationFromType(newCatch, ctch, model); }
-        //    if (!string.IsNullOrWhiteSpace(ctch.Declaration.Identifier.ToString()))
-        //    { return GetDeclarationFromIdentifier(newCatch, ctch, model); }
-        //    throw new NotImplementedException();
-        //}
-
-        //private IVariableDeclaration GetDeclarationFromType(RDomCatchStatement newCatch, CatchClauseSyntax ctch, SemanticModel model)
-        //{
-        //    var variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
-        //    var type = Corporation
-        //                  .CreateFrom<IMisc>(ctch.Declaration.Type, newCatch, model)
-        //                  .FirstOrDefault()
-        //                  as IReferencedType;
-        //    variable.Type = type;
-        //    return variable;
-        //}
-
-        //private IVariableDeclaration GetDeclarationFromIdentifier(RDomCatchStatement newCatch, CatchClauseSyntax ctch, SemanticModel model)
-        //{
-        //    throw new NotImplementedException();
-        //    ISymbol typeSymbol = model.GetDeclaredSymbol(ctch.Declaration);
-        //    if (typeSymbol == null)
-        //    { typeSymbol = model.GetTypeInfo(ctch.Declaration.Type).Type; }
-        //    // TODO: Reconsider Symbol being write only or have an overridable way to retrieve
-        //    // newCatch.Symbol = typeSymbol;
-        //    var variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
-        //    return variable;
-        //}
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {

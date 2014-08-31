@@ -91,6 +91,7 @@ namespace RoslynDom.Common
 
         public bool SameIntent(PublicAnnotationList otherAnnotations, bool skipPublicAnnotations)
         {
+            if (otherAnnotations == null) throw new NotImplementedException();
             if (skipPublicAnnotations) return true;
             if (this._publicAnnotations.Count != otherAnnotations._publicAnnotations.Count) return false;
             foreach (var annotation in _publicAnnotations)
@@ -111,13 +112,6 @@ namespace RoslynDom.Common
             return false;
         }
 
-        public bool TryGetValue(string name, string key, out object value)
-        {
-            value = null;
-            if (!HasValue(name, key)) { return false; }
-            value = GetValue(name, key);
-            return true;
-        }
 
         public bool TryGetValue<T>(string name, string key, out T value)
         {

@@ -25,6 +25,11 @@ namespace RoslynDom.CSharp
                 if (_whitespaceLookup == null)
                 {
                     _whitespaceLookup = new WhitespaceKindLookup();
+                    _whitespaceLookup.Add(LanguageElement.Locked, SyntaxKind.LockKeyword );
+                    _whitespaceLookup.Add(LanguageElement.VariableStartDelimiter, SyntaxKind.OpenParenToken);
+                    _whitespaceLookup.Add(LanguageElement.VariableEndDelimiter, SyntaxKind.CloseParenToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
                 return _whitespaceLookup;
@@ -36,9 +41,12 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as LockStatementSyntax;
             var newItem = new RDomLockStatement(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.InitializeStatements(newItem, syntax.Statement, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Statement, LanguagePart.Current, WhitespaceLookup);
 
             var expr = Corporation.CreateFrom<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
+            CreateFromWorker.StoreWhitespace(expr, syntax.Expression, LanguagePart.Current, WhitespaceLookup);
             newItem.Expression = expr;
 
             return newItem;

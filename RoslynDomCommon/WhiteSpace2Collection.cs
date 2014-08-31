@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,21 +10,22 @@ namespace RoslynDom.Common
 {
 
 
-    public class Whitespace2Set : IEnumerable<Whitespace2>
+    public class Whitespace2Collection : IEnumerable<Whitespace2>
     {
         private List<Whitespace2> list = new List<Whitespace2>();
 
-        public Whitespace2Set()
+        public Whitespace2Collection()
         { }
 
-        public Whitespace2Set(Whitespace2Set old)
+        public Whitespace2Collection(Whitespace2Collection old)
         {
+            if (old == null) throw new NotImplementedException();
             foreach (var item in old.list)
             { list.Add(item.Copy()); }
         }
 
-        public Whitespace2Set Copy()
-        { return new Whitespace2Set(this); }
+        public Whitespace2Collection Copy()
+        { return new Whitespace2Collection(this); }
 
         public IEnumerator<Whitespace2> GetEnumerator()
         { return list.GetEnumerator(); }
@@ -33,11 +35,13 @@ namespace RoslynDom.Common
 
         public void Add(Whitespace2 item)
         {
+            if (item == null) throw new NotImplementedException();
             this[item.LanguagePart, item.LanguageElement] = item;
         }
 
         public void AddRange(IEnumerable<Whitespace2> newItems)
         {
+            if (newItems == null) throw new NotImplementedException();
             foreach (var item in newItems)
             {
                 this[item.LanguagePart, item.LanguageElement] = item;
@@ -111,6 +115,7 @@ namespace RoslynDom.Common
 
         public Whitespace2(Whitespace2 old)
         {
+            if (old == null) throw new NotImplementedException();
             LanguagePart = old.LanguagePart;
             LanguageElement = old.LanguageElement;
             LeadingWhitespace = old.LeadingWhitespace;
@@ -129,7 +134,10 @@ namespace RoslynDom.Common
 
         public override string ToString()
         {
-            return string.Format(@"Whitespace: {0}/{1} Leading: '{2}' Trailing: '{3}' Comment: '{4}'", LanguagePart, LanguageElement, LeadingWhitespace, TrailingWhitespace, TrailingComment);
+            return string.Format(CultureInfo.InvariantCulture,
+                @"Whitespace: {0}/{1} Leading: '{2}' Trailing: '{3}' Comment: '{4}'", 
+                LanguagePart, LanguageElement, LeadingWhitespace, TrailingWhitespace,
+                TrailingComment);
         }
     }
 }

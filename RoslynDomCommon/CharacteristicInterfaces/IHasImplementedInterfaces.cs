@@ -4,7 +4,7 @@ namespace RoslynDom.Common
 {
     public interface IHasImplementedInterfaces : IDom
     {
-        RDomList<IReferencedType> ImplementedInterfaces { get; }
+        RDomCollection<IReferencedType> ImplementedInterfaces { get; }
         IEnumerable<IReferencedType> AllImplementedInterfaces { get; }
     }
 }

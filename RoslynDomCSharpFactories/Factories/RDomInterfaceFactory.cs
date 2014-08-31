@@ -27,8 +27,10 @@ namespace RoslynDom.CSharp
                     _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
                     _whitespaceLookup.Add(LanguageElement.InterfaceStartDelimiter, SyntaxKind.OpenBraceToken);
                     _whitespaceLookup.Add(LanguageElement.InterfaceEndDelimiter, SyntaxKind.CloseBraceToken);
+                    _whitespaceLookup.Add(LanguageElement.TypeParameterStartDelimiter, SyntaxKind.LessThanToken);
+                    _whitespaceLookup.Add(LanguageElement.TypeParameterEndDelimiter, SyntaxKind.GreaterThanToken);
+                    _whitespaceLookup.Add(LanguageElement.BaseListPrefix, SyntaxKind.ColonToken);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
-                    _whitespaceLookup.AddRange(WhitespaceKindLookup.OopModifiers);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
                 return _whitespaceLookup;
@@ -41,11 +43,12 @@ namespace RoslynDom.CSharp
             var newItem = new RDomInterface(syntaxNode, parent, model);
             createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
             createFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
+            createFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 
             newItem.Name = newItem.TypedSymbol.Name;
 
             var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<ITypeMemberCommentWhite>(x, newItem, model));
-            // this is a hack becuase the membersare appearing with a scope
+            // this is a hack because the membersare appearing with a scope
             foreach (var member in members.OfType<ITypeMember>())
             { member.AccessModifier = AccessModifier.None; }
             newItem.MembersAll.AddOrMoveRange(members);
@@ -55,22 +58,44 @@ namespace RoslynDom.CSharp
 
             public static IEnumerable<SyntaxNode> BuildSyntax(IDom item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
         {
-            var itemAsInterface = item as IInterface;
-            var modifiers = itemAsInterface.BuildModfierSyntax();
-            var identifier = SyntaxFactory.Identifier(itemAsInterface.Name);
+            var itemAsT = item as IInterface;
+            Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
+
+            var modifiers = itemAsT.BuildModfierSyntax();
+            var identifier = SyntaxFactory.Identifier(itemAsT.Name);
+
             var node = SyntaxFactory.InterfaceDeclaration(identifier)
                 .WithModifiers(modifiers);
-            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsInterface.Whitespace2Set, whitespaceLookup);
 
-            var attributes = buildSyntaxWorker.BuildAttributeSyntax(itemAsInterface.Attributes);
+            var baseList = BuildSyntaxHelpers.GetBaseList(itemAsT);
+            if (baseList != null) { node = node.WithBaseList(baseList); }
+
+            var attributes = buildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
-            Guardian.Assert.IsNotNull(itemAsInterface, nameof(itemAsInterface));
-            var membersSyntax = itemAsInterface.Members
+
+            var membersSyntax = itemAsT.Members
                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
-            //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
-            // TODO: Class type members and type constraints
+
+            // This works oddly because it uncollapses the list
+            // This code is largely repeated in class and method factories, but is very hard to refactor because of shallow Roslyn (Microsoft) architecture
+            var typeParamsAndConstraints = itemAsT.TypeParameters
+                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                        .ToList();
+
+            var typeParameterSyntaxList = BuildSyntaxHelpers.GetTypeParameterSyntaxList(
+                        typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
+            if (typeParameterSyntaxList != null)
+            {
+                node = node.WithTypeParameterList(typeParameterSyntaxList);
+                var clauses = BuildSyntaxHelpers.GetTypeParameterConstraintList(
+                          typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
+                if (clauses.Any())
+                { node = node.WithConstraintClauses(clauses); }
+            }
+
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, whitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
     }

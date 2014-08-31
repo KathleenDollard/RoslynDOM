@@ -16,9 +16,7 @@ namespace RoslynDom
 
         protected RoslynRDomBase(IDom oldIDom)
          : base(oldIDom)
-        {
-            var oldRDom = oldIDom as RoslynRDomBase;
-        }
+        { }
 
         public abstract ISymbol Symbol { get; }
 
@@ -43,9 +41,7 @@ namespace RoslynDom
 
         protected RDomBase(T oldIDom)
          : base(oldIDom)
-        {
-            var oldRDom = oldIDom as RDomBase<T>;
-        }
+        { }
 
         public virtual T Copy()
         {
@@ -67,8 +63,6 @@ namespace RoslynDom
             if (otherAsT == null) return false;
             if (!CheckSameIntent(otherAsT, skipPublicAnnotations)) { return false; }
             if (!StandardSameIntent.CheckSameIntent(thisAsT, otherAsT, skipPublicAnnotations)) return false; ;
-            //if (sameIntent == null) return true; // assume that CheckSameIntent override does work
-            //return sameIntent.SameIntent(this as T, other as T, skipPublicAnnotations);
             return true;
         }
 

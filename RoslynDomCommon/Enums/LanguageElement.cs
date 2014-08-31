@@ -103,11 +103,8 @@ namespace RoslynDom.Common
         ReturnKeyword,
         Expression,
         LeftExpression,
-        //ExpressionFirstToken,
-        //ExpressionLastToken,
-        //LeftExpressionFirstToken,
-        //LeftExpressionLastToken,
 
+        AssignmentOperator,
         EqualsAssignmentOperator,
         AddAssignmentOperator,
         SubtractAssignmentOperator,
@@ -119,11 +116,6 @@ namespace RoslynDom.Common
         OrAssignmentOperator,
         LeftShiftAssignmentOperator,
         RightShiftAssignmentOperator,
-        // AssignmentOperators - replace enum?
-        // Operators - replace enum?
-        // AccessModifiers - replace enum?
-        // ConstructorInitalizer - replae enum?
-        // Variance - replace enum?
 
         IfKeyword,
         ElseKeyword,
@@ -138,5 +130,30 @@ namespace RoslynDom.Common
         CatchKeyword,
         FinallyKeyword,
         NewSlot,
+        Locked,
+        Checked,
+        Unchecked,
+        Throw,
+        Using,
+        Constant,
+        Readonly,
+        VariableStartDelimiter,
+        VariableEndDelimiter,
+        Separator,
+        Current,
+        BaseListPrefix,
+        ThisForExtension,
+        Volatile,
+        TypeParameterStart,
+        TypeParameterEnd,
+        ConstraintKeyword,
+        ConstraintColon,
+        ConstraintSeparator,
+        ClassConstraint,
+        ValueConstraint,
+        ConstructorConstraint,
+        ConstructorInitializerPrefix,
+        ConstructorBaseInitializer,
+        ConstructorThisInitializer,
     }
 }

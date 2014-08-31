@@ -2,6 +2,9 @@
 
 namespace RoslynDom.Common
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming",
+        "CA1711:IdentifiersShouldNotHaveIncorrectSuffix",
+        Justification = "This refers to attributes so seems correct")]
     public interface IAttribute : IDom<IAttribute>, IMisc, IHasName
     {
         // TODO: Consider: Determine how AllowMultiple will play

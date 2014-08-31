@@ -13,6 +13,8 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         { }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+           "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomAttributeValue(
              RDomAttributeValue oldRDom)
             : base(oldRDom)

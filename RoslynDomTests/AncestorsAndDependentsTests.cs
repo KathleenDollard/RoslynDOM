@@ -46,13 +46,11 @@ namespace RoslynDomTests
 
             // ancestors
             var statement = root.Descendants.OfType<IAssignmentStatement>().First();
-            var ancestors = statement.Ancestors;
-            Assert.AreEqual(5, ancestors.Count());
+            Assert.AreEqual(5, statement.Ancestors.Count());
 
             // if children
             var ifStatement = root.Descendants.OfType<IIfStatement>().First();
-            var children = ifStatement.Children;
-            Assert.AreEqual(4, children.Count());
+            Assert.AreEqual(4, ifStatement.Children.Count());
 
             // if appears as one child
             var method = root.Descendants.OfType<IMethod>().First();

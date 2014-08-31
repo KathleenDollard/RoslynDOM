@@ -62,6 +62,18 @@ namespace RoslynDomTests
         }
 
         [TestMethod, TestCategory(CopyCategory)]
+        public void Can_clone_method_parameter_not_implicit()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+               public string Foo(int id, String firstName, string lastName) {}
+            }";
+            VerifyClone(csharpCode,
+               root => root.RootClasses.First().Methods.First().Parameters.First());
+        }
+
+        [TestMethod, TestCategory(CopyCategory)]
         public void Can_clone_method_with_body()
         {
             var cSharpMethodCode =
@@ -69,6 +81,7 @@ namespace RoslynDomTests
                 {
                   if  ( true )  {}
                   var x = "", "";
+                  String y = x;
                   x = lastName + x + firstName;
                   return ret;
                 }
@@ -85,8 +98,9 @@ namespace RoslynDomTests
             var rDomStatement = newMethod.Statements.First() as IStatement;
             Assert.IsTrue(statements[0] is RDomIfStatement);
             Assert.IsTrue(statements[1] is RDomDeclarationStatement);
-            Assert.IsTrue(statements[2] is RDomAssignmentStatement);
-            Assert.IsTrue(statements[3] is RDomReturnStatement);
+            Assert.IsTrue(statements[2] is RDomDeclarationStatement);
+            Assert.IsTrue(statements[3] is RDomAssignmentStatement);
+            Assert.IsTrue(statements[4] is RDomReturnStatement);
             var outputNew = RDomCSharp.Factory.BuildSyntax(newItem);
             Assert.AreEqual(cSharpMethodCode, outputNew.ToFullString());
         }
@@ -244,14 +258,14 @@ namespace RoslynDomTests
             {
                 public interface Bar
                 {
-                    private string Foo { get; set; }
+                    string Foo { get; set; }
                 }  
             }         
             namespace Namespace2
             {
                 public class Bar2
                 {
-                    string Foo2(int George) {}
+                    private string Foo2(int George) {}
                 }  
             }";
             VerifyClone(csharpCode, root => root);

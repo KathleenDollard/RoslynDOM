@@ -49,7 +49,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
 
             CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
-            CreateFromWorker.StoreWhitespace(newItem, syntax.Body, LanguagePart.Block, WhitespaceLookup);
+            CreateFromWorker.StoreWhitespace(newItem, syntax.Body, LanguagePart.Current, WhitespaceLookup);
 
             var newItemName = accessorType.ToString().ToLower() + "_" + parentProperty.Name;
             newItem.Name = newItemName;
@@ -68,9 +68,7 @@ namespace RoslynDom.CSharp
             AccessorDeclarationSyntax node;
             if (itemAsAccessor.Statements.Any())
             {
-                //var statementBlock = BuildSyntaxWorker.GetStatementBlock(itemAsAccessor.Statements);
                 var statementBlock = (BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsAccessor.Statements, itemAsAccessor, WhitespaceLookup);
-                //statementBlock = BuildSyntaxHelpers.AttachWhitespace(statementBlock, itemAsAccessor.Whitespace2Set, WhitespaceLookup);
                 node = SyntaxFactory.AccessorDeclaration(kind, statementBlock);
             }
             else

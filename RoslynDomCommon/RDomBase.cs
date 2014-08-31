@@ -16,17 +16,15 @@ namespace RoslynDom
     /// </remarks>
     public abstract class RDomBase : IDom
     {
-        [ExcludeFromCodeCoverage]
-        // until move to C# 6 - I want to support name of as soon as possible
-        protected static string nameof<T>(T value) { return ""; }
-
+ 
         private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase()
-        { Whitespace2Set = new Whitespace2Set(); }
+        { Whitespace2Set = new Whitespace2Collection(); }
 
         protected RDomBase(IDom oldIDom) : this()
         {
+            if (oldIDom == null) throw new NotImplementedException();
             var oldRDom = (RDomBase)oldIDom;
             Whitespace2Set = oldIDom.Whitespace2Set.Copy();
             var oldAsHasName = oldIDom as IHasName;
@@ -47,12 +45,6 @@ namespace RoslynDom
         }
 
         /// <summary>
-        /// Must at least set the Name property
-        /// </summary>
-        protected virtual void Initialize()
-        {}
-
-        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
@@ -69,8 +61,10 @@ namespace RoslynDom
         public override string ToString()
         {
             var ret = base.ToString() + " : ";
-            if (this is IHasNamespace) return ret + ((IHasNamespace)this).QualifiedName;
-            if (this is IHasName) return ret + ((IHasName)this).Name;
+            var thisHasNamespace = this as IHasNamespace;
+            if (thisHasNamespace != null) return ret + thisHasNamespace.QualifiedName;
+            var thisHasName = this as IHasName;
+            if (thisHasName != null) return ret + thisHasName.Name;
             if (this is IStatement) return ret;
             if (this is IExpression) return ret + this.RawItem.ToString();
 
@@ -173,7 +167,7 @@ namespace RoslynDom
             }
         }
 
-        public Whitespace2Set Whitespace2Set { get; private set; }
+        public Whitespace2Collection Whitespace2Set { get; private set; }
 
     }
 }

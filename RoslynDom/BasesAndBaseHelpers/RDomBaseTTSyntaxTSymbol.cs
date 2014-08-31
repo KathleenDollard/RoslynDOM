@@ -15,7 +15,7 @@ namespace RoslynDom
         private SyntaxNode _originalRawSyntax;
         private SyntaxNode _rawSyntax;
         private TSymbol _symbol;
-        private string _containingTypeName;
+        //private string _containingTypeName;
 
         protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
              : base()
@@ -44,7 +44,6 @@ namespace RoslynDom
             if (thisAsHasName != null)
             { thisAsHasName.Name = ((IHasName)oldRDom).Name; }
 
-            Initialize();
         }
 
         public SyntaxNode TypedSyntax
@@ -65,12 +64,12 @@ namespace RoslynDom
         public virtual TSymbol TypedSymbol
         { get { return _symbol; } }
        
-        // TODO: Why are we calculating this instead of storing it?
-        protected virtual AccessModifier GetAccessibility()
-        {
-            if (Symbol == null) { return AccessModifier.None; }
-            return (AccessModifier)Symbol.DeclaredAccessibility;
-        }
+        //// TODO: Why are we calculating this instead of storing it?
+        //protected virtual AccessModifier GetAccessibility()
+        //{
+        //    if (Symbol == null) { return AccessModifier.None; }
+        //    return (AccessModifier)Symbol.DeclaredAccessibility;
+        //}
 
         /// <summary>
         /// Fallback for getting requested values. 

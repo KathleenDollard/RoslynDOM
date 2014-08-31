@@ -218,7 +218,6 @@ namespace RoslynDom
         private IEnumerable<IRDomFactory> factories;
         private IRDomFactory genericFactory;
         private Type typeKind;
-        //private IEnumerable<Tuple<IRDomFactory, Type, Type>> factoryLookup;
 
         internal FactorySet(Type typeKind, IEnumerable<IRDomFactory> factories, IRDomFactory genericFactory)
         {

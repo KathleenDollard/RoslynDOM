@@ -7,7 +7,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom.Common
 {
-    public class StandardSameIntent
+    public static class StandardSameIntent
     {
         public static bool CheckSameIntent<T>(T one, T other)
               where T : class, IDom
@@ -73,7 +73,6 @@ namespace RoslynDom.Common
                 return true;
             }
 
-
             private bool CheckCharacteristics<T>(T one, T other)
                          where T : class, IDom
             {
@@ -93,7 +92,7 @@ namespace RoslynDom.Common
                 if (!Check<T, IHasName>(one, other,
                     (x, y) => x.Name == y.Name))
                     return false;
-                // TODO: SHould anything in namespace be checked?
+                // TODO: Should anything in namespace be checked?
                 //if (!Check<T, IHasNamespace>(one, other,
                 //    (x, y) => x.Namespace == y.Namespace && x.QualifiedName == y.QualifiedName))
                 //    return false;
@@ -230,7 +229,7 @@ namespace RoslynDom.Common
                     return false;
                 if (!Check<T, IForStatement>(one, other,
                     (x, y) => Check(x.Variable, y.Variable)
-                    && Check(x.Incrementor, y.Incrementor)))
+                    && Check(x.Iterator, y.Iterator)))
                     return false;
                 if (!Check<T, IIfStatement>(one, other,
                     (x, y) => CheckChildrenInOrder(x.Elses, y.Elses)
@@ -250,7 +249,7 @@ namespace RoslynDom.Common
                 if (!Check<T, IReturnStatement>(one, other,
                     (x, y) => Check(x.Return, y.Return)))
                     return false;
-                // not currently in use, nto certain it's needed
+                // TODO: not currently in use, not certain it's needed
                 //if (!Check<T, ISpecialStatement>(one, other,
                 //    (x, y) => x.SpecialStatementKind == y.SpecialStatementKind))
                 //    return false;
@@ -290,8 +289,6 @@ namespace RoslynDom.Common
 
                 if (one.GetType() != other.GetType()) return false;
 
-                // checking the type parameters provided problematic
-                //if (!typeof(TCheck).IsAssignableFrom(typeof(T))) return true;
                 if (!typeof(TCheck).IsAssignableFrom(one.GetType())) return true;
 
                 if (!skipPublicAnnotations)

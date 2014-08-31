@@ -52,7 +52,6 @@ namespace RoslynDom.CSharp
 
         private IRoot GetRootFromStringInternal(SyntaxTree tree, string filePath)
         {
-            //CSharpFactory.Register();
             var compilation = CSharpCompilation.Create("MyCompilation",
                                            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                                            syntaxTrees: new[] { tree },
@@ -72,12 +71,6 @@ namespace RoslynDom.CSharp
             if (TryBuildSyntax<IStatementCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
             if (TryBuildSyntax<IExpression>(item, out syntaxNodes)) { return syntaxNodes; }
             if (TryBuildSyntax<IMisc>(item, out syntaxNodes)) { return syntaxNodes; }
-            //if (TryBuildSyntax<IRoot>(item, RDomFactoryHelper.GetHelperForRoot(), out syntaxNodes)) { return syntaxNodes; }
-            //if (TryBuildSyntax<IStemMemberCommentWhite>(item, RDomFactoryHelper.GetHelperForStemMember(), out syntaxNodes)) { return syntaxNodes; }
-            //if (TryBuildSyntax<ITypeMemberCommentWhite>(item, RDomFactoryHelper.GetHelperForTypeMember(), out syntaxNodes)) { return syntaxNodes; }
-            //if (TryBuildSyntax<IStatementCommentWhite>(item, RDomFactoryHelper.GetHelperForStatement(), out syntaxNodes)) { return syntaxNodes; }
-            //if (TryBuildSyntax<IExpression>(item, RDomFactoryHelper.GetHelperForExpression(), out syntaxNodes)) { return syntaxNodes; }
-            //if (TryBuildSyntax<IMisc>(item, RDomFactoryHelper.GetHelperForMisc(), out syntaxNodes)) { return syntaxNodes; }
             return new List<SyntaxNode>();
         }
 
@@ -87,11 +80,6 @@ namespace RoslynDom.CSharp
             if (syntaxGroup == null || !syntaxGroup.Any()) return null;
             return syntaxGroup.Single();
         }
-        public SyntaxNode BuildFormattedSyntax(IDom item)
-        {
-            var syntax = BuildSyntax(item);
-            return BuildSyntaxHelpers.Format(syntax, item);
-        }
 
         private bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> node)
              where TKind : class, IDom
@@ -99,7 +87,6 @@ namespace RoslynDom.CSharp
             node = null;
             var itemAsKind = item as TKind;
             if (itemAsKind == null) { return false; }
-            //var corporation = RDomFactoryHelper.GetHelper<TKind>();
             node = _helper.BuildSyntaxGroup(item);
             return true;
         }
@@ -135,48 +122,5 @@ namespace RoslynDom.CSharp
             }
             return true;
         }
-
-        public string Report(IDom item)
-        {
-            return Report(item, false);
-
-        }
-
-        public virtual string Report(IDom item, bool includeTrivia)
-        {
-            var sb = new StringBuilder();
-            var spaces = 2;
-            var indentToAdd = new string(' ', spaces);
-            var indent = "";
-            var reversedAncestors = item.Ancestors.Reverse();
-            foreach (var ancestor in reversedAncestors)
-            {
-                sb.AppendLine(indent + ancestor.ToString());
-                indent += indentToAdd;
-            }
-            sb.AppendLine(indent + this.ToString());
-            AppendChildHierarchy(item, sb, indent + indentToAdd, indentToAdd, includeTrivia);
-            return sb.ToString();
-        }
-
-        private static void AppendChildHierarchy(IDom item, StringBuilder sb,
-            string indent, string indentToAdd, bool includeTrivia)
-        {
-            foreach (var child in item.Children)
-            {
-                sb.AppendLine(indent + child.ToString());
-                if (includeTrivia)
-                { ReportTrivia(child, sb, indent); }
-                AppendChildHierarchy(child, sb, indent + indentToAdd, indentToAdd, includeTrivia);
-            }
-        }
-
-        private static void ReportTrivia(IDom child, StringBuilder sb, string indent)
-        {
-            var item = child as IRoslynDom;
-            if (item == null) return;
-            // TODO: Eventually flesh this out to all trivia types
-            }
     }
-
 }

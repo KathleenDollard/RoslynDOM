@@ -50,9 +50,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IBlockStatement;
             var block = BuildSyntaxWorker.GetStatementBlock(itemAsT.Statements);
-            //var statementSyntaxList = itemAsT.Statements
-            //  .SelectMany(x => Corporation.BuildSyntaxGroup(x))
-            //  .ToList();
+
             var node = SyntaxFactory.Block(SyntaxFactory.List(block.Statements));
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);

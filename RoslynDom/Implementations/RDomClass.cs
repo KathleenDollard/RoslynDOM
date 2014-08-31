@@ -15,7 +15,7 @@ namespace RoslynDom
     {
         public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model, MemberKind.Class, StemMemberKind.Class)
-        { Initialize(); }
+        {  }
 
         internal RDomClass(RDomClass oldRDom)
            : base(oldRDom)
@@ -30,7 +30,6 @@ namespace RoslynDom
         { get { return Members.OfType<IClass>().ToList(); } }
 
         public IEnumerable<IType> Types
-        //{ get { return Classes.Concat<IStemMember>(Structures).Concat(Interfaces).Concat(Enums); } }
         { get { return Members.OfType<IType>().ToList(); } }
 
 

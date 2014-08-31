@@ -10,6 +10,6 @@ namespace RoslynDom.Common
     {
         // NOTE: Constructors do NOT record a name. Consistent with VB and general usage. 
         ConstructorInitializerType ConstructorInitializerType { get; set; }
-        RDomList<IArgument> InitializationArguments { get; }
+        RDomCollection<IArgument> InitializationArguments { get; }
     }
 }

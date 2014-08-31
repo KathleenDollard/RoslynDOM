@@ -17,7 +17,23 @@ namespace RoslynDom
             [TestMethod]
             public void Play()
             {
-                var node = SyntaxFactory.ParseTypeName("System.Int32");
+                var output = "";
+                Bar<string>.Foo(null, ref output);
+                Assert.AreEqual("Hello Fred", output);
+            }
+
+            public class BarBase { }
+
+            public class Bar<T> : BarBase
+                where T : class
+            {
+                public static void Foo(T x, ref string output, string name = "Fred")
+                {
+                    var punctuation = x == null
+                                      ? null
+                                      : "!";
+                    output = "Hello " + name + punctuation;
+                }
             }
         }
 
@@ -43,7 +59,7 @@ namespace RoslynDom
                 }
                 Foo2(A: 3, B: 4);
             }
-            public void  Foo2(int A, int B)
+            public void Foo2(int A, int B)
             { }
         }
 
@@ -137,7 +153,10 @@ namespace RoslynDomTests
             { }
             #endregion
         }
+
     }
+
+
 
     class D
     {
@@ -247,6 +266,18 @@ namespace RoslynDomTests
                                     SyntaxFactory.Token(
                                         SyntaxKind.SemicolonToken))})))))));
         }
+
+
+
+
+
+
+
+
+
+
+
+
     }
     public enum DD : int
     {

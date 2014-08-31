@@ -10,13 +10,13 @@ namespace RoslynDom
         : RDomBase<T, INamedTypeSymbol>, IType<T>, ITypeMemberContainer
         where T : class, IType<T>
     {
-        private RDomList<ITypeMemberCommentWhite> _members;
-        private RDomList<IReferencedType> _implementedInterfaces;
+        private RDomCollection<ITypeMemberCommentWhite> _members;
+        private RDomCollection<IReferencedType> _implementedInterfaces;
         private IEnumerable<IReferencedType> _allImplementedInterfaces;
         private MemberKind _memberKind;        // This should remain readonly
         private StemMemberKind _stemMemberKind;// This should remain readonly
-        private RDomList<ITypeParameter> _typeParameters;
-        private AttributeList _attributes = new AttributeList();
+        private RDomCollection<ITypeParameter> _typeParameters;
+        private AttributeCollection _attributes = new AttributeCollection();
 
         internal RDomBaseType(
               SyntaxNode rawItem,
@@ -28,12 +28,14 @@ namespace RoslynDom
         {
             _memberKind = memberKind;
             _stemMemberKind = stemMemberKind;
+            Initialize();
         }
 
 
         internal RDomBaseType(T oldIDom)
              : base(oldIDom)
         {
+            Initialize();
             var oldRDom = oldIDom as RDomBaseType<T>;
             _memberKind = oldRDom._memberKind;
             _stemMemberKind = oldRDom._stemMemberKind;
@@ -47,13 +49,12 @@ namespace RoslynDom
             // TODO: _allImplementedInterfaces = oldRDom._allImplementedInterfaces.Select(x => x.Copy());
         }
 
-        protected override void Initialize()
+        private  void Initialize()
         {
-            base.Initialize();
-            _members = new RDomList<ITypeMemberCommentWhite>(this);
-            _typeParameters = new RDomList<ITypeParameter>(this);
-            _implementedInterfaces = new RDomList<IReferencedType>(this);
-            var thisAsHasInterfaces = this as IHasImplementedInterfaces;
+            _members = new RDomCollection<ITypeMemberCommentWhite>(this);
+            _typeParameters = new RDomCollection<ITypeParameter>(this);
+            _implementedInterfaces = new RDomCollection<IReferencedType>(this);
+
             var typeSymbol = Symbol as ITypeSymbol;
             if (typeSymbol == null) throw new NotImplementedException();
             // TODO: _allImplementedInterfaces = typeSymbol.AllInterfaces
@@ -100,7 +101,7 @@ namespace RoslynDom
         public bool IsNested
         { get { return (Parent is IType); } }
 
-        public RDomList<ITypeParameter> TypeParameters
+        public RDomCollection<ITypeParameter> TypeParameters
         {
             get
             {
@@ -108,7 +109,7 @@ namespace RoslynDom
             }
         }
 
-        public RDomList<ITypeMemberCommentWhite> MembersAll
+        public RDomCollection<ITypeMemberCommentWhite> MembersAll
         { get { return _members; } }
 
         public IEnumerable<ITypeMember> Members
@@ -123,10 +124,10 @@ namespace RoslynDom
         public IEnumerable<IField> Fields
         { get { return Members.OfType<IField>().ToList(); } }
 
-        // This is not yet editale because it is non-trivial to ensure 
+        // This is not yet editable because it is non-trivial to ensure 
         // correct interface usage (appearing once, etc). These semantics
         // may also change as "all" is confusing with other use in RoslynDon
-        public RDomList<IReferencedType> ImplementedInterfaces
+        public RDomCollection<IReferencedType> ImplementedInterfaces
         { get { return _implementedInterfaces; } }
         public IEnumerable<IReferencedType> AllImplementedInterfaces
         {
@@ -138,7 +139,7 @@ namespace RoslynDom
         }
 
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }

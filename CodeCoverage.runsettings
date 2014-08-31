@@ -14,10 +14,8 @@
                 <ModulePath>.*\.dll$</ModulePath>
               </Include>
               <Exclude>
-                <!-- But exclude some assemblies: -->
-                <ModulePath>.*\\Fabrikam\.MyTests1\.dll$</ModulePath>
-                <!-- Exclude all file paths that contain "Temp": -->
-                <ModulePath>.*Tests.dll</ModulePath>
+                 <ModulePath>.objectapproval.dll</ModulePath>
+                 <ModulePath>.*Tests.dll</ModulePath>
               </Exclude>
             </ModulePaths>
 

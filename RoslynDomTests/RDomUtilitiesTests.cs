@@ -23,7 +23,7 @@ namespace RoslynDomTests
                         ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var cl = root.Classes.First();
-            var list = new RDomList<IClass>(root);
+            var list = new RDomCollection<IClass>(root);
             list.AddOrMove(cl);
             for (int i = 0; i < 5; i++)
             {

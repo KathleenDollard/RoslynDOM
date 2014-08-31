@@ -174,7 +174,7 @@ public class Foo3<in T, out T1,out in T2, T3>
             Assert.AreEqual(Variance.In, parameters[0].Variance);
             Assert.AreEqual(Variance.Out, parameters[1].Variance);
             // This is reflects an inconsistency in the Roslyn parsing
-            Assert.AreEqual(Variance.Out | Variance.Out, parameters[2].Variance);
+            Assert.AreEqual( Variance.Out, parameters[2].Variance);
             Assert.AreEqual(Variance.None, parameters[3].Variance);
 
         }
@@ -191,7 +191,7 @@ public struct Foo3<in T, out T1,out in T2, T3>
             Assert.AreEqual(Variance.In, parameters[0].Variance);
             Assert.AreEqual(Variance.Out, parameters[1].Variance);
             // This is reflects an inconsistency in the Roslyn parsing
-            Assert.AreEqual(Variance.Out | Variance.Out, parameters[2].Variance);
+            Assert.AreEqual( Variance.Out, parameters[2].Variance);
             Assert.AreEqual(Variance.None, parameters[3].Variance);
 
         }
@@ -208,7 +208,7 @@ public interface Foo3<in T, out T1,out in T2, T3>
             Assert.AreEqual(Variance.In, parameters[0].Variance);
             Assert.AreEqual(Variance.Out, parameters[1].Variance);
             // This is reflects an inconsistency in the Roslyn parsing
-            Assert.AreEqual(Variance.Out | Variance.Out, parameters[2].Variance);
+            Assert.AreEqual( Variance.Out, parameters[2].Variance);
             Assert.AreEqual(Variance.None, parameters[3].Variance);
 
         }

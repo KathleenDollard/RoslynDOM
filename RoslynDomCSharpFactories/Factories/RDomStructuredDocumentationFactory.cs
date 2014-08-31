@@ -22,20 +22,7 @@ namespace RoslynDom.CSharp
             : base(corporation)
         { }
 
-        private WhitespaceKindLookup WhitespaceLookup
-        {
-            get
-            {
-                if (_whitespaceLookup == null)
-                {
-                    _whitespaceLookup = new WhitespaceKindLookup();
-                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
-                }
-                return _whitespaceLookup;
-            }
-        }
-        
-        public override RDomPriority Priority
+           public override RDomPriority Priority
         { get { return 0; } }
 
         public override bool CanCreateFrom(SyntaxNode syntaxNode)

@@ -13,10 +13,11 @@ namespace RoslynDom.CSharp
     {
         private static List<Tuple<SyntaxKind, SyntaxKind, LiteralKind>> LiteralKindMap = new List<Tuple<SyntaxKind, SyntaxKind, LiteralKind>>()
         {
-            Tuple.Create(SyntaxKind.StringLiteralToken,    SyntaxKind.StringLiteralExpression,    LiteralKind.String),
+            Tuple.Create(SyntaxKind.StringLiteralToken,    SyntaxKind.StringLiteralExpression,     LiteralKind.String),
             Tuple.Create( SyntaxKind.NumericLiteralToken,   SyntaxKind.NumericLiteralExpression,   LiteralKind.Numeric),
             Tuple.Create( SyntaxKind.TrueKeyword,           SyntaxKind.TrueKeyword,                LiteralKind.Boolean),
             Tuple.Create( SyntaxKind.FalseKeyword,          SyntaxKind.FalseKeyword,               LiteralKind.Boolean),
+            Tuple.Create( SyntaxKind.TypeOfKeyword ,          SyntaxKind.TypeOfExpression,         LiteralKind.Type),
         };
 
         public static LiteralKind LiteralKindFromSyntaxKind(SyntaxKind kind)
@@ -43,26 +44,26 @@ namespace RoslynDom.CSharp
             throw new InvalidOperationException();
         }
 
-        private static List<Tuple<SyntaxKind, AssignmentOperator>> assignmentOpMap = new List<Tuple<SyntaxKind, AssignmentOperator>>()
+        private static List<Tuple<SyntaxKind, SyntaxKind, AssignmentOperator>> assignmentOpMap = new List<Tuple<SyntaxKind, SyntaxKind, AssignmentOperator>>()
         {
-             Tuple.Create( SyntaxKind.SimpleAssignmentExpression, AssignmentOperator.Equals ),
-             Tuple.Create( SyntaxKind.AddAssignmentExpression, AssignmentOperator.AddAssignment),
-             Tuple.Create( SyntaxKind.SubtractAssignmentExpression, AssignmentOperator.SubtractAssignment),
-             Tuple.Create( SyntaxKind.MultiplyAssignmentExpression, AssignmentOperator.MultiplyAssignment),
-             Tuple.Create( SyntaxKind.DivideAssignmentExpression, AssignmentOperator.DivideAssignment),
-             Tuple.Create( SyntaxKind.ModuloAssignmentExpression, AssignmentOperator.ModuloAssignment),
-             Tuple.Create( SyntaxKind.AndAssignmentExpression, AssignmentOperator.AndAssignment),
-             Tuple.Create( SyntaxKind.ExclusiveOrAssignmentExpression, AssignmentOperator.ExclusiveOrAssignment),
-             Tuple.Create( SyntaxKind.OrAssignmentExpression, AssignmentOperator.OrAssignment),
-             Tuple.Create( SyntaxKind.LeftShiftAssignmentExpression, AssignmentOperator.LeftShiftAssignment),
-             Tuple.Create( SyntaxKind.RightShiftAssignmentExpression, AssignmentOperator.RightShiftAssignment)
+             Tuple.Create( SyntaxKind.SimpleAssignmentExpression,     SyntaxKind.EqualsToken,                        AssignmentOperator.Equals ),
+             Tuple.Create( SyntaxKind.AddAssignmentExpression,        SyntaxKind.PlusEqualsToken,                    AssignmentOperator.AddAssignment),
+             Tuple.Create( SyntaxKind.SubtractAssignmentExpression,   SyntaxKind.MinusEqualsToken,                   AssignmentOperator.SubtractAssignment),
+             Tuple.Create( SyntaxKind.MultiplyAssignmentExpression,   SyntaxKind.AsteriskEqualsToken,                AssignmentOperator.MultiplyAssignment),
+             Tuple.Create( SyntaxKind.ModuloAssignmentExpression,     SyntaxKind.PercentEqualsToken,                 AssignmentOperator.ModuloAssignment),
+             Tuple.Create( SyntaxKind.DivideAssignmentExpression,     SyntaxKind.SlashEqualsToken,                   AssignmentOperator.DivideAssignment),
+             Tuple.Create( SyntaxKind.AndAssignmentExpression,        SyntaxKind.AmpersandEqualsToken,               AssignmentOperator.AndAssignment),
+             Tuple.Create( SyntaxKind.ExclusiveOrAssignmentExpression,SyntaxKind.CaretEqualsToken,                   AssignmentOperator.ExclusiveOrAssignment),
+             Tuple.Create( SyntaxKind.OrAssignmentExpression,         SyntaxKind.BarEqualsToken,                     AssignmentOperator.OrAssignment),
+             Tuple.Create( SyntaxKind.LeftShiftAssignmentExpression,  SyntaxKind.GreaterThanGreaterThanEqualsToken,  AssignmentOperator.LeftShiftAssignment),
+             Tuple.Create( SyntaxKind.RightShiftAssignmentExpression, SyntaxKind.LessThanLessThanEqualsToken,        AssignmentOperator.RightShiftAssignment)
         };
 
         public static AssignmentOperator AssignmentOperatorFromCSharpKind(SyntaxKind kind)
         {
             foreach (var tuple in assignmentOpMap)
             {
-                if (tuple.Item1 == kind) { return tuple.Item2; }
+                if (tuple.Item1 == kind) { return tuple.Item3; }
             }
             throw new InvalidOperationException();
         }
@@ -71,29 +72,46 @@ namespace RoslynDom.CSharp
         {
             foreach (var tuple in assignmentOpMap)
             {
-                if (tuple.Item2 == op) { return tuple.Item1; }
+                if (tuple.Item3 == op) { return tuple.Item1; }
             }
             throw new InvalidOperationException();
         }
 
+        public static SyntaxKind SyntaxTokenKindFromAssignmentOperator(AssignmentOperator op)
+        {
+            foreach (var tuple in assignmentOpMap)
+            {
+                if (tuple.Item3 == op) { return tuple.Item2; }
+            }
+            throw new InvalidOperationException();
+        }
+
+        public static AssignmentOperator AssignmentOperatorFromTokenKind(SyntaxKind kind)
+        {
+            foreach (var tuple in assignmentOpMap)
+            {
+                if (tuple.Item2 == kind) { return tuple.Item3; }
+            }
+            throw new InvalidOperationException();
+        }
 
         private static List<Tuple<SyntaxKind, Operator>> operatorMap = new List<Tuple<SyntaxKind, Operator>>()
         {
-             Tuple.Create( SyntaxKind.PlusToken                      , Operator.Plus),                   
-             Tuple.Create( SyntaxKind.MinusToken                     , Operator.Minus),                  
-             Tuple.Create( SyntaxKind.AsteriskToken                  , Operator.Asterisk),               
-             Tuple.Create( SyntaxKind.SlashToken                     , Operator.Slash),                  
-             Tuple.Create( SyntaxKind.PercentToken                   , Operator.Percent),                
-             Tuple.Create( SyntaxKind.AmpersandToken                 , Operator.Ampersand),              
-             Tuple.Create( SyntaxKind.BarToken                       , Operator.Bar),                    
-             Tuple.Create( SyntaxKind.CaretToken                     , Operator.Caret),                  
-             Tuple.Create( SyntaxKind.LessThanLessThanToken          , Operator.LessThanLessThan),       
-             Tuple.Create( SyntaxKind.GreaterThanGreaterThanToken    , Operator.GreaterThanGreaterThan), 
-             Tuple.Create( SyntaxKind.EqualsEqualsToken              , Operator.EqualsEquals),           
-             Tuple.Create( SyntaxKind.ExclamationEqualsToken         , Operator.ExclamationEquals),      
-             Tuple.Create( SyntaxKind.GreaterThanToken               , Operator.GreaterThan),            
-             Tuple.Create( SyntaxKind.LessThanToken                  , Operator.LessThan),               
-             Tuple.Create( SyntaxKind.GreaterThanEqualsToken         , Operator.GreaterThanEquals),      
+             Tuple.Create( SyntaxKind.PlusToken                      , Operator.Plus),
+             Tuple.Create( SyntaxKind.MinusToken                     , Operator.Minus),
+             Tuple.Create( SyntaxKind.AsteriskToken                  , Operator.Asterisk),
+             Tuple.Create( SyntaxKind.SlashToken                     , Operator.Slash),
+             Tuple.Create( SyntaxKind.PercentToken                   , Operator.Percent),
+             Tuple.Create( SyntaxKind.AmpersandToken                 , Operator.Ampersand),
+             Tuple.Create( SyntaxKind.BarToken                       , Operator.Bar),
+             Tuple.Create( SyntaxKind.CaretToken                     , Operator.Caret),
+             Tuple.Create( SyntaxKind.LessThanLessThanToken          , Operator.LessThanLessThan),
+             Tuple.Create( SyntaxKind.GreaterThanGreaterThanToken    , Operator.GreaterThanGreaterThan),
+             Tuple.Create( SyntaxKind.EqualsEqualsToken              , Operator.EqualsEquals),
+             Tuple.Create( SyntaxKind.ExclamationEqualsToken         , Operator.ExclamationEquals),
+             Tuple.Create( SyntaxKind.GreaterThanToken               , Operator.GreaterThan),
+             Tuple.Create( SyntaxKind.LessThanToken                  , Operator.LessThan),
+             Tuple.Create( SyntaxKind.GreaterThanEqualsToken         , Operator.GreaterThanEquals),
              Tuple.Create( SyntaxKind.LessThanEqualsToken            , Operator.LessThanEquals)
         };
 
@@ -121,16 +139,16 @@ namespace RoslynDom.CSharp
 
         private static List<Tuple<Accessibility, AccessModifier>> accessModifierMap = new List<Tuple<Accessibility, AccessModifier>>()
         {
-             Tuple.Create(Accessibility. Private, AccessModifier. Private),
-             Tuple.Create(Accessibility. ProtectedAndInternal, AccessModifier. ProtectedAndInternal),
-             Tuple.Create(Accessibility. ProtectedAndFriend , AccessModifier. ProtectedAndFriend ),
-             Tuple.Create(Accessibility. Protected , AccessModifier. Protected ),
-             Tuple.Create(Accessibility. Internal , AccessModifier. Internal ),
-             Tuple.Create(Accessibility. Friend , AccessModifier. Friend ),
-             Tuple.Create(Accessibility. NotApplicable, AccessModifier. None),
-             Tuple.Create(Accessibility. ProtectedOrInternal , AccessModifier. ProtectedOrInternal ),
-             Tuple.Create(Accessibility. ProtectedOrFriend , AccessModifier. ProtectedOrFriend),
-             Tuple.Create(Accessibility. Public , AccessModifier. Public )
+             Tuple.Create(Accessibility.Private             , AccessModifier.Private),
+             Tuple.Create(Accessibility.ProtectedAndInternal, AccessModifier.ProtectedAndInternal),
+             Tuple.Create(Accessibility.ProtectedAndFriend  , AccessModifier.ProtectedAndFriend ),
+             Tuple.Create(Accessibility.Protected           , AccessModifier.Protected ),
+             Tuple.Create(Accessibility.Internal            , AccessModifier.Internal ),
+             Tuple.Create(Accessibility.Friend              , AccessModifier.Friend ),
+             Tuple.Create(Accessibility.NotApplicable       , AccessModifier.None),
+             Tuple.Create(Accessibility.ProtectedOrInternal , AccessModifier.ProtectedOrInternal ),
+             Tuple.Create(Accessibility.ProtectedOrFriend   , AccessModifier.ProtectedOrFriend),
+             Tuple.Create(Accessibility.Public              , AccessModifier.Public )
         };
         public static Accessibility AccessibilityFromAccessModifier(AccessModifier accessModifier)
         {
@@ -204,13 +222,13 @@ namespace RoslynDom.CSharp
 
         public static SyntaxKind VarianceKindFromVariance(Variance variance)
         {
-           
+
             foreach (var tuple in GenericVarianceMap)
             {
                 if (tuple.Item2 == variance)
                 { return tuple.Item1; }
             }
-            return SyntaxKind.None ;
+            return SyntaxKind.None;
         }
     }
 }

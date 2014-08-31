@@ -26,7 +26,7 @@ namespace RoslynDom.CSharp
                     _whitespaceLookup = new WhitespaceKindLookup();
                     _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
-                    _whitespaceLookup.AddRange(WhitespaceKindLookup.AssignmentOperators);
+                    //_whitespaceLookup.AddRange(WhitespaceKindLookup.AssignmentOperators);
                 }
                 return _whitespaceLookup;
             }
@@ -53,6 +53,7 @@ namespace RoslynDom.CSharp
 
             var binary = syntax.Expression as BinaryExpressionSyntax;
             Guardian.Assert.IsNotNull(binary, nameof(binary));
+
             var left = binary.Left as ExpressionSyntax;
             CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, left, LanguagePart.Current,
                     LanguageElement.LeftExpression);
@@ -63,13 +64,13 @@ namespace RoslynDom.CSharp
             // Also changed Name to Left and string to expression
             var right = binary.Right;
             var expression = right as ExpressionSyntax;
-            CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, expression, LanguagePart.Current, 
+            CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, expression, LanguagePart.Current,
                     LanguageElement.Expression);
             Guardian.Assert.IsNotNull(expression, nameof(expression));
             newItem.Expression = Corporation.CreateFrom<IExpression>(expression, newItem, model).FirstOrDefault();
 
-            CreateFromWorker.StoreWhitespaceForToken(newItem, binary.OperatorToken, 
-                        LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
+            CreateFromWorker.StoreWhitespaceForToken(newItem, binary.OperatorToken,
+                        LanguagePart.Current, LanguageElement.AssignmentOperator);
             newItem.Operator = Mappings.AssignmentOperatorFromCSharpKind(binary.CSharpKind());
             return newItem;
         }
@@ -78,16 +79,21 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IAssignmentStatement;
             var leftSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Left);
-            leftSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(leftSyntax, 
+            leftSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(leftSyntax,
                         itemAsT.Whitespace2Set[LanguageElement.LeftExpression]);
 
             var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression);
-            expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, 
+            expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax,
                         itemAsT.Whitespace2Set[LanguageElement.Expression]);
 
             var syntaxKind = Mappings.SyntaxKindFromAssignmentOperator(itemAsT.Operator);
+            var opToken = SyntaxFactory.Token(Mappings.SyntaxTokenKindFromAssignmentOperator(itemAsT.Operator));
+            opToken = BuildSyntaxHelpers.AttachWhitespaceToToken(opToken, itemAsT.Whitespace2Set[LanguageElement.AssignmentOperator]);
+
             var assignmentSyntax = SyntaxFactory.BinaryExpression(syntaxKind,
-                            (ExpressionSyntax)leftSyntax, (ExpressionSyntax)expressionSyntax);
+                            (ExpressionSyntax)leftSyntax,
+                            opToken,
+                            (ExpressionSyntax)expressionSyntax);
             assignmentSyntax = BuildSyntaxHelpers.AttachWhitespace(assignmentSyntax, itemAsT.Whitespace2Set, WhitespaceLookup);
             var node = SyntaxFactory.ExpressionStatement(assignmentSyntax);
 

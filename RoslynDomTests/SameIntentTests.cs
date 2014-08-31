@@ -48,12 +48,9 @@ namespace RoslynDomTests
             ";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
-            var class1 = root1.Classes.First();
-            var struct1 = root2.Structures.First();
-            var attribute1 = class1.Attributes.Attributes.First();
-            var attribute2 = struct1.Attributes.Attributes.First();
+            var attribute1 = root1.Classes.First().Attributes.Attributes.First();
+            var attribute2 = root2.Structures.First().Attributes.Attributes.First();
             Assert.IsTrue(attribute1.SameIntent(attribute2));
-
         }
 
         [TestMethod, TestCategory(SameIntentAtrributesCategory)]
@@ -119,7 +116,6 @@ namespace RoslynDomTests
 
         }
 
-
         [TestMethod, TestCategory(SameIntentAtrributesCategory)]
         public void Same_intent_false_with_attributes_with_different_values()
         {
@@ -170,66 +166,37 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_name()
         {
-            var csharpCodeGood = @"
-            public class Class1 
+            var csharpCode =
+            @"public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst("public void Bar", "public void Bar2");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public void Bar", "public void Bar2");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_return_type()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst("public void Bar", "public int Bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public void Bar", "public int Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_attributes()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                [Foo(""Fred"", bar:3, bar2:""George"")] public void Bar(string bar, int bar2) {}           
-               [Foo(""Fred"", bar:3, bar2:""George"")] public void Bar(string bar, int bar2) {}          
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"bar2:""George""", @"bar2:""GeorgeX""");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"bar2:""George""", @"bar2:""GeorgeX""");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
@@ -239,15 +206,9 @@ namespace RoslynDomTests
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst(@"bar2", @"bar2X");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
@@ -257,197 +218,105 @@ namespace RoslynDomTests
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-            }
-
-            ";
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst(@"string bar, int bar2", @"int bar2, string bar");
             AssertSameIntent(false, csharpCode, csharpCodeChanged);
-      
-        }
-
-        private void AssertSameIntent(bool shouldMatch, string a, string b)
-        {
-            var root1 = RDomCSharp.Factory.GetRootFromString(a);
-            Assert.IsTrue(root1.SameIntent(root1.Copy()), "a =" + a);
-            var root2 = RDomCSharp.Factory.GetRootFromString(b);
-            Assert.IsTrue(root2.SameIntent(root2.Copy()), "b = " + b);
-            Assert.AreEqual(shouldMatch, root1.SameIntent(root2), string.Format("{0} \r\n ----------- \r\n{1}", a, b));
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_scope()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"public void", @"internal void");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"public void", @"internal void");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_abstract_modifier()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"public void Bar", @"public abstract void Bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"public void Bar", @"public abstract void Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method__static_modifier()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"public void Bar", @"public static void Bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"public void Bar", @"public static void Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_sealed_modifier()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"public void Bar", @"public sealed void Bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"public void Bar", @"public sealed void Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_override_modifiers()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"public void Bar", @"public override void Bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"public void Bar", @"public override void Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_modifiers()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"public void Bar", @"public virtual void Bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"public void Bar", @"public virtual void Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
-        public void Same_intent_false_with_different_method_if_extension()
+        public void Same_intent_false_with_different_method_extension_this()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar(string bar, int bar2) {}
-                public void Bar(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"(string bar", @"(this string bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"(string bar", @"(this string bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
         public void Same_intent_false_with_different_method_type_parameters()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public void Bar<T>(string bar, int bar2) {}
-                public void Bar<T>(string bar, int bar2) {}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"Bar<T>(", @"Bar<T2>(");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsTrue(method1.SameIntent(method2));
-            method1 = root2.Classes.First().Methods.First();
-            method2 = root2.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"Bar<T>(", @"Bar<T2>(");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
@@ -458,15 +327,9 @@ namespace RoslynDomTests
             {
                 public void Bar<T>(string bar, int bar2) where T : class, IDom
                 {}
-                public void Bar<T>(string bar, int bar2) where T : class, IDom, IHasName
-                {}
-            }
-
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@", IDom", @", IDom, IHasName");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentMethodCategory)]
@@ -477,15 +340,9 @@ namespace RoslynDomTests
             {
                 public void Bar<T>(string bar, int bar2)
                 {}
-                public void Bar<T>(string bar, int bar2) where T : value
-                {}
-            }
-
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root1.Classes.First().Methods.Last();
-            Assert.IsFalse(method1.SameIntent(method2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@", int bar2)", @", int bar2) where T : value");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
 
@@ -516,66 +373,37 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentPropertyCategory)]
         public void Same_intent_false_with_different_property_name()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public string Bar{get; set;}
-                public string Bar{get; set;}
-            }
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst("public string Bar", "public string Bar2");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var property1 = root1.Classes.First().Properties.First();
-            var property2 = root1.Classes.First().Properties.Last();
-            Assert.IsTrue(property1.SameIntent(property2));
-            property1 = root2.Classes.First().Properties.First();
-            property2 = root2.Classes.First().Properties.Last();
-            Assert.IsFalse(property1.SameIntent(property2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string Bar", "public string Bar2");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentPropertyCategory)]
         public void Same_intent_false_with_different_property_return_type()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public string Bar{get; set;}
-                public string Bar{get; set;}
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst("public string Bar", "public int Bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var property1 = root1.Classes.First().Properties.First();
-            var property2 = root1.Classes.First().Properties.Last();
-            Assert.IsTrue(property1.SameIntent(property2));
-            property1 = root2.Classes.First().Properties.First();
-            property2 = root2.Classes.First().Properties.Last();
-            Assert.IsFalse(property1.SameIntent(property2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string Bar", "public int Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentPropertyCategory)]
         public void Same_intent_false_with_different_property_attributes()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                [Foo(""Fred"", bar:3, bar2:""George"")] public string Bar{get; set;}           
-               [Foo(""Fred"", bar:3, bar2:""George"")] public string Bar{get; set;}          
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"bar2:""George""", @"bar2:""GeorgeX""");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var property1 = root1.Classes.First().Properties.First();
-            var property2 = root1.Classes.First().Properties.Last();
-            Assert.IsTrue(property1.SameIntent(property2));
-            property1 = root2.Classes.First().Properties.First();
-            property2 = root2.Classes.First().Properties.Last();
-            Assert.IsFalse(property1.SameIntent(property2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"bar2:""George""", @"bar2:""GeorgeX""");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         // I am not testing all of the modifiers becuase I think it's sufficient to test that once
@@ -587,18 +415,9 @@ namespace RoslynDomTests
             public class Class1 
             {
                [Foo(""Fred"", bar:3, bar2:""George"")] public string Bar{get; set;}           
-            }
-
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var property1 = root1.Classes.First().Properties.First();
-            var property2 = root2.Classes.First().Properties.First();
-            Assert.IsTrue(property1.SameIntent(property2));
-            var csharCodeChanged = csharpCode.ReplaceFirst("get;", "");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharCodeChanged);
-            property2 = root2.Classes.First().Properties.Last();
-            Assert.IsFalse(property1.SameIntent(property2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("get;", "");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentPropertyCategory)]
@@ -608,18 +427,9 @@ namespace RoslynDomTests
             public class Class1 
             {
                [Foo(""Fred"", bar:3, bar2:""George"")] public string Bar{get; set;}           
-            }
-
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var property1 = root1.Classes.First().Properties.First();
-            var property2 = root2.Classes.First().Properties.First();
-            Assert.IsTrue(property1.SameIntent(property2));
-            var csharCodeChanged = csharpCode.ReplaceFirst("set;", "");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharCodeChanged);
-            property2 = root2.Classes.First().Properties.Last();
-            Assert.IsFalse(property1.SameIntent(property2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("set;", "");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentPropertyCategory)]
@@ -629,18 +439,9 @@ namespace RoslynDomTests
             public class Class1 
             {
                public string Bar{get; set;}           
-            }
-
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var property1 = root1.Classes.First().Properties.First();
-            var property2 = root2.Classes.First().Properties.First();
-            Assert.IsTrue(property1.SameIntent(property2));
-            var csharCodeChanged = csharpCode.ReplaceFirst("public string ", "public static string ");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharCodeChanged);
-            property2 = root2.Classes.First().Properties.First();
-            Assert.IsFalse(property1.SameIntent(property2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string ", "public static string ");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentPropertyCategory)]
@@ -650,18 +451,9 @@ namespace RoslynDomTests
             public class Class1 
             {
                public string Bar{get; set;}           
-            }
-
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var property1 = root1.Classes.First().Properties.First();
-            var property2 = root2.Classes.First().Properties.First();
-            Assert.IsTrue(property1.SameIntent(property2));
-            var csharCodeChanged = csharpCode.ReplaceFirst("public string", "public new string");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharCodeChanged);
-            property2 = root2.Classes.First().Properties.Last();
-            Assert.IsFalse(property1.SameIntent(property2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string", "public new string");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
         #endregion
 
@@ -691,132 +483,73 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentFieldCategory)]
         public void Same_intent_false_with_with_different_field_is_new()
         {
-            // This test is currently failing because of a needed fix. 
-            var csharpCode1 = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public string Foo;
-            ";
-            var csharpCode2 = @"
-            public class Class1 
-            {
-                new public string Foo;
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
-            var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Classes.First().Fields.First();
-            Assert.IsFalse(field1.SameIntent(field2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string Foo;", "public new string Foo;");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentFieldCategory)]
         public void Same_intent_false_with_with_different_field_is_const()
         {
-            // This test is currently failing because of a needed fix. 
-            var csharpCode1 = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public static string Foo = ""Fred"";
-            ";
-            var csharpCode2 = @"
-            public class Class1 
-            {
-                public const string Foo = ""Fred"";
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
-            var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Classes.First().Fields.First();
-            Assert.IsFalse(field1.SameIntent(field2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("static", "const");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentFieldCategory)]
         public void Same_intent_false_with_with_different_field_is_volatile()
         {
-            // This test is currently failing because of a needed fix. 
-            var csharpCode1 = @"
-            public class Class1 
-            {
-                public volatile string Foo;
-            ";
-            var csharpCode2 = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public string Foo;
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
-            var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Classes.First().Fields.First();
-            Assert.IsFalse(field1.SameIntent(field2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string Foo;", "public volatile string Foo;");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentFieldCategory)]
         public void Same_intent_false_with_with_different_field_is_readonly()
         {
-            // This test is currently failing because of a needed fix. 
-            var csharpCode1 = @"
-            public class Class1 
-            {
-                public readonly string Foo;
-            ";
-            var csharpCode2 = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public string Foo;
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
-            var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Classes.First().Fields.First();
-            Assert.IsFalse(field1.SameIntent(field2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string Foo;", "public readonly string Foo;");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentFieldCategory)]
         public void Same_intent_false_with_different_field_name()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public string Bar;
-                public string Bar;
-            }
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst("public string Bar", "public string Bar2");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var field1 = root1.Classes.First().Fields.First();
-            var field2 = root1.Classes.First().Fields.Last();
-            Assert.IsTrue(field1.SameIntent(field2));
-            field1 = root2.Classes.First().Fields.First();
-            field2 = root2.Classes.First().Fields.Last();
-            Assert.IsFalse(field1.SameIntent(field2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string Bar", "public string Bar2");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentFieldCategory)]
         public void Same_intent_false_with_different_field_return_type()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                 public string Bar;
-                public string Bar;
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst("public string Bar", "public int Bar");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var field1 = root1.Classes.First().Fields.First();
-            var field2 = root1.Classes.First().Fields.Last();
-            Assert.IsTrue(field1.SameIntent(field2));
-            field1 = root2.Classes.First().Fields.First();
-            field2 = root2.Classes.First().Fields.Last();
-            Assert.IsFalse(field1.SameIntent(field2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("public string Bar", "public int Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentFieldCategory)]
@@ -826,39 +559,21 @@ namespace RoslynDomTests
             public class Class1 
             {
                 public string Bar;
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var field1 = root1.Classes.First().Fields.First();
-            var field2 = root2.Classes.First().Fields.First();
-            Assert.IsTrue(field1.SameIntent(field2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public string Bar", "public static string Bar");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            field2 = root2.Classes.First().Fields.First();
-            Assert.IsFalse(field1.SameIntent(field2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentFieldCategory)]
         public void Same_intent_false_with_different_field_attributes()
         {
-            var csharpCodeGood = @"
+            var csharpCode = @"
             public class Class1 
             {
                [Foo(""Fred"", bar:3, bar2:""George"")] public string Bar;           
-               [Foo(""Fred"", bar:3, bar2:""George"")] public string Bar;         
-            }
-
-            ";
-            var csharpCodeBad = csharpCodeGood.ReplaceFirst(@"bar2:""George""", @"bar2:""GeorgeX""");
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCodeGood);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeBad);
-            var field1 = root1.Classes.First().Fields.First();
-            var field2 = root1.Classes.First().Fields.Last();
-            Assert.IsTrue(field1.SameIntent(field2));
-            field1 = root2.Classes.First().Fields.First();
-            field2 = root2.Classes.First().Fields.Last();
-            Assert.IsFalse(field1.SameIntent(field2));
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"bar2:""George""", @"bar2:""GeorgeX""");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
 
@@ -869,16 +584,21 @@ namespace RoslynDomTests
             public class Class1 
             {
                public string Bar = ""Fred"";           
-               public string Bar = ""Fred2"";           
-               public string Bar;         
-            }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"Fred", @"Fred2");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var fields = root1.Classes.First().Fields.ToArray();
-            Assert.IsTrue(fields[0].SameIntent(fields[0]));
-            Assert.IsFalse(fields[0].SameIntent(fields[1]));
-            Assert.IsFalse(fields[0].SameIntent(fields[2]));
+        [TestMethod, TestCategory(SameIntentFieldCategory)]
+        public void Same_intent_false_with_removed_field_initializers()
+        {
+            var csharpCode = @"
+            public class Class1 
+            {
+               public string Bar = ""Fred"";           
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(@"Bar = ""Fred""", @"Bar");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         #endregion
@@ -893,14 +613,14 @@ namespace RoslynDomTests
             public class Class1 
             {
                 public Class1(){}
-            ";
+            }";
             var csharpCode2 = @"
             public struct Struct1 
             { public Struct1(){} }
             ";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
-            var constr1 = root1.Classes.First().Constructors .First();
+            var constr1 = root1.Classes.First().Constructors.First();
             var constr2 = root2.Structures.First().Constructors.First();
             Assert.IsTrue(constr1.SameIntent(constr2));
         }
@@ -911,85 +631,86 @@ namespace RoslynDomTests
             var csharpCode = @"
             public class Class1 
             {
-                public Class1() {};
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            Assert.AreEqual(1, root1.Classes.First().Constructors.Count());
+                public Class1() {}
+            }";
             var csharpCodeChanged = csharpCode.Replace("public Class1()", "internal Class1()");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentConstructorCategory)]
-        public void Same_intent_false_with_with_different_constructor_parameters()
+        public void Same_intent_false_with_with_different_constructor_parameter_name()
+        {
+            var csharpCode = @"
+            public class Class1 
+            {
+                public Class1(int x) {}
+            }";
+            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            Assert.AreEqual(1, root1.Classes.First().Constructors.Count());
+
+            var csharpCodeChanged = csharpCode.Replace("x", "y");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        public void Same_intent_false_with_with_different_constructor_parameter_type()
         {
             var csharpCode = @"
             public class Class1 
             {
                 public Class1(int x) {};
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual(1, root1.Classes.First().Constructors.Count());
+            }";
+            var csharpCodeChanged = csharpCode.Replace("int", "string");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
-            // parameter name
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            var csharpCodeChanged = csharpCode.Replace("x", "y");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // parameter type
-             root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-             csharpCodeChanged = csharpCode.Replace("int", "string");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // parameter count
-             root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-             csharpCodeChanged = csharpCode.Replace("x", "x, int y");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+        public void Same_intent_false_with_with_different_constructor_parameter_count()
+        {
+            var csharpCode = @"
+            public class Class1 
+            {
+                public Class1(int x) {}
+            }";
+            var csharpCodeChanged = csharpCode.Replace("x", "x, int y");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentConstructorCategory)]
-        public void Same_intent_false_with_with_different_constructor_initializer()
+        public void Same_intent_false_with_with_different_constructor_initializer_removed_base()
         {
             var csharpCode = @"
             public class Class1 
             {
                 public Class1(int x) : base()
-                {};
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual(1, root1.Classes.First().Constructors.Count());
-
-            // not calling base
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+                {}
+            }";
             var csharpCodeChanged = csharpCode.Replace(": base()", "");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
-            // calling this
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.Replace("base()", "this()");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+        [TestMethod, TestCategory(SameIntentConstructorCategory)]
+        public void Same_intent_false_with_with_different_constructor_initializer_base_to_this()
+        {
+            var csharpCode = @"
+            public class Class1 
+            {
+                public Class1(int x) : base()
+                {}
+            } ";
+            var csharpCodeChanged = csharpCode.Replace("base()", "this()");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
-            // passing parameter
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.Replace("base()", "base(x)");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+        [TestMethod, TestCategory(SameIntentConstructorCategory)]
+        public void Same_intent_false_with_with_different_constructor_initializer_add_parameter()
+        {
+            var csharpCode = @"
+            public class Class1 
+            {
+                public Class1(int x) : base()
+                {}
+            }";
+            var csharpCodeChanged = csharpCode.Replace("base()", "base(x)");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentConstructorCategory)]
@@ -999,22 +720,14 @@ namespace RoslynDomTests
             public class Class1 
             {
                 public Class1(int x) : base()
-                {};
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual(1, root1.Classes.First().Constructors.Count());
-
-            // not calling base
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+                {}
+            }";
             var csharpCodeChanged = csharpCode.Replace("public Class1(", "public static Class1(");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-           }
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
         [TestMethod, TestCategory(SameIntentConstructorCategory)]
-        public void Same_intent_false_with_with_different_constructor_statements()
+        public void Same_intent_false_with_with_different_constructor_statements_removed()
         {
             var csharpCode = @"
             public class Class1 
@@ -1022,27 +735,39 @@ namespace RoslynDomTests
                 public Class1(int x) : base()
                 {
                     this.X = x;
-                };
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.AreEqual(1, root1.Classes.First().Constructors.Count());
-
-            // no statements
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            var csharpCodeChanged = csharpCode.Replace("this.X = x;", "");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // changed statement
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.Replace("this.X = x;", "this.Y = x;");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+                }
+            }";
+            var csharpCodeChanged = csharpCode.Replace("this.X = x;\r\n", "");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
+        [TestMethod, TestCategory(SameIntentConstructorCategory)]
+        public void Same_intent_false_with_with_different_constructor_statements_altered()
+        {
+            var csharpCode = @"
+            public class Class1 
+            {
+                public Class1(int x) : base()
+                {
+                    this.X = x;
+                }
+            }";
+            var csharpCodeChanged = csharpCode.Replace("this.X = x;", "this.Y = x;");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentConstructorCategory)]
+        public void Same_intent_false_with_with_different_constructor_base_to_this()
+        {
+            var csharpCode = @"
+            public class Class1 
+            {
+                public Class1(int x) : base()
+                {}
+            }";
+            var csharpCodeChanged = csharpCode.Replace("base()", "this()");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
         #endregion
 
         #region same intent destructor
@@ -1080,7 +805,7 @@ namespace RoslynDomTests
             Assert.Inconclusive();
         }
 
-        [TestMethod, TestCategory(SameIntentConversionOperatorCategory )]
+        [TestMethod, TestCategory(SameIntentConversionOperatorCategory)]
         public void Same_intent_false_with_with_different_conversion_operator_accessiblity()
         {
             Assert.Inconclusive();
@@ -1102,7 +827,7 @@ namespace RoslynDomTests
         #endregion
 
         #region same intent indexer
-        [TestMethod, TestCategory(SameIntentIndexerCategory )]
+        [TestMethod, TestCategory(SameIntentIndexerCategory)]
         public void Same_intent_true_with_same_indexer_declaration_in_different_contexts()
         {
             Assert.Inconclusive();
@@ -1120,9 +845,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentClassCategory)]
         public void Same_intent_true_with_same_class_declaration_in_different_contexts()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 namespace Namespace1
                 {
@@ -1152,9 +874,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentClassCategory)]
         public void Same_intent_true_with_same_class_declaration_with_base_and_type_parameters()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 namespace Namespace1
                 {
@@ -1185,122 +904,85 @@ namespace RoslynDomTests
         public void Same_intent_false_with_different_class_name()
         {
             var csharpCode = @"
-            public class Class1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            public class Class1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Class1", "Class2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
         public void Same_intent_false_with_different_class_base_type()
         {
             var csharpCode = @"
-            public class Class1 :classBase {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            public class Class1 :classBase {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("classBase", "classBase2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
         public void Same_intent_false_with_different_class_type_parameters()
         {
             var csharpCode = @"
-            public class Class1<T1> {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            public class Class1<T1> {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("<T1>", "<T2>");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentClassCategory)]
+        public void Same_intent_false_with_different_class_type_parameters_with_constraints()
+        {
+            var csharpCode = @"
+            public class Class1 < T1 >
+                where T1 : Foo
+            {}";
+            var csharpCodeChanged = csharpCode.Replace("T1", "T2");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentClassCategory)]
+        public void Same_intent_false_with_different_class_type_parameters_with_many_constraints()
+        {
+            var csharpCode = @"
+            public class Class1<T1>
+                where T1 : class,Foo<T1>, IFoo, new()
+            {}";
+            var csharpCodeChanged = csharpCode.Replace("T1", "T2");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
         public void Same_intent_false_with_different_class_access_modifiers()
         {
             var csharpCode = @"
-            public class Class1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            public class Class1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "protected internal");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
         public void Same_intent_false_with_different_class_static_modifiers()
         {
             var csharpCode = @"
-                    public class Class1 {}
-                    ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+                    public class Class1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "public static ");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
         public void Same_intent_false_with_different_class_sealed_modifiers()
         {
             var csharpCode = @"
-                    public class Class1 {}
-                    ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+                    public class Class1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "public sealed ");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
         public void Same_intent_false_with_different_class_abstract_modifiers()
         {
             var csharpCode = @"
-            public class Class1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            public class Class1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "public abstract ");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
@@ -1308,18 +990,9 @@ namespace RoslynDomTests
         {
             var csharpCode = @"
             [Foo(var:""Sam"")]
-            public class Class1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            public class Class1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst(@"var:""Sam""", @"var:""George""");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
@@ -1329,18 +1002,9 @@ namespace RoslynDomTests
             public class Class1 
             {
                 public string Bar{ get;}
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Bar", "Bar2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
@@ -1349,20 +1013,11 @@ namespace RoslynDomTests
             var csharpCode = @"
             public class Class1 
             {
-                [Foo()]
+                [Foo]
                 public string Bar{ get;}
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Foo", "Foo2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
@@ -1372,17 +1027,9 @@ namespace RoslynDomTests
             public class Class1 
             {
                 public class Class2 {}
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Class2", "Class3");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
@@ -1390,17 +1037,9 @@ namespace RoslynDomTests
         {
             var csharpCode = @"
             public class Class1 : ClassB, IWhatever
-            {  }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
+            {  }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("IWhatever", "IWhatever2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
@@ -1411,15 +1050,8 @@ namespace RoslynDomTests
             { 
                 public interface Interface1{ }
             }           ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
             var csharpCodeChanged = csharpCode.ReplaceFirst("Interface1", "Interface2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentClassCategory)]
@@ -1430,15 +1062,8 @@ namespace RoslynDomTests
             { 
                 public enum Enum1{ red, yellow, blue }
             }           ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var class1 = root1.RootClasses.First();
-            var class2 = root2.RootClasses.First();
-            Assert.IsTrue(class1.SameIntent(class2));
             var csharpCodeChanged = csharpCode.ReplaceFirst("Enum1", "Enum2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            class2 = root2.RootClasses.First();
-            Assert.IsFalse(class1.SameIntent(class2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
         #endregion
 
@@ -1475,9 +1100,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentStructureCategory)]
         public void Same_intent_true_with_same_structure_declaration_with_type_parameters()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 namespace Namespace1
                 {
@@ -1508,52 +1130,26 @@ namespace RoslynDomTests
         public void Same_intent_false_with_different_structure_name()
         {
             var csharpCode = @"
-            public struct Structure1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var structure1 = root1.RootStructures.First();
-            var structure2 = root2.RootStructures.First();
-            Assert.IsTrue(structure1.SameIntent(structure2));
+            public struct Structure1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Structure1", "Structure2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            structure2 = root2.RootStructures.First();
-            Assert.IsFalse(structure1.SameIntent(structure2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStructureCategory)]
         public void Same_intent_false_with_different_structure_type_parameters()
         {
             var csharpCode = @"
-            public struct Structure1<T1> {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var structure1 = root1.RootStructures.First();
-            var structure2 = root2.RootStructures.First();
-            Assert.IsTrue(structure1.SameIntent(structure2));
+            public struct Structure1<T1> {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("<T1>", "<T2>");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            structure2 = root2.RootStructures.First();
-            Assert.IsFalse(structure1.SameIntent(structure2));
-
         }
 
         [TestMethod, TestCategory(SameIntentStructureCategory)]
         public void Same_intent_false_with_different_structure_access_modifiers()
         {
             var csharpCode = @"
-            public struct Structure1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var structure1 = root1.RootStructures.First();
-            var structure2 = root2.RootStructures.First();
-            Assert.IsTrue(structure1.SameIntent(structure2));
+            public struct Structure1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "protected internal");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            structure2 = root2.RootStructures.First();
-            Assert.IsFalse(structure1.SameIntent(structure2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStructureCategory)]
@@ -1561,17 +1157,9 @@ namespace RoslynDomTests
         {
             var csharpCode = @"
             [Foo(var:""Sam"")]
-            public struct Structure1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var structure1 = root1.RootStructures.First();
-            var structure2 = root2.RootStructures.First();
-            Assert.IsTrue(structure1.SameIntent(structure2));
+            public struct Structure1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst(@"var:""Sam""", @"var:""George""");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            structure2 = root2.RootStructures.First();
-            Assert.IsFalse(structure1.SameIntent(structure2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStructureCategory)]
@@ -1581,17 +1169,10 @@ namespace RoslynDomTests
             public struct Structure1 
             {
                 private int Foo;
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var structure1 = root1.RootStructures.First();
-            var structure2 = root2.RootStructures.First();
-            Assert.IsTrue(structure1.SameIntent(structure2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Foo;", "Foo, Foo2;");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            structure2 = root2.RootStructures.First();
-            Assert.IsFalse(structure1.SameIntent(structure2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
 
 
@@ -1602,17 +1183,9 @@ namespace RoslynDomTests
             public struct Structure1 
             {
                 public struct Structure2 {}
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var structure1 = root1.RootStructures.First();
-            var structure2 = root2.RootStructures.First();
-            Assert.IsTrue(structure1.SameIntent(structure2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Structure2", "Structure3");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            structure2 = root2.RootStructures.First();
-            Assert.IsFalse(structure1.SameIntent(structure2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStructureCategory)]
@@ -1620,17 +1193,9 @@ namespace RoslynDomTests
         {
             var csharpCode = @"
             public struct Structure1 : IWhatever
-            {  }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var structure1 = root1.RootStructures.First();
-            var structure2 = root2.RootStructures.First();
-            Assert.IsTrue(structure1.SameIntent(structure2));
+            {  }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("IWhatever", "IWhatever2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            structure2 = root2.RootStructures.First();
-            Assert.IsFalse(structure1.SameIntent(structure2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
         #endregion
 
@@ -1638,9 +1203,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentInterfaceCategory)]
         public void Same_intent_true_with_same_interface_declaration_in_different_contexts()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 namespace Namespace1
                 {
@@ -1670,9 +1232,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentInterfaceCategory)]
         public void Same_intent_true_with_same_interface_declaration_with_base_and_type_parameters()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 namespace Namespace1
                 {
@@ -1703,68 +1262,36 @@ namespace RoslynDomTests
         public void Same_intent_false_with_different_interface_name()
         {
             var csharpCode = @"
-            public interface Interface1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var interface1 = root1.RootInterfaces.First();
-            var interface2 = root2.RootInterfaces.First();
-            Assert.IsTrue(interface1.SameIntent(interface2));
+            public interface Interface1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Interface1", "Interface2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            interface2 = root2.RootInterfaces.First();
-            Assert.IsFalse(interface1.SameIntent(interface2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentInterfaceCategory)]
         public void Same_intent_false_with_different_interface_base_type()
         {
             var csharpCode = @"
-            public interface Interface1  : baseInterface {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var interface1 = root1.RootInterfaces.First();
-            var interface2 = root2.RootInterfaces.First();
-            Assert.IsTrue(interface1.SameIntent(interface2));
+            public interface Interface1  : baseInterface {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("baseInterface", "baseInterface2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            interface2 = root2.RootInterfaces.First();
-            Assert.IsFalse(interface1.SameIntent(interface2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentInterfaceCategory)]
         public void Same_intent_false_with_different_interface_type_parameters()
         {
             var csharpCode = @"
-            public interface Interface1<T1, T2> {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var interface1 = root1.RootInterfaces.First();
-            var interface2 = root2.RootInterfaces.First();
-            Assert.IsTrue(interface1.SameIntent(interface2));
+            public interface Interface1<T1, T2> {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("T2", "T3");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            interface2 = root2.RootInterfaces.First();
-            Assert.IsFalse(interface1.SameIntent(interface2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentInterfaceCategory)]
         public void Same_intent_false_with_different_interface_access_modifiers()
         {
             var csharpCode = @"
-            public interface Interface1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var interface1 = root1.RootInterfaces.First();
-            var interface2 = root2.RootInterfaces.First();
-            Assert.IsTrue(interface1.SameIntent(interface2));
+            public interface Interface1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "protected");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            interface2 = root2.RootInterfaces.First();
-            Assert.IsFalse(interface1.SameIntent(interface2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentInterfaceCategory)]
@@ -1772,17 +1299,9 @@ namespace RoslynDomTests
         {
             var csharpCode = @"
             [Foo(var:""Sam"")]
-            public interface Interface1 {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var interface1 = root1.RootInterfaces.First();
-            var interface2 = root2.RootInterfaces.First();
-            Assert.IsTrue(interface1.SameIntent(interface2));
+            public interface Interface1 {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Foo", "Foo2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            interface2 = root2.RootInterfaces.First();
-            Assert.IsFalse(interface1.SameIntent(interface2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentInterfaceCategory)]
@@ -1792,17 +1311,8 @@ namespace RoslynDomTests
             public interface Interface1 
             {
                 void Foo();
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var interface1 = root1.RootInterfaces.First();
-            var interface2 = root2.RootInterfaces.First();
-            Assert.IsTrue(interface1.SameIntent(interface2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("void", "int");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            interface2 = root2.RootInterfaces.First();
-            Assert.IsFalse(interface1.SameIntent(interface2));
         }
 
 
@@ -1811,17 +1321,9 @@ namespace RoslynDomTests
         {
             var csharpCode = @"
             public interface Interface1 : IWhatever
-            {  }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var interface1 = root1.RootInterfaces.First();
-            var interface2 = root2.RootInterfaces.First();
-            Assert.IsTrue(interface1.SameIntent(interface2));
+            {  }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("IWhatever", "IWhatever2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            interface2 = root2.RootInterfaces.First();
-            Assert.IsFalse(interface1.SameIntent(interface2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
         #endregion
 
@@ -1830,9 +1332,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentEnumCategory)]
         public void Same_intent_true_with_same_enum_declaration_in_different_contexts()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 namespace Namespace1
                 {
@@ -1863,9 +1362,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentEnumCategory)]
         public void Same_intent_true_with_same_enum_declaration_with_base_and_type_parameters()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 namespace Namespace1
                 {
@@ -1897,121 +1393,70 @@ namespace RoslynDomTests
         public void Same_intent_false_with_different_enum_name()
         {
             var csharpCode = @"
-            public enum Colors {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var enum1 = root1.RootEnums.First();
-            var enum2 = root2.RootEnums.First();
-            Assert.IsTrue(enum1.SameIntent(enum2));
+            public enum Colors {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Colors", "Colors2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            enum2 = root2.RootEnums.First();
-            Assert.IsFalse(enum1.SameIntent(enum2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
-
 
         [TestMethod, TestCategory(SameIntentEnumCategory)]
         public void Same_intent_false_with_different_enum_underlying_type()
         {
             var csharpCode = @"
             public enum Colors : int
-            {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var enum1 = root1.RootEnums.First();
-            var enum2 = root2.RootEnums.First();
-            Assert.IsTrue(enum1.SameIntent(enum2));
+            {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("int", "long");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            enum2 = root2.RootEnums.First();
-            Assert.IsFalse(enum1.SameIntent(enum2));
         }
 
         [TestMethod, TestCategory(SameIntentEnumCategory)]
         public void Same_intent_false_with_different_enum_attribute()
         {
             var csharpCode = @"
-            [Fred()]
+            [Fred]
             public enum Colors : int
-            {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var enum1 = root1.RootEnums.First();
-            var enum2 = root2.RootEnums.First();
-            Assert.IsTrue(enum1.SameIntent(enum2));
+            {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Fred", "George");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            enum2 = root2.RootEnums.First();
-            Assert.IsFalse(enum1.SameIntent(enum2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
-
 
         [TestMethod, TestCategory(SameIntentEnumCategory)]
         public void Same_intent_false_with_different_enum_accessibliity()
         {
             var csharpCode = @"
-            [Fred()]
+            [Fred]
             public enum Colors : int
-            {}
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var enum1 = root1.RootEnums.First();
-            var enum2 = root2.RootEnums.First();
-            Assert.IsTrue(enum1.SameIntent(enum2));
+            {}";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "internal");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            enum2 = root2.RootEnums.First();
-            Assert.IsFalse(enum1.SameIntent(enum2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentEnumCategory)]
         public void Same_intent_false_with_different_enum_members()
         {
             var csharpCode = @"
-            [Fred()]
+            [Fred]
             public enum Colors : int
             {
                 Red,
                 Yellow,
                 Blue
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var enum1 = root1.RootEnums.First();
-            var enum2 = root2.RootEnums.First();
-            Assert.IsTrue(enum1.SameIntent(enum2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Yellow", "Yellow2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            enum2 = root2.RootEnums.First();
-            Assert.IsFalse(enum1.SameIntent(enum2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentEnumCategory)]
         public void Same_intent_false_with_different_enum_stated_values()
         {
             var csharpCode = @"
-            [Fred()]
+            [Fred]
             public enum Colors : int
             {
                 Red = 1,
                 Yellow = 2,
                 Blue
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var enum1 = root1.RootEnums.First();
-            var enum2 = root2.RootEnums.First();
-            Assert.IsTrue(enum1.SameIntent(enum2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("2", "3");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            enum2 = root2.RootEnums.First();
-            Assert.IsFalse(enum1.SameIntent(enum2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
         #endregion
 
@@ -2027,17 +1472,10 @@ namespace RoslynDomTests
                     {
                         void Foo();
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var namespace1 = root1.DescendantNamespaces.First();
-            var namespace2 = root2.DescendantNamespaces.First();
-            Assert.IsTrue(namespace1.SameIntent(namespace2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "private");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            namespace2 = root2.DescendantNamespaces.First();
-            Assert.IsFalse(namespace1.SameIntent(namespace2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
 
         [TestMethod, TestCategory(SameIntentNamespaceCategory)]
@@ -2050,17 +1488,10 @@ namespace RoslynDomTests
                     {
                         void Foo();
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var namespace1 = root1.DescendantNamespaces.First();
-            var namespace2 = root2.DescendantNamespaces.First();
-            Assert.IsTrue(namespace1.SameIntent(namespace2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Namespace0", "NamespaceA");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            namespace2 = root2.DescendantNamespaces.First();
-            Assert.IsFalse(namespace1.SameIntent(namespace2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
 
         [TestMethod, TestCategory(SameIntentNamespaceCategory)]
@@ -2073,20 +1504,11 @@ namespace RoslynDomTests
                     {
                         void Foo();
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var namespace1 = root1.DescendantNamespaces.First();
-            var namespace2 = root2.DescendantNamespaces.First();
-            Assert.IsTrue(namespace1.SameIntent(namespace2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("void", "int");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            namespace2 = root2.DescendantNamespaces.First();
-            Assert.IsFalse(namespace1.SameIntent(namespace2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
-
-
         #endregion
 
         #region same intent root
@@ -2094,9 +1516,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentRootCategory)]
         public void Same_intent_true_with_same_root_declaration_in_different_contexts()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 namespace Namespace0
                 {
@@ -2134,14 +1553,10 @@ namespace RoslynDomTests
                     {
                         void Foo();
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("public", "private");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
 
         [TestMethod, TestCategory(SameIntentRootCategory)]
@@ -2156,14 +1571,10 @@ namespace RoslynDomTests
                     }
                 }
             ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
             var csharpCodeChanged = csharpCode.ReplaceFirst("Namespace0", "NamespaceA");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
-
 
         [TestMethod, TestCategory(SameIntentRootCategory)]
         public void Same_intent_false_with_different_root_name()
@@ -2194,14 +1605,10 @@ namespace RoslynDomTests
                     {
                         void Foo();
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("void", "int");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
 
         [TestMethod, TestCategory(SameIntentRootCategory)]
@@ -2215,14 +1622,10 @@ namespace RoslynDomTests
                     {
                         void Foo();
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("Fred", "Wilma");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
         #endregion
 
@@ -2231,9 +1634,6 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(SameIntentUsingsCategory)]
         public void Same_intent_true_with_same_using_in_different_contexts()
         {
-            // This test presents a fundamental question - should SameIntent include the 
-            // context. I'm saying no, because there are use cases that go across files -
-            // variation of find clone and code evaluation for template creation
             var csharpCode1 = @"
                 
                 using System;
@@ -2277,14 +1677,10 @@ namespace RoslynDomTests
                     {
                         void Foo();
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
+            // TODO: Check namespace after grouping them - remove true
             var csharpCodeChanged = csharpCode.ReplaceFirst("Collections", "Collections.Generic");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
 
         [TestMethod, TestCategory(SameIntentRootCategory)]
@@ -2299,14 +1695,10 @@ namespace RoslynDomTests
                     {
                         void Foo();
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("B", "B2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            // TODO: Check namespace after grouping them - remove true
+            AssertSameIntent(false, csharpCode, csharpCodeChanged, true);
         }
 
         #endregion
@@ -2353,44 +1745,49 @@ namespace RoslynDomTests
                 {
                     public void Foo()
                     { x = y + 2; }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("x = y + 2;", "Console.WriteLine();");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
-         [TestMethod, TestCategory(SameIntentStatementCategory)]
-        public void Same_intent_false_with_changed_assignment_statements()
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_assignment_statement_expression()
         {
             var csharpCode = @"
                 public class ClassA 
                 {
                     public void Foo()
                     { x = y + 2; }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("y + 2", "z + 2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("x", "z");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_assignment_statement_variable()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                    public void Foo()
+                    { x = y + 2; }
+                }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("x", "z");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
 
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("=", "+=");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+        }
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_assignment_statement_operator()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                    public void Foo()
+                    { x = y + 2; }
+                }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("=", "+=");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
@@ -2407,17 +1804,11 @@ namespace RoslynDomTests
                         var x = 42;
                         }
                     }
-                }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("x = y + 3;", "XXX;")
                         .ReplaceFirst("Console.WriteLine();", "x = y + 2;")
                         .ReplaceFirst("XXX;", "Console.WriteLine();");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
@@ -2435,15 +1826,9 @@ namespace RoslynDomTests
                         var x = 42;
                         }
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("checked", "unchecked");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
@@ -2461,19 +1846,13 @@ namespace RoslynDomTests
                         var x = 42;
                         }
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("loopVar", "loopVar2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
-        public void Same_intent_false_with_changed_for_statements()
+        public void Same_intent_false_with_changed_for_statements_initializer()
         {
             var csharpCode = @"
                 public class ClassA 
@@ -2487,24 +1866,34 @@ namespace RoslynDomTests
                         var x = 42;
                         }
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("0", "1");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-             root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-             csharpCodeChanged = csharpCode.ReplaceFirst("i++", "i--");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
-        public void Same_intent_false_with_if_for_statements()
+        public void Same_intent_false_with_changed_for_statement_iterator()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        for (int i = 0; i < length; i++)
+                        {
+                        x = y + 2;
+                        Console.WriteLine();
+                        var x = 42;
+                        }
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("i++", "i--");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_if_statement_statement()
         {
             var csharpCode = @"
                 public class ClassA 
@@ -2516,36 +1905,64 @@ namespace RoslynDomTests
                     else if (x == 2) { return c; }
                     else  { return d; }
                     }
-            }
-            ";
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst(" b", " b2");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_if_condition()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                    if (x == 1) { return a; }
+                    else if (x == 1) { return b; }
+                    else if (x == 2) { return c; }
+                    else  { return d; }
+                    }
+            }";
 
-   
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            var csharpCodeChanged = csharpCode.ReplaceFirst("b", "b2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("x == 1", "x == 11");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("x == 2", "x == 12");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("d", "d2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            var csharpCodeChanged = csharpCode.ReplaceFirst("x == 1", "x == 11");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_else_statmemnt()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                    if (x == 1) { return a; }
+                    else if (x == 1) { return b; }
+                    else if (x == 2) { return c; }
+                    else  { return d; }
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("d", "d2");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_else_condition()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                    if (x == 1) { return a; }
+                    else if (x == 1) { return b; }
+                    else if (x == 2) { return c; }
+                    else  { return d; }
+                    }
+            }";
+
+            var csharpCodeChanged = csharpCode.ReplaceFirst("x == 2", "x == 12");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
         [TestMethod, TestCategory(SameIntentStatementCategory)]
         public void Same_intent_false_with_changed_invocation_statements()
         {
@@ -2556,15 +1973,9 @@ namespace RoslynDomTests
                    { 
                         Console.Writeline(42);
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("42", "43");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
@@ -2577,23 +1988,18 @@ namespace RoslynDomTests
                    { 
                         lock (thisLock)
                         {
-                        x = y + 2;
-                        Console.WriteLine();
-                        var x = 42;
+                            x = y + 2;
+                            Console.WriteLine();
+                            var x = 42;
                         }
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("thisLock", "thatLock");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
-        public void Same_intent_false_with_changed_object_creation_expression()
+        public void Same_intent_false_with_changed_object_creation_expression_parameter()
         {
             var csharpCode = @"
                 public class ClassA 
@@ -2602,22 +2008,25 @@ namespace RoslynDomTests
                    { 
                         z = new Bar(x, y);
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("x", "x2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("x, y", "y, x");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-         }
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_object_creation_expression_parameter_order()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        z = new Bar(x, y);
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("x, y", "y, x");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
         public void Same_intent_false_with_changed_return_statements()
@@ -2629,24 +2038,13 @@ namespace RoslynDomTests
                    { 
                         return x;
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-           Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("x", "42");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            var method1 = root1.Classes.First().Methods.First();
-            var method2 = root2.Classes.First().Methods.First();
-            var statement1 = root1.Classes.First().Methods.First().Statements.First();
-            var statement2 = root2.Classes.First().Methods.First().Statements.First();
-            Assert.IsFalse(statement1.SameIntent(statement2));
-            Assert.IsFalse(method1.SameIntent(method2));
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
-        public void Same_intent_false_with_changed_throw_statements()
+        public void Same_intent_false_with_changed_throw_statements_exception()
         {
             var csharpCode = @"
                 public class ClassA 
@@ -2655,20 +2053,24 @@ namespace RoslynDomTests
                    { 
                         throw new InvalidOperationException();
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("InvalidOperationException", "NotImplementedException");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("tion()", "tion(42)");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_throw_statement_exception_parameter()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        throw new InvalidOperationException();
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("tion()", "tion(42)");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
@@ -2689,61 +2091,112 @@ namespace RoslynDomTests
                         { Console.WriteLine(ex2); }
                         finally { Console.WriteLine(42);}
                     }
-            }
-            ";
+            }";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var root2 = root1.Copy();
             var statement1 = root1.Classes.First().Methods.First().Statements.First() as ITryStatement;
 
-            // statements
-            Assert.IsTrue(root1.SameIntent(root2));
             var csharpCodeChanged = csharpCode.ReplaceFirst("32", "320");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            var statement2 = root2.Classes.First().Methods.First().Statements.First() as ITryStatement;
-            Assert.IsFalse(statement1.SameIntent(statement2));
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // finally
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("42", "420");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            statement2 = root2.Classes.First().Methods.First().Statements.First() as ITryStatement;
-            Assert.IsFalse(statement1.SameIntent(statement2));
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // finally removed
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("finally", "// finally");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // catch changed
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("ex1", "ex1B");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // catch added
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("catch (Not",
-               @"
-                        catch (DivideByZeroException ex3)
-                        { Console.WriteLine(ex3); }
-                        catch (Not");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            var statement = root2.Classes.First().Methods.First().Statements.First();
-            var tryStatement = statement as ITryStatement;
-            Assert.IsNotNull(tryStatement);
-            Assert.AreEqual(3, tryStatement.Catches.Count());
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
-        public void Same_intent_false_with_changed_using_statements()
+        public void Same_intent_false_with_changed_try_finally_statement()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        try
+                        {
+                            var x = 32;
+                        }
+                        catch (InvalidOperationException ex1)
+                        { Console.WriteLine(ex1); }
+                        catch (NotImplementedException)
+                        { Console.WriteLine(ex2); }
+                        finally { Console.WriteLine(42);}
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("42", "420");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_try_finally_removed()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        try
+                        {
+                            var x = 32;
+                        }
+                        catch (InvalidOperationException ex1)
+                        { Console.WriteLine(ex1); }
+                        catch (NotImplementedException)
+                        { Console.WriteLine(ex2); }
+                        finally { Console.WriteLine(42);}
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("finally", "// finally");
+        }
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_try_catch_variable_name()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        try
+                        {
+                            var x = 32;
+                        }
+                        catch (InvalidOperationException ex1)
+                        { Console.WriteLine(ex1); }
+                        catch (NotImplementedException)
+                        { Console.WriteLine(ex2); }
+                        finally { Console.WriteLine(42);}
+                    }
+            }";
+
+            var csharpCodeChanged = csharpCode.ReplaceFirst("ex1", "ex1B");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_try_catch_added()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        try
+                        {
+                            var x = 32;
+                        }
+                        catch (InvalidOperationException ex1)
+                        { Console.WriteLine(ex1); }
+                        catch (NotImplementedException)
+                        { Console.WriteLine(ex2); }
+                        finally { Console.WriteLine(42);}
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("catch (Not",
+                         @"catch (DivideByZeroException ex3)
+                        { Console.WriteLine(ex3); }
+                        catch (Not");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_using_statement_variable()
         {
             var csharpCode = @"
                 public class ClassA 
@@ -2757,20 +2210,76 @@ namespace RoslynDomTests
                         var x = 42;
                         }
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
+            }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("x", "y");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
 
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("Thing", "Thing2");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_using_statement_initialization()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        using (conn.BeginTransaction())
+                        {
+                            x = y + 2;
+                            Console.WriteLine();
+                            var x = 42;
+                        }
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("conn", "conAir");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_variable_initializer()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        var x = 42;
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("42", "43");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_variable_implicit()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        var x = 42;
+                    }
+            }";
+
+            var csharpCodeChanged = csharpCode.ReplaceFirst("var", "int");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
+        }
+
+        [TestMethod, TestCategory(SameIntentStatementCategory)]
+        public void Same_intent_false_with_changed_variable_constant()
+        {
+            var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        int x = 42;
+                    }
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("int", "const int");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
@@ -2781,40 +2290,11 @@ namespace RoslynDomTests
                 {
                    public void Foo()
                    { 
-                        var x = 42;
+                        int x = 42;
                     }
-            }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-
-            // initializer
-            var root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            var csharpCodeChanged = csharpCode.ReplaceFirst("42", "43");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // implicit typing
-            root2 = root1.Copy();
-            Assert.IsTrue(root1.SameIntent(root2));
-            csharpCodeChanged = csharpCode.ReplaceFirst("var", "int");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
-
-            // is const - deliberately comparing to previous
-            var  root3 = root2.Copy();
-            Assert.IsTrue(root2.SameIntent(root3));
-            csharpCodeChanged = csharpCode.ReplaceFirst("int", "const int");
-            root3 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root2.SameIntent(root3));
-
-            // type - still deliberately comparing to previous
-            root3 = root2.Copy();
-            Assert.IsTrue(root2.SameIntent(root3));
-            csharpCodeChanged = csharpCode.ReplaceFirst("int", "long");
-            root3 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root2.SameIntent(root3));
-
+            }";
+            var csharpCodeChanged = csharpCode.ReplaceFirst("int", "long");
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
@@ -2878,9 +2358,7 @@ namespace RoslynDomTests
                             var x = y + 42;
                         } 
                     }
-                }
-              
-            ";
+                }";
             var csharpCode2 = @"
                     public struct Structure1
                     { 
@@ -2889,9 +2367,7 @@ namespace RoslynDomTests
                             var x = y + 42;
                             }
                         } 
-                    }
-
-            ";
+                    }";
             var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
             var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
             var statement1 = root1.Descendants.OfType<IDeclarationStatement>().First();
@@ -2914,15 +2390,9 @@ namespace RoslynDomTests
                             var x = y + 42;
                         } 
                     }
-                }
-              
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst(" y + 42", "Console.WriteLine()");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         [TestMethod, TestCategory(SameIntentStatementCategory)]
@@ -2938,15 +2408,9 @@ namespace RoslynDomTests
                             var x = y + 42;
                         } 
                     }
-                }
-              
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            Assert.IsTrue(root1.SameIntent(root2));
+                }";
             var csharpCodeChanged = csharpCode.ReplaceFirst("42", "3.14");
-            root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-            Assert.IsFalse(root1.SameIntent(root2));
+            AssertSameIntent(false, csharpCode, csharpCodeChanged);
         }
 
         #endregion
@@ -2958,19 +2422,11 @@ namespace RoslynDomTests
         {
             var csharpCode1 = @"
                 namespace Namespace0
-                {   }
-            ";
+                {   }";
             var csharpCode2 = @"
                 public interface Interface1 
-                { }
-            ";
-            var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
-            var nspace = root1.ChildNamespaces.First();
-            var class2 = root2.Interfaces.First();
-            Assert.IsFalse(nspace.SameIntent(class2));
-            //var sameIntent = new SameIntent_IDom();
-            //Assert.IsFalse(sameIntent.SameIntent(class2, nspace, true));
+                { }";
+            AssertSameIntent(false, csharpCode1, csharpCode2);
         }
 
         [TestMethod, TestCategory(SameIntentSpecialCategory)]
@@ -3010,6 +2466,24 @@ namespace RoslynDomTests
             Assert.IsTrue(StandardSameIntent.CheckSameIntent<IClass>(null, null));
         }
         #endregion
+
+        private void AssertSameIntent(bool shouldMatch, string initial, string changed, bool skipBuildSyntax = false)
+        {
+            var root1 = RDomCSharp.Factory.GetRootFromString(initial);
+            var root1Copy = root1.Copy();
+            Assert.IsTrue(root1.SameIntent(root1Copy), "Initial didn't match copy");
+            var root2 = RDomCSharp.Factory.GetRootFromString(changed);
+            var root2Copy = root2.Copy();
+            Assert.IsTrue(root2.SameIntent(root2Copy), "Changed didn't match copy");
+            Assert.AreEqual(shouldMatch, root1.SameIntent(root2), "Initial to Changed match wrong");
+            if (!skipBuildSyntax)
+            {
+                var output1 = RDomCSharp.Factory.BuildSyntax(root1);
+                Assert.AreEqual(initial, output1.ToFullString(), "BuildSyntax for initial didn't match");
+                var output2 = RDomCSharp.Factory.BuildSyntax(root2);
+                Assert.AreEqual(changed, output2.ToFullString(), "BuildSyntax for changed didn't match");
+            }
+        }
 
     }
 }

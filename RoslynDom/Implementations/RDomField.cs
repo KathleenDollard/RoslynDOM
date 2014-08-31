@@ -18,13 +18,15 @@ namespace RoslynDom
     /// </remarks>
     public class RDomField : RDomBase<IField, IFieldSymbol>, IField
     {
-        private AttributeList _attributes = new AttributeList();
+        private AttributeCollection _attributes = new AttributeCollection();
 
         public RDomField(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         {
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+           "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomField(RDomField oldRDom)
             : base(oldRDom)
         {
@@ -34,8 +36,12 @@ namespace RoslynDom
             ReturnType = oldRDom.ReturnType;
             IsStatic = oldRDom.IsStatic;
             IsReadOnly = oldRDom.IsReadOnly;
-            IsConstant  = oldRDom.IsConstant;
+            IsConstant = oldRDom.IsConstant;
+            IsVolatile  = oldRDom.IsVolatile;
             IsNew = oldRDom.IsNew;
+            Initializer = oldRDom.Initializer== null
+                            ? null
+                            : oldRDom.Initializer.Copy();
         }
 
         public string Name { get; set; }
@@ -44,7 +50,7 @@ namespace RoslynDom
         { get { return RoslynUtilities.GetOuterName(this); } }
 
 
-        public AttributeList Attributes
+        public AttributeCollection Attributes
         { get { return _attributes; } }
 
         public AccessModifier AccessModifier { get; set; }
@@ -64,11 +70,11 @@ namespace RoslynDom
             get { return MemberKind.Field; }
         }
 
-        public override object RequestValue(string name)
+        public override object RequestValue(string propertyName)
         {
-            if (name == "TypeName")
+            if (propertyName == "TypeName")
             { return ReturnType.QualifiedName; }
-            return base.RequestValue(name);
+            return base.RequestValue(propertyName);
         }
 
         public IStructuredDocumentation StructuredDocumentation { get; set; }
