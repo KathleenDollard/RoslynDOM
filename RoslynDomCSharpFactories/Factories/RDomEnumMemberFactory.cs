@@ -54,7 +54,7 @@ namespace RoslynDom.CSharp
         }
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-        {
+      {
             var itemAsT = item as IEnumMember;
             Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
 

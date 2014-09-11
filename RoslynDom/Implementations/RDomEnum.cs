@@ -14,11 +14,11 @@ namespace RoslynDom
         private RDomCollection<IEnumMember> _values;
 
         public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
-           : base(rawItem, parent, model)
+            : base(rawItem, parent, model)
         { Initialize(); }
 
         internal RDomEnum(RDomEnum oldRDom)
-             : base(oldRDom)
+            : base(oldRDom)
         {
             Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
@@ -29,9 +29,29 @@ namespace RoslynDom
             UnderlyingType = oldRDom.UnderlyingType;
         }
 
-        protected  void Initialize()
+        protected void Initialize()
         {
             _values = new RDomCollection<IEnumMember>(this);
+        }
+
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = base.Children.ToList();
+                list.AddRange(_values);
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = base.Descendants.ToList();
+                 list.AddRange(Children); 
+                return list;
+            }
         }
 
         public AttributeCollection Attributes
@@ -44,9 +64,6 @@ namespace RoslynDom
 
         public string QualifiedName
         { get { return RoslynUtilities.GetQualifiedName(this); } }
-
-        public string ContainingTypeName
-        { get { return RoslynDomUtilities.GetContainingTypeName(this.Parent); } }
 
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
@@ -65,16 +82,10 @@ namespace RoslynDom
         public IReferencedType UnderlyingType { get; set; }
 
         public MemberKind MemberKind
-        {
-            get { return MemberKind.Enum; }
-
-        }
+        { get { return MemberKind.Enum; } }
 
         public StemMemberKind StemMemberKind
-        {
-            get { return StemMemberKind.Enum; }
-
-        }
+        { get { return StemMemberKind.Enum; } }
 
         public IStructuredDocumentation StructuredDocumentation { get; set; }
 

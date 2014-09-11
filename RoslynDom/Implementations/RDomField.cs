@@ -46,8 +46,8 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
-        public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
+        //public string OuterName
+        //{ get { return RoslynUtilities.GetOuterName(this); } }
 
 
         public AttributeCollection Attributes
@@ -70,14 +70,7 @@ namespace RoslynDom
             get { return MemberKind.Field; }
         }
 
-        public override object RequestValue(string propertyName)
-        {
-            if (propertyName == "TypeName")
-            { return ReturnType.QualifiedName; }
-            return base.RequestValue(propertyName);
-        }
-
-        public IStructuredDocumentation StructuredDocumentation { get; set; }
+         public IStructuredDocumentation StructuredDocumentation { get; set; }
 
         public string Description { get ; set;}
     }

@@ -28,12 +28,11 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
-        public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
+        //public string OuterName
+        //{ get { return RoslynUtilities.GetOuterName(this); } }
 
 
         public IExpression Expression { get; set; }
 
-        public string Description { get; set; }
     }
 }

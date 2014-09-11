@@ -65,8 +65,8 @@ namespace RoslynDom
         }
 
         public string Name { get; set; }
-        public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
+        //public string OuterName
+        //{ get { return RoslynUtilities.GetOuterName(this); } }
         public ConstructorInitializerType ConstructorInitializerType { get; set; }
         public RDomCollection<IArgument> InitializationArguments
         { get { return _initializationArguments; } }

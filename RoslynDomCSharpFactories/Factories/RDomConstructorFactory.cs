@@ -93,7 +93,8 @@ namespace RoslynDom.CSharp
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
             var node = SyntaxFactory.ConstructorDeclaration(nameSyntax)
                             .WithModifiers(modifiers);
-            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
+
+         node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }

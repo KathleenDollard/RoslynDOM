@@ -41,7 +41,6 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
             newItem.Operator  = Mappings.OperatorFromCSharpKind(syntax.OperatorToken.CSharpKind());
 
             var returnType = Corporation

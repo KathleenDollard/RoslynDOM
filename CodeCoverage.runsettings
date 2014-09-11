@@ -14,7 +14,7 @@
                 <ModulePath>.*\.dll$</ModulePath>
               </Include>
               <Exclude>
-                 <ModulePath>.objectapproval.dll</ModulePath>
+                 <ModulePath>.*Approval.dll</ModulePath>
                  <ModulePath>.*Tests.dll</ModulePath>
               </Exclude>
             </ModulePaths>

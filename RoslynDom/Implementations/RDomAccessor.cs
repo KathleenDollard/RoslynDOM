@@ -31,8 +31,8 @@ namespace RoslynDom
 
             AccessModifier = oldRDom.AccessModifier;
             DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-            if (oldRDom.ReturnType != null)
-            { ReturnType = oldRDom.ReturnType.Copy(); }
+            //if (oldRDom.ReturnType != null)
+            //{ ReturnType = oldRDom.ReturnType.Copy(); }
             HasBlock = oldRDom.HasBlock;
             _accessorType = oldRDom.AccessorType;
         }
@@ -70,7 +70,7 @@ namespace RoslynDom
 
         public AccessModifier AccessModifier { get; set; }
         public AccessModifier DeclaredAccessModifier { get; set; }
-        public IReferencedType ReturnType { get; set; }
+      //  public IReferencedType ReturnType { get; set; }
    
         public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
@@ -90,16 +90,7 @@ namespace RoslynDom
             set { }
         }
 
-        public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
-
-        public override object RequestValue(string propertyName)
-        {
-            if (propertyName == "TypeName")
-            {
-                return ReturnType.QualifiedName;
-            }
-            return base.RequestValue(propertyName);
-        }
+        //public string OuterName
+        //{ get { return RoslynUtilities.GetOuterName(this); } }
     }
 }

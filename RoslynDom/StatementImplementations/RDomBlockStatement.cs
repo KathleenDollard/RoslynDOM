@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -25,6 +26,27 @@ namespace RoslynDom
         protected  void Initialize()
         {
             _statements = new RDomCollection<IStatementCommentWhite>(this);
+        }
+
+        public override IEnumerable<IDom> Children
+        {
+            get
+            {
+                var list = base.Children.ToList();
+                list.AddRange(_statements);
+                return list;
+            }
+        }
+
+        public override IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = base.Descendants.ToList();
+                foreach (var statement in _statements)
+                { list.AddRange(statement.DescendantsAndSelf); }
+                return list;
+            }
         }
 
         public RDomCollection<IStatementCommentWhite> Statements

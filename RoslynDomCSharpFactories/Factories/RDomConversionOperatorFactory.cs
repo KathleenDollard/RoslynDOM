@@ -43,8 +43,6 @@ namespace RoslynDom.CSharp
             newItem.Name = newItem.TypedSymbol.Name;
 
 
-            newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
-
             var type = Corporation
                             .CreateFrom<IMisc>(syntax.Type, newItem, model)
                             .FirstOrDefault()

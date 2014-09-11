@@ -18,8 +18,6 @@ namespace RoslynDom.Common
         // There will always be an exception type. There might also be a variable
         IVariableDeclaration Variable { get; set; }
         IReferencedType ExceptionType { get; set; }
-
-        //TODO: Add conditionals for C# 6
     }
 
     public interface IFinallyStatement : IStatement, IDom<IFinallyStatement>, IStatementBlock

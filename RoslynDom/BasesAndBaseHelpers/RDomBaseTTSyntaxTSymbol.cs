@@ -49,7 +49,7 @@ namespace RoslynDom
         public SyntaxNode TypedSyntax
         { get { return _rawSyntax; } }
 
-        protected SyntaxNode OriginalTypedSyntax
+        public SyntaxNode OriginalTypedSyntax
         { get { return _originalRawSyntax; } }
 
         public override object RawItem

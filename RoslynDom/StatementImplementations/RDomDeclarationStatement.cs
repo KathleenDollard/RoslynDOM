@@ -21,7 +21,7 @@ namespace RoslynDom
 
         public bool IsConst { get; set; }
 
-           IDeclarationStatement IDom<IDeclarationStatement>.Copy()
+        IDeclarationStatement IDom<IDeclarationStatement>.Copy()
         {
             return (IDeclarationStatement)base.Copy();
         }

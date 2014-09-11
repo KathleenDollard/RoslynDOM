@@ -32,7 +32,6 @@ namespace RoslynDom
         public IEnumerable<IType> Types
         { get { return Members.OfType<IType>().ToList(); } }
 
-
         public IEnumerable<IStructure> Structures
         { get { return Members.OfType<IStructure>().ToList(); } }
 

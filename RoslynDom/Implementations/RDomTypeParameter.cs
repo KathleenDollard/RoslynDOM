@@ -16,10 +16,9 @@ namespace RoslynDom
            : base(rawItem, parent, model)
         { Initialize(); }
 
-        public RDomTypeParameter(RDomTypeParameter oldRDom)
+        internal RDomTypeParameter(RDomTypeParameter oldRDom)
              : base(oldRDom)
         {
-            if (oldRDom == null) throw new NotImplementedException();
             Initialize();
             _constraintTypes = new RDomCollection<IReferencedType>(this);
             Variance = oldRDom.Variance;
@@ -29,11 +28,6 @@ namespace RoslynDom
             HasValueTypeConstraint = oldRDom.HasValueTypeConstraint;
             var newConstraints = RoslynDomUtilities.CopyMembers(oldRDom._constraintTypes);
             ConstraintTypes.AddOrMoveRange(newConstraints);
-        }
-
-        ITypeParameter IDom<ITypeParameter>.Copy()
-        {
-            return new RDomTypeParameter(this);
         }
 
         protected  void Initialize()
@@ -57,12 +51,5 @@ namespace RoslynDom
 
         public string Name { get; set; }
 
-        public string OuterName
-        { get { return Name; } }
-
-        public string QualifiedName
-        { get { return Name; } }
-
-        public string Namespace { get; set; }
     }
 }

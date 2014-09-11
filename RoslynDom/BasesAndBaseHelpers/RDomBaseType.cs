@@ -92,9 +92,6 @@ namespace RoslynDom
         public string Namespace
         { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
 
-        public string ContainingTypeName
-        { get { return RoslynDomUtilities.GetContainingTypeName(this.Parent); } }
-
         public IType ContainingType
         { get { return Parent as IType; } }
 

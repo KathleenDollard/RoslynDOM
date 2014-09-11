@@ -17,6 +17,7 @@ namespace RoslynDomTests
         private const string AttributesMixedBracketingCategory = "AttributesMixedBracketing";
         private const string AttributeValuesCategory = "AttributesValues";
         private const string RootClassAttributesCategory = "RootClassAttributes";
+        private const string ManipulateAttributesCategory = "ManipulateAttributes";
 
         #region get attributes
         [TestMethod, TestCategory(SimpleAttributeCategory)]
@@ -664,6 +665,63 @@ namespace RoslynDomTests
 
 
         #endregion
+
+        #region manipulate attributes
+        [TestMethod, TestCategory(ManipulateAttributesCategory)]
+        public void Can_remove_attribute_on_property()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                       { 
+                        [Serializable, TestClass]
+                        [Ignore]                  
+                        public int myProperty { get; } }";
+            var csharpCodeChanged = csharpCode.Replace(", TestClass", "");
+            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
+            var syntax2 = RDomCSharp.Factory.BuildSyntax(root2).ToFullString();
+
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var prop = root.Classes.First().Properties.First();
+            Assert.AreEqual(3, prop.Attributes.Count());
+            var attr = prop.Attributes.ElementAt(1);
+            prop.Attributes.RemoveAttribute(attr);
+            Assert.AreEqual(2, prop.Attributes.Count());
+
+            var syntax = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+            Assert.AreEqual(syntax2, syntax);
+        }
+
+        [TestMethod, TestCategory(ManipulateAttributesCategory)]
+        public void Can_get_remove_attribute_values_on_field()
+        {
+            var csharpCode = @"
+                        public class MyClass
+                        { 
+                            [Version(2)]
+                            [Something(3, true)]
+                            public string foo;
+                        }";
+            var csharpCodeChanged = csharpCode.Replace(", true", "");
+            var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
+            var syntax2 = RDomCSharp.Factory.BuildSyntax(root2).ToFullString();
+
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var field = root.Classes.First().Fields.First();
+            var attr = field.Attributes.ElementAt(1);
+            Assert.AreEqual(2, field.Attributes.Count());
+            Assert.AreEqual(2, attr.AttributeValues.Count());
+            var attrValue = attr.AttributeValues.ElementAt(1);
+            attr.RemoveAttributeValue(attrValue);
+            Assert.AreEqual(2, field.Attributes.Count());
+            Assert.AreEqual(1, attr.AttributeValues.Count());
+
+            var syntax = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+            Assert.AreEqual(syntax2, syntax);
+        }
+
+
+        #endregion
+
         private static IEnumerable<IAttribute> VerifyAttributes(string csharpCode,
             Func<IRoot, IEnumerable<IAttribute>> makeAttributes,
             int count, bool skipBuildSyntaxCheck, params string[] names)

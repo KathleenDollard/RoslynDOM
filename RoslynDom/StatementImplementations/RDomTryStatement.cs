@@ -23,7 +23,7 @@ namespace RoslynDom
             // Initialize called in base
             var newCatches = RoslynDomUtilities.CopyMembers(oldRDom.Catches);
             CatchesAll.AddOrMoveRange(newCatches);
-            Finally = oldRDom.Finally;
+            Finally = oldRDom.Finally.Copy();
         }
 
         protected  void Initialize()
@@ -36,9 +36,9 @@ namespace RoslynDom
             get
             {
                 var list = new List<IDom>();
-                list.Add(Finally);
                 list.AddRange(base.Children.ToList());
                 list.AddRange(Catches);
+                list.Add(Finally);
                 return list;
             }
         }
@@ -48,10 +48,10 @@ namespace RoslynDom
             get
             {
                 var list = new List<IDom>();
-                list.AddRange(Finally.DescendantsAndSelf);
                 list.AddRange(base.Descendants.ToList());
                 foreach (var elseif in Catches)
                 { list.AddRange(elseif.DescendantsAndSelf); }
+                list.AddRange(Finally.DescendantsAndSelf);
                 return list;
             }
         }

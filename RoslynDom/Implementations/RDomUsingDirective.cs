@@ -19,8 +19,8 @@ namespace RoslynDom
 
         public string Alias { get; set; }
 
-        public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
+        //public string OuterName
+        //{ get { return RoslynUtilities.GetOuterName(this); } }
 
         public StemMemberKind StemMemberKind
         { get { return StemMemberKind.UsingDirective; } }

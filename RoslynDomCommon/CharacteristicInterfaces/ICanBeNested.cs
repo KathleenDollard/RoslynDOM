@@ -10,5 +10,6 @@ namespace RoslynDom.Common
     {
         bool IsNested { get; }
         IType ContainingType { get; }
+        string OuterName { get; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -28,9 +29,11 @@ namespace RoslynDomTests
         [TestMethod, TestCategory(GeneralFactoryCategory), TestCategory("_Common")]
         public void Can_get_root_from_file()
         {
-            IRoot root = RDomCSharp.Factory.GetRootFromFile(@"..\..\TestFile.cs");
+            var fileName = @"..\..\TestFile.cs";
+            IRoot root = RDomCSharp.Factory.GetRootFromFile(fileName);
             Assert.IsNotNull(root);
             Assert.AreEqual(1, root.ChildNamespaces.Count());
+            Assert.AreEqual(fileName, root.FilePath);
         }
 
         [TestMethod, TestCategory(GeneralFactoryCategory)]
@@ -44,6 +47,10 @@ namespace RoslynDomTests
             IRoot root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             Assert.IsNotNull(root);
             Assert.AreEqual(1, root.ChildNamespaces.Count());
+            Assert.IsNotNull(root.RawItem);
+            Assert.IsNotNull(root.OriginalRawItem);
+            Assert.IsNotNull(((RDomRoot)root).TypedSyntax);
+            Assert.IsNotNull(((RDomRoot)root).OriginalTypedSyntax);
         }
 
         [TestMethod, TestCategory(GeneralFactoryCategory)]

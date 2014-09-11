@@ -71,7 +71,5 @@ namespace RoslynDom.Common
             return newType;
         }
 
-
-
     }
 }

@@ -33,19 +33,17 @@ namespace RoslynDomTests
                   return true;
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(5, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomIfStatement));
-            Assert.IsInstanceOfType(statements[1], typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(statements[2], typeof(RDomAssignmentStatement));
-            Assert.IsInstanceOfType(statements[3], typeof(RDomInvocationStatement));
-            Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
-            Assert.AreEqual(12, root.Descendants.Count());
-            Assert.AreEqual(csharpCode , output.ToFullString());
+            VerifyMethodStatements<object>(csharpCode, 12, 5,
+                    statements =>
+                    {
+                        Assert.IsInstanceOfType(statements.ElementAt(0), typeof(RDomIfStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(1), typeof(RDomDeclarationStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(2), typeof(RDomAssignmentStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(3), typeof(RDomInvocationStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(4), typeof(RDomReturnStatement));
+                    });
         }
+
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
         public void Can_load_declaration_statements_for_method()
@@ -65,13 +63,8 @@ namespace RoslynDomTests
                   Bar z = Bar(w, x);
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(8, statements.Count());
-            Assert.AreEqual(8, statements.OfType<RDomDeclarationStatement>().Count());
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomDeclarationStatement>(csharpCode, 18, 8,
+                    null);
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -94,23 +87,17 @@ namespace RoslynDomTests
                     if (z == 2) Console.Write();
                 }
             }";
-
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(3, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomIfStatement));
-            Assert.IsInstanceOfType(statements[1], typeof(RDomIfStatement));
-            Assert.IsInstanceOfType(statements[2], typeof(RDomIfStatement));
-            var ifStatement = statements[0] as IIfStatement;
-            Assert.AreEqual(2, ifStatement.Elses.Count());
-            Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(ifStatement.Elses.First().Statements.Last(), typeof(RDomAssignmentStatement));
-            Assert.IsInstanceOfType((statements[0] as IIfStatement).Elses.Last().Statements.Last(), typeof(RDomInvocationStatement));
-
-            // TODO: Solve simplification problem.
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomIfStatement>(csharpCode, 24, 3,
+                    statements =>
+                    {
+                        var ifStatement = statements.First() as IIfStatement;
+                        Assert.AreEqual(2, ifStatement.Elses.Count());
+                        Assert.AreEqual(1, ifStatement.ElseIfs.Count());
+                        Assert.IsNotNull(ifStatement.Else);
+                        Assert.IsInstanceOfType(ifStatement.Statements.First(), typeof(RDomDeclarationStatement));
+                        Assert.IsInstanceOfType(ifStatement.Elses.First().Statements.Last(), typeof(RDomAssignmentStatement));
+                        Assert.IsInstanceOfType(ifStatement.Elses.Last().Statements.Last(), typeof(RDomInvocationStatement));
+                    });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -135,17 +122,15 @@ public class Bar
         {}
     }
 }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(3, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomBlockStatement));
-            Assert.IsInstanceOfType(statements[1], typeof(RDomAssignmentStatement));
-            Assert.IsInstanceOfType(statements[2], typeof(RDomBlockStatement));
-            Assert.AreEqual(3, ((IBlockStatement)statements[0]).Statements.Count());
-            Assert.AreEqual(4, ((IBlockStatement)((IBlockStatement)statements[0]).Statements.Last()).Statements.Count());
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<object>(csharpCode, 18, 3,
+                   statements =>
+                   {
+                       Assert.IsInstanceOfType(statements.ElementAt(0), typeof(RDomBlockStatement));
+                       Assert.IsInstanceOfType(statements.ElementAt(1), typeof(RDomAssignmentStatement));
+                       Assert.IsInstanceOfType(statements.ElementAt(2), typeof(RDomBlockStatement));
+                       Assert.AreEqual(3, ((IBlockStatement)statements.ElementAt(0)).Statements.Count());
+                       Assert.AreEqual(4, ((IBlockStatement)((IBlockStatement)statements.ElementAt(0)).Statements.Last()).Statements.Count());
+                   });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -160,14 +145,8 @@ public class Bar
                     Math.Pow(4, 2);
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(2, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomInvocationStatement));
-            Assert.IsInstanceOfType(statements[1], typeof(RDomInvocationStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomInvocationStatement>(csharpCode, 7, 2,
+                  null);
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -185,13 +164,9 @@ public class Bar
                   return 42;
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(1, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomReturnStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomReturnStatement>(csharpCode, 7, 1,
+                 statements =>
+                 {  });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -208,13 +183,12 @@ public class Bar
                     }
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(1, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomWhileStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomWhileStatement>(csharpCode, 7, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(2, statements.First().Children.Count());
+                       Assert.AreEqual(3, statements.First().Descendants.Count());
+                   });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -232,14 +206,12 @@ public class Bar
                     while (true);
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(1, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomDoStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
-
+            VerifyMethodStatements<RDomDoStatement>(csharpCode, 7, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(2, statements.First().Children.Count());
+                       Assert.AreEqual(3, statements.First().Descendants.Count());
+                   });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -257,13 +229,12 @@ public class Bar
                     }
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(1, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomForStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomForStatement>(csharpCode, 10, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(4, statements.First().Children.Count());
+                       Assert.AreEqual(6, statements.First().Descendants.Count());
+                   });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -281,13 +252,12 @@ public class Bar
                     }
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(1, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomForStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomForStatement>(csharpCode, 10, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(4, statements.First().Children.Count());
+                       Assert.AreEqual(6, statements.First().Descendants.Count());
+                   });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -305,13 +275,12 @@ public class Bar
                     }
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(1, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomForEachStatement>(csharpCode, 8, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(3, statements.First().Children.Count());
+                       Assert.AreEqual(4, statements.First().Descendants.Count());
+                   });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
@@ -329,17 +298,16 @@ public class Bar
                     }
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(1, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomForEachStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomForEachStatement>(csharpCode, 8, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(3, statements.First().Children.Count());
+                       Assert.AreEqual(4, statements.First().Descendants.Count());
+                   });
         }
 
         [TestMethod, TestCategory(MethodCodeLoadCategory)]
-        public void Can_load_try_statements_for_method_explicitly_typed()
+        public void Can_load_try_statements_for_method()
         {
             var csharpCode = @"
             public class Bar
@@ -363,24 +331,10 @@ public class Bar
                     { var d = 3; }
                 }
             }";
- 
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var method = root.RootClasses.First().Methods.First();
-            var statements = method.Statements.ToArray();
-            Assert.AreEqual(1, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomTryStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyMethodStatements<RDomTryStatement>(csharpCode, 23, 1,
+                   statements =>
+                   { });
         }
-
-
-        //try
-        // break
-        // continue
-        // empty
-        // using
-        // throw
-
 
         #endregion
 
@@ -395,7 +349,7 @@ public class Bar
                 {
                     get{
                             if (true) {}
-                            var x = "", "";
+                            var x = "","";
                             x = lastName + x + firstName;
                             Foo2();
                             return true;
@@ -404,30 +358,69 @@ public class Bar
                             Foo2();
                             x = lastName + x + firstName;
                             if (true) {}
-                            var x = "", "";
+                            var x = "","";
                             return true;
                     }   
                 }
             }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var property = root.RootClasses.First().Properties.First();
-            var statements = property.GetAccessor.Statements.ToArray();
-            Assert.AreEqual(5, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomIfStatement));
-            Assert.IsInstanceOfType(statements[1], typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(statements[2], typeof(RDomAssignmentStatement));
-            Assert.IsInstanceOfType(statements[3], typeof(RDomInvocationStatement));
-            Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
-            statements = property.SetAccessor.Statements.ToArray();
-            Assert.AreEqual(5, statements.Count());
-            Assert.IsInstanceOfType(statements[0], typeof(RDomInvocationStatement));
-            Assert.IsInstanceOfType(statements[1], typeof(RDomAssignmentStatement));
-            Assert.IsInstanceOfType(statements[2], typeof(RDomIfStatement));
-            Assert.IsInstanceOfType(statements[3], typeof(RDomDeclarationStatement));
-            Assert.IsInstanceOfType(statements[4], typeof(RDomReturnStatement));
-            Assert.AreEqual(csharpCode, output.ToFullString());
+            VerifyPropertyStatements(csharpCode, 25, 5,5,
+                   statements =>
+                   { 
+                        Assert.IsInstanceOfType(statements.ElementAt(0), typeof(RDomIfStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(1), typeof(RDomDeclarationStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(2), typeof(RDomAssignmentStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(3), typeof(RDomInvocationStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(4), typeof(RDomReturnStatement));
+                    },
+                    statements =>
+                    {
+                        Assert.IsInstanceOfType(statements.ElementAt(0), typeof(RDomInvocationStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(1), typeof(RDomAssignmentStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(2), typeof(RDomIfStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(3), typeof(RDomDeclarationStatement));
+                        Assert.IsInstanceOfType(statements.ElementAt(4), typeof(RDomReturnStatement));
+                    });
         }
         #endregion
+
+        private void VerifyMethodStatements<T>(string csharpCode,
+                int rootDescendantCount,
+                int statementCount,
+                Action<IEnumerable<IStatement>> verifyDelegate)
+        {
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var output = RDomCSharp.Factory.BuildSyntax(root);
+            var method = root.RootClasses.First().Methods.First();
+            var statements = method.Statements;
+            Assert.AreEqual(statementCount, statements.Count());
+            Assert.AreEqual(statementCount, statements.OfType<T>().Count()); 
+            Assert.AreEqual(rootDescendantCount, root.Descendants.Count());
+            if (verifyDelegate != null)
+            { verifyDelegate(statements); }
+            Assert.AreEqual(csharpCode, output.ToFullString());
+        }
+
+        private void VerifyPropertyStatements(string csharpCode, int rootDescendantCount, 
+                int getStatementCount, int setStatementCount,
+                Action<IEnumerable<IStatement>> getVerifyDelegate,
+                Action<IEnumerable<IStatement>> setVerifyDelegate)
+        {
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            Assert.AreEqual(rootDescendantCount, root.Descendants.Count());
+            var output = RDomCSharp.Factory.BuildSyntax(root);
+            var prop = root.RootClasses.First().Properties.First();
+
+            var getStatements = prop.GetAccessor.Statements;
+            Assert.AreEqual(getStatementCount, getStatements.Count());
+            if (getVerifyDelegate != null)
+            { getVerifyDelegate(getStatements); }
+
+            var setStatements = prop.SetAccessor.Statements;
+            Assert.AreEqual(setStatementCount, setStatements.Count());
+            if (setVerifyDelegate != null)
+            { setVerifyDelegate(setStatements); }
+            
+            Assert.AreEqual(csharpCode, output.ToFullString());
+        }
     }
 }

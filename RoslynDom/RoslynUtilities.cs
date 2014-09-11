@@ -8,13 +8,7 @@ namespace RoslynDom
     public static class RoslynUtilities
     {
     
-        public static AccessModifier GetAccessibilityFromSymbol(ISymbol symbol)
-        {
-            if (symbol == null) { return AccessModifier.None; }
-            return (AccessModifier)symbol.DeclaredAccessibility;
-        }
-
-        public static string GetOuterName(IDom item)
+         public static string GetOuterName(IDom item)
         {
             var name = "";
             var itemToName = item;

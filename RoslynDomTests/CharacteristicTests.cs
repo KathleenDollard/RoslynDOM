@@ -19,6 +19,7 @@ namespace RoslynDomTests
         private const string OverrideCategory = "Override";
         private const string NewCategory = "New";
         private const string StaticCategory = "Static";
+        private const string IsNestedCategory = "IsNested";
         private const string EnumsCategory = "Enums";
         private const string ImplementedInterfacesCategory = "ImplementedInterfaces";
         private const string BaseTypeCategory = "BaseType";
@@ -45,7 +46,7 @@ public string Bar;
             Assert.IsNotNull(retType);
             Assert.AreEqual("String", retType.Name, "Name");
             Assert.AreEqual("System.String", retType.QualifiedName, "QualifiedName");
-            Assert.AreEqual("String", retType.OuterName, "OuterName");
+            //Assert.AreEqual("String", retType.OuterName, "OuterName");
             Assert.AreEqual("System", retType.Namespace, "Namespace");
         }
 
@@ -64,7 +65,7 @@ public int Bar{get;};
             Assert.IsNotNull(retType);
             Assert.AreEqual("Int32", retType.Name, "Name");
             Assert.AreEqual("System.Int32", retType.QualifiedName, "QualifiedName");
-            Assert.AreEqual("Int32", retType.OuterName, "OuterName");
+            //Assert.AreEqual("Int32", retType.OuterName, "OuterName");
             Assert.AreEqual("System", retType.Namespace, "Namespace");
 
         }
@@ -84,7 +85,8 @@ public Namespace1.A  Bar() {};
             Assert.IsNotNull(retType);
             Assert.AreEqual("A", retType.Name, "Name");
             Assert.AreEqual("Namespace1.A", retType.QualifiedName, "QualifiedName");
-            Assert.AreEqual("A", retType.OuterName, "OuterName");
+            //Assert.AreEqual("A", retType.OuterName, "OuterName");
+            //Assert.AreEqual("Root", root.OuterName, "Root outer name");
         }
 
         [TestMethod, TestCategory(ReturnedTypeCategory)]
@@ -682,6 +684,76 @@ public class Foo2{}
 
         #endregion
 
+        #region is nested and contianing type tests
+
+        [TestMethod, TestCategory(StaticCategory)]
+        public void Can_get_is_nested_types_in_class()
+        {
+            var csharpCode = @"
+public class Foo1
+{
+  public class Foo2  {}
+  public struct Foo3 {}
+  public interface Foo4  {}
+  public enum Foo5  {}
+}";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var classOuter = root.Classes.First();
+            var classNested = classOuter.Classes.First();
+            var structureNested = classOuter.Structures.First();
+            var interfaceNested = classOuter.Interfaces.First();
+            var enumNested = classOuter.Enums.First();
+            Assert.IsFalse(classOuter.IsNested);
+            Assert.IsTrue(classNested.IsNested);
+            Assert.IsTrue(structureNested.IsNested);
+            Assert.IsTrue(interfaceNested.IsNested);
+            Assert.IsTrue(enumNested.IsNested);
+            Assert.AreEqual(classOuter, classNested.ContainingType);
+            Assert.AreEqual(classOuter, structureNested.ContainingType);
+            Assert.AreEqual(classOuter, interfaceNested.ContainingType);
+            Assert.AreEqual(classOuter, enumNested.ContainingType);
+            Assert.AreEqual("Foo1", classOuter.OuterName);
+            Assert.AreEqual("Foo1+Foo2", classNested.OuterName);
+            Assert.AreEqual("Foo1+Foo3", structureNested.OuterName);
+            Assert.AreEqual("Foo1+Foo4", interfaceNested.OuterName);
+            Assert.AreEqual("Foo1+Foo5", enumNested.OuterName);
+        }
+
+        [TestMethod, TestCategory(StaticCategory)]
+        public void Can_get_is_nested_types_in_structure()
+        {
+            var csharpCode = @"
+public struct Foo1
+{
+  public class Foo2  {}
+  public struct Foo3 {}
+  public interface Foo4  {}
+  public enum Foo5  {}
+}";
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var classOuter = root.Structures.First();
+            var classNested = classOuter.Classes.First();
+            var structureNested = classOuter.Structures.First();
+            var interfaceNested = classOuter.Interfaces.First();
+            var enumNested = classOuter.Enums.First();
+            Assert.IsFalse(classOuter.IsNested);
+            Assert.IsTrue(classNested.IsNested);
+            Assert.IsTrue(structureNested.IsNested);
+            Assert.IsTrue(interfaceNested.IsNested);
+            Assert.IsTrue(enumNested.IsNested);
+            Assert.AreEqual(classOuter, classNested.ContainingType);
+            Assert.AreEqual(classOuter, structureNested.ContainingType);
+            Assert.AreEqual(classOuter, interfaceNested.ContainingType);
+            Assert.AreEqual(classOuter, enumNested.ContainingType);
+            Assert.AreEqual("Foo1", classOuter.OuterName);
+            Assert.AreEqual("Foo1+Foo2", classNested.OuterName);
+            Assert.AreEqual("Foo1+Foo3", structureNested.OuterName);
+            Assert.AreEqual("Foo1+Foo4", interfaceNested.OuterName);
+            Assert.AreEqual("Foo1+Foo5", enumNested.OuterName);
+        }
+
+        #endregion
+
         #region enum tests
         [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_underlying_type_for_enum()
@@ -1159,7 +1231,7 @@ namespace Namespace1
 
         #region member type
         [TestMethod, TestCategory(MemberKindCategory)]
-        public void Can_get_member_type_for_members()
+        public void Can_get_member_kind_for_members()
         {
             var csharpCode = @"
 using System
@@ -1186,12 +1258,13 @@ public class Foo
         }
 
         [TestMethod, TestCategory(MemberKindCategory)]
-        public void Can_get_member_type_for_members_via_requestValue()
+        public void Can_get_member_kind_for_members_via_requestValue()
         {
             var csharpCode = @"
 using System
 public class Foo  
 {
+   public Foo() {}
    public string Foo1{get; set;}
    public Int32 Foo2(){}
    public string Foo3;
@@ -1203,13 +1276,14 @@ public class Foo
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var members = root.Classes.First().Members.ToArray();
-            Assert.AreEqual(MemberKind.Property, members[0].RequestValue("MemberKind"));
-            Assert.AreEqual(MemberKind.Method, members[1].RequestValue("MemberKind"));
-            Assert.AreEqual(MemberKind.Field, members[2].RequestValue("MemberKind"));
-            Assert.AreEqual(MemberKind.Class, members[3].RequestValue("MemberKind"));
-            Assert.AreEqual(MemberKind.Structure, members[4].RequestValue("MemberKind"));
-            Assert.AreEqual(MemberKind.Interface, members[5].RequestValue("MemberKind"));
-            Assert.AreEqual(MemberKind.Enum, members[6].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Constructor, members[0].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Property, members[1].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Method, members[2].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Field, members[3].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Class, members[4].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Structure, members[5].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Interface, members[6].RequestValue("MemberKind"));
+            Assert.AreEqual(MemberKind.Enum, members[7].RequestValue("MemberKind"));
         }
 
         [TestMethod, TestCategory(MemberKindCategory)]
@@ -1226,7 +1300,6 @@ public class Foo
             var members = root.Classes.First().Members.ToArray();
             Assert.IsNull(members[0].RequestValue("MemberKindX"));
         }
-
 
         [TestMethod, TestCategory(MemberKindCategory)]
         public void Can_get_value_from_parameter_via_RequestValue()
@@ -1304,7 +1377,6 @@ namespace Namespace1
             Assert.AreEqual("Foo1", ((RDomClass)cl[1]).ClassName);
             Assert.AreEqual("Foo2", ((RDomClass)cl[2]).ClassName);
         }
-
 
         #endregion
     }

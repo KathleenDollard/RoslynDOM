@@ -30,7 +30,12 @@ namespace RoslynDom
             get
             {
                 var list = new List<IDom>();
-                list.Add(Condition);
+                if (this.Variable != null)
+                { list.Add(this.Variable); }
+                else if (this.ExceptionType != null)
+                { list.Add(this.ExceptionType); }
+                if (Condition != null)
+                { list.Add(Condition); }
                 list.AddRange(base.Children.ToList());
                 return list;
             }
@@ -41,7 +46,12 @@ namespace RoslynDom
             get
             {
                 var list = new List<IDom>();
-                list.AddRange(Condition.DescendantsAndSelf);
+                if (this.Variable != null)
+                { list.AddRange(this.Variable.DescendantsAndSelf); }
+                else if ( this.ExceptionType !=null)
+                { list.AddRange(this.ExceptionType.DescendantsAndSelf); }
+                if (Condition != null) 
+                { list.AddRange(Condition.DescendantsAndSelf); }
                 list.AddRange(base.Descendants.ToList());
                 return list;
             }

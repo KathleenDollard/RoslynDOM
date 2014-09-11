@@ -8,7 +8,7 @@ namespace RoslynDom
     {
 
         public RDomReturnStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
-           : base(rawItem, parent, model)
+            : base(rawItem, parent, model)
         { }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
@@ -20,10 +20,18 @@ namespace RoslynDom
         }
 
         public override IEnumerable<IDom> Children
-        { get { return new List<IDom>() { Return }; } }
+        {
+            get
+            {
+                var list = new List<IDom>();
+                if (Return != null)
+                { list.Add(Return); }
+                return list;
+            }
+        }
 
         public override IEnumerable<IDom> Descendants
-        { get { return new List<IDom>() { Return }; } }
+        { get { return Children; } }
 
         public IExpression Return { get; set; }
     }

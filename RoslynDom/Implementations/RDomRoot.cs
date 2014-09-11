@@ -23,8 +23,6 @@ namespace RoslynDom
         public string FilePath { get; set; }
 
 
-        public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
 
         public bool HasSyntaxErrors
         {

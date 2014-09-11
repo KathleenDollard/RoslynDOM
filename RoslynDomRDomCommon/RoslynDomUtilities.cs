@@ -72,21 +72,6 @@ namespace RoslynDom
             { ret = parentNamespace + (string.IsNullOrEmpty(ret) ? "" : "." + ret); }
             return ret;
         }
-
-        public static string GetContainingTypeName(IDom item)
-        {
-            var ret = "";
-            if (item == null) { return ret; }
-            var itemAsType = item as IType;
-            if (itemAsType != null) { ret += itemAsType.Name; }
-            // Once you're not a type, you're not a type
-            if (itemAsType == null || item.Parent == null || item.Parent is IRoot) { return ret; }
-            var parentNamespace = GetNamespace(item.Parent);
-            if (!string.IsNullOrEmpty(parentNamespace))
-            { ret = parentNamespace + (string.IsNullOrEmpty(ret) ? "" : "." + ret); }
-            return ret;
-        }
-
- 
+        
     }
 }

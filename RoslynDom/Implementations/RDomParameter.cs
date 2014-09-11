@@ -28,8 +28,8 @@ namespace RoslynDom
         }
         public string Name { get; set; }
 
-        public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
+        //public string OuterName
+        //{ get { return RoslynUtilities.GetOuterName(this); } }
 
 
         public AttributeCollection Attributes
@@ -49,14 +49,14 @@ namespace RoslynDom
 
         // TODO: Default Values for parameters!!!
 
-        public override object RequestValue(string propertyName)
-        {
-            if (propertyName == "TypeName")
-            {
-                return Type.QualifiedName;
-            }
-            return base.RequestValue(propertyName);
-        }
+        //public override object RequestValue(string propertyName)
+        //{
+        //    if (propertyName == "TypeName")
+        //    {
+        //        return Type.QualifiedName;
+        //    }
+        //    return base.RequestValue(propertyName);
+        //}
     }
 
 

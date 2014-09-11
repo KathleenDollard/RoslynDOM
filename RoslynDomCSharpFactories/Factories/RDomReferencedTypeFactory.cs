@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
             throw new InvalidOperationException();
         }
 
-        private void InitalizeNameAndNamespace(RDomReferencedType newItem,ISymbol symbol, TypeSyntax typeSyntax)
+        private void InitalizeNameAndNamespace(RDomReferencedType newItem, ISymbol symbol, TypeSyntax typeSyntax)
         {
             var predefinedSyntax = typeSyntax as PredefinedTypeSyntax;
             if (predefinedSyntax != null) { InitializeFromPredefined(newItem, symbol, predefinedSyntax); }
@@ -75,13 +75,12 @@ namespace RoslynDom.CSharp
         {
             newItem.Name = symbol.Name;
 
-            if (symbol.ContainingType == null)
-            { newItem.ContainingTypeName = ""; }
-            else
-            { newItem.ContainingTypeName = symbol.ContainingType.Name; }
+            if (symbol.ContainingType != null)
+            {
+                newItem.ContainingType = symbol.ContainingType;
+            }
 
-            if (symbol.ContainingNamespace == null
-                || symbol.ContainingNamespace.ToString() == "<global namespace>")
+            if (symbol.ContainingNamespace == null     || symbol.ContainingNamespace.ToString() == "<global namespace>")
             { newItem.Namespace = ""; }
             else
             { newItem.Namespace = symbol.ContainingNamespace.ToString(); }
@@ -90,7 +89,6 @@ namespace RoslynDom.CSharp
         private void InitializeFromPredefined(RDomReferencedType newItem, ISymbol symbol, PredefinedTypeSyntax predefinedSyntax)
         {
             newItem.DisplayAlias = true;
-            newItem.ContainingTypeName = "";  // No predefined have containing types
 
             newItem.Name = symbol.Name;
             if (symbol == null) throw new NotImplementedException();
@@ -115,28 +113,28 @@ namespace RoslynDom.CSharp
             {
                 switch (type.QualifiedName)
                 {
-                    case "Void":
-                    case "System.Void":  { typeName = "void"; break; }
-                    case "System.Object": { typeName = "object"; break; }
-                    case "System.String": { typeName = "string"; break; }
-                    case "System.Boolean": { typeName = "bool"; break; }
-                    case "System.Decimal": { typeName = "decimal"; break; }
-                    case "System.SByte": { typeName = "sbyte"; break; }
-                    case "System.Byte": { typeName = "byte"; break; }
-                    case "System.Int16": { typeName = "short"; break; }
-                    case "System.UInt16": { typeName = "ushort"; break; }
-                    case "System.Int32": { typeName = "int"; break; }
-                    case "System.UInt32": { typeName = "uint"; break; }
-                    case "System.Int64": { typeName = "long"; break; }
-                    case "System.UInt64": { typeName = "ulong"; break; }
-                    case "System.Char": { typeName = "char"; break; }
-                    case "System.Single": { typeName = "float"; break; }
-                    case "System.Double": { typeName = "double"; break; }
-                    default:
+                case "Void":
+                case "System.Void": { typeName = "void"; break; }
+                case "System.Object": { typeName = "object"; break; }
+                case "System.String": { typeName = "string"; break; }
+                case "System.Boolean": { typeName = "bool"; break; }
+                case "System.Decimal": { typeName = "decimal"; break; }
+                case "System.SByte": { typeName = "sbyte"; break; }
+                case "System.Byte": { typeName = "byte"; break; }
+                case "System.Int16": { typeName = "short"; break; }
+                case "System.UInt16": { typeName = "ushort"; break; }
+                case "System.Int32": { typeName = "int"; break; }
+                case "System.UInt32": { typeName = "uint"; break; }
+                case "System.Int64": { typeName = "long"; break; }
+                case "System.UInt64": { typeName = "ulong"; break; }
+                case "System.Char": { typeName = "char"; break; }
+                case "System.Single": { typeName = "float"; break; }
+                case "System.Double": { typeName = "double"; break; }
+                default:
                     break;
                 }
             }
-            if (type.IsArray )
+            if (type.IsArray)
             { typeName += "[]"; }
             return SyntaxFactory.ParseTypeName(typeName);
 

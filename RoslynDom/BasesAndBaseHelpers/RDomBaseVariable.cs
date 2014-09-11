@@ -7,13 +7,13 @@ namespace RoslynDom
     public abstract class RDomBaseVariable : RDomBase<IVariableDeclaration, ISymbol>, IVariableDeclaration
     {
         protected RDomBaseVariable(SyntaxNode rawItem, IDom parent, SemanticModel model)
-           : base(rawItem, parent, model)
+            : base(rawItem, parent, model)
         { }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomBaseVariable(IVariableDeclaration oldRDom)
-             : base(oldRDom)
+            : base(oldRDom)
         {
             VariableKind = oldRDom.VariableKind;
             IsImplicitlyTyped = oldRDom.IsImplicitlyTyped;
@@ -23,15 +23,23 @@ namespace RoslynDom
         }
 
         public override IEnumerable<IDom> Children
-        { get { return new List<IDom>() { Initializer }; } }
+        {
+            get
+            {
+                var list = new List<IDom>();
+                if (Initializer != null)
+                { list.Add(Initializer); }
+                return list;
+            }
+        }
 
         public override IEnumerable<IDom> Descendants
-        { get { return new List<IDom>() { Initializer }; } }
+        { get { return Children; } }
 
         public string Name { get; set; }
 
-        public string OuterName
-        { get { return RoslynUtilities.GetOuterName(this); } }
+        //public string OuterName
+        //{ get { return RoslynUtilities.GetOuterName(this); } }
 
 
         public IExpression Initializer { get; set; }
