@@ -17,17 +17,17 @@ namespace RoslynDom
             : base(oldRDom)
         { }
 
-        public override IEnumerable<IDom> Children
-        {
-            get
-            { return base.Children.ToList(); }
-        }
+        //public override IEnumerable<IDom> Children
+        //{
+        //    get
+        //    { return base.Children.ToList(); }
+        //}
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            { return base.Descendants.ToList(); }
-        }
+        //public override IEnumerable<IDom> Descendants
+        //{
+        //    get
+        //    { return base.Descendants.ToList(); }
+        //}
 
     }
 }

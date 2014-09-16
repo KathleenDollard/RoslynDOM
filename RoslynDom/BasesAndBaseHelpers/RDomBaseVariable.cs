@@ -33,8 +33,8 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        { get { return Children; } }
+        //public override IEnumerable<IDom> Descendants
+        //{ get { return Children; } }
 
         public string Name { get; set; }
 

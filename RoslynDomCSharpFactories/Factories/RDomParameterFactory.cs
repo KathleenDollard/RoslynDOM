@@ -14,7 +14,7 @@ namespace RoslynDom.CSharp
         private static WhitespaceKindLookup _whitespaceLookup;
 
         public RDomParameterMiscFactory(RDomCorporation corporation)
-         : base(corporation)
+            : base(corporation)
         { }
 
         private WhitespaceKindLookup WhitespaceLookup
@@ -25,7 +25,10 @@ namespace RoslynDom.CSharp
                 {
                     _whitespaceLookup = new WhitespaceKindLookup();
                     _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
-                    _whitespaceLookup.Add(LanguageElement.ParameterDefaultAssignOperator, SyntaxKind.ColonToken);
+                    _whitespaceLookup.Add(LanguageElement.OutParameter, SyntaxKind.OutKeyword );
+                    _whitespaceLookup.Add(LanguageElement.RefParameter, SyntaxKind.RefKeyword);
+                    _whitespaceLookup.Add(LanguageElement.ParamsParameter, SyntaxKind.ParamsKeyword);
+                    _whitespaceLookup.Add(LanguageElement.ParameterDefaultAssignOperator, SyntaxKind.EqualsToken);
                     _whitespaceLookup.Add(LanguageElement.ParameterSeparator, SyntaxKind.CommaToken);
                     _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
                 }
@@ -37,7 +40,6 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as ParameterSyntax;
             var newItem = new RDomParameter(syntaxNode, parent, model);
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            MemberWhitespace(newItem, syntax);
 
             newItem.Name = newItem.TypedSymbol.Name;
 
@@ -51,7 +53,14 @@ namespace RoslynDom.CSharp
             newItem.IsRef = newItem.TypedSymbol.RefKind == RefKind.Ref;
             newItem.IsParamArray = newItem.TypedSymbol.IsParams;
             newItem.IsOptional = newItem.TypedSymbol.IsOptional;
+            if (syntax.Default != null)
+            {
+                var tuple = CreateFromWorker.GetArgumentValue(newItem, model, syntax.Default.Value);
+                newItem.DefaultValue = tuple.Item1;
+                newItem.DefaultValueType = tuple.Item2;
+            }
             newItem.Ordinal = newItem.TypedSymbol.Ordinal;
+            MemberWhitespace(newItem, syntax);
 
             return newItem;
         }
@@ -67,6 +76,14 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.Parameter(nameSyntax)
                         .WithType(syntaxType);
 
+            if (itemAsT.DefaultValueType != LiteralKind.Unknown)
+            {
+                var defaultValueExpression = BuildSyntaxHelpers.BuildArgValueExpression(itemAsT.DefaultValue, itemAsT.DefaultValueType);
+                var defaultClause = SyntaxFactory.EqualsValueClause(defaultValueExpression);
+                defaultClause = BuildSyntaxHelpers.AttachWhitespace(defaultClause, item.Whitespace2Set, WhitespaceLookup);
+                node = node.WithDefault(defaultClause);
+            }
+
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
@@ -74,22 +91,24 @@ namespace RoslynDom.CSharp
             if (itemAsT.IsOut) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.OutKeyword)); }
             if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
             if (itemAsT.IsParamArray) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ParamsKeyword)); }
-            if (itemAsT.IsRef) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.RefKeyword)); }
             if (modifiers.Any()) { node = node.WithModifiers(modifiers); }
 
-            node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.ParameterFirstToken ]);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, WhitespaceLookup);
+            node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.ParameterFirstToken]);
             node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.ParameterLastToken]);
             return node.PrepareForBuildSyntaxOutput(item);
 
         }
-        private void MemberWhitespace(RDomParameter newItem, ParameterSyntax  syntax)
+        private void MemberWhitespace(RDomParameter newItem, ParameterSyntax syntax)
         {
             CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetFirstToken(), LanguagePart.Current, LanguageElement.ParameterFirstToken);
             CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetLastToken(), LanguagePart.Current, LanguageElement.ParameterLastToken);
+            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             if (syntax.Default != null)
             {
-                CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.Default.Value.GetLastToken(), LanguagePart.Current, LanguageElement.Identifier);
-                CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.Default.EqualsToken, LanguagePart.Current, LanguageElement.ParameterDefaultAssignOperator);
+                CreateFromWorker.StoreWhitespace (newItem, syntax.Default, LanguagePart.Current, WhitespaceLookup );
+                //CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.Default.Value.GetLastToken(), LanguagePart.Current, LanguageElement.Identifier);
+                //CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.Default.EqualsToken, LanguagePart.Current, LanguageElement.ParameterDefaultAssignOperator);
             }
 
             var prevNodeOrToken = syntax.Parent

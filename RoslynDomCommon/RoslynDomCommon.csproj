@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeCollection.cs" />
+    <Compile Include="BaseInterfaces\IClassOrStructure.cs" />
     <Compile Include="BaseInterfaces\IDirective.cs" />
     <Compile Include="BaseInterfaces\ICommentWhite.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IDefineDirective.cs" />

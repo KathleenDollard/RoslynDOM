@@ -14,10 +14,10 @@ namespace RoslynDom.CSharp
         private static WhitespaceKindLookup _whitespaceLookup;
 
         public RDomAttributeValueMiscFactory(RDomCorporation corporation)
-         : base(corporation)
+            : base(corporation)
         { }
 
-         protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as AttributeArgumentSyntax;
             var newItem = new RDomAttributeValue(syntaxNode, parent, model);
@@ -35,8 +35,8 @@ namespace RoslynDom.CSharp
             argNameSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirst(argNameSyntax, item.Whitespace2Set[LanguageElement.AttributeValueName]);
             argNameSyntax = BuildSyntaxHelpers.AttachWhitespaceToLast(argNameSyntax, item.Whitespace2Set[LanguageElement.AttributeValueName]);
 
-            var kind = Mappings.SyntaxKindFromLiteralKind(itemAsT.ValueType, itemAsT.Value);
-            ExpressionSyntax expr = BuildArgValueExpression(itemAsT, kind);
+            //var kind = Mappings.SyntaxKindFromLiteralKind(itemAsT.ValueType, itemAsT.Value);
+            ExpressionSyntax expr = BuildSyntaxHelpers.BuildArgValueExpression(itemAsT.Value, itemAsT.ValueType );
             var node = SyntaxFactory.AttributeArgument(expr);
             if (itemAsT.Style == AttributeValueStyle.Colon)
             {
@@ -46,7 +46,7 @@ namespace RoslynDom.CSharp
             }
             else if (itemAsT.Style == AttributeValueStyle.Equals)
             {
-                var nameEquals =SyntaxFactory.NameEquals(argNameSyntax);
+                var nameEquals = SyntaxFactory.NameEquals(argNameSyntax);
                 nameEquals = BuildSyntaxHelpers.AttachWhitespaceToLast(nameEquals, item.Whitespace2Set[LanguageElement.AttributeValueEqualsOrColon]);
                 node = node.WithNameEquals(nameEquals);
             }
@@ -127,60 +127,10 @@ namespace RoslynDom.CSharp
 
             // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
             var expr = arg.Expression;
-            var literalKind = LiteralKind.Unknown;
-            object value = null;
-            var literalExpression = expr as LiteralExpressionSyntax;
-            if (literalExpression != null)
-            { value = GetLiteralValue(literalExpression, ref literalKind); }
-            else
-            {
-                var typeExpression = expr as TypeOfExpressionSyntax;
-                if (typeExpression != null)
-                {
-                    literalKind = LiteralKind.Type;
-                    value = GetTypeExpressionValue(typeExpression, newItem, model);
-                }
-            }
-            return Tuple.Create(value, literalKind);
+            return CreateFromWorker.GetArgumentValue(newItem, model, expr);
         }
 
-        private object GetTypeExpressionValue(TypeOfExpressionSyntax typeExpression, IDom newItem, SemanticModel model)
-        {
-            var returnType = Corporation
-                 .CreateFrom<IMisc>(typeExpression.Type, newItem, model)
-                 .FirstOrDefault()
-                 as IReferencedType;
-            return returnType;
-
-        }
-
-        private object GetLiteralValue(LiteralExpressionSyntax literalExpression, ref LiteralKind literalKind)
-        {
-            literalKind = Mappings.LiteralKindFromSyntaxKind(literalExpression.Token.CSharpKind());
-            return literalExpression.Token.Value;
-        }
-
-        private static ExpressionSyntax BuildArgValueExpression(IAttributeValue atttributeValue, SyntaxKind kind)
-        {
-            ExpressionSyntax expr = null;
-            if (atttributeValue.ValueType == LiteralKind.Boolean)
-            { expr = SyntaxFactory.LiteralExpression(kind); }
-            else if (atttributeValue.ValueType == LiteralKind.Type)
-            {
-                var type = atttributeValue.Value as RDomReferencedType;
-                if (type == null) throw new InvalidOperationException();
-                var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
-                expr = SyntaxFactory.TypeOfExpression(typeSyntax);
-            }
-            else
-            {
-                var token = BuildSyntaxHelpers.GetTokenFromKind(atttributeValue.ValueType, atttributeValue.Value);
-                expr = SyntaxFactory.LiteralExpression((SyntaxKind)kind, token);
-            }
-
-            return expr;
-        }
-
+  
 
     }
 

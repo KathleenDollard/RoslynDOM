@@ -70,17 +70,6 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            {
-                var list = base.Descendants.ToList();
-                foreach (var member in _members)
-                { list.AddRange(member.DescendantsAndSelf); }
-                return list;
-            }
-        }
-
         public string Name { get; set; }
 
         public string OuterName
@@ -118,10 +107,7 @@ namespace RoslynDom
         public IEnumerable<IProperty> Properties
         { get { return Members.OfType<IProperty>().ToList(); } }
 
-        public IEnumerable<IField> Fields
-        { get { return Members.OfType<IField>().ToList(); } }
-
-        // This is not yet editable because it is non-trivial to ensure 
+         // This is not yet editable because it is non-trivial to ensure 
         // correct interface usage (appearing once, etc). These semantics
         // may also change as "all" is confusing with other use in RoslynDon
         public RDomCollection<IReferencedType> ImplementedInterfaces

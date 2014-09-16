@@ -8,13 +8,13 @@ namespace RoslynDom
     {
 
         public RDomAssignmentStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
-           : base(rawItem, parent, model)
+            : base(rawItem, parent, model)
         { }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomAssignmentStatement(RDomAssignmentStatement oldRDom)
-             : base(oldRDom)
+            : base(oldRDom)
         {
             Left = oldRDom.Left.Copy();
             Expression = oldRDom.Expression.Copy();
@@ -24,8 +24,8 @@ namespace RoslynDom
         public override IEnumerable<IDom> Children
         { get { return new List<IDom>() { Expression }; } }
 
-        public override IEnumerable<IDom> Descendants
-        { get { return new List<IDom>() { Expression }; } }
+        //public override IEnumerable<IDom> Descendants
+        //{ get { return new List<IDom>() { Expression }; } }
 
         public IExpression Left { get; set; }
         public IExpression Expression { get; set; }

@@ -71,16 +71,16 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            {
-                var list = base.Descendants.ToList();
-                foreach (var member in _members)
-                { list.AddRange(member.DescendantsAndSelf); }
-                return list;
-            }
-        }
+        //public override IEnumerable<IDom> Descendants
+        //{
+        //    get
+        //    {
+        //        var list = base.Descendants.ToList();
+        //        foreach (var member in _members)
+        //        { list.AddRange(member.DescendantsAndSelf); }
+        //        return list;
+        //    }
+        //}
 
         public string Namespace
         // Parent always works here - if its a namespace, we deliberately skip the current, otherwise, the current is never a namespace

@@ -35,8 +35,6 @@ namespace RoslynDom
         }
 
         public string Name { get; set; }
-        //public string OuterName
-        //{ get { return RoslynUtilities.GetOuterName(this); } }
         public bool IsRef { get; set; }
         public bool IsOut { get; set; }
         public IExpression ValueExpression { get; set; }

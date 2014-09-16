@@ -30,7 +30,6 @@ namespace RoslynDom
             StatementsAll.AddOrMoveRange(newStatements);
             var newInitializationArguments = RoslynDomUtilities.CopyMembers(oldRDom._initializationArguments);
             InitializationArguments.AddOrMoveRange(newInitializationArguments);
-
             ConstructorInitializerType = oldRDom.ConstructorInitializerType;
             AccessModifier = oldRDom.AccessModifier;
             DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
@@ -53,20 +52,7 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            {
-                var list = base.Descendants.ToList();
-                foreach (var statement in _statements)
-                { list.AddRange(statement.DescendantsAndSelf); }
-                return list;
-            }
-        }
-
         public string Name { get; set; }
-        //public string OuterName
-        //{ get { return RoslynUtilities.GetOuterName(this); } }
         public ConstructorInitializerType ConstructorInitializerType { get; set; }
         public RDomCollection<IArgument> InitializationArguments
         { get { return _initializationArguments; } }

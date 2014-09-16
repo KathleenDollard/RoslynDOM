@@ -19,17 +19,17 @@ namespace RoslynDom
 
 
 
-        public override IEnumerable<IDom> Children
-        {
-            get
-            { return base.Children; }
-        }
+        //public override IEnumerable<IDom> Children
+        //{
+        //    get
+        //    { return base.Children; }
+        //}
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            { return base.Descendants; }
-        }
+        //public override IEnumerable<IDom> Descendants
+        //{
+        //    get
+        //    { return base.Descendants; }
+        //}
 
     }
 }

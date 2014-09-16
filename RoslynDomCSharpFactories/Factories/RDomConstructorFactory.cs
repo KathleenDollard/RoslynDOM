@@ -14,7 +14,7 @@ namespace RoslynDom.CSharp
         private static WhitespaceKindLookup _whitespaceLookup;
 
         public RDomConstructorTypeMemberFactory(RDomCorporation corporation)
-         : base(corporation)
+            : base(corporation)
         { }
 
         private WhitespaceKindLookup WhitespaceLookup
@@ -88,13 +88,17 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IConstructor;
             var parent = item.Parent as IClass;
-            var nameSyntax = SyntaxFactory.Identifier(parent.Name);
+            SyntaxToken nameSyntax;
+            if (parent == null)
+            { nameSyntax = SyntaxFactory.Identifier("unknown_name"); }
+            else
+            { nameSyntax = SyntaxFactory.Identifier(parent.Name); }
 
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
             var node = SyntaxFactory.ConstructorDeclaration(nameSyntax)
                             .WithModifiers(modifiers);
 
-         node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
 
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
@@ -129,21 +133,21 @@ namespace RoslynDom.CSharp
 
             switch (itemAsT.ConstructorInitializerType)
             {
-                case ConstructorInitializerType.None:
+            case ConstructorInitializerType.None:
                 { return null; }
-                case ConstructorInitializerType.Base:
+            case ConstructorInitializerType.Base:
                 {
                     node = SyntaxFactory.ConstructorInitializer(
                                 SyntaxKind.BaseConstructorInitializer);
                     break;
                 }
-                case ConstructorInitializerType.This:
+            case ConstructorInitializerType.This:
                 {
                     node = SyntaxFactory.ConstructorInitializer(
                                 SyntaxKind.ThisConstructorInitializer);
                     break;
                 }
-                default:
+            default:
                 throw new InvalidOperationException();
             }
             var argList = itemAsT.InitializationArguments

@@ -33,5 +33,7 @@ namespace RoslynDom.CSharp
         void StoreWhitespaceForFirstAndLastToken(IDom newItem, SyntaxNode node,
              LanguagePart languagePart,
              LanguageElement languageElement);
+
+        Tuple<object, LiteralKind> GetArgumentValue(IDom newItem, SemanticModel model, ExpressionSyntax expr);
     }
 }

@@ -52,7 +52,6 @@ namespace RoslynDom
             get
             {
                 var list = base.Children.ToList();
-                // TODO: Add accessors after switching to accessor approach. 
                 if (GetAccessor != null)
                 { list.Add(GetAccessor); }
                 if (SetAccessor != null)
@@ -61,20 +60,19 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            {
-                var list = base.Descendants.ToList();
-                // TODO: Add accessors after switching to accessor approach.
-                if (GetAccessor != null)
-                { list.AddRange(GetAccessor.DescendantsAndSelf); }
-                if (SetAccessor != null)
-                { list.AddRange(SetAccessor.DescendantsAndSelf); }
+        //public override IEnumerable<IDom> Descendants
+        //{
+        //    get
+        //    {
+        //        var list = base.Descendants.ToList();
+        //        if (GetAccessor != null)
+        //        { list.AddRange(GetAccessor.DescendantsAndSelf); }
+        //        if (SetAccessor != null)
+        //        { list.AddRange(SetAccessor.DescendantsAndSelf); }
 
-                return list;
-            }
-        }
+        //        return list;
+        //    }
+        //}
 
         public string Name { get; set; }
 

@@ -13,8 +13,5 @@ namespace RoslynDom
         internal RDomInterface(RDomInterface oldRDom)
              : base(oldRDom)
         { }
-
-    
-
     }
 }

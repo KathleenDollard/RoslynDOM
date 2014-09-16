@@ -345,6 +345,28 @@ namespace RoslynDom.CSharp
              return SyntaxFactory.List(clauses); 
         }
 
+        public static ExpressionSyntax BuildArgValueExpression(object value, LiteralKind valueType)
+        {
+            var kind = Mappings.SyntaxKindFromLiteralKind(valueType, value);
+            ExpressionSyntax expr = null;
+            if (valueType == LiteralKind.Boolean)
+            { expr = SyntaxFactory.LiteralExpression(kind); }
+            else if (valueType == LiteralKind.Type)
+            {
+                var type = value as RDomReferencedType;
+                if (type == null) throw new InvalidOperationException();
+                var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
+                expr = SyntaxFactory.TypeOfExpression(typeSyntax);
+            }
+            else
+            {
+                var token = BuildSyntaxHelpers.GetTokenFromKind(valueType, value);
+                expr = SyntaxFactory.LiteralExpression((SyntaxKind)kind, token);
+            }
+
+            return expr;
+        }
+
         public static T AttachWhitespace<T>(T syntaxNode, Whitespace2Collection whitespace2Set, WhitespaceKindLookup whitespaceLookup)
                where T : SyntaxNode
         {

@@ -336,7 +336,147 @@ public class Bar
                    { });
         }
 
-        #endregion
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_using_statement_for_method()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    using (var x = new Thing())
+                    {
+                       Console.WriteLine(i);
+                    }
+                }
+            }";
+            VerifyMethodStatements<RDomUsingStatement>(csharpCode, 6, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(1, statements.First().Children.Count());
+                       Assert.AreEqual(2, statements.First().Descendants.Count());
+                   });
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_locked_statements_for_method()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                private object thisLock = new Object();
+                public void Foo()
+                {
+                    lock (thisLock)
+                    {
+                       Console.WriteLine(i);
+                    }
+                }
+            }";
+            VerifyMethodStatements<RDomLockStatement>(csharpCode, 7, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(1, statements.First().Children.Count());
+                       Assert.AreEqual(2, statements.First().Descendants.Count());
+                   });
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_checked_statements_for_method()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    checked 
+                    {
+                       Console.WriteLine(i);
+                    }
+                }
+            }";
+            VerifyMethodStatements<RDomCheckedStatement>(csharpCode, 6, 1,
+                   statements =>
+                   { 
+                       Assert.AreEqual(1, statements.First().Children.Count());
+                       Assert.AreEqual(2, statements.First().Descendants .Count());
+                   });
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_empty_statements_for_method()
+        {
+            Assert.Inconclusive();
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    ;
+                }
+            }";
+            VerifyMethodStatements<RDomEmptyStatement>(csharpCode, 4, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(1, statements.First().Children.Count());
+                       Assert.AreEqual(2, statements.First().Descendants.Count());
+                   });
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_continue_statements_for_method()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })
+                    {
+                        if (b) continue;
+                        Console.WriteLine(i);
+                    }
+                }
+            }";
+            VerifyMethodStatements<RDomForEachStatement>(csharpCode, 11, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(1, statements
+                                    .First()
+                                    .Descendants
+                                    .OfType<RDomContinueStatement>()
+                                    .Count());
+                   });
+        }
+
+        [TestMethod, TestCategory(MethodCodeLoadCategory)]
+        public void Can_load_break_statements_for_method()
+        {
+            var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })
+                    {
+                        if (b) 
+                        { break; }
+                        Console.WriteLine(i);
+                    }
+                }
+            }";
+            VerifyMethodStatements<RDomForEachStatement>(csharpCode, 11, 1,
+                   statements =>
+                   {
+                       Assert.AreEqual(1, statements
+                                    .First()
+                                    .Descendants
+                                    .OfType<RDomBreakStatement>()
+                                    .Count());
+                   });
+        }
+
+         #endregion
 
         #region property code loading
         [TestMethod, TestCategory(PropertyCodeLoadCategory)]
@@ -389,7 +529,9 @@ public class Bar
                 Action<IEnumerable<IStatement>> verifyDelegate)
         {
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root2 = root.Copy();
             var output = RDomCSharp.Factory.BuildSyntax(root);
+            var output2 = RDomCSharp.Factory.BuildSyntax(root2);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements;
             Assert.AreEqual(statementCount, statements.Count());
@@ -398,6 +540,7 @@ public class Bar
             if (verifyDelegate != null)
             { verifyDelegate(statements); }
             Assert.AreEqual(csharpCode, output.ToFullString());
+            Assert.AreEqual(csharpCode, output2.ToFullString());
         }
 
         private void VerifyPropertyStatements(string csharpCode, int rootDescendantCount, 

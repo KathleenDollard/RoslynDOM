@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-  public  interface IHasConstructors
-    {
-        IEnumerable<IConstructor > Constructors { get; }
-    }
+  //public  interface IHasConstructors
+  //  {
+  //  }
 }

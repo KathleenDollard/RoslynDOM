@@ -8,6 +8,8 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param")]
         bool IsParamArray { get; set; }
         bool IsOptional { get; set; }
+        object DefaultValue { get; set; }
+        LiteralKind DefaultValueType { get; set; }
         int Ordinal { get; set; }
     }
 }

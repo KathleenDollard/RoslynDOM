@@ -44,15 +44,15 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            {
-                var list = base.Descendants.ToList();
-                 list.AddRange(Children); 
-                return list;
-            }
-        }
+        //public override IEnumerable<IDom> Descendants
+        //{
+        //    get
+        //    {
+        //        var list = base.Descendants.ToList();
+        //         list.AddRange(Children); 
+        //        return list;
+        //    }
+        //}
 
         public AttributeCollection Attributes
         { get { return _attributes; } }

@@ -9,74 +9,184 @@ using RoslynDom.CSharp;
 
 namespace RoslynDomTests
 {
-    [TestClass]
-    public class CopyTests
-    {
-        private const string SameIntentTestCategory = "SameIntent";
-        private const string CopyCategory = "Copy";
-        private const string CopyMethodsCategory = "CopyMethods";
+   [TestClass]
+   public class CopyTests
+   {
+      private const string SameIntentTestCategory = "SameIntent";
+      private const string CopyCategory = "Copy";
+      private const string CopyMethodsCategory = "CopyMethods";
 
-        #region clone tests
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_attribute()
-        {
-            var csharpCode = @"
+      #region clone tests
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_attribute()
+      {
+         var csharpCode = @"
             [Foo(""Fred"", bar:3, bar2:""George"")] 
             public class Bar{}";
-            VerifyClone(csharpCode,
-                root => root.RootClasses.First().Attributes.Attributes.First());
-        }
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Attributes.Attributes.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_attribute_value()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_attribute_value()
+      {
+         var csharpCode = @"
             [Foo(""Fred"", bar:3, bar2:""George"")] 
             public class Bar{}";
-            VerifyClone(csharpCode,
-                root => root.RootClasses.First().Attributes.Attributes.First().AttributeValues.Last());
-        }
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Attributes.Attributes.First().AttributeValues.Last());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_method()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_constructor()
+      {
+         var csharpCode = @"
+            public class Bar
+            {
+                public Bar()
+                {}
+                public static Bar()
+                {}
+            }";
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Constructors.First(),
+             x => x.Replace("unknown_name", "Bar"));
+
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Constructors.ElementAt(1),
+             x => x.Replace("unknown_name", "Bar"));
+      }
+
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_destructor()
+      {
+         var csharpCode = @"
+            public class Complex
+            {
+                public static Complex operator +(Complex c1, Complex c2)
+                {
+                     return new Complex(c1.real + c2.real, c1.imaginary + c2.imaginary);
+                }
+            }";
+         Assert.Inconclusive();
+         //VerifyClone(csharpCode,
+         //    root => root.RootClasses.First().Destructors.First());
+      }
+
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_plus_operator()
+      {
+         var csharpCode = @"
+            public class Complex
+            {
+                public static Complex operator +(Complex c1, Complex c2)
+                {
+                     return new Complex(c1.real + c2.real, c1.imaginary + c2.imaginary);
+                }
+            }";
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Operators.First());
+      }
+
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_minus_operator()
+      {
+         var csharpCode = @"
+            public class Complex
+            {
+                public static Complex operator -(Complex c1, Complex c2)
+                {
+                     return new Complex(c1.real - c2.real, c1.imaginary - c2.imaginary);
+                }
+            }";
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Operators.First());
+      }
+
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_explicit_conversion_operator()
+      {
+         var csharpCode = @"
+         public class Digit
+         {
+            public static explicit operator Digit(byte b)
+            {
+               Digit d = new Digit(b);
+               return d;
+            }
+         }";
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().ConversionOperators .First());
+      }
+
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_implicit_conversion_operator()
+      {
+         var csharpCode = @"
+         public class Digit
+         {
+            public static implicit operator Digit(byte b)
+            {
+               Digit d = new Digit(b);
+               return d;
+            }
+         }";
+         VerifyClone(csharpCode,
+              root => root.RootClasses.First().ConversionOperators.First());
+      }
+
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_method()
+      {
+         var csharpCode = @"
             public class Bar
             {
                public string Foo(int id, string firstName, string lastName) {}
             }";
-            VerifyClone(csharpCode,
-                root => root.RootClasses.First().Methods.First());
-        }
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Methods.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_method_parameter()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_static_method()
+      {
+         var csharpCode = @"
+            public static class Bar
+            {
+               public static string Foo(int id, string firstName, string lastName) {}
+            }";
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Methods.First());
+      }
+
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_method_parameter()
+      {
+         var csharpCode = @"
             public class Bar
             {
                public string Foo(int id, string firstName, string lastName) {}
             }";
-            VerifyClone(csharpCode,
-               root => root.RootClasses.First().Methods.First().Parameters.First());
-        }
+         VerifyClone(csharpCode,
+            root => root.RootClasses.First().Methods.First().Parameters.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_method_parameter_not_implicit()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_method_parameter_not_implicit()
+      {
+         var csharpCode = @"
             public class Bar
             {
                public string Foo(int id, String firstName, string lastName) {}
             }";
-            VerifyClone(csharpCode,
-               root => root.RootClasses.First().Methods.First().Parameters.First());
-        }
+         VerifyClone(csharpCode,
+            root => root.RootClasses.First().Methods.First().Parameters.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_method_with_body()
-        {
-            var cSharpMethodCode =
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_method_with_body()
+      {
+         var cSharpMethodCode =
 @"               public string Foo(int id, string firstName, string lastName)
                 {
                   if  ( true )  {}
@@ -86,59 +196,59 @@ namespace RoslynDomTests
                   return ret;
                 }
 ";
-            var csharpCode =
+         var csharpCode =
 @"            public class Bar
             {
 " + cSharpMethodCode +
 @"            }";
-            var newItem = VerifyClone(csharpCode,
-               root => root.RootClasses.First().Methods.First());
-            var newMethod = newItem as IMethod;
-            var statements = newMethod.Statements.ToArray();
-            var rDomStatement = newMethod.Statements.First() as IStatement;
-            Assert.IsTrue(statements[0] is RDomIfStatement);
-            Assert.IsTrue(statements[1] is RDomDeclarationStatement);
-            Assert.IsTrue(statements[2] is RDomDeclarationStatement);
-            Assert.IsTrue(statements[3] is RDomAssignmentStatement);
-            Assert.IsTrue(statements[4] is RDomReturnStatement);
-            var outputNew = RDomCSharp.Factory.BuildSyntax(newItem);
-            Assert.AreEqual(cSharpMethodCode, outputNew.ToFullString());
-        }
+         var newItem = VerifyClone(csharpCode,
+            root => root.RootClasses.First().Methods.First());
+         var newMethod = newItem as IMethod;
+         var statements = newMethod.Statements.ToArray();
+         var rDomStatement = newMethod.Statements.First() as IStatement;
+         Assert.IsTrue(statements[0] is RDomIfStatement);
+         Assert.IsTrue(statements[1] is RDomDeclarationStatement);
+         Assert.IsTrue(statements[2] is RDomDeclarationStatement);
+         Assert.IsTrue(statements[3] is RDomAssignmentStatement);
+         Assert.IsTrue(statements[4] is RDomReturnStatement);
+         var outputNew = RDomCSharp.Factory.BuildSyntax(newItem);
+         Assert.AreEqual(cSharpMethodCode, outputNew.ToFullString());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_method_with_array_return_type()
-        {
-            var cSharpMethodCode =
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_method_with_array_return_type()
+      {
+         var cSharpMethodCode =
 @"               public string[] Foo(int id, string firstName, string lastName)
                 {  }
 ";
-            var csharpCode =
+         var csharpCode =
 @"            public class Bar
             {
 " + cSharpMethodCode +
 @"            }";
-            var newItem = VerifyClone(csharpCode,
-               root => root.RootClasses.First().Methods.First());
-            var outputNew = RDomCSharp.Factory.BuildSyntax(newItem);
-            Assert.AreEqual(cSharpMethodCode, outputNew.ToFullString());
-        }
+         var newItem = VerifyClone(csharpCode,
+            root => root.RootClasses.First().Methods.First());
+         var outputNew = RDomCSharp.Factory.BuildSyntax(newItem);
+         Assert.AreEqual(cSharpMethodCode, outputNew.ToFullString());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_property()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_property()
+      {
+         var csharpCode = @"
             public class Bar
             {
                public string Foo{  get ; set ; }
             }";
-            VerifyClone(csharpCode,
-               root => root.RootClasses.First().Properties.First());
-        }
+         VerifyClone(csharpCode,
+            root => root.RootClasses.First().Properties.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_property_get_with_body()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_property_get_with_body()
+      {
+         var csharpCode = @"
             public class Bar
             {
                private string firstName;
@@ -150,17 +260,17 @@ namespace RoslynDomTests
                   return ret;
                } }
             }";
-            var newItem = VerifyClone(csharpCode,
-                    root => root.RootClasses.First().Properties.First());
-            var newProperty = newItem as IProperty;
-            Assert.IsNotNull(newProperty.GetAccessor);
+         var newItem = VerifyClone(csharpCode,
+                 root => root.RootClasses.First().Properties.First());
+         var newProperty = newItem as IProperty;
+         Assert.IsNotNull(newProperty.GetAccessor);
 
-        }
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_property_set_with_body()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_property_set_with_body()
+      {
+         var csharpCode = @"
             public class Bar
             {
                private string firstName;
@@ -180,65 +290,65 @@ namespace RoslynDomTests
                  } 
                }
             }";
-            var newItem = VerifyClone(csharpCode,
-                     root => root.RootClasses.First().Properties.First());
-            var newProperty = newItem as IProperty;
-            Assert.IsNotNull(newProperty.SetAccessor);
-        }
+         var newItem = VerifyClone(csharpCode,
+                  root => root.RootClasses.First().Properties.First());
+         var newProperty = newItem as IProperty;
+         Assert.IsNotNull(newProperty.SetAccessor);
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_class()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_class()
+      {
+         var csharpCode = @"
             public class Bar
             {
                public string Foo{get; set;}
             }";
-            VerifyClone(csharpCode,
-                       root => root.RootClasses.First());
-        }
+         VerifyClone(csharpCode,
+                    root => root.RootClasses.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_structure()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_structure()
+      {
+         var csharpCode = @"
             public struct Bar
             {
                public string Foo{get; set;}
                public string Foo2(int FooBar) {}
             }";
-            VerifyClone(csharpCode,
-                       root => root.RootStructures.First());
-                  }
+         VerifyClone(csharpCode,
+                    root => root.RootStructures.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_interface()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_interface()
+      {
+         var csharpCode = @"
             public interface Bar
             {
                string Foo{get; set;}
             }";
-            VerifyClone(csharpCode,
-                       root => root.RootInterfaces.First());
-              }
+         VerifyClone(csharpCode,
+                    root => root.RootInterfaces.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_enum()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_enum()
+      {
+         var csharpCode = @"
             public enum Bar
             {
               Unknown, Red, Green, Blue
             }";
-            VerifyClone(csharpCode,
-                    root => root.RootEnums.First());
-               }
+         VerifyClone(csharpCode,
+                 root => root.RootEnums.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_namespace()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_namespace()
+      {
+         var csharpCode = @"
             namespace Namespace1
             {
                 public interface Bar
@@ -246,14 +356,14 @@ namespace RoslynDomTests
                     string Foo { get; set; }
                 }  
             }";
-            VerifyClone(csharpCode,
-                       root => root.Namespaces.First());
-        }
+         VerifyClone(csharpCode,
+                    root => root.Namespaces.First());
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Can_clone_root()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_root()
+      {
+         var csharpCode = @"
             namespace Namespace1
             {
                 public interface Bar
@@ -268,43 +378,46 @@ namespace RoslynDomTests
                     private string Foo2(int George) {}
                 }  
             }";
-            VerifyClone(csharpCode, root => root);
-        }
+         VerifyClone(csharpCode, root => root);
+      }
 
-        [TestMethod, TestCategory(CopyCategory)]
-        public void Clone_includes_public_annotations()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(CopyCategory)]
+      public void Clone_includes_public_annotations()
+      {
+         var csharpCode = @"
             //[[ kad_Test3(val1 : ""Fred"", val2 : 42) ]]
             public class Bar
             {
                //[[ kad_Test4() ]]
                public string Foo{get; set;}
             }";
-            var newItem = VerifyClone(csharpCode,
-                     root => root.RootClasses.First());
-            var newClass = newItem as IClass;
-            Assert.AreEqual(42, newClass.PublicAnnotations.GetValue("kad_Test3", "val2"));
-        }
+         var newItem = VerifyClone(csharpCode,
+                  root => root.RootClasses.First());
+         var newClass = newItem as IClass;
+         Assert.AreEqual(42, newClass.PublicAnnotations.GetValue("kad_Test3", "val2"));
+      }
 
-        #endregion
-        private IDom<T> VerifyClone<T>(string csharpCode,
-            Func<IRoot, IDom<T>> makeTestItem)
-            where T : IDom<T>
-        {
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var testItem = makeTestItem(root);
-            var newItem = testItem.Copy();
-            Assert.IsNotNull(newItem);
-            Assert.IsTrue(newItem.SameIntent(testItem));
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var actual = output.ToFullString();
-            Assert.AreEqual(csharpCode, actual);
-            var outputOld = RDomCSharp.Factory.BuildSyntax(testItem);
-            var outputNew = RDomCSharp.Factory.BuildSyntax(newItem);
-            Assert.AreEqual(outputOld.ToString(), outputNew.ToString());
-            return newItem;
-        }
+      #endregion
+      private IDom<T> VerifyClone<T>(string csharpCode,
+          Func<IRoot, IDom<T>> makeTestItem,
+          Func<string, string> fixupOutput = null)
+          where T : IDom<T>
+      {
+         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var testItem = makeTestItem(root);
+         var newItem = testItem.Copy();
+         Assert.IsNotNull(newItem);
+         Assert.IsTrue(newItem.SameIntent(testItem));
+         var output = RDomCSharp.Factory.BuildSyntax(root);
+         var actual = output.ToFullString();
+         Assert.AreEqual(csharpCode, actual);
+         var outputOldText = RDomCSharp.Factory.BuildSyntax(testItem).ToString();
+         var outputNewText = RDomCSharp.Factory.BuildSyntax(newItem).ToString();
+         if (fixupOutput != null)
+         { outputNewText = fixupOutput(outputNewText); }
+         Assert.AreEqual(outputOldText, outputNewText);
+         return newItem;
+      }
 
-    }
+   }
 }

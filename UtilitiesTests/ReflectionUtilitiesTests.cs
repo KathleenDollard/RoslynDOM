@@ -131,6 +131,7 @@ namespace TestRoslyn
       [TestMethod]
       public void _researchTest()
       {
+          Assert.Inconclusive();
          Func<IEnumerable<int>, bool> test = x => x.Max() > 3;
          Action<IEnumerable<int>> test2 = x => Console.WriteLine();
          Assert.AreEqual(2, test.Method.GetParameters().Count());
@@ -141,7 +142,8 @@ namespace TestRoslyn
       [TestMethod]
       public void _researchTest2()
       {
-         Func<IEnumerable<int>, bool> test = x => x.Max() > 3;
+          Assert.Inconclusive();
+          Func<IEnumerable<int>, bool> test = x => x.Max() > 3;
          Assert.AreEqual(2, test.Method.GetParameters().Count());
          var ints = new int[] { 5 };
          var y = test(ints);

@@ -4,7 +4,7 @@ namespace RoslynDom.Common
         IType<IStructure>, 
         INestedContainer, 
         ITypeMemberContainer, 
-        IHasConstructors,
+        IClassOrStructure,
         IHasTypeParameters, 
         IHasImplementedInterfaces
     {

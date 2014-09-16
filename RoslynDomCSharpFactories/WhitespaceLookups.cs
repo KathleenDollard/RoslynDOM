@@ -81,5 +81,34 @@ namespace RoslynDom.CSharp
                 Tuple.Create( LanguageElement.LeftShiftAssignmentOperator,   SyntaxKind.LessThanLessThanEqualsToken),
                 Tuple.Create( LanguageElement.RightShiftAssignmentOperator,  SyntaxKind.GreaterThanGreaterThanEqualsToken)
              };
-    }
+
+      public static IEnumerable<Tuple<LanguageElement, SyntaxKind>> OverloadableOperators = new List<Tuple<LanguageElement, SyntaxKind>>()
+            {
+               Tuple.Create( LanguageElement.PlusOperator  , SyntaxKind.PlusToken     ),
+               Tuple.Create( LanguageElement.MinusOperator  , SyntaxKind.MinusToken     ),
+               Tuple.Create( LanguageElement.NotOperator  , SyntaxKind.ExclamationToken  ),
+               Tuple.Create( LanguageElement.ComplemententOperator  , SyntaxKind.TildeToken     ),
+               Tuple.Create( LanguageElement.IncrementOperator  , SyntaxKind.PlusPlusToken     ),
+               Tuple.Create( LanguageElement.DecrementOperator  , SyntaxKind.MinusMinusToken     ),
+               Tuple.Create( LanguageElement.TrueOperator  , SyntaxKind.TrueKeyword      ),
+               Tuple.Create( LanguageElement.FalseOperator  , SyntaxKind.FalseKeyword      ),
+               Tuple.Create( LanguageElement.MultiplyOperator  , SyntaxKind.AsteriskToken   ),
+               Tuple.Create( LanguageElement.DivideOperator  , SyntaxKind.SlashToken   ),
+               Tuple.Create( LanguageElement.ModulusOperator  , SyntaxKind.PercentToken   ),
+               Tuple.Create( LanguageElement.BitwiseAndOperator  , SyntaxKind.AmpersandToken   ),
+               Tuple.Create( LanguageElement.BitwiseOrOperator  , SyntaxKind.BarToken   ),
+               Tuple.Create( LanguageElement.ExclusiveOrOperator  , SyntaxKind.CaretToken   ),
+               Tuple.Create( LanguageElement.LeftShiftOperator  , SyntaxKind.LessThanLessThanToken   ),
+               Tuple.Create( LanguageElement.RightShiftOperator  , SyntaxKind.GreaterThanGreaterThanToken   ),
+               Tuple.Create( LanguageElement.EqualOperator  , SyntaxKind.EqualsEqualsToken ),
+               Tuple.Create( LanguageElement.NotEqualOperator  , SyntaxKind.ExclamationEqualsToken ),
+               Tuple.Create( LanguageElement.LessThanOperator  , SyntaxKind.LessThanToken   ),
+               Tuple.Create( LanguageElement.GreaterThanOperator  , SyntaxKind.GreaterThanToken   ),
+               Tuple.Create( LanguageElement.LessThanOrEqualOperator  , SyntaxKind.LessThanEqualsToken ),
+               Tuple.Create( LanguageElement.GreaterThanOrEqualOperator  , SyntaxKind.GreaterThanEqualsToken   ),
+             };
+
+
+
+   }
 }

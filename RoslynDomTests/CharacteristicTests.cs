@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ApprovalTests;
 using ApprovalTests.StatePrinter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -35,58 +37,33 @@ namespace RoslynDomTests
         public void Can_get_field_return_type()
         {
             var csharpCode = @"
-                        public class Foo
-{
-public string Bar;
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var field = root.Classes.First().Fields.First();
-            var retType = field.ReturnType;
-            Assert.IsNotNull(retType);
-            Assert.AreEqual("String", retType.Name, "Name");
-            Assert.AreEqual("System.String", retType.QualifiedName, "QualifiedName");
-            //Assert.AreEqual("String", retType.OuterName, "OuterName");
-            Assert.AreEqual("System", retType.Namespace, "Namespace");
+            public class Foo
+            {
+            public string Bar;
+            }";
+            VerifyType(csharpCode, r => r.Classes.First().Fields.First(), "System.String");
         }
 
         [TestMethod, TestCategory(ReturnedTypeCategory)]
         public void Can_get_property_return_type()
         {
             var csharpCode = @"
-                        public class Foo
-{
-public int Bar{get;};
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var property = root.Classes.First().Properties.First();
-            var retType = property.ReturnType;
-            Assert.IsNotNull(retType);
-            Assert.AreEqual("Int32", retType.Name, "Name");
-            Assert.AreEqual("System.Int32", retType.QualifiedName, "QualifiedName");
-            //Assert.AreEqual("Int32", retType.OuterName, "OuterName");
-            Assert.AreEqual("System", retType.Namespace, "Namespace");
-
+            public class Foo
+            {
+                public int Bar{get;}
+            }";
+            VerifyType(csharpCode, r => r.Classes.First().Properties.First(), "System.Int32");
         }
 
         [TestMethod, TestCategory(ReturnedTypeCategory)]
         public void Can_get_method_return_type()
         {
             var csharpCode = @"
-                        public class Foo
-{
-public Namespace1.A  Bar() {};
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var method = root.Classes.First().Methods.First();
-            var retType = method.ReturnType;
-            Assert.IsNotNull(retType);
-            Assert.AreEqual("A", retType.Name, "Name");
-            Assert.AreEqual("Namespace1.A", retType.QualifiedName, "QualifiedName");
-            //Assert.AreEqual("A", retType.OuterName, "OuterName");
-            //Assert.AreEqual("Root", root.OuterName, "Root outer name");
+            public class Foo
+            {
+                public Namespace1.A  Bar() {}
+            }";
+            VerifyType(csharpCode, r => r.Classes.First().Methods.First(), "Namespace1.A");
         }
 
         [TestMethod, TestCategory(ReturnedTypeCategory)]
@@ -96,18 +73,17 @@ public Namespace1.A  Bar() {};
 using System;
 public class Foo
 {
-   public string  Bar() {};
-   public String  Bar() {};
+   public string  Bar() {}
+   public String  Bar() {}
 }
 ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var method1 = root.Classes.First().Methods.First();
-            var method2 = root.Classes.First().Methods.Last();
-            var retType1 = method1.ReturnType;
-            var retType2 = method2.ReturnType;
-            Assert.AreEqual("String", retType1.Name);
-            Assert.AreEqual("String", retType2.Name);
+            var item1 = VerifyType(csharpCode, r => r.Classes.First().Methods.ElementAt(0), "System.String");
+            var item2 = VerifyType(csharpCode, r => r.Classes.First().Methods.ElementAt(1), "System.String");
+            item1.ReturnType.DisplayAlias = true;
+            item2.ReturnType.DisplayAlias = false;
         }
+
+
         #endregion
 
         #region access modifier tests
@@ -115,21 +91,19 @@ public class Foo
         public void Can_get_access_modifier_for_class()
         {
             var csharpCode = @"
-public class Foo1{}
-private class Foo2{}
-protected class Foo3{}
-protected internal class Foo4{}
-internal class Foo5{}
-class Foo6{}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var classes = root.Classes.ToArray();
-            Assert.AreEqual(AccessModifier.Public, classes[0].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, classes[1].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, classes[2].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, classes[3].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, classes[4].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, classes[5].AccessModifier);
+                public class Foo1{}
+                private class Foo2{}
+                protected class Foo3{}
+                protected internal class Foo4{}
+                internal class Foo5{}
+                class Foo6{}";
+            VerifyAccessModifier(csharpCode, r => r.Classes.ToArray(),
+                             AccessModifier.Public,
+                             AccessModifier.Private,
+                             AccessModifier.Protected,
+                             AccessModifier.ProtectedOrInternal,
+                             AccessModifier.Internal,
+                             AccessModifier.Internal);
 
         }
 
@@ -137,184 +111,169 @@ class Foo6{}
         public void Can_get_access_modifier_for_Interface()
         {
             var csharpCode = @"
-public interface Foo1{}
-private interface Foo2{}
-protected interface Foo3{}
-protected internal interface Foo4{}
-internal interface Foo5{}
-interface Foo6{}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var interfaces = root.Interfaces.ToArray();
-            Assert.AreEqual(AccessModifier.Public, interfaces[0].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, interfaces[1].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, interfaces[2].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, interfaces[3].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, interfaces[4].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, interfaces[5].AccessModifier);
-
+                public interface Foo1{}
+                private interface Foo2{}
+                protected interface Foo3{}
+                protected internal interface Foo4{}
+                internal interface Foo5{}
+                interface Foo6{}";
+            VerifyAccessModifier(csharpCode, r => r.Interfaces.ToArray(),
+                                 AccessModifier.Public,
+                                 AccessModifier.Private,
+                                 AccessModifier.Protected,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Internal);
         }
 
         [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_Structure()
         {
             var csharpCode = @"
-public struct Foo1{}
-private struct Foo2{}
-protected struct Foo3{}
-protected internal struct Foo4{}
-internal struct Foo5{}
-struct Foo6{}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var structures = root.Structures.ToArray();
-            Assert.AreEqual(AccessModifier.Public, structures[0].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, structures[1].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, structures[2].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, structures[3].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, structures[4].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, structures[5].AccessModifier);
-
+                public struct Foo1{}
+                private struct Foo2{}
+                protected struct Foo3{}
+                protected internal struct Foo4{}
+                internal struct Foo5{}
+                struct Foo6{}";
+            VerifyAccessModifier(csharpCode, r => r.Structures.ToArray(),
+                                 AccessModifier.Public,
+                                 AccessModifier.Private,
+                                 AccessModifier.Protected,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Internal);
         }
 
         [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_enum()
         {
             var csharpCode = @"
-public enum Foo1{}
-private enum Foo2{}
-protected enum Foo3{}
-protected internal enum Foo4{}
-internal enum Foo5{}
-enum Foo6{}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var enums = root.Enums.ToArray();
-            Assert.AreEqual(6, enums.Count());
-            Assert.AreEqual(AccessModifier.Public, enums[0].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, enums[1].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, enums[2].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, enums[3].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, enums[4].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, enums[5].AccessModifier);
-
+                public enum Foo1{}
+                private enum Foo2{}
+                protected enum Foo3{}
+                protected internal enum Foo4{}
+                internal enum Foo5{}
+                enum Foo6{}";
+            VerifyAccessModifier(csharpCode, r => r.Enums.ToArray(),
+                                 AccessModifier.Public,
+                                 AccessModifier.Private,
+                                 AccessModifier.Protected,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Internal);
         }
 
         [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_members_in_class()
         {
             var csharpCode = @"
-public class Foo1
-{
-    public string Bar1;
-    public string Bar2 {get;};
-    public string Bar3(){};
-    private string Bar4;
-    private string Bar5 {get;};
-    private string Bar6(){};
-    protected string Bar7;
-    protected string Bar8 {get;};
-    protected string Bar9(){};
-    protected internal string Bar10;
-    protected internal string Bar11 {get;};
-    protected internal string Bar12(){};
-    internal string Bar13;
-    internal string Bar14 {get;};
-    internal string Bar15(){};
-    string Bar16;
-    string Bar17 {get;};
-    string Bar18(){};
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var members = root.Classes.First().Members.ToArray();
-            Assert.AreEqual(AccessModifier.Public, members[0].AccessModifier);
-            Assert.AreEqual(AccessModifier.Public, members[1].AccessModifier);
-            Assert.AreEqual(AccessModifier.Public, members[2].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[3].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[4].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[5].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, members[6].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, members[7].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, members[8].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, members[9].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, members[10].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, members[11].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, members[12].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, members[13].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, members[14].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[15].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[16].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[17].AccessModifier);
-
+                public class Foo1
+                {
+                    public string Bar1;
+                    public string Bar2 {get;}
+                    public string Bar3(){}
+                    private string Bar4;
+                    private string Bar5 {get;}
+                    private string Bar6(){}
+                    protected string Bar7;
+                    protected string Bar8 {get;}
+                    protected string Bar9(){}
+                    protected internal string Bar10;
+                    protected internal string Bar11 {get;}
+                    protected internal string Bar12(){}
+                    internal string Bar13;
+                    internal string Bar14 {get;}
+                    internal string Bar15(){}
+                    string Bar16;
+                    string Bar17 {get;}
+                    string Bar18(){}
+                }";
+            VerifyAccessModifier(csharpCode, r => r.Classes.First().Members.ToArray(),
+                                 AccessModifier.Public,
+                                 AccessModifier.Public,
+                                 AccessModifier.Public,
+                                 AccessModifier.Private,
+                                 AccessModifier.Private,
+                                 AccessModifier.Private,
+                                 AccessModifier.Protected,
+                                 AccessModifier.Protected,
+                                 AccessModifier.Protected,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Private,
+                                 AccessModifier.Private,
+                                 AccessModifier.Private);
         }
 
         [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_members_in_structure()
         {
             var csharpCode = @"
-public struct Foo1
-{
-    public string Bar1;
-    public string Bar2 {get;};
-    public string Bar3(){};
-    private string Bar4;
-    private string Bar5 {get;};
-    private string Bar6(){};
-    protected string Bar7;
-    protected string Bar8 {get;};
-    protected string Bar9(){};
-    protected internal string Bar10;
-    protected internal string Bar11 {get;};
-    protected internal string Bar12(){};
-    internal string Bar13;
-    internal string Bar14 {get;};
-    internal string Bar15(){};
-    string Bar16;
-    string Bar17 {get;};
-    string Bar18(){};
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var members = root.Structures.First().Members.ToArray();
-            Assert.AreEqual(AccessModifier.Public, members[0].AccessModifier);
-            Assert.AreEqual(AccessModifier.Public, members[1].AccessModifier);
-            Assert.AreEqual(AccessModifier.Public, members[2].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[3].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[4].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[5].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, members[6].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, members[7].AccessModifier);
-            Assert.AreEqual(AccessModifier.Protected, members[8].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, members[9].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, members[10].AccessModifier);
-            Assert.AreEqual(AccessModifier.ProtectedOrInternal, members[11].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, members[12].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, members[13].AccessModifier);
-            Assert.AreEqual(AccessModifier.Internal, members[14].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[15].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[16].AccessModifier);
-            Assert.AreEqual(AccessModifier.Private, members[17].AccessModifier);
-
+                public struct Foo1
+                {
+                    public string Bar1;
+                    public string Bar2 {get;}
+                    public string Bar3(){}
+                    public static Complex operator +(Complex c1, Complex c2){}
+                    public static explicit operator Digit(byte b) {}
+                    private string Bar4;
+                    private string Bar5 {get;}
+                    private string Bar6(){}
+                    protected string Bar7;
+                    protected string Bar8 {get;}
+                    protected string Bar9(){}
+                    protected internal string Bar10;
+                    protected internal string Bar11 {get;}
+                    protected internal string Bar12(){}
+                    internal string Bar13;
+                    internal string Bar14 {get;}
+                    internal string Bar15(){}
+                    string Bar16;
+                    string Bar17 {get;}
+                    string Bar18(){}
+             }";
+            VerifyAccessModifier(csharpCode, r => r.Structures.First().Members.ToArray(),
+                                 AccessModifier.Public,
+                                 AccessModifier.Public,
+                                 AccessModifier.Public,
+                                 AccessModifier.Public,
+                                 AccessModifier.Public,
+                                 AccessModifier.Private,
+                                 AccessModifier.Private,
+                                 AccessModifier.Private,
+                                 AccessModifier.Protected,
+                                 AccessModifier.Protected,
+                                 AccessModifier.Protected,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.ProtectedOrInternal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Internal,
+                                 AccessModifier.Private,
+                                 AccessModifier.Private,
+                                 AccessModifier.Private);
         }
 
         [TestMethod, TestCategory(AccessModifierCategory)]
         public void Can_get_access_modifier_for_members_in_interface()
         {
             var csharpCode = @"
-public interface Foo1
-{
-
-    string Bar16;
-    string Bar17 {get;};
-    string Bar18(){};
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var members = root.Interfaces.First().Members.ToArray();
-            Assert.AreEqual(AccessModifier.None, members[0].AccessModifier);
-            Assert.AreEqual(AccessModifier.None, members[1].AccessModifier);
-            Assert.AreEqual(AccessModifier.None, members[2].AccessModifier);
+            public interface Foo1
+            {
+                string Bar16;
+                string Bar17 {get;}
+                string Bar18(){}
+            }";
+            VerifyAccessModifier(csharpCode, r => r.Interfaces.First().Members.ToArray(),
+                                 AccessModifier.None,
+                                 AccessModifier.None,
+                                 AccessModifier.None);
         }
         #endregion
 
@@ -323,45 +282,29 @@ public interface Foo1
         public void Can_get_virtual_for_method()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public virtual string Bar1(){}
-  public string Bar2(){}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Methods.ToArray();
-            Assert.IsTrue(methods[0].IsVirtual);
-            Assert.IsFalse(methods[0].IsAbstract);
-            Assert.IsFalse(methods[0].IsOverride);
-            Assert.IsFalse(methods[0].IsSealed);
-            Assert.IsFalse(methods[1].IsVirtual);
-            Assert.IsFalse(methods[1].IsAbstract);
-            Assert.IsFalse(methods[1].IsOverride);
-            Assert.IsFalse(methods[1].IsSealed);
-
+            public class Foo1
+            {
+              public virtual string Bar1(){}
+              public string Bar2(){}
+            }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Methods.ToArray(),
+                        Tuple.Create(true, false, false, false, false, false),
+                        Tuple.Create(false, false, false, false, false, false));
         }
+
 
         [TestMethod, TestCategory(VirtualCategory)]
         public void Can_get_virtual_for_property()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public virtual string Bar1{get;}
-  public string Bar2{get;}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Properties.ToArray();
-            Assert.IsTrue(methods[0].IsVirtual);
-            Assert.IsFalse(methods[0].IsAbstract);
-            Assert.IsFalse(methods[0].IsOverride);
-            Assert.IsFalse(methods[0].IsSealed);
-            Assert.IsFalse(methods[1].IsVirtual);
-            Assert.IsFalse(methods[1].IsAbstract);
-            Assert.IsFalse(methods[1].IsOverride);
-            Assert.IsFalse(methods[1].IsSealed);
+                public class Foo1
+                {
+                  public virtual string Bar1{get;}
+                  public string Bar2{get;}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Properties.ToArray(),
+                       Tuple.Create(true, false, false, false, false, false),
+                       Tuple.Create(false, false, false, false, false, false));
 
         }
 
@@ -372,45 +315,28 @@ public class Foo1
         public void Can_get_override_for_method()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public override string Bar1(){}
-  public string Bar2(){}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var properties = root.Classes.First().Methods.ToArray();
-            Assert.IsFalse(properties[0].IsVirtual);
-            Assert.IsFalse(properties[0].IsAbstract);
-            Assert.IsTrue(properties[0].IsOverride);
-            Assert.IsFalse(properties[0].IsSealed);
-            Assert.IsFalse(properties[1].IsVirtual);
-            Assert.IsFalse(properties[1].IsAbstract);
-            Assert.IsFalse(properties[1].IsOverride);
-            Assert.IsFalse(properties[1].IsSealed);
-
+                public class Foo1
+                {
+                  public override string Bar1(){}
+                  public string Bar2(){}
+                }                ";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Methods.ToArray(),
+                       Tuple.Create(false, false, true, false, false, false),
+                       Tuple.Create(false, false, false, false, false, false));
         }
 
         [TestMethod, TestCategory(OverrideCategory)]
         public void Can_get_override_for_property()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public override string Bar1{get;}
-  public string Bar2{get;}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var properties = root.Classes.First().Properties.ToArray();
-            Assert.IsFalse(properties[0].IsVirtual);
-            Assert.IsFalse(properties[0].IsAbstract);
-            Assert.IsTrue(properties[0].IsOverride);
-            Assert.IsFalse(properties[0].IsSealed);
-            Assert.IsFalse(properties[1].IsVirtual);
-            Assert.IsFalse(properties[1].IsAbstract);
-            Assert.IsFalse(properties[1].IsOverride);
-            Assert.IsFalse(properties[1].IsSealed);
+                public class Foo1
+                {
+                  public override string Bar1{get;}
+                  public string Bar2{get;}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Properties.ToArray(),
+                       Tuple.Create(false, false, true, false, false, false),
+                       Tuple.Create(false, false, false, false, false, false));
 
         }
 
@@ -421,62 +347,39 @@ public class Foo1
         public void Can_get_abstract_for_method()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public abstract string Bar1(){}
-  public string Bar2(){}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Methods.ToArray();
-            Assert.IsFalse(methods[0].IsVirtual);
-            Assert.IsTrue(methods[0].IsAbstract);
-            Assert.IsFalse(methods[0].IsOverride);
-            Assert.IsFalse(methods[0].IsSealed);
-            Assert.IsFalse(methods[1].IsVirtual);
-            Assert.IsFalse(methods[1].IsAbstract);
-            Assert.IsFalse(methods[1].IsOverride);
-            Assert.IsFalse(methods[1].IsSealed);
-
+                public class Foo1
+                {
+                  public abstract string Bar1(){}
+                  public string Bar2(){}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Methods.ToArray(),
+                       Tuple.Create(false, true, false, false, false, false),
+                       Tuple.Create(false, false, false, false, false, false));
         }
 
         [TestMethod, TestCategory(AbstractCategory)]
         public void Can_get_abstract_for_property()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public abstract string Bar1{get;}
-  public string Bar2{get;}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var properties = root.Classes.First().Properties.ToArray();
-            Assert.IsFalse(properties[0].IsVirtual);
-            Assert.IsTrue(properties[0].IsAbstract);
-            Assert.IsFalse(properties[0].IsOverride);
-            Assert.IsFalse(properties[0].IsSealed);
-            Assert.IsFalse(properties[1].IsVirtual);
-            Assert.IsFalse(properties[1].IsAbstract);
-            Assert.IsFalse(properties[1].IsOverride);
-            Assert.IsFalse(properties[1].IsSealed);
-
+                public class Foo1
+                {
+                  public abstract string Bar1{get;}
+                  public string Bar2{get;}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Properties.ToArray(),
+                       Tuple.Create(false, true, false, false, false, false),
+                       Tuple.Create(false, false, false, false, false, false));
         }
 
         [TestMethod, TestCategory(AbstractCategory)]
         public void Can_get_abstract_for_class()
         {
             var csharpCode = @"
-public abstract class Foo1{}
-public class Foo2{}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var classes = root.Classes.ToArray();
-            Assert.IsTrue(classes[0].IsAbstract);
-            Assert.IsFalse(classes[0].IsSealed);
-            Assert.IsFalse(classes[1].IsAbstract);
-            Assert.IsFalse(classes[1].IsSealed);
-
+                public abstract class Foo1{}
+                public class Foo2{}";
+            VerifyOOClass(csharpCode, r => r.Classes,
+                      Tuple.Create(true, false, false),
+                      Tuple.Create(false, false, false));
         }
 
         #endregion
@@ -486,22 +389,14 @@ public class Foo2{}
         public void Can_get_sealed_for_method()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public sealed string Bar1(){}
-  public string Bar2(){}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Methods.ToArray();
-            Assert.IsFalse(methods[0].IsVirtual);
-            Assert.IsFalse(methods[0].IsAbstract);
-            Assert.IsFalse(methods[0].IsOverride);
-            Assert.IsTrue(methods[0].IsSealed);
-            Assert.IsFalse(methods[1].IsVirtual);
-            Assert.IsFalse(methods[1].IsAbstract);
-            Assert.IsFalse(methods[1].IsOverride);
-            Assert.IsFalse(methods[1].IsSealed);
+                public class Foo1
+                {
+                  public sealed string Bar1(){}
+                  public string Bar2(){}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Methods.ToArray(),
+                       Tuple.Create(false, false, false, true, false, false),
+                       Tuple.Create(false, false, false, false, false, false));
 
         }
 
@@ -509,39 +404,25 @@ public class Foo1
         public void Can_get_sealed_for_property()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public sealed string Bar1{get;}
-  public string Bar2{get;}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var properties = root.Classes.First().Properties.ToArray();
-            Assert.IsFalse(properties[0].IsVirtual);
-            Assert.IsFalse(properties[0].IsAbstract);
-            Assert.IsFalse(properties[0].IsOverride);
-            Assert.IsTrue(properties[0].IsSealed);
-            Assert.IsFalse(properties[1].IsVirtual);
-            Assert.IsFalse(properties[1].IsAbstract);
-            Assert.IsFalse(properties[1].IsOverride);
-            Assert.IsFalse(properties[1].IsSealed);
-
+                public class Foo1
+                {
+                  public sealed string Bar1{get;}
+                  public string Bar2{get;}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Properties.ToArray(),
+                       Tuple.Create(false, false, false, true, false, false),
+                       Tuple.Create(false, false, false, false, false, false));
         }
 
         [TestMethod, TestCategory(SealedCategory)]
         public void Can_get_sealed_for_class()
         {
             var csharpCode = @"
-public sealed class Foo1{}
-public class Foo2{}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var classes = root.Classes.ToArray();
-            Assert.IsFalse(classes[0].IsAbstract);
-            Assert.IsTrue(classes[0].IsSealed);
-            Assert.IsFalse(classes[1].IsAbstract);
-            Assert.IsFalse(classes[1].IsSealed);
-
+                public sealed class Foo1{}
+                public class Foo2{}";
+            VerifyOOClass(csharpCode, r => r.Classes,
+                      Tuple.Create(false, true, false),
+                      Tuple.Create(false, false, false));
         }
 
         #endregion
@@ -551,45 +432,28 @@ public class Foo2{}
         public void Can_get_new_for_method()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public new string Bar1(){}
-  public string Bar2(){}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Methods.ToArray();
-            Assert.IsFalse(methods[0].IsVirtual);
-            Assert.IsFalse(methods[0].IsAbstract);
-            Assert.IsFalse(methods[0].IsOverride);
-            Assert.IsFalse(methods[0].IsSealed);
-            Assert.IsFalse(methods[1].IsVirtual);
-            Assert.IsFalse(methods[1].IsAbstract);
-            Assert.IsFalse(methods[1].IsOverride);
-            Assert.IsFalse(methods[1].IsSealed);
-
+                public class Foo1
+                {
+                  public new string Bar1(){}
+                  public string Bar2(){}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Methods.ToArray(),
+                       Tuple.Create(false, false, false, false, true, false),
+                       Tuple.Create(false, false, false, false, false, false));
         }
 
         [TestMethod, TestCategory(NewCategory)]
         public void Can_get_new_for_property()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public new string Bar1{get;}
-  public string Bar2{get;}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Properties.ToArray();
-            Assert.IsFalse(methods[0].IsVirtual);
-            Assert.IsFalse(methods[0].IsAbstract);
-            Assert.IsFalse(methods[0].IsOverride);
-            Assert.IsFalse(methods[0].IsSealed);
-            Assert.IsFalse(methods[1].IsVirtual);
-            Assert.IsFalse(methods[1].IsAbstract);
-            Assert.IsFalse(methods[1].IsOverride);
-            Assert.IsFalse(methods[1].IsSealed);
+                public class Foo1
+                {
+                  public new string Bar1{get;}
+                  public string Bar2{get;}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Properties.ToArray(),
+                       Tuple.Create(false, false, false, false, true, false),
+                       Tuple.Create(false, false, false, false, false, false));
 
         }
 
@@ -600,86 +464,81 @@ public class Foo1
         public void Can_get_static_for_field()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public static string Bar1;
-  public string Bar2
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var fields = root.Classes.First().Fields.ToArray();
-            Assert.IsTrue(fields[0].IsStatic);
-            Assert.IsFalse(fields[1].IsStatic);
-
+                public class Foo1
+                {
+                  public static string Bar1;
+                  public string Bar2;
+                }";
+            VerifyOOField(csharpCode, r => r.Classes.First().Fields.ToArray(),
+                      Tuple.Create(true),
+                      Tuple.Create(false));
         }
 
         [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_static_for_method()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public static abstract virtual override sealed string Bar1(){}
-  public string Bar2(){}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var methods = root.Classes.First().Methods.ToArray();
-            Assert.IsTrue(methods[0].IsVirtual);
-            Assert.IsTrue(methods[0].IsAbstract);
-            Assert.IsTrue(methods[0].IsOverride);
-            Assert.IsTrue(methods[0].IsSealed);
-            Assert.IsTrue(methods[0].IsStatic);
-            Assert.IsFalse(methods[1].IsVirtual);
-            Assert.IsFalse(methods[1].IsAbstract);
-            Assert.IsFalse(methods[1].IsOverride);
-            Assert.IsFalse(methods[1].IsSealed);
-            Assert.IsFalse(methods[1].IsStatic);
-
+                public class Foo1
+                {
+                  public static string Bar1(){}
+                  public string Bar2(){}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Methods.ToArray(),
+                       Tuple.Create(false, false, false, false, false, true),
+                       Tuple.Create(false, false, false, false, false, false));
         }
 
         [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_static_for_property()
         {
             var csharpCode = @"
-public class Foo1
-{
-  public static string Bar1{get;}
-  public string Bar2{get;}
-}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var properties = root.Classes.First().Properties.ToArray();
-            Assert.IsFalse(properties[0].IsVirtual);
-            Assert.IsFalse(properties[0].IsAbstract);
-            Assert.IsFalse(properties[0].IsOverride);
-            Assert.IsFalse(properties[0].IsSealed);
-            Assert.IsTrue(properties[0].IsStatic);
-            Assert.IsFalse(properties[1].IsVirtual);
-            Assert.IsFalse(properties[1].IsAbstract);
-            Assert.IsFalse(properties[1].IsOverride);
-            Assert.IsFalse(properties[1].IsSealed);
-            Assert.IsFalse(properties[1].IsStatic);
+                public class Foo1
+                {
+                  public static string Bar1{get;}
+                  public string Bar2{get;}
+                }";
+            VerifyOOTypeMember(csharpCode, r => r.Classes.First().Methods.ToArray(),
+                      Tuple.Create(false, false, false, false, false, true),
+                      Tuple.Create(false, false, false, false, false, false));
+        }
 
+        [TestMethod, TestCategory(StaticCategory)]
+        public void Can_get_static_for_operators()
+        {
+            var csharpCode = @"
+                public struct Foo1
+                {
+                    public static Complex operator +(Complex c1, Complex c2){}
+                    public static Complex operator -(Complex c1, Complex c2){}
+                }";
+            VerifyStatic(csharpCode, r => r.Structures.First().Operators.ToArray(),
+                      Tuple.Create(true),
+                      Tuple.Create(true));
+        }
 
+        [TestMethod, TestCategory(StaticCategory)]
+        public void Can_get_static_for_conversion_operators()
+        {
+            var csharpCode = @"
+                public struct Foo1
+                {
+                    public static explicit operator Digit(byte b) {}
+                    public static implicit operator Digit(int b) {}
+                }";
+            VerifyStatic(csharpCode, r => r.Structures.First().ConversionOperators.ToArray(),
+                      Tuple.Create(true),
+                      Tuple.Create(true));
         }
 
         [TestMethod, TestCategory(StaticCategory)]
         public void Can_get_static_for_class()
         {
             var csharpCode = @"
-public abstract static class Foo1{}
-public class Foo2{}
-";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var classes = root.Classes.ToArray();
-            Assert.IsTrue(classes[0].IsAbstract);
-            Assert.IsFalse(classes[0].IsSealed);
-            Assert.IsTrue(classes[0].IsStatic);
-            Assert.IsFalse(classes[1].IsAbstract);
-            Assert.IsFalse(classes[1].IsSealed);
-            Assert.IsFalse(classes[1].IsStatic);
-
+                public static class Foo1{}
+                public class Foo2{}";
+            VerifyOOClass(csharpCode, r => r.Classes,
+                      Tuple.Create(false, false, true),
+                      Tuple.Create(false, false, false));
         }
 
         #endregion
@@ -772,21 +631,19 @@ public enum Foo1 : byte {}
         #region implemented interfaces tests
 
         private string csharpCodeForInterfaceTests = @"
-public class Foo1A : IFooA, IFooC { }
-public class Foo1B : Foo1A, IFooB, IFooC { }
-public class Foo1C : Foo1B {} 
+            public class Foo1A : IFooA, IFooC { }
+            public class Foo1B : Foo1A, IFooB, IFooC { }
+            public class Foo1C : Foo1B {} 
 
-public struct Foo2A : IFooA, IFooC { }
+            public struct Foo2A : IFooA, IFooC { }
 
-public interface IFoo3A : IFooA, IFooC { }
-public interface IFoo3B : IFoo3A, IFooB, IFooC { }
-public interface IFoo3C : IFoo3B {}
+            public interface IFoo3A : IFooA, IFooC { }
+            public interface IFoo3B : IFoo3A, IFooB, IFooC { }
+            public interface IFoo3C : IFoo3B {}
 
-public interface IFooA{}
-public interface IFooB{}
-public interface IFooC{}
-
-";
+            public interface IFooA{}
+            public interface IFooB{}
+            public interface IFooC{}";
 
 
         [TestMethod, TestCategory(ImplementedInterfacesCategory)]
@@ -827,7 +684,6 @@ public interface IFooC{}
             var structures = root.Structures.ToArray();
             Assert.AreEqual(2, structures[0].AllImplementedInterfaces.Count());
         }
-
 
         [TestMethod, TestCategory(ImplementedInterfacesCategory)]
         public void Can_get_implemented_interfaces_for_interface()
@@ -880,10 +736,11 @@ public class Foo
    public string Foo2(int i){}
    public string Foo3(int i, string s){}
    public string Foo4(ref int i, out string s, params string[] moreStrings){}
-   public string Foo5(this A a, int i = 0, string s = ""){}
+   public string Foo5(this A a, int i = 0, string s = """"){}
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var actual = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
             // StatePrinterApprovals.Verify(root);
             var methods = root.Classes.First().Methods.ToArray();
             Assert.AreEqual(0, methods[0].Parameters.Count());
@@ -899,9 +756,10 @@ public class Foo
             ParameterCheck(parameters[2], 2, "moreStrings", "String", isParamArray: true, isArray: true);
             parameters = methods[4].Parameters.ToArray();
             ParameterCheck(parameters[0], 0, "a", "A");
-            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true);
-            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true);
+            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true, defaultValue: 0);
+            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true, defaultValue: "");
 
+            Assert.AreEqual(csharpCode, actual);
         }
 
         [TestMethod, TestCategory(ParameterAndMethodCategory)]
@@ -964,14 +822,14 @@ public class Foo
             var csharpCode = @"
 public static class Foo  
 {
-   public static string Foo5(this A a, int i = 0, string s = ""){}
+   public static string Foo5(this A a, int i = 0, string s = """"){}
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
             ParameterCheck(parameters[0], 0, "a", "A");
-            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true);
-            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true);
+            ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true, defaultValue: 0);
+            ParameterCheck(parameters[2], 2, "s", "String", isOptional: true, defaultValue: "");
 
         }
 
@@ -981,12 +839,15 @@ public static class Foo
             var csharpCode = @"
 public static class Foo  
 {
-   public static string Foo5(this A a, int i = 0, string s = ""){}
+   public static string Foo5(this A a, int i = 0, string s = ""Fred""){}
 }
 ";
             var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
             var method = root.Classes.First().Methods.First();
             Assert.IsTrue(method.IsExtensionMethod);
+            Assert.AreEqual(csharpCode, RDomCSharp.Factory.BuildSyntax(root).ToFullString());
+            var method2 = method.Copy();
+            Assert.IsTrue(method.SameIntent(method2));
 
         }
 
@@ -994,7 +855,8 @@ public static class Foo
         private void ParameterCheck(IParameter parm, int ordinal, string name, string typeName,
                 bool isOut = false, bool isRef = false, bool isParamArray = false,
                 bool isOptional = false,
-                bool isArray = false)
+                bool isArray = false,
+                object defaultValue = null)
         {
             Assert.AreEqual(name, parm.Name);
             Assert.AreEqual(typeName, parm.Type.Name);
@@ -1004,6 +866,7 @@ public static class Foo
             Assert.AreEqual(isOptional, parm.IsOptional);
             Assert.AreEqual(isArray, parm.Type.IsArray);
             Assert.AreEqual(ordinal, parm.Ordinal);
+            Assert.AreEqual(defaultValue, parm.DefaultValue);
         }
         #endregion
 
@@ -1379,5 +1242,94 @@ namespace Namespace1
         }
 
         #endregion
+
+        private IEnumerable<IHasAccessModifier> VerifyAccessModifier(string csharpCode,
+                    Func<IRoot, IEnumerable<IHasAccessModifier>> getItems, params AccessModifier[] modifiers)
+        {
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var actual = RDomCSharp.Factory.BuildSyntax(root);
+            var items = getItems(root);
+            for (int i = 0; i < items.Count(); i++)
+            { Assert.AreEqual(modifiers[i], items.ElementAt(i).AccessModifier); }
+            Assert.AreEqual(csharpCode, actual.ToFullString());
+            return items;
+        }
+
+        private IHasReturnType VerifyType(string csharpCode, Func<IRoot, IDom> getItem, string fullName)
+        {
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var actual = RDomCSharp.Factory.BuildSyntax(root);
+            var item = getItem(root) as IHasReturnType;
+            var retType = item.ReturnType;
+            Assert.IsNotNull(retType);
+            var name = fullName.SubstringAfterLast(".");
+            var ns = fullName.SubstringBefore(".");
+            Assert.AreEqual(name, retType.Name, "Name");
+            Assert.AreEqual(fullName, retType.QualifiedName, "QualifiedName");
+            Assert.AreEqual(ns, retType.Namespace, "Namespace");
+            Assert.AreEqual(csharpCode, actual.ToFullString());
+            return item;
+        }
+
+        private void VerifyOOTypeMember<T>(string csharpCode, Func<IRoot, IEnumerable<T>> getItems,
+                     params Tuple<bool, bool, bool, bool, bool, bool>[] expectedValues)
+            where T : IOOTypeMember, ICanBeNew, ICanBeStatic
+        {
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var actual = RDomCSharp.Factory.BuildSyntax(root);
+            var items = getItems(root);
+            for (int i = 0; i < items.Count(); i++)
+            {
+                Assert.AreEqual(expectedValues[i].Item1, items.ElementAt(i).IsVirtual);
+                Assert.AreEqual(expectedValues[i].Item2, items.ElementAt(i).IsAbstract);
+                Assert.AreEqual(expectedValues[i].Item3, items.ElementAt(i).IsOverride);
+                Assert.AreEqual(expectedValues[i].Item4, items.ElementAt(i).IsSealed);
+                Assert.AreEqual(expectedValues[i].Item5, items.ElementAt(i).IsNew);
+                Assert.AreEqual(expectedValues[i].Item6, items.ElementAt(i).IsStatic);
+            }
+            Assert.AreEqual(csharpCode, actual.ToFullString());
+        }
+
+        private void VerifyStatic<T>(string csharpCode, Func<IRoot, IEnumerable<T>> getItems,
+                     params Tuple<bool>[] expectedValues)
+            where T : ICanBeStatic
+        {
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var actual = RDomCSharp.Factory.BuildSyntax(root);
+            var items = getItems(root);
+            for (int i = 0; i < items.Count(); i++)
+            {
+                Assert.AreEqual(expectedValues[i].Item1, items.ElementAt(i).IsStatic);
+            }
+            Assert.AreEqual(csharpCode, actual.ToFullString());
+        }
+
+        private void VerifyOOClass(string csharpCode, Func<IRoot, IEnumerable<IClass>> getItems,
+             params Tuple<bool, bool, bool>[] expectedValues)
+        {
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var actual = RDomCSharp.Factory.BuildSyntax(root);
+            var items = getItems(root);
+            for (int i = 0; i < items.Count(); i++)
+            {
+                Assert.AreEqual(expectedValues[i].Item1, items.ElementAt(i).IsAbstract);
+                Assert.AreEqual(expectedValues[i].Item2, items.ElementAt(i).IsSealed);
+                Assert.AreEqual(expectedValues[i].Item3, items.ElementAt(i).IsStatic);
+            }
+            Assert.AreEqual(csharpCode, actual.ToFullString());
+        }
+
+        private void VerifyOOField(string csharpCode, Func<IRoot, IEnumerable<IField>> getItems,
+             params Tuple<bool>[] expectedValues)
+        {
+            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var actual = RDomCSharp.Factory.BuildSyntax(root);
+            var items = getItems(root);
+            for (int i = 0; i < items.Count(); i++)
+            {
+                Assert.AreEqual(expectedValues[i].Item1, items.ElementAt(i).IsStatic);
+            }
+            Assert.AreEqual(csharpCode, actual.ToFullString());
+        }
     }
 }

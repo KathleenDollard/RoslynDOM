@@ -8,75 +8,95 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class RDomOperatorTypeMemberFactory
-          : RDomTypeMemberFactory<RDomOperator, OperatorDeclarationSyntax>
-    {
-        private static WhitespaceKindLookup _whitespaceLookup;
+   public class RDomOperatorTypeMemberFactory
+         : RDomTypeMemberFactory<RDomOperator, OperatorDeclarationSyntax>
+   {
+      private static WhitespaceKindLookup _whitespaceLookup;
 
-        public RDomOperatorTypeMemberFactory(RDomCorporation corporation)
-         : base(corporation)
-        { }
+      public RDomOperatorTypeMemberFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
 
-        private WhitespaceKindLookup WhitespaceLookup
-        {
-            get
-            {
+      private WhitespaceKindLookup WhitespaceLookup
+      {
+         get
+         {
             if (_whitespaceLookup == null)
             {
-                _whitespaceLookup = new WhitespaceKindLookup();
-                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
-                _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
-                _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
-                }
-                return _whitespaceLookup;
+               _whitespaceLookup = new WhitespaceKindLookup();
+               _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+               _whitespaceLookup.Add(LanguageElement.OperatorKeyword, SyntaxKind.OperatorKeyword );
+               _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
+               _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
+               _whitespaceLookup.Add(LanguageElement.ParameterStartDelimiter, SyntaxKind.OpenParenToken);
+               _whitespaceLookup.Add(LanguageElement.ParameterEndDelimiter, SyntaxKind.CloseParenToken);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.OverloadableOperators );
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
             }
-        }
-        protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            var syntax = syntaxNode as OperatorDeclarationSyntax;
-            var newItem = new RDomOperator(syntaxNode, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
-            CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+            return _whitespaceLookup;
+         }
+      }
+      protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      {
+         var syntax = syntaxNode as OperatorDeclarationSyntax;
+         var newItem = new RDomOperator(syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
+         CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
+         CreateFromWorker.StoreWhitespace(newItem, syntax.Body, LanguagePart.Current, WhitespaceLookup);
+         CreateFromWorker.StoreWhitespace(newItem, syntax.ParameterList, LanguagePart.Current, WhitespaceLookup);
 
-            newItem.Name = newItem.TypedSymbol.Name;
+         newItem.Name = newItem.TypedSymbol.Name;
 
-            newItem.Operator  = Mappings.OperatorFromCSharpKind(syntax.OperatorToken.CSharpKind());
+         var returnType = Corporation
+                          .CreateFrom<IMisc>(syntax.ReturnType, newItem, model)
+                          .FirstOrDefault()
+                          as IReferencedType;
+         newItem.Type = returnType;
 
-            var returnType = Corporation
-                             .CreateFrom<IMisc>(syntax.ReturnType, newItem, model)
-                             .FirstOrDefault()
-                             as IReferencedType;
-            newItem.Type = returnType;
+         newItem.Operator = Mappings.OperatorFromCSharpKind(syntax.OperatorToken.CSharpKind());
 
-            newItem.IsStatic = newItem.Symbol.IsStatic;
+         var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
+                                      .OfType<IParameter>();
+         newItem.Parameters.AddOrMoveRange(parameters);
 
-            return newItem;
-        }
+         return newItem;
+      }
 
-            public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-        {
-            var itemAsT = item as IOperator;
-            var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+      {
+         var itemAsT = item as IOperator;
+         var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
 
-            var kind = Mappings.SyntaxKindFromOperator(itemAsT.Operator);
-            var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.Type).First();
-            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
-            var node = SyntaxFactory.OperatorDeclaration(returnTypeSyntax, nameSyntax)
-                            .WithModifiers(modifiers);
-            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
+         var kind = Mappings.SyntaxKindFromOperator(itemAsT.Operator);
+         var opToken = SyntaxFactory.Token(kind);
+         var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.Type).First();
+         var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
+         var node = SyntaxFactory.OperatorDeclaration(returnTypeSyntax, opToken)
+                         .WithModifiers(modifiers);
+         node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
 
-            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
+         var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
+         if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
-            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+         //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
-            node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup));
+         var parameterList = itemAsT.Parameters
+                     .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                     .OfType<ParameterSyntax>()
+                     .ToList();
+         var parameterListSyntax = SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterList));
+         parameterListSyntax = BuildSyntaxHelpers.AttachWhitespace(parameterListSyntax, itemAsT.Whitespace2Set, WhitespaceLookup);
+         node = node.WithParameterList(parameterListSyntax);
 
-            return node.PrepareForBuildSyntaxOutput(item);
-        }
+         node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup));
 
-    }
+         return node.PrepareForBuildSyntaxOutput(item);
+      }
+
+   }
 
 
 }

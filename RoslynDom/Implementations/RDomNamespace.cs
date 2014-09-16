@@ -24,10 +24,6 @@ namespace RoslynDom
 
         public Guid Group { get; private set; }
 
-
-        //public string OuterName
-        //{ get { return QualifiedName; } }
-
         public StemMemberKind StemMemberKind
         { get { return StemMemberKind.Namespace; } }
     }

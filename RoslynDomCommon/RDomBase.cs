@@ -16,13 +16,14 @@ namespace RoslynDom
     /// </remarks>
     public abstract class RDomBase : IDom
     {
- 
+
         private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
 
         protected RDomBase()
         { Whitespace2Set = new Whitespace2Collection(); }
 
-        protected RDomBase(IDom oldIDom) : this()
+        protected RDomBase(IDom oldIDom)
+            : this()
         {
             if (oldIDom == null) throw new NotImplementedException();
             var oldRDom = (RDomBase)oldIDom;
@@ -132,15 +133,25 @@ namespace RoslynDom
         public PublicAnnotationList PublicAnnotations
         { get { return _publicAnnotations; } }
 
-        public virtual IEnumerable<IDom> Descendants
-        { get { return new List<IDom>(); } }
+        public IEnumerable<IDom> Descendants
+        {
+            get
+            {
+                var list = new List<IDom>();
+                var children = this.Children;
+                foreach (var child in children)
+                { list.AddRange(child.DescendantsAndSelf); }
+                return list;
+            }
+        }
 
         public IEnumerable<IDom> DescendantsAndSelf
         {
             get
             {
-                var list = Descendants.ToList();
-                list.Insert(0, this);
+                var list = new List<IDom>();
+                list.Add(this);
+                list.AddRange(Descendants);
                 return list;
             }
         }

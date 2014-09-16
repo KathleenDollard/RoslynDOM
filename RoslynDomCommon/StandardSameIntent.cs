@@ -169,7 +169,7 @@ namespace RoslynDom.Common
                 if (!Check<T, IField>(one, other,
                      (x, y) => x.IsReadOnly == y.IsReadOnly
                               && x.IsVolatile == y.IsVolatile
-                              && x.IsConstant == y.IsConstant 
+                              && x.IsConstant == y.IsConstant
                               && Check(x.Initializer, y.Initializer)))
                     return false;
                 if (!Check<T, IMethod>(one, other,
@@ -178,8 +178,12 @@ namespace RoslynDom.Common
                 if (!Check<T, IParameter>(one, other,
                      (x, y) => Check(x.Type, y.Type)
                      && x.IsOut == y.IsOut
-                     && x.IsRef == y.IsRef && x.IsParamArray == y.IsParamArray
-                     && x.IsOptional == y.IsOptional && x.Ordinal == y.Ordinal))
+                     && x.IsRef == y.IsRef
+                     && x.IsParamArray == y.IsParamArray
+                     && x.IsOptional == y.IsOptional
+                     && CheckObject(x.DefaultValue, y.DefaultValue)
+                     && x.DefaultValueType == y.DefaultValueType
+                     && x.Ordinal == y.Ordinal))
                     return false;
                 if (!Check<T, IProperty>(one, other,
                      (x, y) => x.CanGet == y.CanGet && x.CanSet == y.CanSet
@@ -303,6 +307,14 @@ namespace RoslynDom.Common
                 return check(oneAs, otherAs);
             }
 
+            private bool CheckObject(object one, object other)
+            {
+                if (one == null && other == null) return true;
+                if (one == null && other != null) return false;
+                if (one != null && other == null) return false;
+
+                return one.Equals(other);
+            }
             private bool CheckChildrenInOrder<T>(IEnumerable<T> oneList, IEnumerable<T> otherList)
                         where T : class, IDom
             {

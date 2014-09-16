@@ -42,18 +42,18 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            {
-                var list = new List<IDom>();
-                list.AddRange(Condition.DescendantsAndSelf);
-                list.AddRange(base.Descendants.ToList());
-                foreach (var elseif in Elses)
-                { list.AddRange(elseif.DescendantsAndSelf); }
-                return list;
-            }
-        }
+        //public override IEnumerable<IDom> Descendants
+        //{
+        //    get
+        //    {
+        //        var list = new List<IDom>();
+        //        list.AddRange(Condition.DescendantsAndSelf);
+        //        list.AddRange(base.Descendants.ToList());
+        //        foreach (var elseif in Elses)
+        //        { list.AddRange(elseif.DescendantsAndSelf); }
+        //        return list;
+        //    }
+        //}
 
         public RDomCollection<IElseBaseStatement> Elses
         { get { return _elses; } }

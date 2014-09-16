@@ -273,6 +273,31 @@ namespace RoslynDom.CSharp
             return Corporation.CreateFrom<IStructuredDocumentation>(syntaxNode, newItem, model);
         }
 
+        public Tuple<object, LiteralKind> GetArgumentValue(IDom newItem, SemanticModel model, ExpressionSyntax expr)
+        {
+            var literalKind = LiteralKind.Unknown;
+            object value = null;
+            var literalExpression = expr as LiteralExpressionSyntax;
+            if (literalExpression != null)
+            {
+                literalKind = Mappings.LiteralKindFromSyntaxKind(literalExpression.Token.CSharpKind());
+                value = literalExpression.Token.Value;
+            }
+            else
+            {
+                var typeExpression = expr as TypeOfExpressionSyntax;
+                if (typeExpression != null)
+                {
+                    literalKind = LiteralKind.Type;
+                    value = Corporation
+                         .CreateFrom<IMisc>(typeExpression.Type, newItem, model)
+                         .FirstOrDefault()
+                         as IReferencedType;
+                }
+            }
+            return Tuple.Create(value, literalKind);
+        }
+
         public IEnumerable<TKind> CreateInvalidMembers<TKind>(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
             where TKind : class
         {

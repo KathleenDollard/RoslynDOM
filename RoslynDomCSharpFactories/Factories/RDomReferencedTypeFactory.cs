@@ -80,7 +80,7 @@ namespace RoslynDom.CSharp
                 newItem.ContainingType = symbol.ContainingType;
             }
 
-            if (symbol.ContainingNamespace == null     || symbol.ContainingNamespace.ToString() == "<global namespace>")
+            if (symbol.ContainingNamespace == null || symbol.ContainingNamespace.ToString() == "<global namespace>")
             { newItem.Namespace = ""; }
             else
             { newItem.Namespace = symbol.ContainingNamespace.ToString(); }
@@ -110,36 +110,61 @@ namespace RoslynDom.CSharp
         {
             string typeName = type.QualifiedName;
             if (type.DisplayAlias)
-            {
-                switch (type.QualifiedName)
-                {
-                case "Void":
-                case "System.Void": { typeName = "void"; break; }
-                case "System.Object": { typeName = "object"; break; }
-                case "System.String": { typeName = "string"; break; }
-                case "System.Boolean": { typeName = "bool"; break; }
-                case "System.Decimal": { typeName = "decimal"; break; }
-                case "System.SByte": { typeName = "sbyte"; break; }
-                case "System.Byte": { typeName = "byte"; break; }
-                case "System.Int16": { typeName = "short"; break; }
-                case "System.UInt16": { typeName = "ushort"; break; }
-                case "System.Int32": { typeName = "int"; break; }
-                case "System.UInt32": { typeName = "uint"; break; }
-                case "System.Int64": { typeName = "long"; break; }
-                case "System.UInt64": { typeName = "ulong"; break; }
-                case "System.Char": { typeName = "char"; break; }
-                case "System.Single": { typeName = "float"; break; }
-                case "System.Double": { typeName = "double"; break; }
-                default:
-                    break;
-                }
-            }
+            { typeName = AliasFromTypeName(typeName); }
+            else
+            { typeName = RemoveUsingPrefixes(type, typeName); }
             if (type.IsArray)
             { typeName += "[]"; }
             return SyntaxFactory.ParseTypeName(typeName);
 
         }
+        private static string AliasFromTypeName(string typeName)
+        {
+            switch (typeName)
+            {
+            case "Void":
+            case "System.Void": { return "void"; }
+            case "System.Object": { return "object"; }
+            case "System.String": { return "string"; }
+            case "System.Boolean": { return "bool"; }
+            case "System.Decimal": { return "decimal"; }
+            case "System.SByte": { return "sbyte"; }
+            case "System.Byte": { return "byte"; }
+            case "System.Int16": { return "short"; }
+            case "System.UInt16": { return "ushort"; }
+            case "System.Int32": { return "int"; }
+            case "System.UInt32": { return "uint"; }
+            case "System.Int64": { return "long"; }
+            case "System.UInt64": { return "ulong"; }
+            case "System.Char": { return "char"; }
+            case "System.Single": { return "float"; }
+            case "System.Double": { return "double"; }
+            default:
+                return null;
+            }
+        }
 
+        private static string RemoveUsingPrefixes(IReferencedType type, string qualifiedName)
+        {
+            var nsName = qualifiedName.SubstringBeforeLast(".");
+            if (string.IsNullOrWhiteSpace(nsName)) { return qualifiedName; }
+            var typeName = qualifiedName.SubstringAfterLast(".");
+            IDom context = type;
+            var list = new List<IUsingDirective>();
+            while (context !=  null)
+            {
+                var contextAsStemContainer = context as IStemContainer;
+                if (contextAsStemContainer != null)
+                { list.AddRange(contextAsStemContainer.UsingDirectives); }
+                context = context.Parent ;
+            }
+            // C# does not support partial namespace usings right now
+            foreach (var usingDirective in list)
+            {
+                if (usingDirective.Name == nsName)
+                { return typeName; }
+            }
+            return qualifiedName;
+        }
     }
-
 }

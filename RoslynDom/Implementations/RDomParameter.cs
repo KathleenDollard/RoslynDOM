@@ -10,27 +10,25 @@ namespace RoslynDom
         private AttributeCollection _attributes = new AttributeCollection();
 
         public RDomParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
-           : base(rawItem, parent, model)
+            : base(rawItem, parent, model)
         { }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
            "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
         internal RDomParameter(RDomParameter oldRDom)
-           : base(oldRDom)
+            : base(oldRDom)
         {
-            Attributes.AddOrMoveAttributeRange( oldRDom.Attributes.Select(x=>x.Copy()));
+            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
             Type = oldRDom.Type;
             IsOut = oldRDom.IsOut;
             IsRef = oldRDom.IsRef;
             IsParamArray = oldRDom.IsParamArray;
             IsOptional = oldRDom.IsOptional;
+            DefaultValue = oldRDom.DefaultValue;
+            DefaultValueType = oldRDom.DefaultValueType;
             Ordinal = oldRDom.Ordinal;
         }
         public string Name { get; set; }
-
-        //public string OuterName
-        //{ get { return RoslynUtilities.GetOuterName(this); } }
-
 
         public AttributeCollection Attributes
         { get { return _attributes; } }
@@ -45,18 +43,12 @@ namespace RoslynDom
 
         public bool IsOptional { get; set; }
 
+        public object DefaultValue { get; set; }
+
+        public LiteralKind DefaultValueType { get; set; }
+
         public int Ordinal { get; set; }
 
-        // TODO: Default Values for parameters!!!
-
-        //public override object RequestValue(string propertyName)
-        //{
-        //    if (propertyName == "TypeName")
-        //    {
-        //        return Type.QualifiedName;
-        //    }
-        //    return base.RequestValue(propertyName);
-        //}
     }
 
 

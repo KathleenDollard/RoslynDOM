@@ -6,8 +6,8 @@ namespace RoslynDom.Common
         IType<IClass>, 
         INestedContainer, 
         ITypeMemberContainer, 
+        IClassOrStructure,
         IHasTypeParameters, 
-        IHasConstructors,
         IHasImplementedInterfaces , 
         ICanBeStatic 
     {
@@ -15,6 +15,8 @@ namespace RoslynDom.Common
         bool IsSealed { get; set; }
 
         IReferencedType BaseType { get; set; }
+
+        IDestructor Destructor { get; }
 
     }
 }

@@ -27,6 +27,15 @@ namespace RoslynDom
             }
         }
 
+        public IEnumerable<IField> Fields
+        { get { return Members.OfType<IField>().ToList(); } }
+
+        public IEnumerable<IOperator> Operators
+        { get { return Members.OfType<IOperator>().ToList(); } }
+
+        public IEnumerable<IConversionOperator> ConversionOperators
+        { get { return Members.OfType<IConversionOperator>().ToList(); } }
+
         public IEnumerable<IStructure> Structures
         { get { return Members.OfType<IStructure>().ToList(); } }
 

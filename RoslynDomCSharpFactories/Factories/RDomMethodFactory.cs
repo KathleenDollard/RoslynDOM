@@ -59,10 +59,10 @@ namespace RoslynDom.CSharp
             newItem.ReturnType = returnType;
 
             newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
+
             var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
                                 .OfType<IParameter>();
             newItem.Parameters.AddOrMoveRange(parameters);
-
 
             return newItem;
         }

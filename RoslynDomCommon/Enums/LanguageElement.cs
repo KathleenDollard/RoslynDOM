@@ -39,7 +39,7 @@ namespace RoslynDom.Common
         ConditionEnd,
 
         UsingKeyword,
-        
+
         NamespaceKeyword,
         NamespaceStartDelimiter,
         NamespaceEndDelimiter,
@@ -69,7 +69,7 @@ namespace RoslynDom.Common
 
         StatementBlockStartDelimiter,
         StatementBlockEndDelimiter,
- 
+
         AccessorGetKeyword,
         AccessorSetKeyword,
         AccessorAddEventKeyword,
@@ -155,5 +155,33 @@ namespace RoslynDom.Common
         ConstructorInitializerPrefix,
         ConstructorBaseInitializer,
         ConstructorThisInitializer,
+        PlusOperator,
+        MinusOperator,
+        NotOperator,
+        ComplemententOperator,
+        IncrementOperator,
+        DecrementOperator,
+        TrueOperator,
+        FalseOperator,
+        MultiplyOperator,
+        DivideOperator,
+        ModulusOperator,
+        BitwiseAndOperator,
+        BitwiseOrOperator,
+        ExclusiveOrOperator,
+        LeftShiftOperator,
+        RightShiftOperator,
+        EqualOperator,
+        NotEqualOperator,
+        LessThanOperator,
+        GreaterThanOperator,
+        LessThanOrEqualOperator,
+        GreaterThanOrEqualOperator,
+        OperatorKeyword,
+        ExplicitConversion,
+        ImplicitConversion,
+        OutParameter,
+        RefParameter,
+        ParamsParameter,
     }
 }

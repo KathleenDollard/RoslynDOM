@@ -16,7 +16,8 @@ namespace RoslynDom
         internal RDomReturnStatement(RDomReturnStatement oldRDom)
             : base(oldRDom)
         {
-            Return = oldRDom.Return.Copy();
+            if (oldRDom.Return != null)
+            { Return = oldRDom.Return.Copy(); }
         }
 
         public override IEnumerable<IDom> Children
@@ -30,8 +31,8 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        { get { return Children; } }
+        //public override IEnumerable<IDom> Descendants
+        //{ get { return Children; } }
 
         public IExpression Return { get; set; }
     }

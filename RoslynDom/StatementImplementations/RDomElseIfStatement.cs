@@ -31,18 +31,7 @@ namespace RoslynDom
             }
         }
 
-        public override IEnumerable<IDom> Descendants
-        {
-            get
-            {
-                var list = new List<IDom>();
-                list.AddRange(Condition.DescendantsAndSelf);
-                list.AddRange(base.Descendants.ToList());
-                return list;
-            }
-        }
-
-        public IExpression Condition { get; set; }
+            public IExpression Condition { get; set; }
 
     }
 }
