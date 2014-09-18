@@ -49,10 +49,16 @@ namespace RoslynDom
                     var y = 42;
                     z = x + y;
                 }
-                catch (InvalidOperationException ex) if (z == 45)
-                { Console.WriteLine(ex + " " + z); }
+                catch (InvalidOperationException ex)
+                {
+                    if (z == 45)
+                    {
+                        Console.WriteLine(ex + " " + z);
+                    }
+                }
                 catch
-                { }
+                {
+                }
                 var length = 10;
                 for (int i = 0, j = 3; i < length && j < length; i++, j++)
                 {

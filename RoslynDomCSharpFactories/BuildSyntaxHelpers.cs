@@ -158,6 +158,7 @@ namespace RoslynDom.CSharp
         {
             switch (kind)
             {
+                case LiteralKind.Constant:
                 case LiteralKind.String:
                 case LiteralKind.Unknown:
                 return SyntaxFactory.Literal(value.ToString());

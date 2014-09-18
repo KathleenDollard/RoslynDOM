@@ -659,6 +659,38 @@ namespace RoslynDomTests
 
         }
 
+        [TestMethod, TestCategory(AttributeValuesCategory)]
+        public void Can_get_exression_attribute_value()
+        {
+            var source = @"
+using System;
+
+namespace Test
+{
+    public class ContractNamespaceAttribute : Attribute
+    {
+        public ContractNamespaceAttribute(string text)
+        {
+        }
+
+        public Type MyType {get; set;}
+    }
+
+    public class Const
+    {
+        public const string Test = ""TestContract"";
+    }
+
+    [ContractNamespace(Const.Test)]
+    class TestClass
+    {
+    }
+}";
+            var attributes = VerifyAttributes(source, root => root.RootClasses.First(x => x.Name == "TestClass").Attributes, 1, true, "ContractNamespace").ToArray();
+            var attributeValues = VerifyAttributeValues(attributes[0], count: 1).ToArray();
+            VerifyAttributeValue(attributeValues[0], name: "", value: "TestContract", kind: LiteralKind.Constant);
+        }
+
         #endregion
 
         #region get root class attributes

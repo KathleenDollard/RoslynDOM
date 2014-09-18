@@ -294,6 +294,16 @@ namespace RoslynDom.CSharp
                          .FirstOrDefault()
                          as IReferencedType;
                 }
+                else
+                {
+                    // If all else fails, try to get constant value
+                    var constant = model.GetConstantValue(expr);
+                    if (constant.HasValue)
+                    {
+                        literalKind = LiteralKind.Constant;
+                        value = constant.Value;
+                    }
+                }
             }
             return Tuple.Create(value, literalKind);
         }
