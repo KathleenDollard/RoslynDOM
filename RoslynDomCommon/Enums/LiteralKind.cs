@@ -6,6 +6,7 @@
         Numeric,
         Boolean,
         String,
-        Type
+        Type,
+        Constant
     }
 }
