@@ -158,11 +158,11 @@ namespace RoslynDom.CSharp
         {
             switch (kind)
             {
-                case LiteralKind.Constant:
-                case LiteralKind.String:
-                case LiteralKind.Unknown:
+            case LiteralKind.Constant:
+            case LiteralKind.String:
+            case LiteralKind.Unknown:
                 return SyntaxFactory.Literal(value.ToString());
-                case LiteralKind.Numeric:
+            case LiteralKind.Numeric:
                 if (GeneralUtilities.IsInteger(value))
                 { return SyntaxFactory.Literal(Convert.ToInt32(value)); }
                 if (GeneralUtilities.IsFloatingPint(value))
@@ -175,10 +175,10 @@ namespace RoslynDom.CSharp
                 { return SyntaxFactory.Literal(Convert.ToUInt64(value)); }
                 else
                 { return SyntaxFactory.Literal(Convert.ToDecimal(value)); }
-                case LiteralKind.Boolean:
-                case LiteralKind.Type:
-                // Need to create an expression so handled separately and should not call this
-                default:
+            case LiteralKind.Boolean:
+            case LiteralKind.Type:
+            // Need to create an expression so handled separately and should not call this
+            default:
                 break;
             }
             throw new NotImplementedException();
@@ -257,19 +257,19 @@ namespace RoslynDom.CSharp
             var tokenList = SyntaxFactory.TokenList();
             switch (accessModifier)
             {
-                case AccessModifier.None:
+            case AccessModifier.None:
                 return tokenList;
-                case AccessModifier.Private:
+            case AccessModifier.Private:
                 return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
-                case AccessModifier.ProtectedOrInternal:
+            case AccessModifier.ProtectedOrInternal:
                 return tokenList.AddRange(new SyntaxToken[] { SyntaxFactory.Token(SyntaxKind.ProtectedKeyword), SyntaxFactory.Token(SyntaxKind.InternalKeyword) });
-                case AccessModifier.Protected:
+            case AccessModifier.Protected:
                 return tokenList.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
-                case AccessModifier.Internal:
+            case AccessModifier.Internal:
                 return tokenList.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
-                case AccessModifier.Public:
+            case AccessModifier.Public:
                 return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
-                default:
+            default:
                 throw new InvalidOperationException();
             }
         }
@@ -301,7 +301,7 @@ namespace RoslynDom.CSharp
         }
 
         public static TypeParameterListSyntax GetTypeParameterSyntaxList(
-                 IEnumerable<SyntaxNode> typeParamsAndConstraints, 
+                 IEnumerable<SyntaxNode> typeParamsAndConstraints,
                  Whitespace2Collection whitespace2Set,
                  WhitespaceKindLookup whitespaceLookup)
         {
@@ -343,23 +343,29 @@ namespace RoslynDom.CSharp
                 if (constraint != null)
                 { clauses.Add(constraint); }
             }
-             return SyntaxFactory.List(clauses); 
+            return SyntaxFactory.List(clauses);
         }
 
-        public static ExpressionSyntax BuildArgValueExpression(object value, LiteralKind valueType)
+        public static ExpressionSyntax BuildArgValueExpression(object value, string declaredConst, LiteralKind valueType)
         {
             var kind = Mappings.SyntaxKindFromLiteralKind(valueType, value);
             ExpressionSyntax expr = null;
-            if (valueType == LiteralKind.Boolean)
-            { expr = SyntaxFactory.LiteralExpression(kind); }
-            else if (valueType == LiteralKind.Type)
-            {
-                var type = value as RDomReferencedType;
-                if (type == null) throw new InvalidOperationException();
-                var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
-                expr = SyntaxFactory.TypeOfExpression(typeSyntax);
-            }
-            else
+         if (valueType == LiteralKind.Boolean)
+         { expr = SyntaxFactory.LiteralExpression(kind); }
+         else if (valueType == LiteralKind.Type)
+         {
+            var type = value as RDomReferencedType;
+            if (type == null) throw new InvalidOperationException();
+            var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
+            expr = SyntaxFactory.TypeOfExpression(typeSyntax);
+         }
+         else if (valueType == LiteralKind.Constant)
+         {
+            var leftExpr = SyntaxFactory.IdentifierName(declaredConst.SubstringBeforeLast("."));
+            var name = SyntaxFactory.IdentifierName(declaredConst.SubstringAfterLast("."));
+            expr = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, leftExpr, name);
+         }
+         else
             {
                 var token = BuildSyntaxHelpers.GetTokenFromKind(valueType, value);
                 expr = SyntaxFactory.LiteralExpression((SyntaxKind)kind, token);

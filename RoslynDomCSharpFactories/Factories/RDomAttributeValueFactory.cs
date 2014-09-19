@@ -8,130 +8,132 @@ using System;
 
 namespace RoslynDom.CSharp
 {
-    public class RDomAttributeValueMiscFactory
-            : RDomMiscFactory<RDomAttributeValue, AttributeArgumentSyntax>
-    {
-        private static WhitespaceKindLookup _whitespaceLookup;
+   public class RDomAttributeValueMiscFactory
+           : RDomMiscFactory<RDomAttributeValue, AttributeArgumentSyntax>
+   {
+      private static WhitespaceKindLookup _whitespaceLookup;
 
-        public RDomAttributeValueMiscFactory(RDomCorporation corporation)
-            : base(corporation)
-        { }
+      public RDomAttributeValueMiscFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
 
-        protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            var syntax = syntaxNode as AttributeArgumentSyntax;
-            var newItem = new RDomAttributeValue(syntaxNode, parent, model);
-            InitializeAttributeValue(newItem, syntax, model);
-            CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
-            AttributeValueWhitespace(newItem, syntax);
-            return newItem;
-        }
+      protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      {
+         var syntax = syntaxNode as AttributeArgumentSyntax;
+         var newItem = new RDomAttributeValue(syntaxNode, parent, model);
+         InitializeAttributeValue(newItem, syntax, model);
+         CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
+         AttributeValueWhitespace(newItem, syntax);
+         return newItem;
+      }
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-        {
-            var itemAsT = item as IAttributeValue;
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+      {
+         var itemAsT = item as IAttributeValue;
 
-            var argNameSyntax = SyntaxFactory.IdentifierName(itemAsT.Name);
-            argNameSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirst(argNameSyntax, item.Whitespace2Set[LanguageElement.AttributeValueName]);
-            argNameSyntax = BuildSyntaxHelpers.AttachWhitespaceToLast(argNameSyntax, item.Whitespace2Set[LanguageElement.AttributeValueName]);
+         var argNameSyntax = SyntaxFactory.IdentifierName(itemAsT.Name);
+         argNameSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirst(argNameSyntax, item.Whitespace2Set[LanguageElement.AttributeValueName]);
+         argNameSyntax = BuildSyntaxHelpers.AttachWhitespaceToLast(argNameSyntax, item.Whitespace2Set[LanguageElement.AttributeValueName]);
 
-            //var kind = Mappings.SyntaxKindFromLiteralKind(itemAsT.ValueType, itemAsT.Value);
-            ExpressionSyntax expr = BuildSyntaxHelpers.BuildArgValueExpression(itemAsT.Value, itemAsT.ValueType );
-            var node = SyntaxFactory.AttributeArgument(expr);
-            if (itemAsT.Style == AttributeValueStyle.Colon)
-            {
-                var nameColon = SyntaxFactory.NameColon(argNameSyntax);
-                nameColon = BuildSyntaxHelpers.AttachWhitespaceToLast(nameColon, item.Whitespace2Set[LanguageElement.AttributeValueEqualsOrColon]);
-                node = node.WithNameColon(nameColon);
-            }
-            else if (itemAsT.Style == AttributeValueStyle.Equals)
-            {
-                var nameEquals = SyntaxFactory.NameEquals(argNameSyntax);
-                nameEquals = BuildSyntaxHelpers.AttachWhitespaceToLast(nameEquals, item.Whitespace2Set[LanguageElement.AttributeValueEqualsOrColon]);
-                node = node.WithNameEquals(nameEquals);
-            }
-            node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.AttributeValueFirstToken]);
-            node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.AttributeValueLastToken]);
+         //var kind = Mappings.SyntaxKindFromLiteralKind(itemAsT.ValueType, itemAsT.Value);
+         ExpressionSyntax expr = BuildSyntaxHelpers.BuildArgValueExpression(
+                     itemAsT.Value, itemAsT.ValueConstantIdentifier, itemAsT.ValueType);
+         var node = SyntaxFactory.AttributeArgument(expr);
+         if (itemAsT.Style == AttributeValueStyle.Colon)
+         {
+            var nameColon = SyntaxFactory.NameColon(argNameSyntax);
+            nameColon = BuildSyntaxHelpers.AttachWhitespaceToLast(nameColon, item.Whitespace2Set[LanguageElement.AttributeValueEqualsOrColon]);
+            node = node.WithNameColon(nameColon);
+         }
+         else if (itemAsT.Style == AttributeValueStyle.Equals)
+         {
+            var nameEquals = SyntaxFactory.NameEquals(argNameSyntax);
+            nameEquals = BuildSyntaxHelpers.AttachWhitespaceToLast(nameEquals, item.Whitespace2Set[LanguageElement.AttributeValueEqualsOrColon]);
+            node = node.WithNameEquals(nameEquals);
+         }
+         node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.AttributeValueFirstToken]);
+         node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.AttributeValueLastToken]);
 
-            return node.PrepareForBuildSyntaxOutput(item);
-        }
+         return node.PrepareForBuildSyntaxOutput(item);
+      }
 
-        private void InitializeAttributeValue(IAttributeValue newItem,
-                  AttributeArgumentSyntax rawItem, SemanticModel model)
-        {
-            var tuple = GetAttributeValueName(rawItem);
-            newItem.Name = tuple.Item1;
-            newItem.Style = tuple.Item2;
-            var tuple2 = GetAttributeValueValue(rawItem, newItem, model);
-            newItem.Value = tuple2.Item1;
-            newItem.ValueType = tuple2.Item2;
-            newItem.Type = newItem.Value.GetType();
-        }
+      private void InitializeAttributeValue(IAttributeValue newItem,
+                AttributeArgumentSyntax rawItem, SemanticModel model)
+      {
+         var tuple = GetAttributeValueName(rawItem);
+         newItem.Name = tuple.Item1;
+         newItem.Style = tuple.Item2;
+         var tuple2 = GetAttributeValueValue(rawItem, newItem, model);
+         newItem.Value = tuple2.Item1;
+         newItem.ValueConstantIdentifier = tuple2.Item2;
+         newItem.ValueType = tuple2.Item3;
+         newItem.Type = newItem.Value.GetType();
+      }
 
-        private void AttributeValueWhitespace(RDomAttributeValue newItem, AttributeArgumentSyntax syntax)
-        {
-            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetFirstToken(), LanguagePart.Current, LanguageElement.AttributeValueFirstToken);
-            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetLastToken(), LanguagePart.Current, LanguageElement.AttributeValueLastToken);
-            if (syntax.NameColon != null)
-            {
-                CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameColon.Name.Identifier, LanguagePart.Current, LanguageElement.AttributeValueName);
-                CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameColon.ColonToken, LanguagePart.Current, LanguageElement.AttributeValueEqualsOrColon);
-            }
-            else if (syntax.NameEquals != null)
-            {
-                CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameEquals.Name.Identifier, LanguagePart.Current, LanguageElement.AttributeValueName);
-                CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameEquals.EqualsToken, LanguagePart.Current, LanguageElement.AttributeValueEqualsOrColon);
-            }
+      private void AttributeValueWhitespace(RDomAttributeValue newItem, AttributeArgumentSyntax syntax)
+      {
+         CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetFirstToken(), LanguagePart.Current, LanguageElement.AttributeValueFirstToken);
+         CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetLastToken(), LanguagePart.Current, LanguageElement.AttributeValueLastToken);
+         if (syntax.NameColon != null)
+         {
+            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameColon.Name.Identifier, LanguagePart.Current, LanguageElement.AttributeValueName);
+            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameColon.ColonToken, LanguagePart.Current, LanguageElement.AttributeValueEqualsOrColon);
+         }
+         else if (syntax.NameEquals != null)
+         {
+            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameEquals.Name.Identifier, LanguagePart.Current, LanguageElement.AttributeValueName);
+            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameEquals.EqualsToken, LanguagePart.Current, LanguageElement.AttributeValueEqualsOrColon);
+         }
 
-            var prevNodeOrToken = syntax.Parent
-                                    .ChildNodesAndTokens()
-                                    .PreviousSiblings(syntax)
-                                    .LastOrDefault();
-            if (prevNodeOrToken.CSharpKind() == SyntaxKind.CommaToken)
-            {
-                var commaToken = prevNodeOrToken.AsToken();
-                var whitespace2 = newItem.Whitespace2Set[LanguageElement.AttributeValueFirstToken];
-                if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
-                { whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString(); }
-            }
-        }
+         var prevNodeOrToken = syntax.Parent
+                                 .ChildNodesAndTokens()
+                                 .PreviousSiblings(syntax)
+                                 .LastOrDefault();
+         if (prevNodeOrToken.CSharpKind() == SyntaxKind.CommaToken)
+         {
+            var commaToken = prevNodeOrToken.AsToken();
+            var whitespace2 = newItem.Whitespace2Set[LanguageElement.AttributeValueFirstToken];
+            if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
+            { whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString(); }
+         }
+      }
 
 
-        private Tuple<string, AttributeValueStyle> GetAttributeValueName(AttributeArgumentSyntax arg)
-        {
-            string name = "";
-            AttributeValueStyle style;
-            if (arg.NameColon != null)
-            {
-                style = AttributeValueStyle.Colon;
-                name = arg.NameColon.Name.ToString().Replace(":", "").Trim();
-            }
-            else if (arg.NameEquals != null)
-            {
-                style = AttributeValueStyle.Equals;
-                name = arg.NameEquals.Name.ToString();
-            }
-            else
-            {
-                style = AttributeValueStyle.Positional;
-                // TODO: Work harder at getting the real parameter name??
-            }
-            return Tuple.Create(name, style);
-        }
+      private Tuple<string, AttributeValueStyle> GetAttributeValueName(AttributeArgumentSyntax arg)
+      {
+         string name = "";
+         AttributeValueStyle style;
+         if (arg.NameColon != null)
+         {
+            style = AttributeValueStyle.Colon;
+            name = arg.NameColon.Name.ToString().Replace(":", "").Trim();
+         }
+         else if (arg.NameEquals != null)
+         {
+            style = AttributeValueStyle.Equals;
+            name = arg.NameEquals.Name.ToString();
+         }
+         else
+         {
+            style = AttributeValueStyle.Positional;
+            // TODO: Work harder at getting the real parameter name??
+         }
+         return Tuple.Create(name, style);
+      }
 
-        private Tuple<object, LiteralKind> GetAttributeValueValue(
-                      SyntaxNode argNode, IDom newItem, SemanticModel model)
-        {
-            var arg = argNode as AttributeArgumentSyntax;
-            Guardian.Assert.IsNotNull(arg, nameof(arg));
+      private Tuple<object, string, LiteralKind> GetAttributeValueValue(
+                    SyntaxNode argNode, IDom newItem, SemanticModel model)
+      {
+         var arg = argNode as AttributeArgumentSyntax;
+         Guardian.Assert.IsNotNull(arg, nameof(arg));
 
-            // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
-            var expr = arg.Expression;
-            return CreateFromWorker.GetArgumentValue(newItem, model, expr);
-        }
+         // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
+         var expr = arg.Expression;
+         return CreateFromWorker.GetArgumentValue(newItem, model, expr);
+      }
 
-  
 
-    }
+
+   }
 
 }

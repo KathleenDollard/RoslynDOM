@@ -34,6 +34,6 @@ namespace RoslynDom.CSharp
              LanguagePart languagePart,
              LanguageElement languageElement);
 
-        Tuple<object, LiteralKind> GetArgumentValue(IDom newItem, SemanticModel model, ExpressionSyntax expr);
+        Tuple<object, string, LiteralKind> GetArgumentValue(IDom newItem, SemanticModel model, ExpressionSyntax expr);
     }
 }
