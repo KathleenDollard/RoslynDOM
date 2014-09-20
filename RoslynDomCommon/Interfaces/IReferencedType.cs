@@ -6,5 +6,6 @@ namespace RoslynDom.Common
     {
         bool DisplayAlias { get; set; }
         bool IsArray { get; set; }
+        RDomCollection<IReferencedType> TypeArguments { get; set; }
     }
 }
