@@ -42,6 +42,19 @@ namespace RoslynDom.CSharp
                     newItem.IsArray = false;
                     InitalizeNameAndNamespace(newItem, newItem.Symbol, typeSyntax);
                 }
+
+                var genericSyntax = typeSyntax as GenericNameSyntax;
+                if (genericSyntax != null)
+                {
+                    foreach (var argument in genericSyntax.TypeArgumentList.Arguments)
+                    {
+                        newItem.TypeArguments.AddOrMove(Corporation
+                                 .CreateFrom<IMisc>(argument, newItem, model)
+                                 .FirstOrDefault()
+                                 as IReferencedType);
+                    }
+                }
+
                 return newItem;
             }
             throw new InvalidOperationException();

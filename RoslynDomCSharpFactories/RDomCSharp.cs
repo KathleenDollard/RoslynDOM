@@ -42,7 +42,14 @@ namespace RoslynDom.CSharp
         {
             Guardian.Assert.IsNotNull(document, nameof(document));
             SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
-            return GetRootFromStringInternal(tree, document.FilePath);
+            SemanticModel model = document.GetSemanticModelAsync().Result;
+            var root = _helper.CreateFrom<IRoot>(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();
+            if (root == null)
+                throw new InvalidOperationException("Failed to get root node!");
+
+            root.FilePath = document.FilePath;
+
+            return root;
         }
 
         public IRoot GetRootFromSyntaxTree(SyntaxTree tree)

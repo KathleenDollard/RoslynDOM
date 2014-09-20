@@ -1205,6 +1205,66 @@ public class Foo
          var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
          Assert.AreEqual(false, (bool)parameters[0].RequestValue("IsOut"));
       }
+
+       [TestMethod, TestCategory(MemberKindCategory)]
+       public void Can_get_generic_arguments_from_property()
+       {
+           var csharpCode = @"
+using System;
+using System.Collections.Generic;
+public class Foo  
+{
+   public Dictionary<string, int> Foo1{get; set;}
+}
+";
+           var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+           var members = root.Classes.First().Properties.ToArray();
+           var returnType = members[0].ReturnType;
+           Assert.AreEqual("Dictionary", returnType.Name);
+           Assert.AreEqual(2, returnType.TypeArguments.Count());
+           Assert.AreEqual("String", returnType.TypeArguments.ElementAt(0).Name);
+           Assert.AreEqual("Int32", returnType.TypeArguments.ElementAt(1).Name);
+       }
+
+       [TestMethod, TestCategory(MemberKindCategory)]
+       public void Can_get_complex_generic_arguments_from_property()
+       {
+           var csharpCode = @"
+using System;
+using System.Collections.Generic;
+public class Foo  
+{
+   public Dictionary<string, List<int>> Foo1{get; set;}
+}
+";
+           var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+           var members = root.Classes.First().Properties.ToArray();
+           var returnType = members[0].ReturnType;
+           Assert.AreEqual("Dictionary", returnType.Name);
+           Assert.AreEqual(2, returnType.TypeArguments.Count());
+           Assert.AreEqual("String", returnType.TypeArguments.ElementAt(0).Name);
+           Assert.AreEqual("List", returnType.TypeArguments.ElementAt(1).Name);
+           Assert.AreEqual(1, returnType.TypeArguments.ElementAt(1).TypeArguments.Count());
+           Assert.AreEqual("Int32", returnType.TypeArguments.ElementAt(1).TypeArguments.ElementAt(0).Name);
+       }
+
+       [TestMethod, TestCategory(MemberKindCategory)]
+       public void Can_get_generic_arguments_from_ancestor()
+       {
+           var csharpCode = @"
+using System;
+using System.Collections.Generic;
+public class Foo : List<System.Int32>
+{
+}
+";
+           var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+           var type = root.Classes.First().BaseType;
+           Assert.IsNotNull(type);
+           Assert.AreEqual("List", type.Name);
+           Assert.AreEqual(1, type.TypeArguments.Count());
+           Assert.AreEqual("Int32", type.TypeArguments.ElementAt(0).Name);
+       }
       #endregion
 
       #region property access

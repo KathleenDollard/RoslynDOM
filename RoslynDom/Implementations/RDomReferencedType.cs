@@ -11,7 +11,9 @@ namespace RoslynDom
 
         public RDomReferencedType(SyntaxNode rawItem, IDom parent, SemanticModel model)
             : base(rawItem, parent, model)
-        { }
+        {
+            TypeArguments = new RDomCollection<IReferencedType>(this);
+        }
 
         internal RDomReferencedType(RDomReferencedType oldRDom)
             : base(oldRDom)
@@ -21,11 +23,13 @@ namespace RoslynDom
             DisplayAlias = oldRDom.DisplayAlias;
             IsArray = oldRDom.IsArray;
             ContainingType = oldRDom.ContainingType;
+            TypeArguments = oldRDom.TypeArguments;
         }
 
         public string Name { get; set; }
         public bool DisplayAlias { get; set; }
         public bool IsArray { get; set; }
+        public RDomCollection<IReferencedType> TypeArguments { get; set; }
 
         public string QualifiedName
         {
