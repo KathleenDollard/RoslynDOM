@@ -83,6 +83,15 @@ namespace RoslynDom.CSharp
          return SyntaxFactory.TokenList(list);
       }
 
+      internal static T RemoveLeadingSpaces<T>(T syntax)
+         where T : SyntaxNode
+      {
+         var trivia = syntax.GetLeadingTrivia();
+         var newTrivia = trivia.Where(x => x.CSharpKind() != SyntaxKind.WhitespaceTrivia);
+         syntax = syntax.WithLeadingTrivia(newTrivia);
+         return syntax;
+      }
+
       public static SyntaxTriviaList LeadingTrivia(IDom item)
       {
          var leadingTrivia = new List<SyntaxTrivia>();

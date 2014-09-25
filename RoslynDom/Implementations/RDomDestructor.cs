@@ -68,8 +68,7 @@ namespace RoslynDom
             get
             { return AccessModifier.Public; }
             set
-            {  // noop 
-            }
+            { }
         }
 
         public AccessModifier DeclaredAccessModifier
@@ -77,8 +76,7 @@ namespace RoslynDom
             get
             { return AccessModifier; }
             set
-            {  // noop 
-            }
+            { }
         }
         public RDomCollection<IParameter> Parameters
         { get { return _parameters; } }
@@ -101,6 +99,5 @@ namespace RoslynDom
         public IStructuredDocumentation StructuredDocumentation { get; set; }
 
         public string Description { get; set; }
-
     }
 }

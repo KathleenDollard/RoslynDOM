@@ -51,6 +51,4 @@ namespace RoslynDom
 
       public string DefaultConstantIdentifier { get; set; }
    }
-
-
 }

@@ -11,7 +11,7 @@ namespace RoslynDom
     public class RDomComment : RDomCommentWhite, IComment
     {
         public RDomComment (string text, bool isMultiline)
-            : base(StemMemberKind.Comment, MemberKind.Comment )
+            : base(StemMemberKind.Comment, MemberKind.Comment)
         {
             Text = text;
             IsMultiline = isMultiline;

@@ -99,6 +99,5 @@ namespace RoslynDom
       public IStructuredDocumentation StructuredDocumentation { get; set; }
 
       public string Description { get; set; }
-
    }
 }

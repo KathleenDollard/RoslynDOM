@@ -36,6 +36,5 @@ namespace RoslynDom
 
         public IEnumerable<IAttributeValue> AttributeValues
         { get { return _attributeValues; } }
-
     }
 }

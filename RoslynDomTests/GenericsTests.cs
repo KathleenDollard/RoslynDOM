@@ -41,12 +41,6 @@ public struct Foo1<T>{}
 public struct Foo2<T, T1>{}
 public struct Foo3<T, T1,T2>{}
 ";
-         //var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         //var structures = root.Structures.ToArray();
-         //Assert.AreEqual(0, structures[0].TypeParameters.Count());
-         //Assert.AreEqual(1, structures[1].TypeParameters.Count());
-         //Assert.AreEqual(2, structures[2].TypeParameters.Count());
-         //Assert.AreEqual(3, structures[3].TypeParameters.Count());
          VerifyTypeParameters(csharpCode, x => x.Structures.ToArray()[0].TypeParameters);
          VerifyTypeParameters(csharpCode, x => x.Structures.ToArray()[1].TypeParameters, "T");
          VerifyTypeParameters(csharpCode, x => x.Structures.ToArray()[2].TypeParameters, "T", "T1");
@@ -63,12 +57,6 @@ public interface Foo1<T>{}
 public interface Foo2<T, T1>{}
 public interface Foo3<T, T1, T2>{}
 ";
-         //var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         //var interfaces = root.Interfaces.ToArray();
-         //Assert.AreEqual(0, interfaces[0].TypeParameters.Count());
-         //Assert.AreEqual(1, interfaces[1].TypeParameters.Count());
-         //Assert.AreEqual(2, interfaces[2].TypeParameters.Count());
-         //Assert.AreEqual(3, interfaces[3].TypeParameters.Count());
          VerifyTypeParameters(csharpCode, x => x.Interfaces.ToArray()[0].TypeParameters);
          VerifyTypeParameters(csharpCode, x => x.Interfaces.ToArray()[1].TypeParameters, "T");
          VerifyTypeParameters(csharpCode, x => x.Interfaces.ToArray()[2].TypeParameters, "T", "T1");
@@ -87,12 +75,6 @@ public void Foo2<T, T1>(){}
 public void Foo3<T, T1, T2>(){}
 }
 ";
-         //var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         //var methods = root.Classes.First().Methods.ToArray();
-         //Assert.AreEqual(0, methods[0].TypeParameters.Count());
-         //Assert.AreEqual(1, methods[1].TypeParameters.Count());
-         //Assert.AreEqual(2, methods[2].TypeParameters.Count());
-         //Assert.AreEqual(3, methods[3].TypeParameters.Count());
          VerifyTypeParameters(csharpCode, x => x.Classes.First().Methods.ToArray()[0].TypeParameters);
          VerifyTypeParameters(csharpCode, x => x.Classes.First().Methods.ToArray()[1].TypeParameters, "T");
          VerifyTypeParameters(csharpCode, x => x.Classes.First().Methods.ToArray()[2].TypeParameters, "T", "T1");
@@ -111,16 +93,30 @@ public  List < T, T1>  Foo2(){}
 public List<T, T1, T2> Foo3(){}
 }
 ";
-         //var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         //var methods = root.Classes.First().Methods.ToArray();
-         //Assert.AreEqual(0, methods[0].TypeParameters.Count());
-         //Assert.AreEqual(1, methods[1].TypeParameters.Count());
-         //Assert.AreEqual(2, methods[2].TypeParameters.Count());
-         //Assert.AreEqual(3, methods[3].TypeParameters.Count());
          VerifyTypeArguments(csharpCode, x => x.Classes.First().Methods.ToArray()[0].ReturnType.TypeArguments);
          VerifyTypeArguments(csharpCode, x => x.Classes.First().Methods.ToArray()[1].ReturnType.TypeArguments, "T");
          VerifyTypeArguments(csharpCode, x => x.Classes.First().Methods.ToArray()[2].ReturnType.TypeArguments, "T", "T1");
          VerifyTypeArguments(csharpCode, x => x.Classes.First().Methods.ToArray()[3].ReturnType.TypeArguments, "T", "T1", "T2");
+      }
+
+      [TestMethod, TestCategory(GenericParamCategory)]
+      public void Can_get_generic_fields_types()
+      {
+         var csharpCode = @"
+public class Foo
+{
+   private List<IAttributeValue> _attributeValues = new List<IAttributeValue>();
+   private void Foo0;
+   private List<T> Foo1;
+   private Dictionary < T, T1>  Foo2;
+   private Tuple<T, T1, T2> Foo3;
+}
+";
+         VerifyTypeArguments(csharpCode, x => x.Classes.First().Fields.ElementAt(0).ReturnType.TypeArguments, "IAttributeValue");
+         VerifyTypeArguments(csharpCode, x => x.Classes.First().Fields.ElementAt(1).ReturnType.TypeArguments);
+         VerifyTypeArguments(csharpCode, x => x.Classes.First().Fields.ElementAt(2).ReturnType.TypeArguments, "T");
+         VerifyTypeArguments(csharpCode, x => x.Classes.First().Fields.ElementAt(3).ReturnType.TypeArguments, "T", "T1");
+         VerifyTypeArguments(csharpCode, x => x.Classes.First().Fields.ElementAt(4).ReturnType.TypeArguments, "T", "T1", "T2");
       }
       #endregion
 

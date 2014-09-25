@@ -29,6 +29,5 @@ namespace RoslynDom
         public string Name { get; set; }
 
         public IExpression Expression { get; set; }
-
     }
 }

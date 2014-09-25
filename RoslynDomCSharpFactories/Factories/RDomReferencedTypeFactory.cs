@@ -44,21 +44,7 @@ namespace RoslynDom.CSharp
             var newItem = new RDomReferencedType(syntaxNode, parent, model);
 
             CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            //CreateFromWorker.StoreWhitespace(newItem, typeSyntax, LanguagePart.Current, whitespaceLookup);
-            var identifierToken = typeSyntax.ChildTokens()
-                           .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
-                           .FirstOrDefault();
-            CreateFromWorker.StoreWhitespaceForToken(newItem, identifierToken, LanguagePart.Current, LanguageElement.Identifier);
-            var firstToken = typeSyntax.GetFirstToken();
-            var lastToken = typeSyntax.GetLastToken();
-            if (identifierToken != firstToken)
-            {
-               CreateFromWorker.StoreWhitespaceForToken(newItem, firstToken, LanguagePart.Current, LanguageElement.FirstToken);
-            }
-            if (identifierToken != lastToken)
-            {
-               CreateFromWorker.StoreWhitespaceForToken(newItem, lastToken, LanguagePart.Current, LanguageElement.LastToken);
-            }
+            StoreWhitespace(typeSyntax, newItem);
 
             CreateTypeArgs(syntaxNode, model, newItem);
 
@@ -77,6 +63,47 @@ namespace RoslynDom.CSharp
             return newItem;
          }
          throw new InvalidOperationException();
+      }
+
+      private void StoreWhitespace(TypeSyntax typeSyntax, RDomReferencedType newItem)
+      {
+         //CreateFromWorker.StoreWhitespace(newItem, typeSyntax, LanguagePart.Current, whitespaceLookup);
+         var identifierToken = typeSyntax.ChildTokens()
+                        .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+                        .FirstOrDefault();
+         CreateFromWorker.StoreWhitespaceForToken(newItem, identifierToken, LanguagePart.Current, LanguageElement.Identifier);
+         var firstToken = typeSyntax.GetFirstToken();
+         var lastToken = typeSyntax.GetLastToken();
+         if (identifierToken != firstToken)
+         {
+            CreateFromWorker.StoreWhitespaceForToken(newItem, firstToken, LanguagePart.Current, LanguageElement.FirstToken);
+         }
+         if (identifierToken != lastToken && lastToken.CSharpKind() != SyntaxKind.GreaterThanToken)
+         {
+            CreateFromWorker.StoreWhitespaceForToken(newItem, lastToken, LanguagePart.Current, LanguageElement.LastToken);
+         }
+         var typeArgumentList = typeSyntax.ChildNodes()
+                                 .OfType<TypeArgumentListSyntax>()
+                                 .FirstOrDefault();
+         if (typeArgumentList != null)
+         {
+            CreateFromWorker.StoreWhitespaceForToken(newItem, typeArgumentList.LessThanToken , 
+                        LanguagePart.Current, LanguageElement.TypeParameterStartDelimiter);
+            CreateFromWorker.StoreWhitespaceForToken(newItem, typeArgumentList.GreaterThanToken,
+                        LanguagePart.Current, LanguageElement.TypeParameterEndDelimiter);
+         }
+
+         //// This is ugly, but there are so many uses for this class I had 
+         //// trouble with the generalized StoreWhitespace doubling some
+         //// whitespace.
+         //var openTypeParam = typeSyntax.ChildTokens()
+         //               .Where(x => x.CSharpKind() == SyntaxKind.LessThanToken)
+         //               .FirstOrDefault();
+         //CreateFromWorker.StoreWhitespaceForToken(newItem, openTypeParam, LanguagePart.Current, LanguageElement.TypeParameterStartDelimiter);
+         //var closeTypeParam = typeSyntax.ChildTokens()
+         //               .Where(x => x.CSharpKind() == SyntaxKind.GreaterThanToken)
+         //               .FirstOrDefault();
+         //CreateFromWorker.StoreWhitespaceForToken(newItem, closeTypeParam, LanguagePart.Current, LanguageElement.TypeParameterEndDelimiter);
       }
 
       private void CreateTypeArgs(SyntaxNode syntaxNode, SemanticModel model, RDomReferencedType newItem)
@@ -169,9 +196,9 @@ namespace RoslynDom.CSharp
          var itemAsT = item as IReferencedType;
          var node = TypeSyntaxFromType(itemAsT);
 
-         node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, 
+         node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node,
                            itemAsT.Whitespace2Set.
-                           Where(x=>x.LanguageElement == LanguageElement.FirstToken )
+                           Where(x => x.LanguageElement == LanguageElement.FirstToken)
                            .FirstOrDefault());
          node = BuildSyntaxHelpers.AttachWhitespaceToLast(node,
                            itemAsT.Whitespace2Set.
@@ -185,6 +212,7 @@ namespace RoslynDom.CSharp
       // Not sure if this belongs here or in BuildSyntaxHelpers
       public static TypeSyntax TypeSyntaxFromType(IReferencedType type)
       {
+         // Type syntax is realy ugly to build, so I build it and then hack hte type arg whitespace
          var typeName = CleanName(type);
          if (type.TypeArguments.Any())
          {
@@ -202,6 +230,17 @@ namespace RoslynDom.CSharp
          if (type.IsArray)
          { typeName += "[]"; }
          var node = SyntaxFactory.ParseTypeName(typeName);
+         var typeArgNode = node.ChildNodes().OfType<TypeArgumentListSyntax>().FirstOrDefault();
+         if (typeArgNode != null)
+         {
+            var newStartToken = BuildSyntaxHelpers.AttachWhitespaceToToken(typeArgNode.LessThanToken,
+                        type.Whitespace2Set [LanguageElement.TypeParameterStartDelimiter]);
+            var newEndToken = BuildSyntaxHelpers.AttachWhitespaceToToken(typeArgNode.GreaterThanToken,
+                        type.Whitespace2Set[LanguageElement.TypeParameterEndDelimiter]);
+            var newTypeArgNode = typeArgNode.WithLessThanToken(newStartToken).WithGreaterThanToken(newEndToken);
+            //var newTypeArgNode = typeArgNode.WithLessThanToken(newStartToken);
+            node = node.ReplaceNode(typeArgNode, newTypeArgNode);
+         }
          return node;
       }
 

@@ -33,7 +33,7 @@ namespace RoslynDomTests
       public void Can_load_specific_RoslynDom_implementation()
       {
          var dirName = @"..\..\..\RoslynDom\Implementations";
-         var file = dirName + @"\RDomAttribute.cs";
+         var file = dirName + @"\RDomAttributeValue.cs";
          var csharpCode = File.ReadAllText(file);
          var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
          var actual = RDomCSharp.Factory.BuildSyntax(root);

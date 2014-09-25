@@ -115,7 +115,7 @@ namespace RoslynDom.CSharp
             var variableNode = SyntaxFactory.VariableDeclaration(returnTypeSyntax)
                .WithVariables(
                         SyntaxFactory.SingletonSeparatedList(declaratorNode));
-            variableNode = BuildSyntaxHelpers.AttachWhitespace(variableNode, itemAsField.Whitespace2Set, WhitespaceLookup);
+            //variableNode = BuildSyntaxHelpers.AttachWhitespace(variableNode, itemAsField.Whitespace2Set, WhitespaceLookup);
             var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsField.Whitespace2Set, WhitespaceLookup);

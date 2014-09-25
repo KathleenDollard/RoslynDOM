@@ -5,9 +5,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <summary></summary>
     /// <remarks>
     /// I'm not currently supporting parameters (am supporting type parameters) because I don't understand them
     /// </remarks>
@@ -37,7 +35,7 @@ namespace RoslynDom
 
         public IDestructor Destructor
         { get { return Members.OfType<IDestructor>().SingleOrDefault(); } }
-   
+
         public IEnumerable<IClass> Classes
         { get { return Members.OfType<IClass>().ToList(); } }
 
