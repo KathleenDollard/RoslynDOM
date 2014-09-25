@@ -60,6 +60,5 @@ namespace RoslynDom
         public IExpression Condition { get; set; }
         public IVariableDeclaration Variable { get; set; }
         public IReferencedType  ExceptionType { get; set; }
-
     }
 }

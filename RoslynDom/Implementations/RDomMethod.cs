@@ -123,6 +123,5 @@ namespace RoslynDom
          }
          return base.RequestValue(propertyName);
       }
-
    }
 }

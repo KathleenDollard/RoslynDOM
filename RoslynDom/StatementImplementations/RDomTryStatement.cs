@@ -63,6 +63,5 @@ namespace RoslynDom
         { get { return _catches; } }
 
         public IFinallyStatement Finally { get; set; }
-
     }
 }

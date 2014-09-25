@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
 using RoslynDom.Common;
@@ -18,11 +18,9 @@ namespace RoslynDom
          var parent = itemToName.Parent;
          do
          {
-            // null is legal here because objects may be unattached
             if (parent == null || parent is IRoot) 
             {
-               // at top of what we care about
-               break;
+break;
             }
             var parentHasName = parent as IHasName;
             if (parentHasName != null)
@@ -46,11 +44,9 @@ namespace RoslynDom
          var parent = item.Parent;
          do
          {
-            // null is legal here because objects may be unattached
             if (parent == null || parent is IRoot) 
             {
-               // at top of what we care about
-               break;
+break;
             }
             var parentHasName = parent as IHasName;
             if (parentHasName != null)

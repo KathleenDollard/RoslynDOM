@@ -15,6 +15,5 @@ namespace RoslynDom
         internal RDomVariableDeclaration(IVariableDeclaration oldRDom)
              : base(oldRDom)
         { }
-         
     }
 }

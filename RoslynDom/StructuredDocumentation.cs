@@ -9,7 +9,7 @@ namespace RoslynDom
     public class RDomStructuredDocumentation : RDomBase<IStructuredDocumentation, ISymbol>, IStructuredDocumentation, IHasSameIntentMethod
     {
         public RDomStructuredDocumentation(SyntaxNode rawItem, IDom parent, SemanticModel model)
-            : base(rawItem, parent, model )
+            : base(rawItem, parent, model)
         {     }
 
            public RDomStructuredDocumentation(RDomStructuredDocumentation oldRDom)
@@ -17,6 +17,5 @@ namespace RoslynDom
         { }
         public string Description { get; set; }
         public string Document { get; set; }
-
     }
 }

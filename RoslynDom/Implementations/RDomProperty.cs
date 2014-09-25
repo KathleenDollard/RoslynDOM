@@ -10,7 +10,7 @@ namespace RoslynDom
       private RDomCollection<IParameter> _parameters;
       private AttributeCollection _attributes = new AttributeCollection();
       // The RDomList is used for accessor to reuse the forced parenting in that class
-      private RDomCollection<IAccessor> _accessors; // Getter first, Setter last
+      private RDomCollection<IAccessor> _accessors; 
 
 
       public RDomProperty(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -131,18 +131,16 @@ namespace RoslynDom
 
       public bool IsNew { get; set; }
 
-      /// <summary>
-      /// 
-      /// </summary>
+      /// <summary></summary>
       /// <returns></returns>
       /// <remarks>
       /// This is to support VB, C# does not have parameters on properties. Property parameters
       /// in VB are generally used for indexing, which is managed by "default" in C#
-      /// <br/>
+      /// <br />
       /// Can't test until VB is active
+      /// This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
       /// </remarks>
       public RDomCollection<IParameter> Parameters
-      // This is for VB, wihch I have not yet implemented, but don't want things crashing so will ignore
       { get { return _parameters; } }
 
 

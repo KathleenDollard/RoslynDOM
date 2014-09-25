@@ -11,7 +11,7 @@ namespace RoslynDom
     public class RDomVerticalWhitespace : RDomCommentWhite, IVerticalWhitespace
     {
         public RDomVerticalWhitespace(int count, bool isElastic)
-            : base(StemMemberKind.Whitespace, MemberKind.Whitespace )
+            : base(StemMemberKind.Whitespace, MemberKind.Whitespace)
         {
             Count = count;
             IsElastic = isElastic;

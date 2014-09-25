@@ -50,6 +50,5 @@ namespace RoslynDom
         public Variance Variance { get; set; }
 
         public string Name { get; set; }
-
     }
 }

@@ -22,6 +22,5 @@ namespace RoslynDom
         }
 
         public IExpression ExceptionExpression { get; set; }
-
     }
 }

@@ -22,12 +22,5 @@ namespace RoslynDom
             get
             { return base.Children.ToList(); }
         }
-
-        //public override IEnumerable<IDom> Descendants
-        //{
-        //    get
-        //    { return base.Descendants.ToList(); }
-        //}
-
     }
 }

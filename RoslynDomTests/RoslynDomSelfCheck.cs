@@ -12,9 +12,15 @@ namespace RoslynDomTests
       [TestMethod]
       public void Can_load_RoslynDom_implementations()
       {
-         var dirName = @"..\..\..\RoslynDom\Implementations";
+         VerifyFilesInDirectory(@"..\..\..\RoslynDom\Implementations");
+         VerifyFilesInDirectory(@"..\..\..\RoslynDom\BasesAndBaseHelpers");
+         VerifyFilesInDirectory(@"..\..\..\RoslynDom\StatementImplementations");
+         VerifyFilesInDirectory(@"..\..\..\RoslynDom");
+      }
+
+      private static void VerifyFilesInDirectory(string dirName)
+      {
          var files = Directory.GetFiles(dirName, "*.cs");
-         Assert.IsTrue(files.Count() > 10);
          foreach (var file in files)
          {
             var csharpCode = File.ReadAllText(file);

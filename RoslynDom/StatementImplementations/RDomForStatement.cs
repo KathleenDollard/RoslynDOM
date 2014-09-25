@@ -50,6 +50,5 @@ namespace RoslynDom
 
 
         public IVariableDeclaration Variable { get; set; }
-
     }
 }
