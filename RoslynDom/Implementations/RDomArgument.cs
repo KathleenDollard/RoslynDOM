@@ -6,15 +6,13 @@ using System.Linq;
 namespace RoslynDom
 {
 
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <summary></summary>
     /// <returns></returns>
     /// <remarks>
-    /// Field assignments in the form "Type x, y, z" are not yet supported 
-    /// and when they are they will be loaded as separate fields (rather 
+    /// Field assignments in the form "Type x, y, z" are not yet supported
+    /// and when they are they will be loaded as separate fields (rather
     /// obviously). At that point, the variable declaration will need to be held in
-    /// the class. 
+    /// the class.
     /// </remarks>
     public class RDomArgument : RDomBase<IArgument, ISymbol>, IArgument
     {
@@ -37,7 +35,6 @@ namespace RoslynDom
         public string Name { get; set; }
         public bool IsRef { get; set; }
         public bool IsOut { get; set; }
-        public IExpression ValueExpression { get; set; }
-  
+        public IExpression ValueExpression { get; set; } 
     }
 }

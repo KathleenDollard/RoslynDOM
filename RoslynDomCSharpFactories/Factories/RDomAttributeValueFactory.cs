@@ -23,7 +23,7 @@ namespace RoslynDom.CSharp
          var newItem = new RDomAttributeValue(syntaxNode, parent, model);
          InitializeAttributeValue(newItem, syntax, model);
          CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
-         AttributeValueWhitespace(newItem, syntax);
+         StoreWhitespace(newItem, syntax);
          return newItem;
       }
 
@@ -51,8 +51,7 @@ namespace RoslynDom.CSharp
             nameEquals = BuildSyntaxHelpers.AttachWhitespaceToLast(nameEquals, item.Whitespace2Set[LanguageElement.AttributeValueEqualsOrColon]);
             node = node.WithNameEquals(nameEquals);
          }
-         node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.AttributeValueFirstToken]);
-         node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.AttributeValueLastToken]);
+         node = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(node, item.Whitespace2Set[LanguageElement.AttributeValueValue]);
 
          return node.PrepareForBuildSyntaxOutput(item);
       }
@@ -70,32 +69,32 @@ namespace RoslynDom.CSharp
          newItem.Type = newItem.Value.GetType();
       }
 
-      private void AttributeValueWhitespace(RDomAttributeValue newItem, AttributeArgumentSyntax syntax)
+      private void StoreWhitespace(RDomAttributeValue newItem, AttributeArgumentSyntax syntax)
       {
-         CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetFirstToken(), LanguagePart.Current, LanguageElement.AttributeValueFirstToken);
-         CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetLastToken(), LanguagePart.Current, LanguageElement.AttributeValueLastToken);
-         if (syntax.NameColon != null)
-         {
-            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameColon.Name.Identifier, LanguagePart.Current, LanguageElement.AttributeValueName);
-            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameColon.ColonToken, LanguagePart.Current, LanguageElement.AttributeValueEqualsOrColon);
-         }
-         else if (syntax.NameEquals != null)
-         {
-            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameEquals.Name.Identifier, LanguagePart.Current, LanguageElement.AttributeValueName);
-            CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.NameEquals.EqualsToken, LanguagePart.Current, LanguageElement.AttributeValueEqualsOrColon);
-         }
+         // TODO: I feel like I'm working too hard here. Try creating a WhitespaceLookup and see how much of this is done in a standard StoreWhitespace
 
-         var prevNodeOrToken = syntax.Parent
-                                 .ChildNodesAndTokens()
-                                 .PreviousSiblings(syntax)
-                                 .LastOrDefault();
-         if (prevNodeOrToken.CSharpKind() == SyntaxKind.CommaToken)
+         var op = new SyntaxToken();
+         if (syntax.NameColon != null)
+         { StoreWhitespaceForNamed(newItem, syntax, syntax.NameColon.Name.Identifier, syntax.NameColon.ColonToken); }
+         else if (syntax.NameEquals != null)
+         { StoreWhitespaceForNamed(newItem, syntax, syntax.NameEquals.Name.Identifier, syntax.NameEquals.EqualsToken); }
+         else
          {
-            var commaToken = prevNodeOrToken.AsToken();
-            var whitespace2 = newItem.Whitespace2Set[LanguageElement.AttributeValueFirstToken];
-            if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
-            { whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString(); }
+            CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, syntax,
+                  LanguagePart.Current, LanguageElement.AttributeValueValue);
          }
+         CreateFromWorker.StoreListMemberWhitespace(syntax,
+               SyntaxKind.CommaToken, LanguageElement.AttributeValueValue, newItem);
+      }
+
+      private void StoreWhitespaceForNamed(RDomAttributeValue newItem, AttributeArgumentSyntax syntax, SyntaxToken identifier, SyntaxToken op)
+      {
+         CreateFromWorker.StoreWhitespaceForToken(newItem, identifier,
+                  LanguagePart.Current, LanguageElement.AttributeValueName);
+         CreateFromWorker.StoreWhitespaceForToken(newItem, op, LanguagePart.Current, LanguageElement.AttributeValueEqualsOrColon);
+         var lastToken = syntax.GetLastToken();
+         CreateFromWorker.StoreWhitespaceForToken(newItem, lastToken, LanguagePart.Current, LanguageElement.AttributeValueValue);
+
       }
 
 

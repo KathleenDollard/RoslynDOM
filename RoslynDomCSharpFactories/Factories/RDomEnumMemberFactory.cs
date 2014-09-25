@@ -88,21 +88,25 @@ namespace RoslynDom.CSharp
                 CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.EqualsValue.EqualsToken, LanguagePart.Current, LanguageElement.EnumValueAssignOperator);
             }
 
-            var prevNodeOrToken = syntax.Parent
-                                    .ChildNodesAndTokens()
-                                    .PreviousSiblings(syntax)
-                                    .LastOrDefault();
-            var sepKind = WhitespaceLookup.Lookup(LanguageElement.EnumValueSeparator);
-            if (prevNodeOrToken.CSharpKind() == sepKind)
-            {
-                var commaToken = prevNodeOrToken.AsToken();
-                var whitespace2 = newItem.Whitespace2Set[LanguageElement.Identifier];
-                var newLeadingWhitespace = commaToken.TrailingTrivia.ToString();;
-                if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace)
-                    || newLeadingWhitespace.EndsWith("\r\n"))
-                { whitespace2.LeadingWhitespace = newLeadingWhitespace 
-                                                  + whitespace2.LeadingWhitespace; }
-            }
+         CreateFromWorker.StoreListMemberWhitespace(syntax, 
+                  WhitespaceLookup.Lookup(LanguageElement.EnumValueSeparator),
+                  LanguageElement.Identifier, newItem);
+
+            //var prevNodeOrToken = syntax.Parent
+            //                        .ChildNodesAndTokens()
+            //                        .PreviousSiblings(syntax)
+            //                        .LastOrDefault();
+            //var sepKind = WhitespaceLookup.Lookup(LanguageElement.EnumValueSeparator);
+            //if (prevNodeOrToken.CSharpKind() == sepKind)
+            //{
+            //    var commaToken = prevNodeOrToken.AsToken();
+            //    var whitespace2 = newItem.Whitespace2Set[LanguageElement.Identifier];
+            //    var newLeadingWhitespace = commaToken.TrailingTrivia.ToString();;
+            //    if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace)
+            //        || newLeadingWhitespace.EndsWith("\r\n"))
+            //    { whitespace2.LeadingWhitespace = newLeadingWhitespace 
+            //                                      + whitespace2.LeadingWhitespace; }
+            //}
         }
     }
 

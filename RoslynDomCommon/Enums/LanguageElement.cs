@@ -8,6 +8,8 @@ namespace RoslynDom.Common
 {
     public enum LanguageElement
     {
+        NotApplicable,
+
         Comment,
         DocumentationComment,
         EndOfLine,
@@ -16,10 +18,9 @@ namespace RoslynDom.Common
         AttributeSurroundEnd,
         AttributeParameterStart,
         AttributeParameterEnd,
-        AttributeValueFirstToken,
+        AttributeValueValue,
         AttributeValueName,
         AttributeValueEqualsOrColon,
-        AttributeValueLastToken,
 
         TypeParameterStartDelimiter,
         TypeParameterEndDelimiter,
@@ -80,7 +81,6 @@ namespace RoslynDom.Common
         AccessorGroupEndDelimiter,
         AccessorShortFormIndicator,
 
-        NotApplicable,
         Private,
         ProtectedAndInternal,
         ProtectedAndFriend = ProtectedAndInternal,
@@ -92,7 +92,7 @@ namespace RoslynDom.Common
         Public,
 
         Identifier,
-        Type,
+        LastToken,
 
         Abstract,
         Override,
@@ -183,5 +183,7 @@ namespace RoslynDom.Common
         OutParameter,
         RefParameter,
         ParamsParameter,
-    }
+      ConstructorInitializerArgument,
+      FirstToken,
+   }
 }

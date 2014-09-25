@@ -78,24 +78,29 @@ namespace RoslynDom.CSharp
                         .ToList();
             node = node.WithMembers(SyntaxFactory.List(membersSyntax));
 
-            // This works oddly because it uncollapses the list
-            // This code is largely repeated in class and method factories, but is very hard to refactor because of shallow Roslyn (Microsoft) architecture
-            var typeParamsAndConstraints = itemAsT.TypeParameters
-                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
-                        .ToList();
+         node = BuildSyntaxHelpers.BuildTypeParameterSyntax(
+                   itemAsT, node, whitespaceLookup,
+                   (x, p) => x.WithTypeParameterList(p),
+                   (x, c) => x.WithConstraintClauses(c));
 
-            var typeParameterSyntaxList = BuildSyntaxHelpers.GetTypeParameterSyntaxList(
-                        typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
-            if (typeParameterSyntaxList != null)
-            {
-                node = node.WithTypeParameterList(typeParameterSyntaxList);
-                var clauses = BuildSyntaxHelpers.GetTypeParameterConstraintList(
-                          typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
-                if (clauses.Any())
-                { node = node.WithConstraintClauses(clauses); }
-            }
+         //// This works oddly because it uncollapses the list
+         //// This code is largely repeated in class and method factories, but is very hard to refactor because of shallow Roslyn (Microsoft) architecture
+         //var typeParamsAndConstraints = itemAsT.TypeParameters
+         //            .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+         //            .ToList();
 
-            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, whitespaceLookup);
+         //var typeParameterSyntaxList = BuildSyntaxHelpers.GetTypeParameterSyntaxList(
+         //            typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
+         //if (typeParameterSyntaxList != null)
+         //{
+         //    node = node.WithTypeParameterList(typeParameterSyntaxList);
+         //    var clauses = BuildSyntaxHelpers.GetTypeParameterConstraintList(
+         //              typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
+         //    if (clauses.Any())
+         //    { node = node.WithConstraintClauses(clauses); }
+         //}
+
+         node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, whitespaceLookup);
             return node.PrepareForBuildSyntaxOutput(item);
         }
     }

@@ -174,16 +174,16 @@ namespace RoslynDom.CSharp
                var newBaseType = Corporation.CreateFrom<IMisc>(syntax, itemAsT, model).Single()
                                        as IReferencedType;
                itemAsClass.BaseType = newBaseType;
-               StoreWhitespace(newBaseType, syntax,
-                             LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
+               //StoreWhitespace(newBaseType, syntax,
+               //              LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
                types = types.Skip(1);
             }
             foreach (var implementedInterfaceSyntax in types)
             {
                var newInterface = Corporation.CreateFrom<IMisc>(implementedInterfaceSyntax, itemAsT, model).Single()
                                as IReferencedType;
-               StoreWhitespace(newInterface, implementedInterfaceSyntax,
-                             LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
+               //StoreWhitespace(newInterface, implementedInterfaceSyntax,
+               //              LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
 
                var whitespace2 = newInterface.Whitespace2Set[LanguageElement.Identifier];
                if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
@@ -335,5 +335,12 @@ namespace RoslynDom.CSharp
               LanguageElement languageElement)
       { triviaManager.StoreWhitespaceForFirstAndLastToken(newItem, node, languagePart, languageElement); }
 
+      public void StoreListMemberWhitespace(SyntaxNode syntax,
+                    SyntaxKind syntaxKind,
+                    LanguageElement elementType,
+                    IDom newItem)
+      {
+         triviaManager.StoreListMemberWhitespace(syntax, syntaxKind, elementType, newItem);
+      }
    }
 }

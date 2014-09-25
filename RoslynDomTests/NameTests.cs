@@ -814,12 +814,19 @@ namespace MyNamespace
 {
    public class Foo
    {
-      public A Bar1() {};
+      public A<int> Bar1() {};
       public B Bar2() {};
       public C Bar3() {};
       public class B   { } 
    }
-   public class A   { }
+   public class A<T>   
+   {
+      public Foo.B Bar2() {};
+      public FooX.B Bar3() {};
+      public int Bar4() {};
+      public T Bar4() {};
+      public List<T> Bar4() {};
+   }
 }
 public class C   { }
 ";

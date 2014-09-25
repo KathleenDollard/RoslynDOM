@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
@@ -6,42 +6,42 @@ using System;
 
 namespace RoslynDom
 {
-    public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
+    public class RDomConstructor : RDomBase<IConstructor, IMethodSymbol>, IConstructor
     {
+        private RDomCollection<IParameter> _parameters;
+        private RDomCollection<IArgument> _initializationArguments;
         private RDomCollection<IStatementCommentWhite> _statements;
         private AttributeCollection _attributes = new AttributeCollection();
-        private AccessorType _accessorType;
 
-        public RDomPropertyAccessor(SyntaxNode rawItem, AccessorType accessorType, IDom parent, SemanticModel model)
+        public RDomConstructor(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        {
-            _accessorType = accessorType;
-            Initialize();
-        }
+        { Initialize(); }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
-         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
-        internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
-                : base(oldRDom)
+          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
+        internal RDomConstructor(RDomConstructor oldRDom)
+           : base(oldRDom)
         {
             Initialize();
             Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
+            var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
+            Parameters.AddOrMoveRange(newParameters);
             var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
             StatementsAll.AddOrMoveRange(newStatements);
-
+            var newInitializationArguments = RoslynDomUtilities.CopyMembers(oldRDom._initializationArguments);
+            InitializationArguments.AddOrMoveRange(newInitializationArguments);
+            ConstructorInitializerType = oldRDom.ConstructorInitializerType;
             AccessModifier = oldRDom.AccessModifier;
             DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-            //if (oldRDom.ReturnType != null)
-            //{ ReturnType = oldRDom.ReturnType.Copy(); }
-            HasBlock = oldRDom.HasBlock;
-            _accessorType = oldRDom.AccessorType;
+            IsStatic = oldRDom.IsStatic;
         }
 
-        protected  void Initialize()
+        protected void Initialize()
         {
+            _parameters = new RDomCollection<IParameter>(this);
             _statements = new RDomCollection<IStatementCommentWhite>(this);
+            _initializationArguments = new RDomCollection<IArgument>(this);
         }
-
         public override IEnumerable<IDom> Children
         {
             get
@@ -53,6 +53,9 @@ namespace RoslynDom
         }
 
         public string Name { get; set; }
+        public ConstructorInitializerType ConstructorInitializerType { get; set; }
+        public RDomCollection<IArgument> InitializationArguments
+        { get { return _initializationArguments; } }
 
         public AttributeCollection Attributes
         { get { return _attributes; } }
@@ -60,19 +63,27 @@ namespace RoslynDom
         public AccessModifier AccessModifier { get; set; }
         public AccessModifier DeclaredAccessModifier { get; set; }
 
+        public bool IsStatic { get; set; }
+        public RDomCollection<IParameter> Parameters
+        { get { return _parameters; } }
+
         public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
 
         public IEnumerable<IStatement> Statements
         { get { return _statements.OfType<IStatement>().ToList(); } }
 
-        public AccessorType AccessorType
-        { get { return _accessorType; } }
-
         public bool HasBlock
         {
             get { return true; }
             set { }
         }
+
+        public MemberKind MemberKind
+        { get { return MemberKind.Constructor; } }
+
+        public IStructuredDocumentation StructuredDocumentation { get; set; }
+
+        public string Description { get; set; }
     }
 }

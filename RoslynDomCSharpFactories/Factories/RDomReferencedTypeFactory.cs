@@ -9,119 +9,216 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class RDomReferencedTypeMiscFactory
-           : RDomMiscFactory<RDomReferencedType, TypeSyntax>
-    {
-        private static WhitespaceKindLookup whitespaceLookup;
+   public class RDomReferencedTypeMiscFactory
+          : RDomMiscFactory<RDomReferencedType, TypeSyntax>
+   {
+      private static WhitespaceKindLookup _whitespaceLookup;
 
-        public RDomReferencedTypeMiscFactory(RDomCorporation corporation)
-            : base(corporation)
-        { }
+      public RDomReferencedTypeMiscFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
 
-        protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            var typeParameterSyntax = syntaxNode as TypeParameterSyntax;
-            if (typeParameterSyntax != null) throw new NotImplementedException("Should have called TypeParameterFactory");
-            var typeSyntax = syntaxNode as TypeSyntax;
-            if (typeSyntax != null)
+      private static WhitespaceKindLookup whitespaceLookup
+      {
+         get
+         {
+            if (_whitespaceLookup == null)
             {
-                var newItem = new RDomReferencedType(syntaxNode, parent, model);
-
-                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, syntaxNode, LanguagePart.Current, LanguageElement.Identifier);
-
-                var arrayTypeSyntax = syntaxNode as ArrayTypeSyntax;
-                if (arrayTypeSyntax != null)
-                {
-                    newItem.IsArray = true;
-                    var arraySymbol = newItem.Symbol as IArrayTypeSymbol;
-                    InitalizeNameAndNamespace(newItem, arraySymbol.ElementType, arrayTypeSyntax.ElementType);
-                }
-                else
-                {
-                    newItem.IsArray = false;
-                    InitalizeNameAndNamespace(newItem, newItem.Symbol, typeSyntax);
-                }
-                return newItem;
+               _whitespaceLookup = new WhitespaceKindLookup();
+               _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+               _whitespaceLookup.Add(LanguageElement.TypeParameterStartDelimiter, SyntaxKind.LessThanToken);
+               _whitespaceLookup.Add(LanguageElement.TypeParameterEndDelimiter, SyntaxKind.GreaterThanToken);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
             }
-            throw new InvalidOperationException();
-        }
+            return _whitespaceLookup;
+         }
+      }
 
-        private void InitalizeNameAndNamespace(RDomReferencedType newItem, ISymbol symbol, TypeSyntax typeSyntax)
-        {
-            var predefinedSyntax = typeSyntax as PredefinedTypeSyntax;
-            if (predefinedSyntax != null) { InitializeFromPredefined(newItem, symbol, predefinedSyntax); }
-            else if (symbol != null) { InitializeFromSymbol(newItem, symbol, typeSyntax); }
-            else { InitializeFromCode(newItem, typeSyntax); }
-        }
+      protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      {
+         var typeParameterSyntax = syntaxNode as TypeParameterSyntax;
+         if (typeParameterSyntax != null) throw new NotImplementedException("Should have called TypeParameterFactory");
+         var typeSyntax = syntaxNode as TypeSyntax;
+         if (typeSyntax != null)
+         {
+            var newItem = new RDomReferencedType(syntaxNode, parent, model);
 
-        private void InitializeFromCode(RDomReferencedType newItem, TypeSyntax typeSyntax)
-        {
-            var text = typeSyntax.ToString();
-            if (text.Contains("."))
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            //CreateFromWorker.StoreWhitespace(newItem, typeSyntax, LanguagePart.Current, whitespaceLookup);
+            var identifierToken = typeSyntax.ChildTokens()
+                           .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+                           .FirstOrDefault();
+            CreateFromWorker.StoreWhitespaceForToken(newItem, identifierToken, LanguagePart.Current, LanguageElement.Identifier);
+            var firstToken = typeSyntax.GetFirstToken();
+            var lastToken = typeSyntax.GetLastToken();
+            if (identifierToken != firstToken)
             {
-                // Assume no nested types as there is no way to distinguish
-                newItem.Name = typeSyntax.ToString().SubstringAfterLast(".");
-                newItem.Namespace = typeSyntax.ToString().SubstringBeforeLast(".");
+               CreateFromWorker.StoreWhitespaceForToken(newItem, firstToken, LanguagePart.Current, LanguageElement.FirstToken);
+            }
+            if (identifierToken != lastToken)
+            {
+               CreateFromWorker.StoreWhitespaceForToken(newItem, lastToken, LanguagePart.Current, LanguageElement.LastToken);
+            }
+
+            CreateTypeArgs(syntaxNode, model, newItem);
+
+            var arrayTypeSyntax = syntaxNode as ArrayTypeSyntax;
+            if (arrayTypeSyntax != null)
+            {
+               newItem.IsArray = true;
+               var arraySymbol = newItem.Symbol as IArrayTypeSymbol;
+               InitalizeNameAndNamespace(newItem, arraySymbol.ElementType, arrayTypeSyntax.ElementType);
             }
             else
             {
-                newItem.Name = text;
-                newItem.Namespace = "";
+               newItem.IsArray = false;
+               InitalizeNameAndNamespace(newItem, newItem.Symbol, typeSyntax);
             }
-        }
+            return newItem;
+         }
+         throw new InvalidOperationException();
+      }
 
-        private void InitializeFromSymbol(RDomReferencedType newItem, ISymbol symbol, TypeSyntax typeSyntax)
-        {
-            newItem.Name = symbol.Name;
+      private void CreateTypeArgs(SyntaxNode syntaxNode, SemanticModel model, RDomReferencedType newItem)
+      {
+         var typeArgumentListList = syntaxNode.ChildNodes()
+                                 .OfType<TypeArgumentListSyntax>()
+                                 .ToList();
+         if (typeArgumentListList.Any())
+         {
+            foreach (var typeArgListSyntax in typeArgumentListList)
+            {
+               foreach (var typeArg in typeArgListSyntax.Arguments)
+               {
+                  var newArg = Corporation
+                              .CreateFrom<IMisc>(typeArg, newItem, model)
+                              .FirstOrDefault()
+                              as IReferencedType;
+                  newItem.TypeArguments.AddOrMove(newArg);
+               }
+            }
+         }
+      }
 
+      private void InitalizeNameAndNamespace(RDomReferencedType newItem, ISymbol symbol, TypeSyntax typeSyntax)
+      {
+         var predefinedSyntax = typeSyntax as PredefinedTypeSyntax;
+         if (predefinedSyntax != null) { InitializeFromPredefined(newItem, symbol, predefinedSyntax); }
+         else if (symbol != null) { InitializeFromSymbol(newItem, symbol, typeSyntax); }
+         else { InitializeFromCode(newItem, typeSyntax); }
+      }
+
+      private void InitializeFromCode(RDomReferencedType newItem, TypeSyntax typeSyntax)
+      {
+         string name = null;
+         string nSpace = null;
+         var tokens = typeSyntax.ChildTokens()
+                  .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken);
+         if (tokens.Any())
+         { name = tokens.First().ToString(); }
+         else
+         {
+            var nodes = typeSyntax.ChildNodes()
+                        .OfType<NameSyntax>();
+            name = nodes.Last().ToString();
+            nSpace = string.Join(".", nodes.Take(nodes.Count() - 1).Select(x => x.ToString()));
+         }
+         newItem.Name = name;
+         newItem.Namespace = nSpace;
+         //if (name.Contains("."))
+         //{
+         //   // Assume no nested types as there is no way to distinguish
+         //   newItem.Name = typeSyntax.ToString().SubstringAfterLast(".");
+         //   newItem.Namespace = typeSyntax.ToString().SubstringBeforeLast(".");
+         //}
+         //else
+         //{
+         //   newItem.Name = name;
+         //   newItem.Namespace = "";
+         //}
+      }
+
+      private void InitializeFromSymbol(RDomReferencedType newItem, ISymbol symbol, TypeSyntax typeSyntax)
+      {
+         newItem.Name = symbol.Name;
+
+         // TODO: Replace this hack becuase it seems to take a private dependency. Containing type seems broken in CTP3 on generics, so I have to first check that it's not
+         if (symbol.GetType().Name != "SourceTypeParameterSymbol")
+         {
             if (symbol.ContainingType != null)
+            { newItem.ContainingType = symbol.ContainingType; }
+         }
+
+         if (symbol.ContainingNamespace == null || symbol.ContainingNamespace.ToString() == "<global namespace>")
+         { newItem.Namespace = ""; }
+         else
+         { newItem.Namespace = symbol.ContainingNamespace.ToString(); }
+      }
+
+      private void InitializeFromPredefined(RDomReferencedType newItem, ISymbol symbol, PredefinedTypeSyntax predefinedSyntax)
+      {
+         newItem.DisplayAlias = true;
+
+         newItem.Name = symbol.Name;
+         if (symbol == null) throw new NotImplementedException();
+         newItem.Namespace = symbol.ContainingNamespace.ToString();
+      }
+
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+      {
+         var itemAsT = item as IReferencedType;
+         var node = TypeSyntaxFromType(itemAsT);
+
+         node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, 
+                           itemAsT.Whitespace2Set.
+                           Where(x=>x.LanguageElement == LanguageElement.FirstToken )
+                           .FirstOrDefault());
+         node = BuildSyntaxHelpers.AttachWhitespaceToLast(node,
+                           itemAsT.Whitespace2Set.
+                           Where(x => x.LanguageElement == LanguageElement.LastToken)
+                           .FirstOrDefault());
+         node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, whitespaceLookup);
+
+         return node.PrepareForBuildSyntaxOutput(item);
+      }
+
+      // Not sure if this belongs here or in BuildSyntaxHelpers
+      public static TypeSyntax TypeSyntaxFromType(IReferencedType type)
+      {
+         var typeName = CleanName(type);
+         if (type.TypeArguments.Any())
+         {
+            typeName += "<";
+            foreach (var tArg in type.TypeArguments)
             {
-                newItem.ContainingType = symbol.ContainingType;
+               typeName += tArg.QualifiedName +
+                            (tArg == type.TypeArguments.Last()
+                              ? ""
+                              : ", ");
+
             }
+            typeName += ">";
+         }
+         if (type.IsArray)
+         { typeName += "[]"; }
+         var node = SyntaxFactory.ParseTypeName(typeName);
+         return node;
+      }
 
-            if (symbol.ContainingNamespace == null || symbol.ContainingNamespace.ToString() == "<global namespace>")
-            { newItem.Namespace = ""; }
-            else
-            { newItem.Namespace = symbol.ContainingNamespace.ToString(); }
-        }
+      public static string CleanName(IReferencedType type)
+      {
+         string typeName = type.QualifiedName;
+         if (type.DisplayAlias)
+         { typeName = AliasFromTypeName(typeName); }
+         else
+         { typeName = RemoveUsingPrefixes(type, typeName); }
+         return typeName;
+      }
 
-        private void InitializeFromPredefined(RDomReferencedType newItem, ISymbol symbol, PredefinedTypeSyntax predefinedSyntax)
-        {
-            newItem.DisplayAlias = true;
-
-            newItem.Name = symbol.Name;
-            if (symbol == null) throw new NotImplementedException();
-            newItem.Namespace = symbol.ContainingNamespace.ToString();
-        }
-
-        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-        {
-            var itemAsT = item as IReferencedType;
-            var node = TypeSyntaxFromType(itemAsT);
-
-            node = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(node, itemAsT.Whitespace2Set.FirstOrDefault());
-
-            return node.PrepareForBuildSyntaxOutput(item);
-        }
-
-        // Not sure if this belongs here or in BuildSyntaxHelpers
-        public static TypeSyntax TypeSyntaxFromType(IReferencedType type)
-        {
-            string typeName = type.QualifiedName;
-            if (type.DisplayAlias)
-            { typeName = AliasFromTypeName(typeName); }
-            else
-            { typeName = RemoveUsingPrefixes(type, typeName); }
-            if (type.IsArray)
-            { typeName += "[]"; }
-            return SyntaxFactory.ParseTypeName(typeName);
-
-        }
-        private static string AliasFromTypeName(string typeName)
-        {
-            switch (typeName)
-            {
+      private static string AliasFromTypeName(string typeName)
+      {
+         switch (typeName)
+         {
             case "Void":
             case "System.Void": { return "void"; }
             case "System.Object": { return "object"; }
@@ -140,31 +237,77 @@ namespace RoslynDom.CSharp
             case "System.Single": { return "float"; }
             case "System.Double": { return "double"; }
             default:
-                return null;
-            }
-        }
+               return null;
+         }
+      }
 
-        private static string RemoveUsingPrefixes(IReferencedType type, string qualifiedName)
-        {
-            var nsName = qualifiedName.SubstringBeforeLast(".");
-            if (string.IsNullOrWhiteSpace(nsName)) { return qualifiedName; }
-            var typeName = qualifiedName.SubstringAfterLast(".");
-            IDom context = type;
-            var list = new List<IUsingDirective>();
-            while (context !=  null)
+      //private static string RemoveUsingPrefixes(IReferencedType type, string qualifiedName)
+      //{
+      //   // C# does not support partial namespace usings right now
+      //   var nsName = qualifiedName.SubstringBeforeLast(".");
+      //   if (string.IsNullOrWhiteSpace(nsName)) { return qualifiedName; }
+      //   var typeName = qualifiedName.SubstringAfterLast(".");
+      //   IDom context = type;
+      //   var list = new List<IUsingDirective>();
+      //   while (context != null)
+      //   {
+      //      var contextAsStemContainer = context as IStemContainer;
+      //      if (contextAsStemContainer != null)
+      //      { list.AddRange(contextAsStemContainer.UsingDirectives); }
+      //      context = context.Parent;
+      //   }
+      //   foreach (var usingDirective in list)
+      //   {
+      //      if (usingDirective.Name == nsName)
+      //      { return typeName; }
+      //   }
+      //   return qualifiedName;
+      //}
+
+      private static string RemoveUsingPrefixes(IReferencedType type, string qualifiedName)
+      {
+         // C# does not support partial namespace usings right now
+         var nsName = qualifiedName.SubstringBeforeLast(".");
+         if (string.IsNullOrWhiteSpace(nsName)) { return qualifiedName; }
+         var typeName = qualifiedName.SubstringAfterLast(".");
+         var list = GetNamespaceToDrop(type);
+
+         foreach (var usingName in list)
+         {
+            if (usingName == nsName)
+            { return typeName; }
+         }
+         return qualifiedName;
+      }
+
+      private static List<string> GetNamespaceToDrop(IReferencedType type)
+      {
+         IDom context = type;
+         var list = new List<string>();
+         while (context != null)
+         {
+            var contextAsStemContainer = context as IStemContainer;
+            if (contextAsStemContainer != null)
             {
-                var contextAsStemContainer = context as IStemContainer;
-                if (contextAsStemContainer != null)
-                { list.AddRange(contextAsStemContainer.UsingDirectives); }
-                context = context.Parent ;
+               var asNamespace = context as INamespace;
+               if (asNamespace != null)
+               { list.AddRange(GetNamespaceSubParts(asNamespace.Name)); }
+               list.AddRange(contextAsStemContainer.UsingDirectives.Select(x => x.Name));
             }
-            // C# does not support partial namespace usings right now
-            foreach (var usingDirective in list)
-            {
-                if (usingDirective.Name == nsName)
-                { return typeName; }
-            }
-            return qualifiedName;
-        }
-    }
+            context = context.Parent;
+         }
+         return list;
+      }
+
+      private static IEnumerable<string> GetNamespaceSubParts(string name)
+      {
+         var list = new List<string>();
+         do
+         {
+            list.Add(name);
+            name = name.SubstringBeforeLast(".");
+         } while (!string.IsNullOrEmpty(name));
+         return list;
+      }
+   }
 }

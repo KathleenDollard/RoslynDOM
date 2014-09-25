@@ -69,8 +69,6 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IAttribute;
             var nameSyntax = SyntaxFactory.ParseName(itemAsT.Name);
-            //nameSyntax = BuildSyntaxHelpers.AttachWhitespace(nameSyntax, item.Whitespace2Set, WhitespaceLookup);
-
 
             var node = SyntaxFactory.Attribute(nameSyntax);
             node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, WhitespaceLookup);
@@ -95,7 +93,6 @@ namespace RoslynDom.CSharp
             nodeList = BuildSyntaxHelpers.AttachWhitespace(nodeList, item.Whitespace2Set, WhitespaceLookup);
 
             return nodeList.PrepareForBuildSyntaxOutput(item);
-            //return new SyntaxNode[] { nodeList };
         }
 
          #region Private methods to support adding attributes

@@ -694,6 +694,45 @@ namespace Test
 
       }
 
+      [TestMethod, TestCategory(AttributeValuesCategory)]
+      public void Can_get_multiline_attribute_value()
+      {
+         // One test because I'm testing whitespace value with different order of named attribute values
+         var source = @"
+using System;
+
+namespace Test
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(""Microsoft.Naming"", 
+        ""CA1711:IdentifiersShouldNotHaveIncorrectSuffix"",
+                Justification = ""Because"")]
+    public class MyClass
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(""Microsoft.Naming"", 
+           Justification = ""Just because"",
+              A: ""CA1711:IdentifiersShouldNotHaveIncorrectSuffix"")]
+        public void Whatever(string text)
+        {}
+    }
+}";
+         var attributes = VerifyAttributes(source,
+                  root => root.RootClasses.First().Attributes,
+                  1, false, "System.Diagnostics.CodeAnalysis.SuppressMessage").ToArray();
+         var attributeValues = VerifyAttributeValues(attributes[0], count: 3).ToArray();
+         VerifyAttributeValue(attributeValues[0], name: "", value: "Microsoft.Naming", kind: LiteralKind.String);
+         VerifyAttributeValue(attributeValues[1], name: "", value: "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", kind: LiteralKind.String);
+         VerifyAttributeValue(attributeValues[2], name: "Justification", value: "Because", kind: LiteralKind.String);
+
+         attributes = VerifyAttributes(source,
+                  root => root.RootClasses.First().Methods.First().Attributes,
+                  1, false, "System.Diagnostics.CodeAnalysis.SuppressMessage").ToArray();
+         attributeValues = VerifyAttributeValues(attributes[0], count: 3).ToArray();
+         VerifyAttributeValue(attributeValues[0], name: "", value: "Microsoft.Naming", kind: LiteralKind.String);
+         VerifyAttributeValue(attributeValues[1], name: "Justification", value: "Just because", kind: LiteralKind.String);
+         VerifyAttributeValue(attributeValues[2], name: "A", value: "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", kind: LiteralKind.String);
+
+      }
+
       #endregion
 
       #region get root class attributes

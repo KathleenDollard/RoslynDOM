@@ -104,6 +104,7 @@
     <Compile Include="TestFile.cs" />
     <Compile Include="TestUtilities.cs" />
     <Compile Include="RDomUtilitiesTests.cs" />
+    <Compile Include="RoslynDomSelfCheck.cs" />
     <Compile Include="WhitespaceTests.cs" />
   </ItemGroup>
   <ItemGroup>

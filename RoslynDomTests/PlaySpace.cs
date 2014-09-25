@@ -18,21 +18,23 @@ namespace RoslynDom
          public void Play()
          {
             var output = "";
-            Bar<string>.Foo(null, ref output);
-            Assert.AreEqual("Hello Fred", output);
+           
          }
 
          public class BarBase { }
 
          public class Bar<T> : BarBase
-             where T : class
+             where T : Bar<T>
          {
-            public static void Foo(T x, ref string output, string name = "Fred")
+            public virtual T MyMethod()
+            { return null; }
+         }
+
+         public class Barbacoa : Bar<Barbacoa>
+         {
+            public override Barbacoa MyMethod()
             {
-               var punctuation = x == null
-                                 ? null
-                                 : "!";
-               output = "Hello " + name + punctuation;
+               return base.MyMethod();
             }
          }
       }

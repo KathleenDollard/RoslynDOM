@@ -113,18 +113,22 @@ namespace RoslynDom.CSharp
             //CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.Default.EqualsToken, LanguagePart.Current, LanguageElement.ParameterDefaultAssignOperator);
          }
 
-         var prevNodeOrToken = syntax.Parent
-                                 .ChildNodesAndTokens()
-                                 .PreviousSiblings(syntax)
-                                 .LastOrDefault();
-         var sepKind = WhitespaceLookup.Lookup(LanguageElement.ParameterSeparator);
-         if (prevNodeOrToken.CSharpKind() == sepKind)
-         {
-            var commaToken = prevNodeOrToken.AsToken();
-            var whitespace2 = newItem.Whitespace2Set[LanguageElement.ParameterFirstToken];
-            if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
-            { whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString(); }
-         }
+         CreateFromWorker.StoreListMemberWhitespace(syntax,
+               WhitespaceLookup.Lookup(LanguageElement.ParameterSeparator),
+               LanguageElement.ParameterFirstToken, newItem);
+
+         //var prevNodeOrToken = syntax.Parent
+         //                        .ChildNodesAndTokens()
+         //                        .PreviousSiblings(syntax)
+         //                        .LastOrDefault();
+         //var sepKind = WhitespaceLookup.Lookup(LanguageElement.ParameterSeparator);
+         //if (prevNodeOrToken.CSharpKind() == sepKind)
+         //{
+         //   var commaToken = prevNodeOrToken.AsToken();
+         //   var whitespace2 = newItem.Whitespace2Set[LanguageElement.ParameterFirstToken];
+         //   if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
+         //   { whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString(); }
+         //}
       }
    }
 

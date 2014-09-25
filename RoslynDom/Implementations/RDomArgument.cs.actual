@@ -1,4 +1,3 @@
-actual.ToFullString(),nq
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
@@ -16,6 +15,7 @@ namespace RoslynDom
     /// the class.
     /// </remarks>
     public class RDomArgument : RDomBase<IArgument, ISymbol>, IArgument
+
     {
         public RDomArgument(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
@@ -36,7 +36,6 @@ namespace RoslynDom
         public string Name { get; set; }
         public bool IsRef { get; set; }
         public bool IsOut { get; set; }
-        public IExpression ValueExpression { get; set; }
+        public IExpression ValueExpression { get; set; } 
     }
 }
-

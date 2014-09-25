@@ -61,12 +61,12 @@ namespace RoslynDom.CSharp
           public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsAccessor = item as IAccessor;
-            var parentProperty = item.Parent as IProperty;
+            var parentProperty = item.Parent as RDomProperty; // .NET specific
             if (itemAsAccessor == null || parentProperty == null) { throw new InvalidOperationException(); }
             var kind = (itemAsAccessor.AccessorType == AccessorType.Get)
                         ? SyntaxKind.GetAccessorDeclaration : SyntaxKind.SetAccessorDeclaration;
             AccessorDeclarationSyntax node;
-            if (itemAsAccessor.Statements.Any())
+            if (itemAsAccessor.Statements.Any() || !parentProperty.CanBeAutoProperty )
             {
                 var statementBlock = (BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsAccessor.Statements, itemAsAccessor, WhitespaceLookup);
                 node = SyntaxFactory.AccessorDeclaration(kind, statementBlock);

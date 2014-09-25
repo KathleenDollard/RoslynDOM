@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
@@ -9,6 +9,7 @@ namespace RoslynDom
 {
 
    public class RDomReferencedType : RDomBase<IReferencedType, ISymbol>, IReferencedType
+
    {
       // ITypeParameter not used because these are arguments, not declarations
       private RDomCollection<IReferencedType> _typeArguments;
