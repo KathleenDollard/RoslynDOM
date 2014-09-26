@@ -20,7 +20,7 @@ namespace RoslynDom
          {
             if (parent == null || parent is IRoot) 
             {
-break;
+               break;
             }
             var parentHasName = parent as IHasName;
             if (parentHasName != null)
@@ -46,7 +46,7 @@ break;
          {
             if (parent == null || parent is IRoot) 
             {
-break;
+               break;
             }
             var parentHasName = parent as IHasName;
             if (parentHasName != null)

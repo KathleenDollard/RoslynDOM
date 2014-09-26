@@ -170,7 +170,7 @@ namespace RoslynDom.CSharp
          newItem.Name = symbol.Name;
 
          // TODO: Replace this hack becuase it seems to take a private dependency. Containing type seems broken in CTP3 on generics, so I have to first check that it's not
-         if (symbol.GetType().Name != "SourceTypeParameterSymbol")
+         if (!symbol.GetType().Name.Contains("TypeParameter"))
          {
             if (symbol.ContainingType != null)
             { newItem.ContainingType = symbol.ContainingType; }
@@ -210,7 +210,7 @@ namespace RoslynDom.CSharp
       }
 
       // Not sure if this belongs here or in BuildSyntaxHelpers
-      public static TypeSyntax TypeSyntaxFromType(IReferencedType type)
+      public TypeSyntax TypeSyntaxFromType(IReferencedType type)
       {
          // Type syntax is realy ugly to build, so I build it and then hack hte type arg whitespace
          var typeName = CleanName(type);
@@ -219,10 +219,15 @@ namespace RoslynDom.CSharp
             typeName += "<";
             foreach (var tArg in type.TypeArguments)
             {
-               typeName += tArg.QualifiedName +
-                            (tArg == type.TypeArguments.Last()
+               var display = BuildSyntax(tArg).FirstOrDefault().ToFullString();
+               typeName += display;
+               typeName += (tArg == type.TypeArguments.Last()
                               ? ""
                               : ", ");
+               //typeName += tArg.QualifiedName +
+               //             (tArg == type.TypeArguments.Last()
+               //               ? ""
+               //               : ", ");
 
             }
             typeName += ">";

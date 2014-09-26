@@ -22,6 +22,5 @@ namespace RoslynDom
         public string Expression { get; set; }
 
         public ExpressionType ExpressionType { get; set; }
-    
     }
 }

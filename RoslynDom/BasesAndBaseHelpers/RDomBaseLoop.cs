@@ -69,4 +69,3 @@ namespace RoslynDom
         { get { return _statements; } }
     }
 }
-

@@ -31,8 +31,6 @@ namespace RoslynDom
 
             AccessModifier = oldRDom.AccessModifier;
             DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-            //if (oldRDom.ReturnType != null)
-            //{ ReturnType = oldRDom.ReturnType.Copy(); }
             HasBlock = oldRDom.HasBlock;
             _accessorType = oldRDom.AccessorType;
         }

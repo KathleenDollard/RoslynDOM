@@ -58,6 +58,5 @@ namespace RoslynDom
 
         public IEnumerable <IStatement> Statements
         { get { return _statements.OfType<IStatement>().ToList(); } }
-
     }
 }

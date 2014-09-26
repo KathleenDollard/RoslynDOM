@@ -34,7 +34,5 @@ namespace RoslynDom
 
          public override object RequestValue(string propertyName)
         { return null; }
-      
     }
-
 }

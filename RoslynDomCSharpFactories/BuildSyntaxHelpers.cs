@@ -215,7 +215,7 @@ namespace RoslynDom.CSharp
             leadingWs = itemStructDoc.Whitespace2Set[LanguageElement.DocumentationComment].LeadingWhitespace;
             innerLeadingWs = itemStructDoc.Whitespace2Set[LanguagePart.Inner, LanguageElement.DocumentationComment].LeadingWhitespace;
          }
-         var description = "\r\n" + innerLeadingWs + itemHasStructDoc.Description + "\r\n";
+         var description = innerLeadingWs + itemHasStructDoc.Description + "\r\n";
 
          SetDescriptionInXDoc(xDoc, description);
          string newDocAsString = PrefixLinesWithDocCommentPrefix(leadingWs, xDoc);

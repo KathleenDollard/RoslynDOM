@@ -35,6 +35,7 @@ namespace RoslynDom.CSharp
             return _whitespaceLookup;
          }
       }
+
       protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as ParameterSyntax;

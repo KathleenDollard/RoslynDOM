@@ -877,6 +877,27 @@ namespace Test
          Assert.AreEqual(csharpCode, actual);
       }
 
+      [TestMethod, TestCategory(ParameterAndMethodCategory)]
+      public void Can_get_generic_parameter_value()
+      {
+         var csharpCode = @"
+using System;
+
+namespace Test
+{
+    class TestClass
+    {
+        protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations){}
+    }
+}";
+         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var parameters = root.RootClasses.ElementAt(0).Methods.First().Parameters.ToArray();
+         ParameterCheck(parameters[0], 0, "other", "TLocal");
+         ParameterCheck(parameters[1], 1, "skipPublicAnnotations", "Boolean");
+         var actual = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+         Assert.AreEqual(csharpCode, actual);
+      }
+
       private void ParameterCheck(IParameter parm, int ordinal, string name, string typeName,
                 bool isOut = false, bool isRef = false, bool isParamArray = false,
                 bool isOptional = false,
@@ -1228,6 +1249,36 @@ public class Foo
          Assert.IsFalse(properties[1].CanSet);
          Assert.IsFalse(properties[2].CanGet);
          Assert.IsTrue(properties[2].CanSet);
+      }
+
+      [TestMethod, TestCategory(PropertyAccessCategory)]
+      public void Can_get_property_access_different_accessibility()
+      {
+         var csharpCode = @"
+using System;
+public class Foo  
+{
+   public string Foo1{get; private set;}
+   public string Foo2{get; set;}
+   public string Foo3{internal get; set; }
+}
+";
+         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var actual = RDomCSharp.Factory.BuildSyntax(root);
+
+         var properties = root.Classes.First().Properties.ToArray();
+         VerifyPropertyAccess(properties[0], AccessModifier.Public, AccessModifier.Public, AccessModifier.Private);
+         VerifyPropertyAccess(properties[1], AccessModifier.Public, AccessModifier.Public, AccessModifier.Public);
+         VerifyPropertyAccess(properties[2], AccessModifier.Public, AccessModifier.Internal, AccessModifier.Public);
+         Assert.AreEqual(csharpCode , actual.ToFullString());
+      }
+
+      private void VerifyPropertyAccess(IProperty property, AccessModifier propertyAccess,
+               AccessModifier getAccess, AccessModifier setAccess)
+      {
+         Assert.AreEqual(propertyAccess, property.AccessModifier);
+         Assert.AreEqual(getAccess, property.GetAccessor.AccessModifier);
+         Assert.AreEqual(setAccess, property.SetAccessor.AccessModifier);
       }
 
 

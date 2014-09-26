@@ -476,10 +476,39 @@ public class Bar
                    });
         }
 
-         #endregion
+      [TestMethod, TestCategory(MethodCodeLoadCategory)]
+      public void Can_load_break_statement_on_own_line_for_method()
+      {
+         var csharpCode = @"
+            public class Bar
+            {
+                public void Foo()
+                {
+                    foreach (int i in new int[] { 1, 2, 3, 4, 5, 6 })
+                    {
+                        if (b) 
+                        { 
+                           break; 
+                        }
+                        Console.WriteLine(i);
+                    }
+                }
+            }";
+         VerifyMethodStatements<RDomForEachStatement>(csharpCode, 11, 1,
+                statements =>
+                {
+                   Assert.AreEqual(1, statements
+                                   .First()
+                                   .Descendants
+                                   .OfType<RDomBreakStatement>()
+                                   .Count());
+                });
+      }
 
-        #region property code loading
-        [TestMethod, TestCategory(PropertyCodeLoadCategory)]
+      #endregion
+
+      #region property code loading
+      [TestMethod, TestCategory(PropertyCodeLoadCategory)]
         public void Can_load_return_statements_for_property()
         {
             var csharpCode = @"

@@ -9,8 +9,8 @@ namespace RoslynDom
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
     public abstract class RDomBase<T, TSymbol> : RDomBase<T>, IRoslynDom<T, TSymbol>
-          where TSymbol : ISymbol
           where T : class, IDom<T>
+          where TSymbol : ISymbol
     {
         private SyntaxNode _originalRawSyntax;
         private SyntaxNode _rawSyntax;
@@ -43,7 +43,6 @@ namespace RoslynDom
             var thisAsHasName = this as IHasName;
             if (thisAsHasName != null)
             { thisAsHasName.Name = ((IHasName)oldRDom).Name; }
-
         }
 
         public SyntaxNode TypedSyntax
@@ -63,25 +62,5 @@ namespace RoslynDom
 
         public virtual TSymbol TypedSymbol
         { get { return _symbol; } }
-       
-        //// TODO: Why are we calculating this instead of storing it?
-        //protected virtual AccessModifier GetAccessibility()
-        //{
-        //    if (Symbol == null) { return AccessModifier.None; }
-        //    return (AccessModifier)Symbol.DeclaredAccessibility;
-        //}
-
-        /// <summary>
-        /// Fallback for getting requested values. 
-        /// <br/>
-        /// For special values (those that don't just return a property) override
-        /// this method, return the approparite value, and olny call this base method when needed
-        /// </summary>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
- 
-
     }
-
-
 }

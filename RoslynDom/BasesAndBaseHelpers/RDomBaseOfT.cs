@@ -67,17 +67,15 @@ namespace RoslynDom
         }
 
         /// <summary>
-        /// Derived classes can override this if the RoslynDom.Common implementations aren't working. 
+        /// Derived classes can override this if the RoslynDom.Common implementations aren't working.
         /// Do NOT override if the problem can be solved in the RoslynDom.Common implementations (SameIntent_xxx)
         /// </summary>
         /// <param name="other"></param>
         /// <param name="skipPublicAnnotations"></param>
         /// <returns></returns>
-
         protected virtual bool CheckSameIntent(T other, bool skipPublicAnnotations)
         {
             return true;
         }
- 
     }
 }
