@@ -53,7 +53,8 @@ namespace RoslynDom.CSharp
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<ITypeMemberCommentWhite>(x, newItem, model));
+         var members = ListUtilities.MakeList(syntax, x => x.Members, 
+                  x => corporation.CreateFrom<ITypeMemberCommentWhite>(x, newItem, model));
          newItem.MembersAll.AddOrMoveRange(members);
 
          newItem.IsAbstract = newItem.Symbol.IsAbstract;

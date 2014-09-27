@@ -111,6 +111,9 @@
     <Compile Include="TestUtilities.cs" />
     <Compile Include="Scenario_PatternMatchingSelection.cs" />
     <Compile Include="Walkthroughs.cs" />
+    <Compile Include="Walkthrough_2_INotifyPropertyChanged.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Walkthrough_1_code.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>

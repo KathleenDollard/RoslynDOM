@@ -107,6 +107,9 @@ namespace RoslynDom
       public IEnumerable<IProperty> Properties
       { get { return Members.OfType<IProperty>().ToList(); } }
 
+      public IEnumerable<IEvent> Events
+      { get { return Members.OfType<IEvent>().ToList(); } }
+
       // This is not yet editable because it is non-trivial to ensure 
       // correct interface usage (appearing once, etc). These semantics
       // may also change as "all" is confusing with other use in RoslynDon

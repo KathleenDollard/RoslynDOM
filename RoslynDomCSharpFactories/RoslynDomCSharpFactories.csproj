@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseFactories\RDomBaseLoopStatementFactory.cs" />
+    <Compile Include="Factories\RDomEventFactory.cs" />
     <Compile Include="TriviaManager.cs" />
     <Compile Include="WhitespaceLookups.cs" />
     <Compile Include="ContainerCheck.cs" />

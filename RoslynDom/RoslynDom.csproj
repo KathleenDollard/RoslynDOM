@@ -76,6 +76,7 @@
     <Compile Include="Implementations\RDomConstructor.cs" />
     <Compile Include="Implementations\RDomDestructor.cs" />
     <Compile Include="Implementations\RDomConversionOperator.cs" />
+    <Compile Include="Implementations\RDomEvent.cs" />
     <Compile Include="Implementations\RDomOperator.cs" />
     <Compile Include="Implementations\RDomVerticalWhitespace.cs" />
     <Compile Include="IRoslynHasSymbol.cs" />

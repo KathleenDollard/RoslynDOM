@@ -185,5 +185,6 @@ namespace RoslynDom.Common
         ParamsParameter,
       ConstructorInitializerArgument,
       FirstToken,
+      Event,
    }
 }

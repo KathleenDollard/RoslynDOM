@@ -83,6 +83,31 @@ public class Foo
          item2.ReturnType.DisplayAlias = false;
       }
 
+      [TestMethod, TestCategory(ReturnedTypeCategory)]
+      public void Can_get_event_return_type()
+      {
+         var csharpCode = @"
+            public class Foo
+            {
+                public event Func<Namespace1.A>  Bar;
+            }";
+         VerifyEvent(csharpCode, r => r.Classes.First().Events.First(), "Func<Namespace1.A>");
+      }
+
+      [TestMethod, TestCategory(ReturnedTypeCategory)]
+      public void Can_get_event_predefined_return_type()
+      {
+         var csharpCode = @"
+using System;
+public class Foo
+{
+   public event EventHandler  Bar;
+}
+";
+         var item1 = VerifyEvent(csharpCode, r => r.Classes.First().Events.ElementAt(0), "System.EventHandler");
+         item1.Type.DisplayAlias = true;
+      }
+
 
       #endregion
 
@@ -1348,6 +1373,23 @@ namespace Namespace1
          Assert.AreEqual(csharpCode, actual.ToFullString());
          return item;
       }
+
+      private IEvent VerifyEvent(string csharpCode, Func<IRoot, IEvent> getItem, string fullName)
+      {
+         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var item = getItem(root);
+         var type = item.Type;
+         Assert.IsNotNull(type);
+         var name = fullName.Contains(".") ? fullName.SubstringAfterLast(".") : fullName;
+         var ns = fullName.SubstringBefore(".");
+         Assert.AreEqual(name, type.Name, "Name");
+         Assert.AreEqual(fullName, type.QualifiedName, "QualifiedName");
+         Assert.AreEqual(ns, type.Namespace, "Namespace");
+         Assert.AreEqual(csharpCode, actual.ToFullString());
+         return item;
+      }
+
 
       private void VerifyOOTypeMember<T>(string csharpCode, Func<IRoot, IEnumerable<T>> getItems,
                    params Tuple<bool, bool, bool, bool, bool, bool>[] expectedValues)
