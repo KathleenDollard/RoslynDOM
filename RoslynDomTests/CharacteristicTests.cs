@@ -102,6 +102,7 @@ using System;
 public class Foo
 {
    public event EventHandler  Bar;
+   event EventHandler  Bar;
 }
 ";
          var item1 = VerifyEvent(csharpCode, r => r.Classes.First().Events.ElementAt(0), "System.EventHandler");

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
-using cm = System.ComponentModel;
+using cm=System.ComponentModel;
 
 namespace RoslynDom
 {
@@ -37,7 +37,7 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomField(string name, string typeName, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomField(string name, string typeName, AccessModifier accessModifier = .,
                 bool isStatic = false, bool isNew = false)
        : this(name, new RDomReferencedType(typeName), accessModifier, isStatic, isNew)
       { }
@@ -59,7 +59,7 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomField(string name, IReferencedType type, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomField(string name, IReferencedType type, AccessModifier accessModifier = .,
                 bool isStatic = false, bool isNew = false)
        : this(null, null, null)
       {
@@ -69,7 +69,7 @@ namespace RoslynDom
          IsStatic = isStatic;
          IsNew = isNew;
       }
-      [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
+      [cm.EditorBrowsable(.)]
       public RDomField(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
       { }

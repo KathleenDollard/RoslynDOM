@@ -1,11 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.Common
 {
     public static class StringUtilities
     {
-        public static string ReplaceFirst(this string input, string replace, string replaceWith)
+      public static string NameFromQualifiedName(string qName)
+      {
+         if (qName.Contains(".")) return qName.SubstringAfterLast(".");
+         return qName;
+      }
+
+      public static string NamespaceFromQualifiedName(string qName)
+      {
+         if (qName.Contains(".")) return qName.SubstringBeforeLast(".");
+         return qName;
+      }
+
+      public static string CamelCase(string name)
+      {
+         if (name.StartsWith("_")) name = name.Substring(1);
+         name = name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
+         return "_" + name;
+      }
+
+      public static string ReplaceFirst(this string input, string replace, string replaceWith)
         {
             if (string.IsNullOrEmpty(input)) return input;
             if (string.IsNullOrEmpty(replace)) throw new InvalidOperationException("Replace string cannot be null or an empty string");

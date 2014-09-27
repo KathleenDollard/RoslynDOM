@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom.Common;
 using RoslynDom.CSharp;
+using RoslynDom;
 
 namespace RoslynDomExampleTests
 {
@@ -27,7 +28,7 @@ namespace RoslynDomExampleTests
             var outputFileName = Path.Combine(outputDirectory, Path.GetFileName(fileName));
             var root = factory.GetRootFromFile(fileName);
             var classes = root.RootClasses;
-            foreach(var cl in classes)
+            foreach (var cl in classes)
             { AddINotifyPropertyChanged(cl); }
             var output = factory.BuildSyntax(root).ToString();
             File.WriteAllText(outputFileName, output);
@@ -36,18 +37,49 @@ namespace RoslynDomExampleTests
 
       private void AddINotifyPropertyChanged(IClass cl)
       {
-         //var interfaces = ;
-         //if (!cl.ImplementedInterfaces.Any(x=>x.Name=="INotifyPropertyChanged"))
-         //   { AddInterface(cl, "INotifyPropertyChanged"); }
-         //if (!cl.Events.Any(x=>x.Name == "PropertyChangedEvent"))
-         //{ AddEvent(cl, "PropertyChangedEvent"); }
-         //var notifyingProps = cl.Properties
-         //                     .Where(x => x.CanSet);
-         //foreach (var prop in notifyingProps)
-         //{
-         //   UpdateProperty(prop); 
-         //}
+         if (!cl.ImplementedInterfaces.Any(x => x.Name == "INotifyPropertyChanged"))
+         { cl.ImplementedInterfaces.AddOrMove(new RDomReferencedType("INotifyPropertyChanged")); }
+         if (!cl.Events.Any(x => x.Name == "PropertyChanged"))
+         { cl.MembersAll.AddOrMove(new RDomEvent("PropertyChanged", "PropertyChangedEventHandler ")); }
+         var notifyingProps = cl.Properties
+                              .Where(x => x.CanSet);
+         foreach (var prop in notifyingProps)
+         {
+            UpdateProperty(prop);
+         }
+      }
 
+      private void UpdateProperty(IProperty prop)
+      {
+         if (prop.CanSet)
+         {
+            if (prop.SetAccessor.Statements.Any())
+            {
+               Console.WriteLine(string.Format("{0} has set accessor code, cannot update"));
+               return;
+            }
+            //Add the field, causing a naming collision the programmer can resolve
+            var parent = prop.Parent as ITypeMemberContainer;
+            var fieldName = StringUtilities.CamelCase(prop.Name);
+            var field = new RDomField(fieldName, prop.ReturnType);
+            UpdatePropertyGet(prop, fieldName);
+            UpdatePropertySet(prop, fieldName);
+         }
+      }
+
+      private void UpdatePropertyGet(IProperty prop, string fieldName)
+      {
+         var retExpression = RDomCSharp.Factory.ParseExpression(fieldName);
+         var statement = new RDomReturnStatement(retExpression);
+         prop.GetAccessor.StatementsAll.AddOrMove(statement);
+      }
+
+      private void UpdatePropertySet(IProperty prop, string fieldName)
+      {
+         var expression = RDomCSharp.Factory.ParseExpression(
+            string.Format("setProperty(ref {0}, value)", fieldName));
+         var statement = new RDomInvocationStatement (expression);
+         prop.SetAccessor.StatementsAll.AddOrMove(statement);
       }
 
       private string ReportCodeLines(IEnumerable<IDom> items)
@@ -80,7 +112,9 @@ namespace RoslynDomExampleTests
       private string GetNewCode(IDom item)
       {
          var ret = new List<string>();
-         return RDomCSharp.Factory.BuildFormattedSyntax(item).ToString();
+         // formatting removed from the following line (BuildFormattedSyntax)
+         return RDomCSharp.Factory.BuildSyntax(item).ToString();
+         //   return RDomCSharp.Factory.BuildFormattedSyntax(item).ToString();
       }
 
       private string GetOldCode(IDom item)

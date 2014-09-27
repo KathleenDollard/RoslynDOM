@@ -62,26 +62,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Unity.3.5.1405-prerelease\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
     </Reference>
-    <Reference Include="RoslynDom, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RoslynDomCSharpFactories.1.0.10-alpha\lib\net45\RoslynDom.dll</HintPath>
-    </Reference>
-    <Reference Include="RoslynDomCommon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RoslynDomCSharpFactories.1.0.10-alpha\lib\net45\RoslynDomCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="RoslynDomCSharpFactories, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RoslynDomCSharpFactories.1.0.10-alpha\lib\net45\RoslynDomCSharpFactories.dll</HintPath>
-    </Reference>
-    <Reference Include="RoslynDomRDomCommon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RoslynDomCSharpFactories.1.0.10-alpha\lib\net45\RoslynDomRDomCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="RoslynDomUtilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RoslynDomCSharpFactories.1.0.10-alpha\lib\net45\RoslynDomUtilities.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.1.20.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -128,6 +108,28 @@
     <Content Include="..\RoslynDomCommon\CustomDictionary.xml">
       <Link>CustomDictionary.xml</Link>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RoslynDomCommon\RoslynDomCommon.csproj">
+      <Project>{4f7977ed-7d76-40b6-bfb8-185c2b5a04b7}</Project>
+      <Name>RoslynDomCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynDomCSharpFactories\RoslynDomCSharpFactories.csproj">
+      <Project>{8ae6f765-35a1-492f-84a1-86807155aa2c}</Project>
+      <Name>RoslynDomCSharpFactories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynDomRDomCommon\RoslynDomRDomCommon.csproj">
+      <Project>{1e5b8601-b717-471d-a9ee-0c03d15491a5}</Project>
+      <Name>RoslynDomRDomCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynDomUtilities\RoslynDomUtilities.csproj">
+      <Project>{278404a0-aa81-402c-9ff0-b183715e2997}</Project>
+      <Name>RoslynDomUtilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynDom\RoslynDom.csproj">
+      <Project>{cb000d47-6587-4706-9f3b-e474b5a43174}</Project>
+      <Name>RoslynDom</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

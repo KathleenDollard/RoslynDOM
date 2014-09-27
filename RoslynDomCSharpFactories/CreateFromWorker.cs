@@ -301,13 +301,18 @@ namespace RoslynDom.CSharp
             {
                var memberAccess = expr as MemberAccessExpressionSyntax ;
                {
-                  // If this is legal code, this is a constant
+                  literalKind = LiteralKind.MemberAccess;
+                  // If this is legal code, this is a constant or an enum
                   var constant = model.GetConstantValue(memberAccess);
                   if (constant.HasValue)
                   {
-                     literalKind = LiteralKind.Constant;
                      constantIdentifier = expr.ToString();
                      value = constant.Value;
+                  }
+                  else
+                  {
+                     constantIdentifier = memberAccess.Name.ToFullString();
+                     value = memberAccess.Name.ToFullString();
                   }
                }
             }

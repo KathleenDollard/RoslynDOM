@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.Simplification;
 using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public static class RoslynCSharpUtilities
+   public static class RoslynCSharpUtilities
     {
 
         public static string NameFrom(this SyntaxNode node)

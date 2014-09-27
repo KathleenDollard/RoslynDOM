@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm = System.ComponentModel;
+using cm=System.ComponentModel;
 
 namespace RoslynDom
 {
@@ -20,7 +20,7 @@ namespace RoslynDom
          Invocation  = expression;
       }
 
-      [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
+      [cm.EditorBrowsable(.)]
       public RDomInvocationStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { }

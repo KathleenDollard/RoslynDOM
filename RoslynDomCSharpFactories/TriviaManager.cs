@@ -198,50 +198,111 @@ namespace RoslynDom.CSharp
          return ret;
       }
 
+      //private T AttachWhitespaceItem<T>(T syntaxNode, Whitespace2 whitespace,
+      //        WhitespaceKindLookup whitespaceLookup)
+      //     where T : SyntaxNode
+      //{
+      //   var ret = syntaxNode;
+      //   var kind = whitespaceLookup.Lookup(whitespace.LanguageElement);
+      //   var tokens = syntaxNode.ChildTokens().Where(x => x.CSharpKind() == kind);
+      //   if (!tokens.Any() && whitespace.LanguageElement == LanguageElement.Identifier)
+      //   {
+      //      var nameNode = syntaxNode.ChildNodes().OfType<NameSyntax>().FirstOrDefault();
+      //      if (nameNode != null)
+      //      {
+      //         tokens = nameNode.DescendantTokens()
+      //                 .Where(x => x.CSharpKind() == kind);
+      //         tokens = tokens
+      //                 .Where(x => !x.TrailingTrivia.Any(y => RealWhitespace(y)));
+      //         tokens = tokens
+      //                 .Where(x => !x.LeadingTrivia.Any(y => RealWhitespace(y)));
+      //      }
+      //   }
+      //   else if (!tokens.Any() && whitespace.LanguageElement == LanguageElement.LastToken)
+      //   {
+      //      var typeNode = syntaxNode.ChildNodes().OfType<NameSyntax>().LastOrDefault();
+      //      if (typeNode != null)
+      //      {
+      //         tokens = typeNode.DescendantTokens()
+      //               .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+      //               .Where(x => !x.TrailingTrivia.Any(y => RealWhitespace(y)))
+      //               .Where(x => !x.LeadingTrivia.Any(y => RealWhitespace(y)));
+      //      }
+      //   }           // Sometimes the token won't be there due to changes in the tree. 
+      //   tokens = tokens.ToList();
+      //   if (tokens.Any())
+      //   {
+      //      var newToken = tokens.First();
+      //      var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace.LeadingWhitespace)
+      //                 .Concat(newToken.LeadingTrivia);
+      //      var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace.TrailingWhitespace)
+      //                 .Concat(newToken.TrailingTrivia);
+      //      // Manage EOL comment here
+      //      newToken = newToken
+      //                  .WithLeadingTrivia(leadingTrivia)
+      //                  .WithTrailingTrivia(trailingTrivia);
+      //      ret = ret.ReplaceToken(tokens.First(), newToken);
+      //   }
+      //   return ret;
+      //}
+
       private T AttachWhitespaceItem<T>(T syntaxNode, Whitespace2 whitespace,
-              WhitespaceKindLookup whitespaceLookup)
-           where T : SyntaxNode
+             WhitespaceKindLookup whitespaceLookup)
+          where T : SyntaxNode
       {
          var ret = syntaxNode;
+         var name = ret.ToString();
          var kind = whitespaceLookup.Lookup(whitespace.LanguageElement);
-         var tokens = syntaxNode.ChildTokens().Where(x => x.CSharpKind() == kind);
-         if (!tokens.Any() && whitespace.LanguageElement == LanguageElement.Identifier)
+         Func<SyntaxNode, IEnumerable<SyntaxToken>> makeTokens = s => s.ChildTokens().Where(x => x.CSharpKind() == kind);
+         var tokens = makeTokens(syntaxNode).ToList();
+         if (!tokens.Any())
          {
-            var nameNode = syntaxNode.ChildNodes().OfType<NameSyntax>().FirstOrDefault();
-            if (nameNode != null)
+            if (whitespace.LanguageElement == LanguageElement.Identifier)
             {
-               tokens = nameNode.DescendantTokens()
-                       .Where(x => x.CSharpKind() == kind);
-               tokens = tokens
-                       .Where(x => !x.TrailingTrivia.Any(y => RealWhitespace(y)));
-               tokens = tokens
-                       .Where(x => !x.LeadingTrivia.Any(y => RealWhitespace(y)));
+               makeTokens = s => s.ChildNodes().OfType<NameSyntax>()
+                                    .SelectMany(n => n.DescendantTokens()
+                                          .Where(x => x.CSharpKind() == kind));
+               tokens = makeTokens(syntaxNode).ToList();
+               if (!tokens.Any() && syntaxNode.ChildTokens().Any())
+               {
+                  var testNode = syntaxNode.ChildTokens().First();
+                  if (Mappings.IsTypeAlias(testNode.CSharpKind()))
+                  { tokens.Add(testNode); }
+               }
             }
+            else if (whitespace.LanguageElement == LanguageElement.LastToken)
+            {
+               makeTokens = s => s.ChildNodes().OfType<NameSyntax>()
+                                      .SelectMany(n => n.DescendantTokens()
+                                          .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken));
+               tokens = makeTokens(syntaxNode).ToList();
+            }           // Sometimes the token won't be there due to changes in the tree. 
          }
-         else if (!tokens.Any() && whitespace.LanguageElement == LanguageElement.LastToken)
-         {
-            var typeNode = syntaxNode.ChildNodes().OfType<NameSyntax>().LastOrDefault();
-            if (typeNode != null)
-            {
-               tokens = typeNode.DescendantTokens()
-                     .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
-                     .Where(x => !x.TrailingTrivia.Any(y => RealWhitespace(y)))
-                     .Where(x => !x.LeadingTrivia.Any(y => RealWhitespace(y)));
-            }
-         }           // Sometimes the token won't be there due to changes in the tree. 
-         tokens = tokens.ToList();
+
          if (tokens.Any())
          {
-            var newToken = tokens.First();
-            var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace.LeadingWhitespace)
-                       .Concat(newToken.LeadingTrivia);
-            var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace.TrailingWhitespace)
-                       .Concat(newToken.TrailingTrivia);
+            var token = tokens.First();
+            var triviaString = token.LeadingTrivia.ToFullString();
+            if (whitespace.LeadingWhitespace.Length > triviaString.Length)
+            { triviaString = whitespace.LeadingWhitespace; }
+            var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(triviaString);
+            //leadingTrivia = SyntaxFactory.TriviaList(leadingTrivia.Concat(token.LeadingTrivia));
+            token = token.WithLeadingTrivia(leadingTrivia);
+
+            if (tokens.Count() > 1)
+            {
+               ret = ret.ReplaceToken(tokens.First(), token);
+               tokens = makeTokens(ret).ToList();
+               token = tokens.Last();
+            }
+            //trailingTrivia = SyntaxFactory.TriviaList(trailingTrivia.Concat(token.TrailingTrivia));
+            triviaString = token.TrailingTrivia.ToFullString();
+            if (whitespace.TrailingWhitespace.Length > triviaString.Length)
+            { triviaString = whitespace.TrailingWhitespace; }
+            var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(triviaString);
+            token = token.WithTrailingTrivia(trailingTrivia);
+            ret = ret.ReplaceToken(tokens.Last(), token);
             // Manage EOL comment here
-            newToken = newToken
-                        .WithLeadingTrivia(leadingTrivia)
-                        .WithTrailingTrivia(trailingTrivia);
-            ret = ret.ReplaceToken(tokens.First(), newToken);
          }
          return ret;
       }

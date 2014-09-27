@@ -7,91 +7,116 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoslynDom.Common;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace RoslynDom.CSharp
 {
-    public class RDomCSharp
-    {
-        [ExcludeFromCodeCoverage]
-        // until move to C# 6 - I want to support name of as soon as possible
-        protected static string nameof<T>(T value) { return ""; }
+   public class RDomCSharp
+   {
+      [ExcludeFromCodeCoverage]
+      // until move to C# 6 - I want to support name of as soon as possible
+      protected static string nameof<T>(T value) { return ""; }
 
-        private static RDomCSharp _factory = new RDomCSharp();
-        private RDomCorporation _helper = new RDomCorporation();
+      private static RDomCSharp factory = new RDomCSharp();
+      private RDomCorporation corporation = new RDomCorporation();
 
-        private RDomCSharp() { }
+      private RDomCSharp() { }
 
-        public static RDomCSharp Factory
-        { get { return _factory; } }
+      public static RDomCSharp Factory
+      { get { return factory; } }
 
-        public IRoot GetRootFromFile(string fileName)
-        {
-            var code = File.ReadAllText(fileName);
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-            // TODO: Consider whether to expand the filename to full path
-            return GetRootFromStringInternal(tree, fileName);
-        }
+      public IRoot GetRootFromFile(string fileName)
+      {
+         var code = File.ReadAllText(fileName);
+         SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+         // TODO: Consider whether to expand the filename to full path
+         return GetRootFromStringInternal(tree, fileName);
+      }
 
-        public IRoot GetRootFromString(string code)
-        {
-            SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-            return GetRootFromStringInternal(tree, null);
-        }
+      public IRoot GetRootFromString(string code)
+      {
+         SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+         return GetRootFromStringInternal(tree, null);
+      }
 
-        public IRoot GetRootFromDocument(Document document)
-        {
-            Guardian.Assert.IsNotNull(document, nameof(document));
-            SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
-            return GetRootFromStringInternal(tree, document.FilePath);
-        }
+      public IRoot GetRootFromDocument(Document document)
+      {
+         Guardian.Assert.IsNotNull(document, nameof(document));
+         SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
+         return GetRootFromStringInternal(tree, document.FilePath);
+      }
 
-        public IRoot GetRootFromSyntaxTree(SyntaxTree tree)
-        {
-            return GetRootFromStringInternal(tree, tree.FilePath);
-        }
+      public IRoot GetRootFromSyntaxTree(SyntaxTree tree)
+      {
+         return GetRootFromStringInternal(tree, tree.FilePath);
+      }
 
-        private IRoot GetRootFromStringInternal(SyntaxTree tree, string filePath)
-        {
-            var compilation = CSharpCompilation.Create("MyCompilation",
-                                           options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-                                           syntaxTrees: new[] { tree },
-                                           references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
-            var model = compilation.GetSemanticModel(tree);
-            var root = _helper.CreateFrom<IRoot>(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();
-            root.FilePath = filePath;
-            return root;
-        }
+      public SyntaxNode BuildSyntax(IDom item)
+      {
+         var syntaxGroup = BuildSyntaxGroup(item);
+         if (syntaxGroup == null || !syntaxGroup.Any()) return null;
+         return syntaxGroup.Single();
+      }
 
-        internal IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
-        {
-            IEnumerable<SyntaxNode> syntaxNodes;
-            if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }
-            if (TryBuildSyntax<IStemMemberCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
-            if (TryBuildSyntax<ITypeMemberCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
-            if (TryBuildSyntax<IStatementCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
-            if (TryBuildSyntax<IExpression>(item, out syntaxNodes)) { return syntaxNodes; }
-            if (TryBuildSyntax<IMisc>(item, out syntaxNodes)) { return syntaxNodes; }
-            return new List<SyntaxNode>();
-        }
+      public IExpression ParseExpression(string expressionAsString)
+      {
+         var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);
+         var expression = corporation.CreateFrom<IExpression>(expressionSyntax, null, null).FirstOrDefault();
+         return expression;
+      }
 
-        public SyntaxNode BuildSyntax(IDom item)
-        {
-            var syntaxGroup = BuildSyntaxGroup(item);
-            if (syntaxGroup == null || !syntaxGroup.Any()) return null;
-            return syntaxGroup.Single();
-        }
+      public SyntaxTree Format(SyntaxTree tree)
+      {
+         var root = tree.GetCompilationUnitRoot();
+         var span = root.FullSpan;
+         root = Formatter.Format(root, span, new CustomWorkspace()) as CompilationUnitSyntax;
+         return SyntaxFactory.SyntaxTree(root);
+      }
 
-        private bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> node)
-             where TKind : class, IDom
-        {
-            node = null;
-            var itemAsKind = item as TKind;
-            if (itemAsKind == null) { return false; }
-            node = _helper.BuildSyntaxGroup(item);
-            return true;
-        }
+      public SyntaxNode Format(SyntaxNode node)
+      {
+         var span = node.FullSpan;
+         node = Formatter.Format(node, span, new CustomWorkspace()) as SyntaxNode;
+         return node;
+      }
 
-        private IEnumerable<Tuple<Type, int>> expectations = new List<Tuple<Type, int>>()
+
+      private IRoot GetRootFromStringInternal(SyntaxTree tree, string filePath)
+      {
+         var compilation = CSharpCompilation.Create("MyCompilation",
+                                        options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                                        syntaxTrees: new[] { tree },
+                                        references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
+         var model = compilation.GetSemanticModel(tree);
+         var root = corporation.CreateFrom<IRoot>(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();
+         root.FilePath = filePath;
+         return root;
+      }
+
+      internal IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
+      {
+         IEnumerable<SyntaxNode> syntaxNodes;
+         if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }
+         if (TryBuildSyntax<IStemMemberCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
+         if (TryBuildSyntax<ITypeMemberCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
+         if (TryBuildSyntax<IStatementCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
+         if (TryBuildSyntax<IExpression>(item, out syntaxNodes)) { return syntaxNodes; }
+         if (TryBuildSyntax<IMisc>(item, out syntaxNodes)) { return syntaxNodes; }
+         return new List<SyntaxNode>();
+      }
+
+      private bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> node)
+           where TKind : class, IDom
+      {
+         node = null;
+         var itemAsKind = item as TKind;
+         if (itemAsKind == null) { return false; }
+         node = corporation.BuildSyntaxGroup(item);
+         return true;
+      }
+
+      private IEnumerable<Tuple<Type, int>> expectations = new List<Tuple<Type, int>>()
         {
                     Tuple.Create(typeof(IMisc),2),
                     Tuple.Create(typeof(IExpression),1),
@@ -104,23 +129,23 @@ namespace RoslynDom.CSharp
                     Tuple.Create(typeof(ICommentWhite),1)
         };
 
-        public bool ContainerCheck()
-        {
-            if (!_helper.HasExpectedItems())
-            {
-                Guardian.Assert.BadContainer();
-                return false;
-            }
+      public bool ContainerCheck()
+      {
+         if (!corporation.HasExpectedItems())
+         {
+            Guardian.Assert.BadContainer();
+            return false;
+         }
 
-            foreach (var tuple in expectations)
+         foreach (var tuple in expectations)
+         {
+            if (corporation.CountFactorySet(tuple.Item1) < tuple.Item2)
             {
-                if (_helper.CountFactorySet(tuple.Item1) < tuple.Item2)
-                {
-                    Guardian.Assert.BadContainer();
-                    return false;
-                }
+               Guardian.Assert.BadContainer();
+               return false;
             }
-            return true;
-        }
-    }
+         }
+         return true;
+      }
+   }
 }

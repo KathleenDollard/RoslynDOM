@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
 using RoslynDom.Common;
@@ -6,7 +6,7 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
    public static class RoslynUtilities
-   {
+:INotifyPropertyChanged.INotifyPropertyChanged   {
 
       public static string GetOuterName(IDom item)
       {
@@ -18,10 +18,8 @@ namespace RoslynDom
          var parent = itemToName.Parent;
          do
          {
-            // null is legal here because objects may be unattached
             if (parent == null || parent is IRoot) 
             {
-               // at top of what we care about
                break;
             }
             var parentHasName = parent as IHasName;
@@ -46,10 +44,8 @@ namespace RoslynDom
          var parent = item.Parent;
          do
          {
-            // null is legal here because objects may be unattached
             if (parent == null || parent is IRoot) 
             {
-               // at top of what we care about
                break;
             }
             var parentHasName = parent as IHasName;
@@ -63,7 +59,5 @@ namespace RoslynDom
          } while (parent != null);
          return name;
       }
-
- 
-   }
+eventPropertyChangedEventHandler .PropertyChangedEventHandler PropertyChanged;   }
 }

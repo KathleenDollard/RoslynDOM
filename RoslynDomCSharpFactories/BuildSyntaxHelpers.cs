@@ -8,7 +8,7 @@ using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
+//using Microsoft.CodeAnalysis.Formatting;
 using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
@@ -167,7 +167,7 @@ namespace RoslynDom.CSharp
       {
          switch (kind)
          {
-            case LiteralKind.Constant:
+            case LiteralKind.MemberAccess:
             case LiteralKind.String:
             case LiteralKind.Unknown:
                return SyntaxFactory.Literal(value.ToString());
@@ -197,7 +197,8 @@ namespace RoslynDom.CSharp
       {
          var ret = new List<SyntaxTrivia>();
          if (itemHasStructDoc == null ||
-             (itemHasStructDoc.StructuredDocumentation.Document == null
+             ((itemHasStructDoc.StructuredDocumentation == null 
+             || itemHasStructDoc.StructuredDocumentation.Document == null)
              && string.IsNullOrEmpty(itemHasStructDoc.Description)))
          { return ret; }
          var itemStructDoc = itemHasStructDoc.StructuredDocumentation;
@@ -368,7 +369,7 @@ namespace RoslynDom.CSharp
             var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
             expr = SyntaxFactory.TypeOfExpression(typeSyntax);
          }
-         else if (valueType == LiteralKind.Constant)
+         else if (valueType == LiteralKind.MemberAccess)
          {
             var leftExpr = SyntaxFactory.IdentifierName(declaredConst.SubstringBeforeLast("."));
             var name = SyntaxFactory.IdentifierName(declaredConst.SubstringAfterLast("."));

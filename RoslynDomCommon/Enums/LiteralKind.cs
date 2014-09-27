@@ -7,6 +7,6 @@
         Boolean,
         String,
         Type,
-        Constant
+        MemberAccess
     }
 }

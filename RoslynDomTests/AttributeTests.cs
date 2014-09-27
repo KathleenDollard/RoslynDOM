@@ -690,7 +690,7 @@ namespace Test
                   root => root.RootClasses.First(x => x.Name == "TestClass").Attributes,
                   1, false, "ContractNamespace").ToArray();
          var attributeValues = VerifyAttributeValues(attributes[0], count: 1).ToArray();
-         VerifyAttributeValue(attributeValues[0], name: "", value: "TestContract", kind: LiteralKind.Constant);
+         VerifyAttributeValue(attributeValues[0], name: "", value: "TestContract", kind: LiteralKind.MemberAccess);
 
       }
 
