@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom.Common;
 using RoslynDom.CSharp;
 using RoslynDom;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace RoslynDomExampleTests
 {
@@ -21,28 +22,40 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Walkthroughs_2_LoadFiles()
       {
+         UpdateFilesInDirectory(inputDirectory, outputDirectory, @"BasesAndBaseHelpers");
+         UpdateFilesInDirectory(inputDirectory, outputDirectory, @"Implementations");
+         UpdateFilesInDirectory(inputDirectory, outputDirectory, @"StatementImplementations");
+         // UpdateFilesInDirectory(inputDirectory, outputDirectory, "");
+
+      }
+
+      private void UpdateFilesInDirectory(string inputDirectory, string outputDirectory, string subDirectory)
+      {
          var factory = RDomCSharp.Factory;
-         var files = Directory.GetFiles(inputDirectory, "*.cs");
+         var inputDir = Path.Combine(inputDirectory, subDirectory);
+         var outputDir = Path.Combine(outputDirectory, subDirectory);
+         var files = Directory.GetFiles(inputDir, "*.cs");
          foreach (var fileName in files)
          {
-            var outputFileName = Path.Combine(outputDirectory, Path.GetFileName(fileName));
+            var outputFileName = Path.Combine(outputDir, Path.GetFileName(fileName));
             var root = factory.GetRootFromFile(fileName);
             var classes = root.RootClasses;
             foreach (var cl in classes)
             { AddINotifyPropertyChanged(cl); }
-            var output = factory.BuildSyntax(root).ToString();
-            File.WriteAllText(outputFileName, output);
+            var output = factory.BuildSyntax(root);
+            //output = factory.Format(output,);
+            var outputString = output.ToFullString();
+            File.WriteAllText(outputFileName, outputString);
          }
       }
 
       private void AddINotifyPropertyChanged(IClass cl)
       {
-         if (!cl.ImplementedInterfaces.Any(x => x.Name == "INotifyPropertyChanged"))
-         { cl.ImplementedInterfaces.AddOrMove(new RDomReferencedType("INotifyPropertyChanged")); }
-         if (!cl.Events.Any(x => x.Name == "PropertyChanged"))
-         { cl.MembersAll.AddOrMove(new RDomEvent("PropertyChanged", "PropertyChangedEventHandler ")); }
          var notifyingProps = cl.Properties
-                              .Where(x => x.CanSet);
+                              .Where(x => x.CanSet
+                                    && !x.SetAccessor.Statements.Any()
+                                    && !x.GetAccessor.Statements.Any()
+                                    && x.AccessModifier == AccessModifier.Public);
          foreach (var prop in notifyingProps)
          {
             UpdateProperty(prop);
@@ -51,35 +64,39 @@ namespace RoslynDomExampleTests
 
       private void UpdateProperty(IProperty prop)
       {
-         if (prop.CanSet)
-         {
-            if (prop.SetAccessor.Statements.Any())
-            {
-               Console.WriteLine(string.Format("{0} has set accessor code, cannot update"));
-               return;
-            }
-            //Add the field, causing a naming collision the programmer can resolve
-            var parent = prop.Parent as ITypeMemberContainer;
-            var fieldName = StringUtilities.CamelCase(prop.Name);
-            var field = new RDomField(fieldName, prop.ReturnType);
-            UpdatePropertyGet(prop, fieldName);
-            UpdatePropertySet(prop, fieldName);
-         }
+         // Add the field without further checks because the programmer will find and resolve
+         // things like naming collisions
+         var parent = prop.Parent as ITypeMemberContainer;
+         var fieldName = StringUtilities.CamelCase(prop.Name);
+         var field = new RDomField(fieldName, prop.ReturnType, declaredAccessModifier: AccessModifier.Private);
+         FixWhitespace(field, prop);
+         field.Whitespace2Set.Add(new Whitespace2(prop.Whitespace2Set.First().Copy()));
+         parent.MembersAll.InsertOrMoveBefore(prop, field);
+         UpdatePropertyGet(prop, fieldName);
+         UpdatePropertySet(prop, fieldName);
+      }
+
+      private void FixWhitespace(RDomField field, IProperty prop)
+      {
+         // TODO: This is rather detailed because of featuresnot yet in the whitespace system
+         var leading = prop.Whitespace2Set[LanguageElement.Public].LeadingWhitespace;
+         field.Whitespace2Set[LanguageElement.Private] = new Whitespace2(LanguageElement.Private, leading, " ", "");
       }
 
       private void UpdatePropertyGet(IProperty prop, string fieldName)
       {
          var retExpression = RDomCSharp.Factory.ParseExpression(fieldName);
-         var statement = new RDomReturnStatement(retExpression);
+         var statement = new RDomReturnStatement(retExpression, true);
          prop.GetAccessor.StatementsAll.AddOrMove(statement);
+         prop.GetAccessor.EnsureNewLineAfter();
       }
 
       private void UpdatePropertySet(IProperty prop, string fieldName)
       {
-         var expression = RDomCSharp.Factory.ParseExpression(
-            string.Format("setProperty(ref {0}, value)", fieldName));
-         var statement = new RDomInvocationStatement (expression);
+         var expression = RDomCSharp.Factory.ParseExpression(string.Format("SetProperty(ref {0}, value)", fieldName));
+         var statement = new RDomInvocationStatement(expression, true);
          prop.SetAccessor.StatementsAll.AddOrMove(statement);
+         prop.GetAccessor.EnsureNewLineAfter();
       }
 
       private string ReportCodeLines(IEnumerable<IDom> items)

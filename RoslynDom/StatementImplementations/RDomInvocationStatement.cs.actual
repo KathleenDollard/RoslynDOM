@@ -14,10 +14,12 @@ namespace RoslynDom
       /// <param name="expression">
       /// Expression to invoke
       /// </param>
-      public RDomInvocationStatement(IExpression expression)
+      public RDomInvocationStatement(IExpression expression, bool suppressNewLine = false)
        : this(null, null, null)
       {
          Invocation  = expression;
+         if (!suppressNewLine)
+         { Whitespace2Set.Add(new Whitespace2(LanguageElement.EndOfLine, "", "\r\n", "")); }
       }
 
       [cm.EditorBrowsable(.)]

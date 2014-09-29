@@ -2,32 +2,34 @@ using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
-    public interface IDom : IHasSameIntentMethod
-    {
-        object RawItem { get; }
-        object OriginalRawItem { get; }
+   public interface IDom : IHasSameIntentMethod
+   {
+      object RawItem { get; }
+      object OriginalRawItem { get; }
 
-        Whitespace2Collection Whitespace2Set { get;  }
- 
-        bool Matches(IDom other);
-        IDom Parent { get; }
-        IEnumerable<IDom> Children { get; }
+      Whitespace2Collection Whitespace2Set { get; }
+      void EnsureNewLineAfter();
+      void EnsureLeading(string whitespace);
 
-        IEnumerable<IDom> Ancestors { get; }
-        IEnumerable<IDom> AncestorsAndSelf { get; }
-        IEnumerable<IDom> Descendants { get; }
-        IEnumerable<IDom> DescendantsAndSelf { get; }
+      bool Matches(IDom other);
+      IDom Parent { get; }
+      IEnumerable<IDom> Children { get; }
 
-        string ReportHierarchy();
+      IEnumerable<IDom> Ancestors { get; }
+      IEnumerable<IDom> AncestorsAndSelf { get; }
+      IEnumerable<IDom> Descendants { get; }
+      IEnumerable<IDom> DescendantsAndSelf { get; }
 
-        object RequestValue(string propertyName);
+      string ReportHierarchy();
 
-        PublicAnnotationList PublicAnnotations { get; }
-    }
+      object RequestValue(string propertyName);
 
-    public interface IDom<T> : IDom
-        where T : IDom<T>
-    {
-        T Copy();
-    }
+      PublicAnnotationList PublicAnnotations { get; }
+   }
+
+   public interface IDom<T> : IDom
+       where T : IDom<T>
+   {
+      T Copy();
+   }
 }

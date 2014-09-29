@@ -29,9 +29,6 @@ namespace RoslynDom.CSharp
                _whitespaceLookup.Add(LanguageElement.AccessorSetKeyword, SyntaxKind.SetKeyword);
                _whitespaceLookup.Add(LanguageElement.AccessorShortFormIndicator, SyntaxKind.SemicolonToken);
                _whitespaceLookup.Add(LanguageElement.AccessorEndDelimiter, SyntaxKind.CloseBraceToken);
-               //Tuple.Create( LanguageElement.AccessorAddEventKeyword, SyntaxKind.??),
-               // TODO: Find Add/Remove keywords
-               //Tuple.Create( LanguageElement.AccessorRemoveEventKeyword, SyntaxKind.??),
                _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
             }
             return _whitespaceLookup;

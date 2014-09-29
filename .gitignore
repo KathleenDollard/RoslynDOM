@@ -1,3 +1,8 @@
+
+# RoslynDom
+*.actual
+*_Updated_Files/
+
 packages/
 nuget_packages/
 *.ide/

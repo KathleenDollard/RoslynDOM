@@ -195,8 +195,43 @@ namespace RoslynDom.CSharp
          {
             ret = AttachWhitespaceItem(ret, whitespace, whitespaceLookup);
          }
+         // Not sure the functional approah is best here
+         ret = CheckToken<T>(ret,
+                     x => x.GetLastToken(),
+                     t => t.TrailingTrivia,
+                     s=>SyntaxFactory.ParseTrailingTrivia(s),
+                     (t,trivia)=>t.WithTrailingTrivia(trivia),
+                     whitespace2Set.ForceTrailing);
+         ret = CheckToken<T>(ret,
+                     x => x.GetFirstToken(),
+                     t => t.LeadingTrivia,
+                     s => SyntaxFactory.ParseLeadingTrivia(s),
+                     (t, trivia) => t.WithLeadingTrivia(trivia),
+                     whitespace2Set.ForceLeading);
          return ret;
       }
+
+      private T CheckToken<T>(T node, Func<SyntaxNode, SyntaxToken> getToken,
+                  Func<SyntaxToken, SyntaxTriviaList> getOldTrivia,
+                  Func<string, SyntaxTriviaList> getNewTrivia,
+                  Func<SyntaxToken, SyntaxTriviaList, SyntaxToken> setNewTrivia,
+                  string forceWhitespace)
+         where T : SyntaxNode
+      {
+         if (string.IsNullOrEmpty(forceWhitespace )) return node;
+         var lastToken = getToken(node);
+         if (lastToken != null)
+         {
+            if (getOldTrivia(lastToken).ToFullString() != forceWhitespace)
+            {
+               var trailingTrivia = getNewTrivia(forceWhitespace);
+               lastToken = lastToken.WithTrailingTrivia(trailingTrivia);
+               node = node.ReplaceToken(node.GetLastToken(), lastToken);
+            }
+         }
+         return node;
+      }
+
 
       //private T AttachWhitespaceItem<T>(T syntaxNode, Whitespace2 whitespace,
       //        WhitespaceKindLookup whitespaceLookup)
@@ -333,7 +368,10 @@ namespace RoslynDom.CSharp
 
       private SyntaxToken AttachLeadingWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
       {
-         if (token == null || whitespace2 == null) { return token; }
+         if (token.CSharpKind() == SyntaxKind.None
+                  || whitespace2 == null
+                  || whitespace2.LeadingWhitespace == null)
+         { return token; }
          var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(whitespace2.LeadingWhitespace)
                     .Concat(token.LeadingTrivia);
          return token.WithLeadingTrivia(leadingTrivia);
@@ -341,7 +379,10 @@ namespace RoslynDom.CSharp
 
       private SyntaxToken AttachTrailingWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
       {
-         if (token == null || whitespace2 == null) { return token; }
+         if (token.CSharpKind() == SyntaxKind.None
+                  || whitespace2 == null
+                  || whitespace2.TrailingWhitespace == null)
+         { return token; }
          var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(whitespace2.TrailingWhitespace)
                     .Concat(token.TrailingTrivia);
          // Manage EOL comment here
@@ -350,7 +391,6 @@ namespace RoslynDom.CSharp
 
       internal SyntaxToken AttachWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
       {
-         if (token == null || whitespace2 == null) { return token; }
          token = AttachLeadingWhitespaceToToken(token, whitespace2);
          token = AttachTrailingWhitespaceToToken(token, whitespace2);
          return token;

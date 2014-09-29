@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
@@ -50,19 +50,13 @@ namespace RoslynDom
             }
         }
 
-        private string _name ;
-        public string Name { get{return _name;}
-set{SetProperty(ref _name, value);}}
+        public string Name { get; set; }
 
         public AttributeCollection Attributes
         { get { return _attributes; } }
 
-        private AccessModifier _accessModifier ;
-        public AccessModifier AccessModifier { get{return _accessModifier;}
-set{SetProperty(ref _accessModifier, value);}}
-        private AccessModifier _declaredAccessModifier ;
-        public AccessModifier DeclaredAccessModifier { get{return _declaredAccessModifier;}
-set{SetProperty(ref _declaredAccessModifier, value);}}
+        public AccessModifier AccessModifier { get; set; }
+        public AccessModifier DeclaredAccessModifier { get; set; }
 
         public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }

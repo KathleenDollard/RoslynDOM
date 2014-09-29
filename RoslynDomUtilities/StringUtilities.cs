@@ -15,13 +15,13 @@ namespace RoslynDom.Common
       public static string NamespaceFromQualifiedName(string qName)
       {
          if (qName.Contains(".")) return qName.SubstringBeforeLast(".");
-         return qName;
+         return "";
       }
 
       public static string CamelCase(string name)
       {
          if (name.StartsWith("_")) name = name.Substring(1);
-         name = name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
+         name = name.Substring(0, 1).ToLowerInvariant() + name.Substring(1);
          return "_" + name;
       }
 

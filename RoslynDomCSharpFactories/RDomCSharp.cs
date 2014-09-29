@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using RoslynDom.Common;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Options;
 
 namespace RoslynDom.CSharp
 {
@@ -62,6 +63,7 @@ namespace RoslynDom.CSharp
       public IExpression ParseExpression(string expressionAsString)
       {
          var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);
+         expressionSyntax = RDomCSharp.Factory.Format(expressionSyntax) as ExpressionSyntax;
          var expression = corporation.CreateFrom<IExpression>(expressionSyntax, null, null).FirstOrDefault();
          return expression;
       }

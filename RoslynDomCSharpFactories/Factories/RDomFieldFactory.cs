@@ -89,28 +89,28 @@ namespace RoslynDom.CSharp
 
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
-            var itemAsField = item as IField;
-            var nameSyntax = SyntaxFactory.Identifier(itemAsField.Name);
-            var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsField.ReturnType).First();
-            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsField);
-            if (itemAsField.IsReadOnly) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)); }
-            if (itemAsField.IsConstant)
+            var itemAsT = item as IField;
+            var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
+            var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.ReturnType).First();
+            var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
+            if (itemAsT.IsReadOnly) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)); }
+            if (itemAsT.IsConstant)
             {
                 modifiers = modifiers.Remove(modifiers.Where(x => x.CSharpKind() == SyntaxKind.StaticKeyword).First());
                 modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ConstKeyword));
             }
-            if (itemAsField.IsVolatile) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.VolatileKeyword)); }
+            if (itemAsT.IsVolatile) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.VolatileKeyword)); }
             var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
-            if (itemAsField.Initializer != null)
+            if (itemAsT.Initializer != null)
             {
-                var expressionSyntax = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsField.Initializer);
-                expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, itemAsField.Whitespace2Set[LanguageElement.Expression]);
+                var expressionSyntax = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Initializer);
+                expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, itemAsT.Whitespace2Set[LanguageElement.Expression]);
                 var equalsToken = SyntaxFactory.Token(SyntaxKind.EqualsToken);
-                equalsToken = BuildSyntaxHelpers.AttachWhitespaceToToken(equalsToken, itemAsField.Whitespace2Set[LanguageElement.EqualsAssignmentOperator]);
+                equalsToken = BuildSyntaxHelpers.AttachWhitespaceToToken(equalsToken, itemAsT.Whitespace2Set[LanguageElement.EqualsAssignmentOperator]);
                 var equalsValueClause = SyntaxFactory.EqualsValueClause(equalsToken, expressionSyntax);
                 declaratorNode = declaratorNode.WithInitializer(equalsValueClause);
             }
-            declaratorNode = BuildSyntaxHelpers.AttachWhitespace(declaratorNode, itemAsField.Whitespace2Set, WhitespaceLookup);
+            declaratorNode = BuildSyntaxHelpers.AttachWhitespace(declaratorNode, itemAsT.Whitespace2Set, WhitespaceLookup);
 
             var variableNode = SyntaxFactory.VariableDeclaration(returnTypeSyntax)
                .WithVariables(
@@ -118,9 +118,9 @@ namespace RoslynDom.CSharp
             //variableNode = BuildSyntaxHelpers.AttachWhitespace(variableNode, itemAsField.Whitespace2Set, WhitespaceLookup);
             var node = SyntaxFactory.FieldDeclaration(variableNode)
                .WithModifiers(modifiers);
-            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsField.Whitespace2Set, WhitespaceLookup);
+            node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
 
-            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsField.Attributes);
+            var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             return node.PrepareForBuildSyntaxOutput(item);
