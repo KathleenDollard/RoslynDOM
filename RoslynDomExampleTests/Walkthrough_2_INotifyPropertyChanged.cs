@@ -20,13 +20,21 @@ namespace RoslynDomExampleTests
       private string outputDirectory = @"..\..\Walkthrough2_Updated_Files";
 
       [TestMethod]
-      public void Walkthroughs_2_LoadFiles()
+      public void Walkthroughs_2_load_files()
       {
          UpdateFilesInDirectory(inputDirectory, outputDirectory, @"BasesAndBaseHelpers");
          UpdateFilesInDirectory(inputDirectory, outputDirectory, @"Implementations");
          UpdateFilesInDirectory(inputDirectory, outputDirectory, @"StatementImplementations");
          // UpdateFilesInDirectory(inputDirectory, outputDirectory, "");
 
+      }
+
+
+      [TestMethod]
+      public void Walkthroughs_2_load_specific_file()
+      {
+         var factory = RDomCSharp.Factory;
+         UpdateFile(factory, outputDirectory, Path.Combine(inputDirectory, @"StatementImplementations", "RDomInvocationStatement.cs"));
       }
 
       private void UpdateFilesInDirectory(string inputDirectory, string outputDirectory, string subDirectory)
@@ -37,16 +45,21 @@ namespace RoslynDomExampleTests
          var files = Directory.GetFiles(inputDir, "*.cs");
          foreach (var fileName in files)
          {
-            var outputFileName = Path.Combine(outputDir, Path.GetFileName(fileName));
-            var root = factory.GetRootFromFile(fileName);
-            var classes = root.RootClasses;
-            foreach (var cl in classes)
-            { AddINotifyPropertyChanged(cl); }
-            var output = factory.BuildSyntax(root);
-            //output = factory.Format(output,);
-            var outputString = output.ToFullString();
-            File.WriteAllText(outputFileName, outputString);
+            UpdateFile(factory, outputDir, fileName);
          }
+      }
+
+      private void UpdateFile(RDomCSharp factory, string outputDir, string fileName)
+      {
+         var outputFileName = Path.Combine(outputDir, Path.GetFileName(fileName));
+         var root = factory.GetRootFromFile(fileName);
+         var classes = root.RootClasses;
+         foreach (var cl in classes)
+         { AddINotifyPropertyChanged(cl); }
+         var output = factory.BuildSyntax(root);
+         //output = factory.Format(output,);
+         var outputString = output.ToFullString();
+         File.WriteAllText(outputFileName, outputString);
       }
 
       private void AddINotifyPropertyChanged(IClass cl)

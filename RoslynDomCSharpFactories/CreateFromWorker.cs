@@ -311,8 +311,8 @@ namespace RoslynDom.CSharp
                   }
                   else
                   {
-                     constantIdentifier = memberAccess.Name.ToFullString();
-                     value = memberAccess.Name.ToFullString();
+                     constantIdentifier = memberAccess.ToFullString();
+                     value = memberAccess.ToFullString();
                   }
                }
             }
