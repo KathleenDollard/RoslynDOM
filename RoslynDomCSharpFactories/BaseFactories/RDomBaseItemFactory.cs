@@ -18,7 +18,7 @@ namespace RoslynDom.CSharp
     {
         // until move to C# 6 - I want to support name of as soon as possible
         [ExcludeFromCodeCoverage]
-        protected static string nameof<T>(T value) { return ""; }
+        protected static string nameof<T2>(T2 value) { return ""; }
 
         public RDomBaseItemFactory(RDomCorporation corporation)
         {

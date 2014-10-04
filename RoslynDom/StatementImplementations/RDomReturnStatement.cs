@@ -49,9 +49,6 @@ namespace RoslynDom
          }
       }
 
-      //public override IEnumerable<IDom> Descendants
-      //{ get { return Children; } }
-
       public IExpression Return { get; set; }
    }
 }

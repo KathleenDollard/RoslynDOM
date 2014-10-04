@@ -15,7 +15,6 @@ namespace RoslynDom
         private SyntaxNode _originalRawSyntax;
         private SyntaxNode _rawSyntax;
         private TSymbol _symbol;
-        //private string _containingTypeName;
 
         protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
              : base()

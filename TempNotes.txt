@@ -1,0 +1,5 @@
+Add cm: using to the using set - check first
+Add EditorBrowsable to two existing constructors
+Add new constructor - check first
+	- Determine the algorithm for optional values
+	- If there's a type allow either name or IReferencedType (two constructors? )

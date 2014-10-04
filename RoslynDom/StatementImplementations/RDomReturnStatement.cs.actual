@@ -24,7 +24,7 @@ namespace RoslynDom
          Whitespace2Set.Add(new Whitespace2(LanguageElement.ReturnKeyword, "", " ", ""));
       }
 
-      [cm.EditorBrowsable(.)]
+      [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
       public RDomReturnStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
             : base(rawItem, parent, model)
       { }
@@ -48,9 +48,6 @@ namespace RoslynDom
             return list;
          }
       }
-
-      //public override IEnumerable<IDom> Descendants
-      //{ get { return Children; } }
 
       public IExpression Return { get; set; }
    }

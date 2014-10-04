@@ -11,7 +11,6 @@ namespace RoslynDom
         {
             Name = name;
             Group = group;
-            Initialize();
         }
 
         internal RDomNamespace(RDomNamespace oldRDom)
@@ -21,7 +20,6 @@ namespace RoslynDom
         }
 
         public string Name { get; set; }
-
         public Guid Group { get; private set; }
 
         public StemMemberKind StemMemberKind

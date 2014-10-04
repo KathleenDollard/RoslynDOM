@@ -50,17 +50,14 @@ namespace RoslynDom
       public IEnumerable<IEnum> Enums
       { get { return Members.OfType<IEnum>().ToList(); } }
 
-      public bool IsAbstract { get; set; }
-
-      public bool IsSealed { get; set; }
-
-      public bool IsStatic { get; set; }
-
       public IReferencedType BaseType { get; set; }
-
+      public bool IsAbstract { get; set; }
+      public bool IsSealed { get; set; }
+      public bool IsStatic { get; set; }
+      
       public IEnumerable<IConstructor> Constructors
       { get { return Members.OfType<IConstructor>(); } }
 
-      public string ClassName { get { return this.Name; } }
+      //public string ClassName { get { return this.Name; } }
    }
 }

@@ -28,27 +28,19 @@ namespace RoslynDom
          DefaultValueType = oldRDom.DefaultValueType;
          Ordinal = oldRDom.Ordinal;
       }
-      public string Name { get; set; }
 
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      public string Name { get; set; }
       public IReferencedType Type { get; set; }
-
-      public bool IsOut { get; set; }
-
-      public bool IsRef { get; set; }
-
-      public bool IsParamArray { get; set; }
-
-      public bool IsOptional { get; set; }
-
-      public object DefaultValue { get; set; }
-
-      public LiteralKind DefaultValueType { get; set; }
-
       public int Ordinal { get; set; }
-
+      public bool IsOut { get; set; }
+      public bool IsRef { get; set; }
+      public bool IsParamArray { get; set; }
+      public bool IsOptional { get; set; }
+      public object DefaultValue { get; set; }
+      public LiteralKind DefaultValueType { get; set; }
       public string DefaultConstantIdentifier { get; set; }
    }
 }

@@ -41,17 +41,7 @@ namespace RoslynDom
             }
         }
 
-        //public override IEnumerable<IDom> Descendants
-        //{
-        //    get
-        //    {
-        //        var list = base.Descendants.ToList();
-        //        foreach (var statement in Statements)
-        //        { list.AddRange(statement.DescendantsAndSelf); }
-        //        return list;
-        //    }
-        //}
-
+        public bool Unchecked { get; set; }
         public bool HasBlock { get; set; }
 
         public IEnumerable<IStatement> Statements
@@ -59,7 +49,5 @@ namespace RoslynDom
 
         public RDomCollection<IStatementCommentWhite> StatementsAll
         { get { return _statements; } }
-
-        public bool Unchecked { get; set; }
     }
 }

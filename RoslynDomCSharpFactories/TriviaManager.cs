@@ -199,8 +199,8 @@ namespace RoslynDom.CSharp
          ret = CheckToken<T>(ret,
                      x => x.GetLastToken(),
                      t => t.TrailingTrivia,
-                     s=>SyntaxFactory.ParseTrailingTrivia(s),
-                     (t,trivia)=>t.WithTrailingTrivia(trivia),
+                     s => SyntaxFactory.ParseTrailingTrivia(s),
+                     (t, trivia) => t.WithTrailingTrivia(trivia),
                      whitespace2Set.ForceTrailing);
          ret = CheckToken<T>(ret,
                      x => x.GetFirstToken(),
@@ -218,16 +218,13 @@ namespace RoslynDom.CSharp
                   string forceWhitespace)
          where T : SyntaxNode
       {
-         if (string.IsNullOrEmpty(forceWhitespace )) return node;
+         if (string.IsNullOrEmpty(forceWhitespace)) return node;
          var lastToken = getToken(node);
-         if (lastToken != null)
+         if (getOldTrivia(lastToken).ToFullString() != forceWhitespace)
          {
-            if (getOldTrivia(lastToken).ToFullString() != forceWhitespace)
-            {
-               var trailingTrivia = getNewTrivia(forceWhitespace);
-               lastToken = lastToken.WithTrailingTrivia(trailingTrivia);
-               node = node.ReplaceToken(node.GetLastToken(), lastToken);
-            }
+            var trailingTrivia = getNewTrivia(forceWhitespace);
+            lastToken = lastToken.WithTrailingTrivia(trailingTrivia);
+            node = node.ReplaceToken(node.GetLastToken(), lastToken);
          }
          return node;
       }

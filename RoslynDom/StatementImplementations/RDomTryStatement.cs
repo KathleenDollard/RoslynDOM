@@ -26,7 +26,7 @@ namespace RoslynDom
             Finally = oldRDom.Finally.Copy();
         }
 
-        protected  void Initialize()
+        private void Initialize()
         {
             _catches = new RDomCollection<ICatchStatement>(this);
         }
@@ -42,19 +42,6 @@ namespace RoslynDom
                 return list;
             }
         }
-
-        //public override IEnumerable<IDom> Descendants
-        //{
-        //    get
-        //    {
-        //        var list = new List<IDom>();
-        //        list.AddRange(base.Descendants.ToList());
-        //        foreach (var elseif in Catches)
-        //        { list.AddRange(elseif.DescendantsAndSelf); }
-        //        list.AddRange(Finally.DescendantsAndSelf);
-        //        return list;
-        //    }
-        //}
 
         public RDomCollection<ICatchStatement> CatchesAll
         { get { return _catches; } }

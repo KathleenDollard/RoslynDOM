@@ -44,18 +44,6 @@ namespace RoslynDom
             }
         }
 
-        //public override IEnumerable<IDom> Descendants
-        //{
-        //    get
-        //    {
-        //        var list = base.Descendants.ToList();
-        //        list.AddRange(Condition.DescendantsAndSelf);
-        //        foreach (var statement in Statements)
-        //        { list.AddRange(statement.DescendantsAndSelf); }
-        //        return list;
-        //    }
-        //}
-
         public IExpression Condition { get; set; }
 
         public bool TestAtEnd { get; set; }

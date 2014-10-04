@@ -71,6 +71,8 @@ namespace RoslynDom
       }
 
       public string Name { get; set; }
+      public AccessModifier AccessModifier { get; set; }
+      public AccessModifier DeclaredAccessModifier { get; set; }
 
       public string OuterName
       { get { return RoslynUtilities.GetOuterName(this); } }
@@ -88,12 +90,7 @@ namespace RoslynDom
       { get { return (Parent is IType); } }
 
       public RDomCollection<ITypeParameter> TypeParameters
-      {
-         get
-         {
-            return _typeParameters;
-         }
-      }
+      { get { return _typeParameters; } }
 
       public RDomCollection<ITypeMemberCommentWhite> MembersAll
       { get { return _members; } }
@@ -126,10 +123,6 @@ namespace RoslynDom
 
       public AttributeCollection Attributes
       { get { return _attributes; } }
-
-      public AccessModifier AccessModifier { get; set; }
-
-      public AccessModifier DeclaredAccessModifier { get; set; }
 
       public MemberKind MemberKind
       { get { return _memberKind; } }

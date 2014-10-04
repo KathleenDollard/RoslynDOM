@@ -27,15 +27,10 @@ namespace RoslynDom
       }
 
       public string Name { get; set; }
-
-      public object Value { get; set; }
-
-      public string ValueConstantIdentifier { get; set; }
-
-      public LiteralKind ValueType { get; set; }
-
       public AttributeValueStyle Style { get; set; }
-
+      public object Value { get; set; }
+      public string ValueConstantIdentifier { get; set; }
+      public LiteralKind ValueType { get; set; }
       public Type Type { get; set; }
    }
 }

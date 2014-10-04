@@ -164,9 +164,9 @@ namespace RoslynDom.CSharp
          var baseList = node.ChildNodes().OfType<BaseListSyntax>().SingleOrDefault();
          if (baseList != null)
          {
-            IEnumerable<TypeSyntax> types = baseList.Types;
+            IEnumerable<TypeSyntax> types = baseList.Types.ToList();
             StoreWhitespaceForToken(itemAsT, baseList.ColonToken, LanguagePart.Current, LanguageElement.BaseListPrefix);
-            if (node is ClassDeclarationSyntax && baseType.Name == types.First().ToString())
+            if (node is ClassDeclarationSyntax && baseType.ToString() == types.First().ToString())
             {
                var itemAsClass = itemAsT as RDomClass;
                var syntax = types.First();

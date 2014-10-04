@@ -11,7 +11,6 @@ namespace RoslynDom.CSharp
    public class RDomAttributeValueMiscFactory
            : RDomMiscFactory<RDomAttributeValue, AttributeArgumentSyntax>
    {
-      private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomAttributeValueMiscFactory(RDomCorporation corporation)
           : base(corporation)
@@ -73,7 +72,6 @@ namespace RoslynDom.CSharp
       {
          // TODO: I feel like I'm working too hard here. Try creating a WhitespaceLookup and see how much of this is done in a standard StoreWhitespace
 
-         var op = new SyntaxToken();
          if (syntax.NameColon != null)
          { StoreWhitespaceForNamed(newItem, syntax, syntax.NameColon.Name.Identifier, syntax.NameColon.ColonToken); }
          else if (syntax.NameEquals != null)

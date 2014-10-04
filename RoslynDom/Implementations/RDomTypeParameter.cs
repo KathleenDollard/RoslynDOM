@@ -35,20 +35,14 @@ namespace RoslynDom
             _constraintTypes = new RDomCollection<IReferencedType>(this);
         }
 
-
         public RDomCollection<IReferencedType> ConstraintTypes
         { get { return _constraintTypes; } }
 
-        public bool HasConstructorConstraint { get; set; }
-
-        public bool HasReferenceTypeConstraint { get; set; }
-
-        public bool HasValueTypeConstraint { get; set; }
-
-        public int Ordinal { get; set; }
-
-        public Variance Variance { get; set; }
-
         public string Name { get; set; }
+        public int Ordinal { get; set; }
+        public bool HasConstructorConstraint { get; set; }
+        public bool HasReferenceTypeConstraint { get; set; }
+        public bool HasValueTypeConstraint { get; set; }
+        public Variance Variance { get; set; }
     }
 }

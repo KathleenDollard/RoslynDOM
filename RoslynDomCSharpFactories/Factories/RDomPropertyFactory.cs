@@ -50,7 +50,7 @@ namespace RoslynDom.CSharp
                          .CreateFrom<IMisc>(syntax.Type, newItem, model)
                          .FirstOrDefault()
                          as IReferencedType;
-         newItem.ReturnType = type;
+         newItem.PropertyType = type;
 
          var propSymbol = newItem.Symbol as IPropertySymbol;
          Guardian.Assert.IsNotNull(propSymbol, nameof(propSymbol));

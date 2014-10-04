@@ -6,77 +6,70 @@ using System;
 
 namespace RoslynDom
 {
-    public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
-    {
-        private RDomCollection<IStatementCommentWhite> _statements;
-        private AttributeCollection _attributes = new AttributeCollection();
-        private AccessorType _accessorType;
+   public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
+   {
+      private RDomCollection<IStatementCommentWhite> _statements;
+      private AttributeCollection _attributes = new AttributeCollection();
+      private AccessorType _accessorType;
 
-        public RDomPropertyAccessor(SyntaxNode rawItem, AccessorType accessorType, IDom parent, SemanticModel model)
-           : base(rawItem, parent, model)
-        {
-            _accessorType = accessorType;
-            Initialize();
-        }
+      public RDomPropertyAccessor(SyntaxNode rawItem, AccessorType accessorType, IDom parent, SemanticModel model)
+         : base(rawItem, parent, model)
+      {
+         _accessorType = accessorType;
+         Initialize();
+      }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
-         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
-        internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
-                : base(oldRDom)
-        {
-            Initialize();
-            Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-            var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-            StatementsAll.AddOrMoveRange(newStatements);
+      [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+       "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
+      internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
+              : base(oldRDom)
+      {
+         Initialize();
+         Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
+         var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
+         StatementsAll.AddOrMoveRange(newStatements);
 
-            AccessModifier = oldRDom.AccessModifier;
-            DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-            HasBlock = oldRDom.HasBlock;
-            _accessorType = oldRDom.AccessorType;
-        }
+         AccessModifier = oldRDom.AccessModifier;
+         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         HasBlock = oldRDom.HasBlock;
+         _accessorType = oldRDom.AccessorType;
+      }
 
-        protected  void Initialize()
-        {
-            _statements = new RDomCollection<IStatementCommentWhite>(this);
-        }
+      protected void Initialize()
+      {
+         _statements = new RDomCollection<IStatementCommentWhite>(this);
+      }
 
-        public override IEnumerable<IDom> Children
-        {
-            get
-            {
-                var list = base.Children.ToList();
-                list.AddRange(_statements);
-                return list;
-            }
-        }
+      public override IEnumerable<IDom> Children
+      {
+         get
+         {
+            var list = base.Children.ToList();
+            list.AddRange(_statements);
+            return list;
+         }
+      }
 
-        private string _name ;
-        public string Name { get{return _name;}
-set{SetProperty(ref _name, value);}}
+      public AttributeCollection Attributes
+      { get { return _attributes; } }
 
-        public AttributeCollection Attributes
-        { get { return _attributes; } }
+      public string Name { get; set; }
+      public AccessModifier AccessModifier { get; set; }
+      public AccessModifier DeclaredAccessModifier { get; set; }
 
-        private AccessModifier _accessModifier ;
-        public AccessModifier AccessModifier { get{return _accessModifier;}
-set{SetProperty(ref _accessModifier, value);}}
-        private AccessModifier _declaredAccessModifier ;
-        public AccessModifier DeclaredAccessModifier { get{return _declaredAccessModifier;}
-set{SetProperty(ref _declaredAccessModifier, value);}}
+      public RDomCollection<IStatementCommentWhite> StatementsAll
+      { get { return _statements; } }
 
-        public RDomCollection<IStatementCommentWhite> StatementsAll
-        { get { return _statements; } }
+      public IEnumerable<IStatement> Statements
+      { get { return _statements.OfType<IStatement>().ToList(); } }
 
-        public IEnumerable<IStatement> Statements
-        { get { return _statements.OfType<IStatement>().ToList(); } }
+      public AccessorType AccessorType
+      { get { return _accessorType; } }
 
-        public AccessorType AccessorType
-        { get { return _accessorType; } }
-
-        public bool HasBlock
-        {
-            get { return true; }
-            set { }
-        }
-    }
+      public bool HasBlock
+      {
+         get { return true; }
+         set { }
+      }
+   }
 }

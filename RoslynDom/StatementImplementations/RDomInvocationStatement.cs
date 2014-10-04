@@ -38,9 +38,6 @@ namespace RoslynDom
         public override IEnumerable<IDom> Children
         { get { return new List<IDom>() { Invocation }; } }
 
-        //public override IEnumerable<IDom> Descendants
-        //{ get { return new List<IDom>() { Invocation }; } }
-
         public IExpression Invocation { get; set; }
     }
 }

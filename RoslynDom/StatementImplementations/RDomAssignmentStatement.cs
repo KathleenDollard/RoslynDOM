@@ -46,9 +46,6 @@ namespace RoslynDom
         public override IEnumerable<IDom> Children
         { get { return new List<IDom>() { Expression }; } }
 
-        //public override IEnumerable<IDom> Descendants
-        //{ get { return new List<IDom>() { Expression }; } }
-
         public IExpression Left { get; set; }
         public IExpression Expression { get; set; }
         public AssignmentOperator Operator { get; set; }

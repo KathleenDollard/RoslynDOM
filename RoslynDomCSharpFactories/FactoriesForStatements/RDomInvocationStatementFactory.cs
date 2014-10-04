@@ -11,8 +11,6 @@ namespace RoslynDom.CSharp
     public class RDomInvocationStatementFactory
          : RDomStatementFactory<RDomInvocationStatement, ExpressionStatementSyntax>
     {
-        private static WhitespaceKindLookup _whitespaceLookup;
-
         public RDomInvocationStatementFactory(RDomCorporation corporation)
          : base(corporation)
         { }

@@ -15,9 +15,7 @@ namespace RoslynDom
 
       internal RDomBaseStemContainer(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
-      {
-         Initialize();
-      }
+      {         Initialize();      }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability",
           "CA1502:AvoidExcessiveComplexity",
@@ -55,7 +53,7 @@ namespace RoslynDom
          return false;
       }
 
-      protected void Initialize()
+      private void Initialize()
       {
          _members = new RDomCollection<IStemMemberCommentWhite>(this);
       }
@@ -70,21 +68,8 @@ namespace RoslynDom
          }
       }
 
-      //public override IEnumerable<IDom> Descendants
-      //{
-      //    get
-      //    {
-      //        var list = base.Descendants.ToList();
-      //        foreach (var member in _members)
-      //        { list.AddRange(member.DescendantsAndSelf); }
-      //        return list;
-      //    }
-      //}
-
-      // Parent always works here - if its a namespace, we deliberately skip the current, otherwise, the current is never a namespace
       public string Namespace
       { get { return RoslynDomUtilities.GetNamespace(this.Parent); } }
-
 
       public string QualifiedName
       { get { return RoslynUtilities.GetQualifiedName(this); } }

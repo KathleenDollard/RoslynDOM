@@ -124,26 +124,24 @@ namespace RoslynDom
          }
       }
 
-      public string Name { get; set; }
-
       public AttributeCollection Attributes
       { get { return _attributes; } }
-      public IReferencedType Type { get; set; }
 
+      public string Name { get; set; }
+      public IReferencedType Type { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
       public bool IsAbstract { get; set; }
       public bool IsVirtual { get; set; }
       public bool IsOverride { get; set; }
       public bool IsSealed { get; set; }
-      public bool IsStatic { get; set; }
       public bool IsNew { get; set; }
+      public bool IsStatic { get; set; }
+      public IStructuredDocumentation StructuredDocumentation { get; set; }
+      public string Description { get; set; }
 
       public MemberKind MemberKind
       { get { return MemberKind.Event; } }
 
-      public IStructuredDocumentation StructuredDocumentation { get; set; }
-
-      public string Description { get; set; }
    }
 }

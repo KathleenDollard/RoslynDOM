@@ -48,7 +48,7 @@ namespace RoslynDom
       /// <param name="rawItem">Underlying SyntaxNode</param>
       /// <param name="parent">Parent IDom, null for root</param>
       /// <param name="model">The semantic model for the syntax node to avoid re-creation</param>
-      [cm.EditorBrowsable(.)]
+      [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
       public RDomReferencedType(SyntaxNode rawItem, IDom parent, SemanticModel model)
             : base(rawItem, parent, model)
       { Initialize(); }
@@ -71,8 +71,10 @@ namespace RoslynDom
       }
 
       public string Name { get; set; }
+      public string Namespace { get; set; }
       public bool DisplayAlias { get; set; }
       public bool IsArray { get; set; }
+      public INamedTypeSymbol ContainingType { get; set; }
 
       public string QualifiedName
       {
@@ -88,11 +90,7 @@ namespace RoslynDom
          }
       }
 
-      public string Namespace { get; set; }
-
       public RDomCollection<IReferencedType> TypeArguments
       { get { return _typeArguments; } }
-
-      public INamedTypeSymbol ContainingType { get; set; }
    }
 }

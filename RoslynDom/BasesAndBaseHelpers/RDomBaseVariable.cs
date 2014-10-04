@@ -33,19 +33,9 @@ namespace RoslynDom
             }
         }
 
-        //public override IEnumerable<IDom> Descendants
-        //{ get { return Children; } }
-
         public string Name { get; set; }
-
-        //public string OuterName
-        //{ get { return RoslynUtilities.GetOuterName(this); } }
-
-
         public IExpression Initializer { get; set; }
-
         public IReferencedType Type { get; set; }
-
         public bool IsImplicitlyTyped { get; set; }
         public bool IsAliased { get; set; }
         public VariableKind VariableKind { get; set; }

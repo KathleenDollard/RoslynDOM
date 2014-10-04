@@ -16,8 +16,6 @@ namespace RoslynDom.CSharp
                : RDomMiscFactory<IStructuredDocumentation, SyntaxNode>
    {
 
-      private static WhitespaceKindLookup _whitespaceLookup;
-
       public StructuredDocumentationFactory(RDomCorporation corporation)
           : base(corporation)
       { }

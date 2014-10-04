@@ -71,8 +71,10 @@ namespace RoslynDom
       }
 
       public string Name { get; set; }
+      public string Namespace { get; set; }
       public bool DisplayAlias { get; set; }
       public bool IsArray { get; set; }
+      public INamedTypeSymbol ContainingType { get; set; }
 
       public string QualifiedName
       {
@@ -88,11 +90,8 @@ namespace RoslynDom
          }
       }
 
-      public string Namespace { get; set; }
-
       public RDomCollection<IReferencedType> TypeArguments
       { get { return _typeArguments; } }
 
-      public INamedTypeSymbol ContainingType { get; set; }
    }
 }

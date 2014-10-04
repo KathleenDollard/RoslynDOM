@@ -61,7 +61,7 @@ namespace RoslynDom
       /// Pass true for an new class
       /// </param>
       public RDomField(string name, IReferencedType type, AccessModifier declaredAccessModifier = AccessModifier.Private,
-                      bool isStatic = false, bool isNew = false,  bool isReadOnly = false,
+                      bool isStatic = false, bool isNew = false, bool isReadOnly = false,
                       bool isVolatile = false, bool isConstant = false)
        : this(null, null, null)
       {
@@ -111,30 +111,27 @@ namespace RoslynDom
                          : oldRDom.Initializer.Copy();
       }
 
-      public string Name { get; set; }
-
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      public string Name { get; set; }
+      public IReferencedType ReturnType { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
-
-      public IReferencedType ReturnType { get; set; }
-
       public bool IsStatic { get; set; }
       public bool IsNew { get; set; }
       public bool IsReadOnly { get; set; }
       public bool IsVolatile { get; set; }
       public bool IsConstant { get; set; }
       public IExpression Initializer { get; set; }
+      public IStructuredDocumentation StructuredDocumentation { get; set; }
+      public string Description { get; set; }
 
       public MemberKind MemberKind
       {
          get { return MemberKind.Field; }
       }
 
-      public IStructuredDocumentation StructuredDocumentation { get; set; }
 
-      public string Description { get; set; }
    }
 }

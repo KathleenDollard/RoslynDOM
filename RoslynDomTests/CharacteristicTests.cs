@@ -960,10 +960,10 @@ public class Foo
 ";
          var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
          var methods = root.Classes.First().Methods.ToArray();
-         Assert.AreEqual("System.String", methods[0].RequestValue("TypeName"));
-         Assert.AreEqual("System.Int32", methods[1].RequestValue("TypeName"));
-         Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", methods[2].RequestValue("TypeName"));
-         Assert.AreEqual("BadName", methods[3].RequestValue("TypeName"));
+         Assert.AreEqual("System.String", methods[0].ReturnType.QualifiedName);
+         Assert.AreEqual("System.Int32", methods[1].ReturnType.QualifiedName);
+         Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", methods[2].ReturnType.QualifiedName);
+         Assert.AreEqual("BadName", methods[3].ReturnType.Name);
       }
 
       [TestMethod, TestCategory(ReturnTypeNameCategory)]
@@ -981,11 +981,9 @@ public class Foo
 ";
          var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
          var properties = root.Classes.First().Properties.ToArray();
-         Assert.AreEqual("System.String", properties[0].RequestValue("TypeName"));
-         Assert.AreEqual("System.Int32", properties[1].RequestValue("TypeName"));
-         Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", properties[2].RequestValue("TypeName"));
-         Assert.AreEqual("BadName", properties[3].RequestValue("TypeName"));
-         Assert.AreEqual("Foo4", properties[3].RequestValue("Name"));
+         Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", properties[2].PropertyType.QualifiedName);
+         Assert.AreEqual("BadName", properties[3].PropertyType.Name);
+         Assert.AreEqual("Foo4", properties[3].Name);
       }
 
       [TestMethod, TestCategory(ReturnTypeNameCategory)]
@@ -1323,7 +1321,7 @@ public class Foo
 ";
          var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
          var cl = (RDomClass)root.Classes.First();
-         Assert.AreEqual("Foo", cl.ClassName);
+         Assert.AreEqual("Foo", cl.Name);
       }
 
       [TestMethod, TestCategory(MiscellaneousCategory)]
@@ -1340,9 +1338,9 @@ namespace Namespace1
 ";
          var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
          var cl = root.RootClasses.ToArray();
-         Assert.AreEqual("Foo", ((RDomClass)cl[0]).ClassName);
-         Assert.AreEqual("Foo1", ((RDomClass)cl[1]).ClassName);
-         Assert.AreEqual("Foo2", ((RDomClass)cl[2]).ClassName);
+         Assert.AreEqual("Foo", ((RDomClass)cl[0]). Name);
+         Assert.AreEqual("Foo1", ((RDomClass)cl[1]).Name);
+         Assert.AreEqual("Foo2", ((RDomClass)cl[2]).Name);
       }
 
       #endregion

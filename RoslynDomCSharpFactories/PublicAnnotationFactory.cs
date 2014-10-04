@@ -13,8 +13,6 @@ namespace RoslynDom.CSharp
     public class PublicAnnotationFactory
         : RDomMiscFactory<IPublicAnnotation, SyntaxNode>
     {
-        private static WhitespaceKindLookup _whitespaceLookup;
-
         public PublicAnnotationFactory(RDomCorporation corporation)
             : base(corporation)
         { }

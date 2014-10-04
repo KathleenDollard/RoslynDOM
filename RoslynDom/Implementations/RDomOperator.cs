@@ -35,7 +35,7 @@ namespace RoslynDom
          Type = oldRDom.Type.Copy();
         }
 
-      protected void Initialize()
+      private void Initialize()
       {
          _statements = new RDomCollection<IStatementCommentWhite>(this);
          _parameters = new RDomCollection<IParameter>(this);
@@ -51,18 +51,18 @@ namespace RoslynDom
          }
       }
 
-      public string Name { get; set; }
-
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      public string Name { get; set; }
+      public IReferencedType Type { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
-
       public Operator Operator { get; set; }
-      public IReferencedType Type { get; set; }
-
       public bool IsStatic { get; set; }
+      public IStructuredDocumentation StructuredDocumentation { get; set; }
+      public string Description { get; set; }
+
       public RDomCollection<IParameter> Parameters
       { get { return _parameters; } }
 
@@ -81,8 +81,5 @@ namespace RoslynDom
       public MemberKind MemberKind
       { get { return MemberKind.Operator; } }
 
-      public IStructuredDocumentation StructuredDocumentation { get; set; }
-
-      public string Description { get; set; }
    }
 }

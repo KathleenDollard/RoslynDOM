@@ -10,7 +10,7 @@ namespace RoslynDom
     {
         public RDomCatchStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { Initialize(); }
+        { }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
@@ -40,22 +40,6 @@ namespace RoslynDom
                 return list;
             }
         }
-
-        //public override IEnumerable<IDom> Descendants
-        //{
-        //    get
-        //    {
-        //        var list = new List<IDom>();
-        //        if (this.Variable != null)
-        //        { list.AddRange(this.Variable.DescendantsAndSelf); }
-        //        else if ( this.ExceptionType !=null)
-        //        { list.AddRange(this.ExceptionType.DescendantsAndSelf); }
-        //        if (Condition != null) 
-        //        { list.AddRange(Condition.DescendantsAndSelf); }
-        //        list.AddRange(base.Descendants.ToList());
-        //        return list;
-        //    }
-        //}
 
         public IExpression Condition { get; set; }
         public IVariableDeclaration Variable { get; set; }
