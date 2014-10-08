@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomUsingStatement : RDomBase<IUsingStatement, ISymbol>, IUsingStatement
@@ -51,6 +51,5 @@ namespace RoslynDom
 
       public RDomCollection<IStatementCommentWhite> StatementsAll
       { get { return _statements; } }
-
    }
 }

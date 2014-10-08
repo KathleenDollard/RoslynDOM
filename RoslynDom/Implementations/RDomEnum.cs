@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming",
@@ -47,6 +47,7 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
@@ -71,7 +72,7 @@ namespace RoslynDom
 
       public RDomCollection<IEnumMember> Members
       { get { return _values; } }
-     
+
       public MemberKind MemberKind
       { get { return MemberKind.Enum; } }
 

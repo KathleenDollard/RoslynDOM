@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomDestructor: RDomBase<IDestructor, IMethodSymbol>, IDestructor
@@ -43,6 +43,7 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
       public IStructuredDocumentation StructuredDocumentation { get; set; }
       public string Description { get; set; }
@@ -77,6 +78,5 @@ namespace RoslynDom
 
       public MemberKind MemberKind
       { get { return MemberKind.Destructor; } }
-
    }
 }

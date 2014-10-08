@@ -1,6 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomUsingDirective : RDomBase<IUsingDirective, ISymbol>, IUsingDirective
@@ -23,6 +23,7 @@ namespace RoslynDom
          Alias = oldRDom.Alias;
       }
 
+      [Required]
       public string Name { get; set; }
       public string Alias { get; set; }
 

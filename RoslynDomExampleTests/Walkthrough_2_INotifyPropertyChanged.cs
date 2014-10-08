@@ -28,9 +28,9 @@ namespace RoslynDomExampleTests
       }
 
       [TestMethod]
-      public void Walkthroughs_2_update_files()
+      public void Walkthroughs_2_update_notify_property_changed()
       {
-         DoUpdate(GetFilePairs(".cs", inputDirectory, outputDirectory, subDirectories),
+         DoUpdate(GetFilePairs("*.cs", inputDirectory, outputDirectory, subDirectories),
             GetRDomClasses, AddINotifyPropertyChanged);
       }
 
@@ -62,20 +62,16 @@ namespace RoslynDomExampleTests
             { didAnythingChange = true; }
          }
          if (didAnythingChange)
-         { WriteChangesToFile(outputFileName, itemsToChange); }
+         { WriteChangesToFile(outputFileName, root); }
          return didAnythingChange;
       }
 
-      private static void WriteChangesToFile<TChange>(string outputFileName, IEnumerable<TChange> itemsToChange)
-         where TChange : IDom
+      private static void WriteChangesToFile(string outputFileName, IRoot root)
       {
          var sb = new StringBuilder();
-         foreach (var item in itemsToChange)
-         {
-            var output = RDomCSharp.Factory.BuildSyntax(item);
-            sb.Append(output.ToFullString());
-         }
-         File.WriteAllText( outputFileName, sb.ToString());
+         var output = RDomCSharp.Factory.BuildSyntax(root);
+         sb.Append(output.ToFullString());
+         File.WriteAllText(outputFileName, sb.ToString());
       }
 
 

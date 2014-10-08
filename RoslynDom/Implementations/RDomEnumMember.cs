@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomEnumMember : RDomBase<IEnumMember, ISymbol>, IEnumMember
@@ -26,6 +26,7 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
       public IExpression Expression { get; set; }
    }

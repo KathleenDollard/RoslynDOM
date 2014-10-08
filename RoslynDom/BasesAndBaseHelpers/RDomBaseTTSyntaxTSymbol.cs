@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]

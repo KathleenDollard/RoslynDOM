@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomRoot : RDomBaseStemContainer<IRoot, ISymbol>, IRoot
@@ -18,6 +18,7 @@ namespace RoslynDom
          : base(oldRDom)
       { }
 
+      [Required]
       public string Name { get; set; }
       public string FilePath { get; set; }
 

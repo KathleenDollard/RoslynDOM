@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
     public class RDomForEachStatement : RDomBaseLoop<IForEachStatement>, IForEachStatement
@@ -29,6 +29,7 @@ namespace RoslynDom
             }
         }
 
-        public IVariableDeclaration Variable { get; set; }
+      [Required]
+      public IVariableDeclaration Variable { get; set; }
     }
 }

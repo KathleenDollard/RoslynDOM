@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomIfStatement : RDomStatementBlockBase<IIfStatement>, IIfStatement
@@ -42,6 +42,7 @@ namespace RoslynDom
          }
       }
 
+      [Required]
       public IExpression Condition { get; set; }
 
       public RDomCollection<IElseBaseStatement> Elses
@@ -52,15 +53,12 @@ namespace RoslynDom
          get
          {
             var candidates = Elses.OfType<IFinalElseStatement>();
-            switch (candidates.Count())
-            {
-               case 0:
-                  return null;
-               case 1:
-                  return candidates.First();
-               default:
-                  throw new InvalidOperationException();
-            }
+            if (candidates.Count() == 0)
+            { return null; }
+            else if (candidates.Count() == 1)
+            { return candidates.First(); }
+            else
+            { throw new InvalidOperationException(); }
          }
       }
 

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomParameter : RDomBase<IParameter, IParameterSymbol>, IParameter
@@ -32,7 +32,9 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
+      [Required]
       public IReferencedType Type { get; set; }
       public int Ordinal { get; set; }
       public bool IsOut { get; set; }

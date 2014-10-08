@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomMethod : RDomBase<IMethod, IMethodSymbol>, IMethod
@@ -63,7 +63,9 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
+      [Required]
       public IReferencedType ReturnType { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }

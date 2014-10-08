@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
     public class RDomBlockStatement : RDomBase<IBlockStatement, ISymbol>, IBlockStatement

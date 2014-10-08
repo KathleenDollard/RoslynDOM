@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System;
-using cm = System.ComponentModel;
-
+using cm=System.ComponentModel;
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomEvent : RDomBase<IEvent, IEventSymbol>, IEvent
@@ -44,7 +44,7 @@ namespace RoslynDom
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false, 
                bool isSealed = false, bool isStatic = false, bool isNew = false)
        : this(name, new RDomReferencedType(typeName), accessModifier, isAbstract,
-                isVirtual, isOverride,  isSealed, isStatic, isNew )
+                isVirtual, isOverride,  isSealed, isStatic, isNew)
       {      }
 
       /// <summary>
@@ -127,7 +127,9 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
+      [Required]
       public IReferencedType Type { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
@@ -142,6 +144,5 @@ namespace RoslynDom
 
       public MemberKind MemberKind
       { get { return MemberKind.Event; } }
-
    }
 }

@@ -1,7 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm = System.ComponentModel;
-
+using cm=System.ComponentModel;
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
 
@@ -14,15 +14,15 @@ namespace RoslynDom
       /// Constructor to use when creating a RoslynDom from scratch
       /// </summary>
       /// <param name="name">
-      /// Name of the type. If it's a qualified name, output checks in factories will 
+      /// Name of the type. If it's a qualified name, output checks in factories will
       /// probably simplify
-      /// <br/>
+      /// <br />
       /// In the case of language aliases, please enter the framework name because RoslynDom
       /// is language independent and direct tree creation does not depend on a language. For
       /// example, enter "System.String" not "string" and "System.Int32", not "int"
       /// </param>
       /// <param name="displayAlias">
-      /// When using a type that you wish to display as a language alias, enter true. 
+      /// When using a type that you wish to display as a language alias, enter true.
       /// Otherwise this is ignored
       /// </param>
       /// <param name="isArray">
@@ -32,7 +32,7 @@ namespace RoslynDom
       /// Type arguments for the type being created
       /// </param>
       public RDomReferencedType(string name, bool displayAlias = false, bool isArray = false,
-                  params IReferencedType[] typeArgs)
+                                    params IReferencedType [] typeArgs)
          : this(null, null, null)
       {
          Name = StringUtilities.NameFromQualifiedName(name);
@@ -70,6 +70,7 @@ namespace RoslynDom
          _typeArguments = new RDomCollection<IReferencedType>(this);
       }
 
+      [Required]
       public string Name { get; set; }
       public string Namespace { get; set; }
       public bool DisplayAlias { get; set; }
@@ -92,6 +93,5 @@ namespace RoslynDom
 
       public RDomCollection<IReferencedType> TypeArguments
       { get { return _typeArguments; } }
-
    }
 }

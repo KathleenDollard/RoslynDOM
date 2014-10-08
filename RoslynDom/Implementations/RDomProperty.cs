@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace RoslynDom
 {
@@ -74,7 +75,9 @@ namespace RoslynDom
          }
       }
 
+      [Required]
       public string Name { get; set; }
+      [Required]
       public IReferencedType PropertyType { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
@@ -85,7 +88,9 @@ namespace RoslynDom
       public bool IsStatic { get; set; }
       public bool IsNew { get; set; }
       // TODO: Check that CanGet/CanSet are updated on the addition of accessor statements, these might need to be calculated
+      [System.ComponentModel.DefaultValue(true)]
       public bool CanGet { get; set; }
+      [System.ComponentModel.DefaultValue(true)]
       public bool CanSet { get; set; }
       public IStructuredDocumentation StructuredDocumentation { get; set; }
       public string Description { get; set; }
@@ -142,6 +147,5 @@ namespace RoslynDom
          get { return PropertyType; }
          set { PropertyType = value; }
       }
-
    }
 }

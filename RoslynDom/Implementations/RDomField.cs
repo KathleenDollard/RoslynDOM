@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
-using cm = System.ComponentModel;
-
+using cm=System.ComponentModel;
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
 
@@ -114,7 +114,9 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
+      [Required]
       public IReferencedType ReturnType { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
@@ -131,7 +133,5 @@ namespace RoslynDom
       {
          get { return MemberKind.Field; }
       }
-
-
    }
 }

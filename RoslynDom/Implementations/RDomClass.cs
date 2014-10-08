@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    /// <summary></summary>
-   /// <remarks>
-   /// </remarks>
+   /// <remarks></remarks>
    public class RDomClass : RDomBaseType<IClass>, IClass
    {
       public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -54,10 +53,8 @@ namespace RoslynDom
       public bool IsAbstract { get; set; }
       public bool IsSealed { get; set; }
       public bool IsStatic { get; set; }
-      
+
       public IEnumerable<IConstructor> Constructors
       { get { return Members.OfType<IConstructor>(); } }
-
-      //public string ClassName { get { return this.Name; } }
    }
 }

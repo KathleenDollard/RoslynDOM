@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
@@ -53,6 +53,7 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }

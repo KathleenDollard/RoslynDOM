@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using cm = System.ComponentModel;
-
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
-    public class RDomInvocationStatement : RDomBase<IInvocationStatement, ISymbol>, IInvocationStatement
-    {
+   public class RDomInvocationStatement : RDomBase<IInvocationStatement, ISymbol>, IInvocationStatement
+   {
 
       /// <summary>
       /// Constructor to use when creating a RoslynDom from scratch
@@ -17,7 +17,7 @@ namespace RoslynDom
       public RDomInvocationStatement(IExpression expression, bool suppressNewLine = false)
        : this(null, null, null)
       {
-         Invocation  = expression;
+         Invocation = expression;
          if (!suppressNewLine)
          { Whitespace2Set.Add(new Whitespace2(LanguageElement.EndOfLine, "", "\r\n", "")); }
       }
@@ -25,19 +25,20 @@ namespace RoslynDom
       [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
       public RDomInvocationStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        { }
+      { }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
-           "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
-        internal RDomInvocationStatement(RDomInvocationStatement oldRDom)
-           : base(oldRDom)
-        {
-            Invocation = oldRDom.Invocation.Copy();
-        }
+      [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
+      internal RDomInvocationStatement(RDomInvocationStatement oldRDom)
+         : base(oldRDom)
+      {
+         Invocation = oldRDom.Invocation.Copy();
+      }
 
-        public override IEnumerable<IDom> Children
-        { get { return new List<IDom>() { Invocation }; } }
+      public override IEnumerable<IDom> Children
+      { get { return new List<IDom>() { Invocation }; } }
 
-        public IExpression Invocation { get; set; }
-    }
+      [Required]
+      public IExpression Invocation { get; set; }
+   }
 }

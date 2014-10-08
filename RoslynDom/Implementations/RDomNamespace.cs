@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomNamespace : RDomBaseStemContainer<INamespace, INamespaceSymbol>, INamespace
@@ -26,6 +26,7 @@ namespace RoslynDom
          Group = oldRDom.Group;
       }
 
+      [Required]
       public string Name { get; set; }
       public Guid Group { get; private set; }
 

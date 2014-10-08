@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomInvalidMember : RDomBase<IInvalidMember, ISymbol>, IInvalidMember
@@ -33,6 +33,7 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
@@ -48,6 +49,5 @@ namespace RoslynDom
       {
          get { return StemMemberKind.Invalid; }
       }
-
    }
 }

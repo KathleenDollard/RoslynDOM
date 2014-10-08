@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System;
-
+ using System.ComponentModel.DataAnnotations;
 // TODO: Combine this with Method and constructor
 namespace RoslynDom
 {
@@ -54,7 +54,9 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      [Required]
       public string Name { get; set; }
+      [Required]
       public IReferencedType Type { get; set; }
       public AccessModifier AccessModifier { get; set; }
       public AccessModifier DeclaredAccessModifier { get; set; }
@@ -80,6 +82,5 @@ namespace RoslynDom
 
       public MemberKind MemberKind
       { get { return MemberKind.Operator; } }
-
    }
 }

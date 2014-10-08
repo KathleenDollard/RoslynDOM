@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomAttributeValue
@@ -26,6 +26,7 @@ namespace RoslynDom
          Style = oldRDom.Style;
       }
 
+      [Required]
       public string Name { get; set; }
       public AttributeValueStyle Style { get; set; }
       public object Value { get; set; }
