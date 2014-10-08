@@ -70,10 +70,16 @@ namespace RoslynDom
          }
       }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
-      public AccessModifier AccessModifier { get; set; }
-      public AccessModifier DeclaredAccessModifier { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private AccessModifier _accessModifier ;
+      public AccessModifier AccessModifier { get {return _accessModifier; }
+set {SetProperty(ref _accessModifier, value); }}
+      private AccessModifier _declaredAccessModifier ;
+      public AccessModifier DeclaredAccessModifier { get {return _declaredAccessModifier; }
+set {SetProperty(ref _declaredAccessModifier, value); }}
 
       public string OuterName
       { get { return RoslynUtilities.GetOuterName(this); } }
@@ -131,8 +137,12 @@ namespace RoslynDom
       public StemMemberKind StemMemberKind
       { get { return _stemMemberKind; } }
 
-      public IStructuredDocumentation StructuredDocumentation { get; set; }
+      private IStructuredDocumentation _structuredDocumentation ;
+      public IStructuredDocumentation StructuredDocumentation { get {return _structuredDocumentation; }
+set {SetProperty(ref _structuredDocumentation, value); }}
 
-      public string Description { get; set; }
+      public string Description { get {return _description; }
+set {SetProperty(ref _description, value); }}
+      private string _description ;
    }
 }

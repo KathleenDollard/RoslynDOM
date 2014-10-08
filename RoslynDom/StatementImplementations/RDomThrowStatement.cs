@@ -21,6 +21,8 @@ namespace RoslynDom
             ExceptionExpression = oldRDom.ExceptionExpression.Copy();
         }
 
-        public IExpression ExceptionExpression { get; set; }
+        public IExpression ExceptionExpression { get {return _exceptionExpression; }
+set {SetProperty(ref _exceptionExpression, value); }}
+        private IExpression _exceptionExpression ;
     }
 }

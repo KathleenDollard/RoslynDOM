@@ -33,13 +33,25 @@ namespace RoslynDom
          }
       }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private IReferencedType _type ;
       [Required]
-      public IReferencedType Type { get; set; }
-      public IExpression Initializer { get; set; }
-      public bool IsImplicitlyTyped { get; set; }
-      public bool IsAliased { get; set; }
-      public VariableKind VariableKind { get; set; }
+      public IReferencedType Type { get {return _type; }
+set {SetProperty(ref _type, value); }}
+      private IExpression _initializer ;
+      public IExpression Initializer { get {return _initializer; }
+set {SetProperty(ref _initializer, value); }}
+      private bool _isImplicitlyTyped ;
+      public bool IsImplicitlyTyped { get {return _isImplicitlyTyped; }
+set {SetProperty(ref _isImplicitlyTyped, value); }}
+      private bool _isAliased ;
+      public bool IsAliased { get {return _isAliased; }
+set {SetProperty(ref _isAliased, value); }}
+      public VariableKind VariableKind { get {return _variableKind; }
+set {SetProperty(ref _variableKind, value); }}
+      private VariableKind _variableKind ;
    }
 }

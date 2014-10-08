@@ -32,10 +32,18 @@ namespace RoslynDom
          ValueExpression = oldRDom.ValueExpression.Copy();
       }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
-      public IExpression ValueExpression { get; set; }
-      public bool IsRef { get; set; }
-      public bool IsOut { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private IExpression _valueExpression ;
+      public IExpression ValueExpression { get {return _valueExpression; }
+set {SetProperty(ref _valueExpression, value); }}
+      private bool _isRef ;
+      public bool IsRef { get {return _isRef; }
+set {SetProperty(ref _isRef, value); }}
+      public bool IsOut { get {return _isOut; }
+set {SetProperty(ref _isOut, value); }}
+      private bool _isOut ;
    }
 }

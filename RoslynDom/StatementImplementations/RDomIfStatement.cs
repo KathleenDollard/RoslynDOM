@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+ using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomIfStatement : RDomStatementBlockBase<IIfStatement>, IIfStatement
@@ -42,12 +42,12 @@ namespace RoslynDom
          }
       }
 
-      [Required]
       public IExpression Condition { get; set; }
 
       public RDomCollection<IElseBaseStatement> Elses
       { get { return _elses; } }
 
+      [Required]
       public IFinalElseStatement Else
       {
          get

@@ -55,14 +55,28 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
-      public AccessModifier AccessModifier { get; set; }
-      public AccessModifier DeclaredAccessModifier { get; set; }
-      public bool IsStatic { get; set; }
-      public ConstructorInitializerType ConstructorInitializerType { get; set; }
-      public IStructuredDocumentation StructuredDocumentation { get; set; }
-      public string Description { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private AccessModifier _accessModifier ;
+      public AccessModifier AccessModifier { get {return _accessModifier; }
+set {SetProperty(ref _accessModifier, value); }}
+      private AccessModifier _declaredAccessModifier ;
+      public AccessModifier DeclaredAccessModifier { get {return _declaredAccessModifier; }
+set {SetProperty(ref _declaredAccessModifier, value); }}
+      private bool _isStatic ;
+      public bool IsStatic { get {return _isStatic; }
+set {SetProperty(ref _isStatic, value); }}
+      private ConstructorInitializerType _constructorInitializerType ;
+      public ConstructorInitializerType ConstructorInitializerType { get {return _constructorInitializerType; }
+set {SetProperty(ref _constructorInitializerType, value); }}
+      private IStructuredDocumentation _structuredDocumentation ;
+      public IStructuredDocumentation StructuredDocumentation { get {return _structuredDocumentation; }
+set {SetProperty(ref _structuredDocumentation, value); }}
+      private string _description ;
+      public string Description { get {return _description; }
+set {SetProperty(ref _description, value); }}
 
       public RDomCollection<IArgument> InitializationArguments
       { get { return _initializationArguments; } }

@@ -18,9 +18,13 @@ namespace RoslynDom
          : base(oldRDom)
       { }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
-      public string FilePath { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private string _filePath ;
+      public string FilePath { get {return _filePath; }
+set {SetProperty(ref _filePath, value); }}
 
       public bool HasSyntaxErrors
       { get { return TypedSyntax.GetDiagnostics().Count() > 0; } }

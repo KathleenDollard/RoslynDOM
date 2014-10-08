@@ -26,12 +26,24 @@ namespace RoslynDom
          Style = oldRDom.Style;
       }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
-      public AttributeValueStyle Style { get; set; }
-      public object Value { get; set; }
-      public string ValueConstantIdentifier { get; set; }
-      public LiteralKind ValueType { get; set; }
-      public Type Type { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private AttributeValueStyle _style ;
+      public AttributeValueStyle Style { get {return _style; }
+set {SetProperty(ref _style, value); }}
+      private object _value ;
+      public object Value { get {return _value; }
+set {SetProperty(ref _value, value); }}
+      private string _valueConstantIdentifier ;
+      public string ValueConstantIdentifier { get {return _valueConstantIdentifier; }
+set {SetProperty(ref _valueConstantIdentifier, value); }}
+      private LiteralKind _valueType ;
+      public LiteralKind ValueType { get {return _valueType; }
+set {SetProperty(ref _valueType, value); }}
+      public Type Type { get {return _type; }
+set {SetProperty(ref _type, value); }}
+      private Type _type ;
    }
 }

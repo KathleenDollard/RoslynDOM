@@ -41,8 +41,12 @@ namespace RoslynDom
             }
         }
 
-        public bool Unchecked { get; set; }
-        public bool HasBlock { get; set; }
+        private bool _unchecked ;
+        public bool Unchecked { get {return _unchecked; }
+set {SetProperty(ref _unchecked, value); }}
+        private bool _hasBlock ;
+        public bool HasBlock { get {return _hasBlock; }
+set {SetProperty(ref _hasBlock, value); }}
 
         public IEnumerable<IStatement> Statements
         { get { return _statements.OfType<IStatement>().ToList(); } }

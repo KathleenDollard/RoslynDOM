@@ -32,17 +32,37 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private IReferencedType _type ;
       [Required]
-      public IReferencedType Type { get; set; }
-      public int Ordinal { get; set; }
-      public bool IsOut { get; set; }
-      public bool IsRef { get; set; }
-      public bool IsParamArray { get; set; }
-      public bool IsOptional { get; set; }
-      public object DefaultValue { get; set; }
-      public LiteralKind DefaultValueType { get; set; }
-      public string DefaultConstantIdentifier { get; set; }
+      public IReferencedType Type { get {return _type; }
+set {SetProperty(ref _type, value); }}
+      private int _ordinal ;
+      public int Ordinal { get {return _ordinal; }
+set {SetProperty(ref _ordinal, value); }}
+      private bool _isOut ;
+      public bool IsOut { get {return _isOut; }
+set {SetProperty(ref _isOut, value); }}
+      private bool _isRef ;
+      public bool IsRef { get {return _isRef; }
+set {SetProperty(ref _isRef, value); }}
+      private bool _isParamArray ;
+      public bool IsParamArray { get {return _isParamArray; }
+set {SetProperty(ref _isParamArray, value); }}
+      private bool _isOptional ;
+      public bool IsOptional { get {return _isOptional; }
+set {SetProperty(ref _isOptional, value); }}
+      private object _defaultValue ;
+      public object DefaultValue { get {return _defaultValue; }
+set {SetProperty(ref _defaultValue, value); }}
+      private LiteralKind _defaultValueType ;
+      public LiteralKind DefaultValueType { get {return _defaultValueType; }
+set {SetProperty(ref _defaultValueType, value); }}
+      public string DefaultConstantIdentifier { get {return _defaultConstantIdentifier; }
+set {SetProperty(ref _defaultConstantIdentifier, value); }}
+      private string _defaultConstantIdentifier ;
    }
 }

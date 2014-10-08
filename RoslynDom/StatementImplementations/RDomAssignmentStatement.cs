@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm = System.ComponentModel;
+using cm=System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
@@ -46,10 +46,16 @@ namespace RoslynDom
       public override IEnumerable<IDom> Children
       { get { return new List<IDom>() { Expression }; } }
 
+      private IExpression _left ;
       [Required]
-      public IExpression Left { get; set; }
+      public IExpression Left { get {return _left; }
+set {SetProperty(ref _left, value); }}
+      private IExpression _expression ;
       [Required]
-      public IExpression Expression { get; set; }
-      public AssignmentOperator Operator { get; set; }
+      public IExpression Expression { get {return _expression; }
+set {SetProperty(ref _expression, value); }}
+      public AssignmentOperator Operator { get {return _operator; }
+set {SetProperty(ref _operator, value); }}
+      private AssignmentOperator _operator ;
    }
 }

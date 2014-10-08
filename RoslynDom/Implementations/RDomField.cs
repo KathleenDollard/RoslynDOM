@@ -114,20 +114,44 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private IReferencedType _returnType ;
       [Required]
-      public IReferencedType ReturnType { get; set; }
-      public AccessModifier AccessModifier { get; set; }
-      public AccessModifier DeclaredAccessModifier { get; set; }
-      public bool IsStatic { get; set; }
-      public bool IsNew { get; set; }
-      public bool IsReadOnly { get; set; }
-      public bool IsVolatile { get; set; }
-      public bool IsConstant { get; set; }
-      public IExpression Initializer { get; set; }
-      public IStructuredDocumentation StructuredDocumentation { get; set; }
-      public string Description { get; set; }
+      public IReferencedType ReturnType { get {return _returnType; }
+set {SetProperty(ref _returnType, value); }}
+      private AccessModifier _accessModifier ;
+      public AccessModifier AccessModifier { get {return _accessModifier; }
+set {SetProperty(ref _accessModifier, value); }}
+      private AccessModifier _declaredAccessModifier ;
+      public AccessModifier DeclaredAccessModifier { get {return _declaredAccessModifier; }
+set {SetProperty(ref _declaredAccessModifier, value); }}
+      private bool _isStatic ;
+      public bool IsStatic { get {return _isStatic; }
+set {SetProperty(ref _isStatic, value); }}
+      private bool _isNew ;
+      public bool IsNew { get {return _isNew; }
+set {SetProperty(ref _isNew, value); }}
+      private bool _isReadOnly ;
+      public bool IsReadOnly { get {return _isReadOnly; }
+set {SetProperty(ref _isReadOnly, value); }}
+      private bool _isVolatile ;
+      public bool IsVolatile { get {return _isVolatile; }
+set {SetProperty(ref _isVolatile, value); }}
+      private bool _isConstant ;
+      public bool IsConstant { get {return _isConstant; }
+set {SetProperty(ref _isConstant, value); }}
+      private IExpression _initializer ;
+      public IExpression Initializer { get {return _initializer; }
+set {SetProperty(ref _initializer, value); }}
+      private IStructuredDocumentation _structuredDocumentation ;
+      public IStructuredDocumentation StructuredDocumentation { get {return _structuredDocumentation; }
+set {SetProperty(ref _structuredDocumentation, value); }}
+      private string _description ;
+      public string Description { get {return _description; }
+set {SetProperty(ref _description, value); }}
 
       public MemberKind MemberKind
       {

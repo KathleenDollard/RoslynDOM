@@ -49,6 +49,8 @@ namespace RoslynDom
          }
       }
 
-      public IExpression Return { get; set; }
+      public IExpression Return { get {return _return; }
+set {SetProperty(ref _return, value); }}
+      private IExpression _return ;
    }
 }

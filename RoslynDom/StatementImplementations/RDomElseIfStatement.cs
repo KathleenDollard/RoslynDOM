@@ -31,7 +31,6 @@ namespace RoslynDom
          }
       }
 
-      [Required]
       public IExpression Condition { get; set; }
    }
 }

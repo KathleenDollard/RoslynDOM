@@ -26,8 +26,12 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
-      public IExpression Expression { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      public IExpression Expression { get {return _expression; }
+set {SetProperty(ref _expression, value); }}
+      private IExpression _expression ;
    }
 }

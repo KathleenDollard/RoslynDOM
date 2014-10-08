@@ -38,7 +38,9 @@ namespace RoslynDom
          }
       }
 
-      public bool HasBlock { get; set; }
+      private bool _hasBlock ;
+      public bool HasBlock { get {return _hasBlock; }
+set {SetProperty(ref _hasBlock, value); }}
 
       public RDomCollection<IStatementCommentWhite> StatementsAll
       { get { return _statements; } }

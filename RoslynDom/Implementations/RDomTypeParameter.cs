@@ -38,12 +38,24 @@ namespace RoslynDom
       public RDomCollection<IReferencedType> ConstraintTypes
       { get { return _constraintTypes; } }
 
+      private string _name ;
       [Required]
-      public string Name { get; set; }
-      public int Ordinal { get; set; }
-      public bool HasConstructorConstraint { get; set; }
-      public bool HasReferenceTypeConstraint { get; set; }
-      public bool HasValueTypeConstraint { get; set; }
-      public Variance Variance { get; set; }
+      public string Name { get {return _name; }
+set {SetProperty(ref _name, value); }}
+      private int _ordinal ;
+      public int Ordinal { get {return _ordinal; }
+set {SetProperty(ref _ordinal, value); }}
+      private bool _hasConstructorConstraint ;
+      public bool HasConstructorConstraint { get {return _hasConstructorConstraint; }
+set {SetProperty(ref _hasConstructorConstraint, value); }}
+      private bool _hasReferenceTypeConstraint ;
+      public bool HasReferenceTypeConstraint { get {return _hasReferenceTypeConstraint; }
+set {SetProperty(ref _hasReferenceTypeConstraint, value); }}
+      private bool _hasValueTypeConstraint ;
+      public bool HasValueTypeConstraint { get {return _hasValueTypeConstraint; }
+set {SetProperty(ref _hasValueTypeConstraint, value); }}
+      public Variance Variance { get {return _variance; }
+set {SetProperty(ref _variance, value); }}
+      private Variance _variance ;
    }
 }
