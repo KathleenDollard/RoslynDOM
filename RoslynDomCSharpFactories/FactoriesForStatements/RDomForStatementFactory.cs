@@ -30,7 +30,12 @@ namespace RoslynDom.CSharp
                                                  x.LeadingWhitespace, x.TrailingWhitespace, x.TrailingComment)));
          SetWhitespaceForSemiColon(syntax, 1, newItem, LanguagePart.Variable);
          SetWhitespaceForSemiColon(syntax, 2, newItem, LanguagePart.Condition);
-         newItem.Iterator = Corporation.CreateFrom<IExpression>(syntax.Incrementors.First(), newItem, model).FirstOrDefault();
+         var incrementor = syntax.Incrementors.First();
+         newItem.Incrementor = Corporation.CreateFrom<IExpression>(incrementor, newItem, model).FirstOrDefault();
+         newItem.Whitespace2Set.Add(new Whitespace2(LanguagePart.Iterator, LanguageElement.Identifier,
+                              incrementor.GetLeadingTrivia().ToString(),
+                              incrementor.GetTrailingTrivia().ToString(),
+                              ""));
          return newItem;
 
       }
@@ -70,7 +75,7 @@ namespace RoslynDom.CSharp
          var nodeDeclaratorInList = SyntaxFactory.SeparatedList(SyntaxFactory.List<VariableDeclaratorSyntax>(new VariableDeclaratorSyntax[] { declaratorSyntax }));
          var nodeDeclaration = SyntaxFactory.VariableDeclaration(typeSyntax, nodeDeclaratorInList);
          nodeDeclaration = BuildSyntaxHelpers.AttachWhitespace(nodeDeclaration, itemAsT.Whitespace2Set, WhitespaceLookup, LanguagePart.Variable);
-         var incrementorSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Iterator);
+         var incrementorSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Incrementor);
          incrementorSyntax = BuildSyntaxHelpers.AttachWhitespace(incrementorSyntax, itemAsT.Whitespace2Set, WhitespaceLookup, LanguagePart.Iterator);
 
          var secondSemiColonToken = SyntaxFactory.Token(SyntaxKind.SemicolonToken);
@@ -90,11 +95,15 @@ namespace RoslynDom.CSharp
          var itemAsT = item as RDomForStatement;
          var syntax = node as ForStatementSyntax;
 
-         var origToken = syntax.FirstSemicolonToken;
-         var newToken = BuildSyntaxHelpers.AttachWhitespaceToToken(origToken ,
-                        item.Whitespace2Set[LanguagePart.Variable, LanguageElement.EndOfLine]);
-         syntax = syntax.ReplaceToken(origToken, newToken);
+         //var origToken = syntax.FirstSemicolonToken;
+         //var newToken = BuildSyntaxHelpers.AttachWhitespaceToToken(origToken ,
+         //               item.Whitespace2Set[LanguagePart.Variable, LanguageElement.EndOfLine]);
+         //syntax = syntax.ReplaceToken(origToken, newToken);
 
+         var origNode = syntax.Incrementors.First();
+         var newNode = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(origNode,
+                    item.Whitespace2Set[LanguagePart.Iterator, LanguageElement.Identifier]);
+         syntax = syntax.ReplaceNode(origNode, newNode);
          //origToken = syntax.SecondSemicolonToken;
          //newToken = BuildSyntaxHelpers.AttachWhitespaceToToken(origToken,
          //           item.Whitespace2Set[LanguagePart.Variable, LanguageElement.EndOfLine]);

@@ -7,6 +7,8 @@
         Boolean,
         String,
         Type,
-        MemberAccess
-    }
+        Default,
+        MemberAccess,
+      Null
+   }
 }

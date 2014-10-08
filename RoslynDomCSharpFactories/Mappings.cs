@@ -13,12 +13,14 @@ namespace RoslynDom.CSharp
    {
       private static List<Tuple<SyntaxKind, SyntaxKind, LiteralKind>> LiteralKindMap = new List<Tuple<SyntaxKind, SyntaxKind, LiteralKind>>()
         {
-            Tuple.Create(SyntaxKind.StringLiteralToken,     SyntaxKind.StringLiteralExpression,     LiteralKind.String),
-            Tuple.Create(SyntaxKind.IdentifierToken,        SyntaxKind.SimpleMemberAccessExpression,LiteralKind.MemberAccess),
-            Tuple.Create(SyntaxKind.NumericLiteralToken,    SyntaxKind.NumericLiteralExpression,    LiteralKind.Numeric),
-            Tuple.Create(SyntaxKind.TrueKeyword,            SyntaxKind.TrueKeyword,                 LiteralKind.Boolean),
-            Tuple.Create(SyntaxKind.FalseKeyword,           SyntaxKind.FalseKeyword,                LiteralKind.Boolean),
-            Tuple.Create(SyntaxKind.TypeOfKeyword ,         SyntaxKind.TypeOfExpression,            LiteralKind.Type),
+            Tuple.Create(SyntaxKind.StringLiteralToken,  SyntaxKind.StringLiteralExpression,      LiteralKind.String),
+            Tuple.Create(SyntaxKind.IdentifierToken,     SyntaxKind.SimpleMemberAccessExpression, LiteralKind.MemberAccess),
+            Tuple.Create(SyntaxKind.NumericLiteralToken, SyntaxKind.NumericLiteralExpression,     LiteralKind.Numeric),
+            Tuple.Create(SyntaxKind.NullKeyword,         SyntaxKind.NullLiteralExpression,        LiteralKind.Null),
+            Tuple.Create(SyntaxKind.TrueKeyword,         SyntaxKind.TrueKeyword,                  LiteralKind.Boolean),
+            Tuple.Create(SyntaxKind.FalseKeyword,        SyntaxKind.FalseKeyword,                 LiteralKind.Boolean),
+            Tuple.Create(SyntaxKind.DefaultKeyword,      SyntaxKind.DefaultExpression ,           LiteralKind.Default),
+            Tuple.Create(SyntaxKind.TypeOfKeyword,       SyntaxKind.TypeOfExpression,             LiteralKind.Type),
         };
 
       public static LiteralKind LiteralKindFromSyntaxKind(SyntaxKind kind)

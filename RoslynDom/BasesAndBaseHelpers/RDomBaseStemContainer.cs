@@ -15,7 +15,7 @@ namespace RoslynDom
 
       internal RDomBaseStemContainer(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
-      {         Initialize();      }
+      { Initialize(); }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability",
           "CA1502:AvoidExcessiveComplexity",
@@ -76,6 +76,54 @@ namespace RoslynDom
 
       public void ClearStemMembers()
       { _members.Clear(); }
+
+      public IUsingDirective AddUsingDirective(IUsingDirective usingDirective)
+      {
+         StemMembersAll.AddOrMove(usingDirective);
+         return usingDirective;
+      }
+
+      public IUsingDirective AddUsingDirective(string usingName)
+      {
+         var usingDirective = new RDomUsingDirective(usingName);
+         return AddUsingDirective(usingDirective);
+      }
+
+      public IEnumerable<IUsingDirective> AddUsingDirectives(params IUsingDirective[] usingDirectives)
+      {
+         StemMembersAll.AddOrMoveRange(usingDirectives);
+         return usingDirectives;
+      }
+
+      public IEnumerable<IUsingDirective> AddUsingDirectives(params string[] usingNames)
+      {
+         var usingDirectives = usingNames.Select(n => new RDomUsingDirective(n)).ToArray();
+         return AddUsingDirectives(usingDirectives);
+      }
+
+      public INamespace AddNamespace(INamespace nspace)
+      {
+         StemMembersAll.AddOrMove(nspace);
+         return nspace;
+      }
+
+      public INamespace AddNamespace(string namespaceName)
+      {
+         var nspace = new RDomNamespace(namespaceName);
+         return AddNamespace(nspace);
+      }
+
+      public IEnumerable<INamespace> AddNamespaces(params INamespace[] namespaces)
+      {
+         StemMembersAll.AddOrMoveRange(namespaces);
+         return namespaces;
+      }
+
+      public IEnumerable<INamespace> AddNamespaces(params string[] namespaceName)
+      {
+         var namespaces = namespaceName.Select(n => new RDomNamespace(n)).ToArray();
+         return AddNamespaces(namespaces);
+      }
 
       public RDomCollection<IStemMemberCommentWhite> StemMembersAll
       { get { return _members; } }

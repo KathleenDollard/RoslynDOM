@@ -18,7 +18,7 @@ namespace RoslynDom
         internal RDomForStatement(RDomForStatement oldRDom)
             : base(oldRDom)
         {
-            Iterator = oldRDom.Iterator.Copy();
+            Incrementor = oldRDom.Incrementor.Copy();
             Variable = oldRDom.Variable.Copy();
         }
 
@@ -27,7 +27,7 @@ namespace RoslynDom
             get
             {
                 var list = new List<IDom>();
-                list.Add(Iterator);
+                list.Add(Incrementor);
                 list.Add(Variable);
                 list.AddRange(base.Children);
                 return list;
@@ -35,7 +35,7 @@ namespace RoslynDom
         }
 
   
-        public IExpression Iterator { get; set; }
+        public IExpression Incrementor { get; set; }
         public IVariableDeclaration Variable { get; set; }
     }
 }

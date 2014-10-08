@@ -186,6 +186,7 @@ namespace RoslynDom.CSharp
                { return SyntaxFactory.Literal(Convert.ToDecimal(value)); }
             case LiteralKind.Boolean:
             case LiteralKind.Type:
+            case LiteralKind.Default:
             // Need to create an expression so handled separately and should not call this
             default:
                break;
@@ -362,12 +363,23 @@ namespace RoslynDom.CSharp
          ExpressionSyntax expr = null;
          if (valueType == LiteralKind.Boolean)
          { expr = SyntaxFactory.LiteralExpression(kind); }
+         else if (valueType == LiteralKind.Null)
+         {
+            expr = SyntaxFactory.LiteralExpression (SyntaxKind.NullLiteralExpression );
+         }
          else if (valueType == LiteralKind.Type)
          {
             var type = value as RDomReferencedType;
             if (type == null) throw new InvalidOperationException();
             var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
             expr = SyntaxFactory.TypeOfExpression(typeSyntax);
+         }
+         else if (valueType == LiteralKind.Default)
+         {
+            var type = value as RDomReferencedType;
+            if (type == null) throw new InvalidOperationException();
+            var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
+            expr = SyntaxFactory.DefaultExpression(typeSyntax);
          }
          else if (valueType == LiteralKind.MemberAccess)
          {

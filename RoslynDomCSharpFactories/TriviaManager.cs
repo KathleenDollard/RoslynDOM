@@ -31,7 +31,7 @@ namespace RoslynDom.CSharp
             if (nodeAsExpressionSyntax != null)
             {
                StoreWhitespaceForExpression(newItem, nodeAsExpressionSyntax, languagePart);
-               return;
+               //return;
             }
          }
 
@@ -191,6 +191,10 @@ namespace RoslynDom.CSharp
       {
          var ret = syntaxNode;
          var whitespaceList = whitespace2Set.Where(x => x.LanguagePart == languagePart);
+         var missingWhitespace = whitespaceLookup.NotUsedInWhitespaceList(whitespaceList);
+         whitespaceList = whitespaceList
+                              .Union(missingWhitespace
+                                          .Select(x => new Whitespace2(languagePart, x)));
          foreach (var whitespace in whitespaceList)
          {
             ret = AttachWhitespaceItem(ret, whitespace, whitespaceLookup);
@@ -212,11 +216,11 @@ namespace RoslynDom.CSharp
       }
 
       private T CheckToken<T>(T node, Func<SyntaxNode, SyntaxToken> getToken,
-                  Func<SyntaxToken, SyntaxTriviaList> getOldTrivia,
-                  Func<string, SyntaxTriviaList> getNewTrivia,
-                  Func<SyntaxToken, SyntaxTriviaList, SyntaxToken> setNewTrivia,
-                  string forceWhitespace)
-         where T : SyntaxNode
+             Func<SyntaxToken, SyntaxTriviaList> getOldTrivia,
+             Func<string, SyntaxTriviaList> getNewTrivia,
+             Func<SyntaxToken, SyntaxTriviaList, SyntaxToken> setNewTrivia,
+             string forceWhitespace)
+    where T : SyntaxNode
       {
          if (string.IsNullOrEmpty(forceWhitespace)) return node;
          var lastToken = getToken(node);
@@ -314,26 +318,42 @@ namespace RoslynDom.CSharp
          if (tokens.Any())
          {
             var token = tokens.First();
+            var tokenString = token.ToString();
             var triviaString = token.LeadingTrivia.ToFullString();
-            if (whitespace.LeadingWhitespace.Length > triviaString.Length)
+            if (whitespace.LeadingWhitespace == null)
+            {
+               triviaString = triviaString.Length > 0 || token.CSharpKind() == SyntaxKind.SemicolonToken
+                            ? triviaString
+                            : " ";
+            }
+            else if (whitespace.LeadingWhitespace.Length > triviaString.Length)
             { triviaString = whitespace.LeadingWhitespace; }
             var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(triviaString);
-            //leadingTrivia = SyntaxFactory.TriviaList(leadingTrivia.Concat(token.LeadingTrivia));
             token = token.WithLeadingTrivia(leadingTrivia);
 
-            if (tokens.Count() > 1)
+
+            if (tokens.First().Parent != null &&
+                  tokens.First().Parent.AncestorsAndSelf().Any(x=>x.CSharpKind() == SyntaxKind.QualifiedName ))
             {
                ret = ret.ReplaceToken(tokens.First(), token);
                tokens = makeTokens(ret).ToList();
                token = tokens.Last();
+               triviaString = token.TrailingTrivia.ToFullString();
+               if (whitespace.TrailingWhitespace != null && whitespace.TrailingWhitespace.Length > triviaString.Length)
+               { triviaString = whitespace.TrailingWhitespace; }
+               var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(triviaString);
+               token = token.WithTrailingTrivia(trailingTrivia);
+               ret = ret.ReplaceToken(tokens.Last(), token);
             }
-            //trailingTrivia = SyntaxFactory.TriviaList(trailingTrivia.Concat(token.TrailingTrivia));
-            triviaString = token.TrailingTrivia.ToFullString();
-            if (whitespace.TrailingWhitespace.Length > triviaString.Length)
-            { triviaString = whitespace.TrailingWhitespace; }
-            var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(triviaString);
-            token = token.WithTrailingTrivia(trailingTrivia);
-            ret = ret.ReplaceToken(tokens.Last(), token);
+            else
+            {
+               triviaString = token.TrailingTrivia.ToFullString();
+               if (whitespace.TrailingWhitespace != null && whitespace.TrailingWhitespace.Length > triviaString.Length)
+               { triviaString = whitespace.TrailingWhitespace; }
+               var trailingTrivia = SyntaxFactory.ParseTrailingTrivia(triviaString);
+               token = token.WithTrailingTrivia(trailingTrivia);
+               ret = ret.ReplaceToken(tokens.First(), token);
+            }
             // Manage EOL comment here
          }
          return ret;

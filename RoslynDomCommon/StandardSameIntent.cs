@@ -238,7 +238,7 @@ namespace RoslynDom.Common
                return false;
             if (!Check<T, IForStatement>(one, other,
                 (x, y) => Check(x.Variable, y.Variable)
-                && Check(x.Iterator, y.Iterator)))
+                && Check(x.Incrementor, y.Incrementor)))
                return false;
             if (!Check<T, IIfStatement>(one, other,
                 (x, y) => CheckChildrenInOrder(x.Elses, y.Elses)

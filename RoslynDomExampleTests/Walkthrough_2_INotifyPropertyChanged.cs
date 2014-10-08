@@ -18,128 +18,101 @@ namespace RoslynDomExampleTests
    {
       private string inputDirectory = @"..\..\..\RoslynDom";
       private string outputDirectory = @"..\..\Walkthrough2_Updated_Files";
+      private string[] subDirectories = new string[] { @"BasesAndBaseHelpers", @"Implementations", @"StatementImplementations" };
 
       [TestMethod]
-      public void Walkthroughs_2_load_files()
+      public void Walkthroughs_1_update_using_for_data_annotation()
       {
-         UpdateFilesInDirectory(inputDirectory, outputDirectory, @"BasesAndBaseHelpers");
-         UpdateFilesInDirectory(inputDirectory, outputDirectory, @"Implementations");
-         UpdateFilesInDirectory(inputDirectory, outputDirectory, @"StatementImplementations");
+         DoUpdate(GetFilePairs("*.cs", inputDirectory, outputDirectory, subDirectories),
+            GetRoot, AddUsingStatement("System.ComponentModel.DataAnnotations"));
       }
 
       [TestMethod]
       public void Walkthroughs_2_update_files()
       {
-         IEnumerable<Tuple<string, string>> filePairs = GetFilePairs();
+         DoUpdate(GetFilePairs(".cs", inputDirectory, outputDirectory, subDirectories),
+            GetRDomClasses, AddINotifyPropertyChanged);
+      }
+
+      private bool DoUpdate<TChange>(IEnumerable<Tuple<string, string>> filePairs,
+                            Func<IRoot, IEnumerable<TChange>> getItemsToChange,
+                            Func<TChange, bool> changeItems)
+         where TChange : IDom
+      {
+         var didAnythingChange = false;
          foreach (var pair in filePairs)
          {
-            DoUpdate(pair.Item1, pair.Item2, NotifyPropertyChange);
+            if (DoUpdateOnFile(pair.Item1, pair.Item2, getItemsToChange, changeItems))
+            { didAnythingChange = true; }
          }
+         return didAnythingChange;
       }
 
-      private bool DoUpdate(string inputFileName, string outputFileName, Func<IRoot, bool> doChanges)
+      private bool DoUpdateOnFile<TChange>(string inputFileName, string outputFileName,
+                            Func<IRoot, IEnumerable<TChange>> getItemsToChange,
+                            Func<TChange, bool> doChanges)
+         where TChange : IDom
       {
-         var factory = RDomCSharp.Factory;
-         var root = factory.GetRootFromFile(inputFileName);
-         if (doChanges(root))
+         var root = RDomCSharp.Factory.GetRootFromFile(inputFileName);
+         var itemsToChange = getItemsToChange(root);
+         var didAnythingChange = false;
+         foreach (var item in itemsToChange)
          {
-            var output = factory.BuildSyntax(root);
-            var outputString = output.ToFullString();
-            File.WriteAllText(outputFileName, outputString);
-            return true;
+            if (doChanges(item))
+            { didAnythingChange = true; }
          }
-         else { return false; }
+         if (didAnythingChange)
+         { WriteChangesToFile(outputFileName, itemsToChange); }
+         return didAnythingChange;
       }
 
-      private bool NotifyPropertyChange(IRoot root)
+      private static void WriteChangesToFile<TChange>(string outputFileName, IEnumerable<TChange> itemsToChange)
+         where TChange : IDom
       {
-         IEnumerable<IClass> classes = GetClasses(root);
-         if (!classes.Any()) return false;
-         foreach (var cl in classes)
-         { AddINotifyPropertyChanged(cl); }
-         return true;
+         var sb = new StringBuilder();
+         foreach (var item in itemsToChange)
+         {
+            var output = RDomCSharp.Factory.BuildSyntax(item);
+            sb.Append(output.ToFullString());
+         }
+         File.WriteAllText( outputFileName, sb.ToString());
       }
 
-      private IEnumerable<Tuple<string, string>> GetFilePairs()
+
+      private IEnumerable<Tuple<string, string>> GetFilePairs(string pattern,
+               string inputDirectory, string outputDirectory, params string[] subDirectories)
       {
-         var subDirectories = new string[] { @"BasesAndBaseHelpers", @"Implementations", @"StatementImplementations" };
          IEnumerable<Tuple<string, string>> filePairs = new List<Tuple<string, string>>();
          foreach (var subDir in subDirectories)
          {
             filePairs = filePairs.Union(
                Directory
-                  .GetFiles(Path.Combine(inputDirectory, subDir), "*.cs")
+                  .GetFiles(Path.Combine(inputDirectory, subDir), pattern)
                   .Select(x => Tuple.Create(x, Path.Combine(outputDirectory, subDir, Path.GetFileName(x)))));
          }
 
          return filePairs;
       }
 
-      [TestMethod]
-      public void Walkthroughs_2_list_files()
+      private static IEnumerable<IRoot> GetRoot(IRoot root)
       {
-         var sb = new StringBuilder();
-         ListFilesInDirectory(inputDirectory, @"BasesAndBaseHelpers", sb);
-         ListFilesInDirectory(inputDirectory, @"Implementations", sb);
-         ListFilesInDirectory(inputDirectory, @"StatementImplementations", sb);
+         return new List<IRoot>() { root };
       }
 
-      private void ListFilesInDirectory(string inputDirectory, string subDirectory, StringBuilder sb)
-      {
-         var factory = RDomCSharp.Factory;
-         var inputDir = Path.Combine(inputDirectory, subDirectory);
-         var files = Directory.GetFiles(inputDir, "*.cs");
-         foreach (var fileName in files)
-         {
-            var root = factory.GetRootFromFile(fileName);
-            IEnumerable<IClass> classes = GetClasses(root);
-            foreach (var cl in classes)
-            { sb.AppendLine(cl.Name); }
-         }
-      }
-
-
-      [TestMethod]
-      public void Walkthroughs_2_load_specific_file()
-      {
-         var factory = RDomCSharp.Factory;
-         UpdateFile(factory, outputDirectory, Path.Combine(inputDirectory, @"StatementImplementations", "RDomInvocationStatement.cs"));
-      }
-
-      private void UpdateFilesInDirectory(string inputDirectory, string outputDirectory, string subDirectory)
-      {
-         var factory = RDomCSharp.Factory;
-         var inputDir = Path.Combine(inputDirectory, subDirectory);
-         var outputDir = Path.Combine(outputDirectory, subDirectory);
-         var files = Directory.GetFiles(inputDir, "*.cs");
-         foreach (var fileName in files)
-         {
-            UpdateFile(factory, outputDir, fileName);
-         }
-      }
-
-      private void UpdateFile(RDomCSharp factory, string outputDir, string fileName)
-      {
-         var outputFileName = Path.Combine(outputDir, Path.GetFileName(fileName));
-         var root = factory.GetRootFromFile(fileName);
-         IEnumerable<IClass> classes = GetClasses(root);
-         foreach (var cl in classes)
-         { AddINotifyPropertyChanged(cl); }
-         var output = factory.BuildSyntax(root);
-         //output = factory.Format(output,);
-         var outputString = output.ToFullString();
-         File.WriteAllText(outputFileName, outputString);
-      }
-
-      private static IEnumerable<IClass> GetClasses(IRoot root)
+      private static IEnumerable<IClass> GetRDomClasses(IRoot root)
       {
          return root.RootClasses
                         .Where(x => x.BaseType != null
             && ((x.BaseType.Name == "RDomBaseType" && x.BaseType.TypeArguments.Count() == 1)
-                || (x.BaseType.Name.StartsWith("RDomBase") && x.BaseType.TypeArguments.Count() == 2)));
+                  || (x.BaseType.Name.StartsWith("RDomBase") && x.BaseType.TypeArguments.Count() == 2)));
       }
 
-      private void AddINotifyPropertyChanged(IClass cl)
+      private Func<IRoot, bool> AddUsingStatement(params string[] usings)
+      {
+         return r => r.AddUsingDirectives(usings).Any();
+      }
+
+      private bool AddINotifyPropertyChanged(IClass cl)
       {
          var notifyingProps = cl.Properties
                               .Where(x => x.CanSet
@@ -150,6 +123,7 @@ namespace RoslynDomExampleTests
          {
             UpdateProperty(prop);
          }
+         return true;
       }
 
       private void UpdateProperty(IProperty prop)
@@ -189,80 +163,6 @@ namespace RoslynDomExampleTests
          prop.GetAccessor.EnsureNewLineAfter();
       }
 
-      private string ReportCodeLines(IEnumerable<IDom> items)
-      {
-         var sb = new StringBuilder();
 
-         var lineItems = from x in items
-                         select new
-                         {
-                            item = x,
-                            fileName = GetFileName(x),
-                            position = GetPosition(x),
-                            code = GetNewCode(x)
-                         };
-         var filePathMax = lineItems.Max(x => x.fileName.Length);
-         var itemMax = lineItems.Max(x => x.item.ToString().Trim().Length);
-         var lineMax = lineItems.Max(x => x.position.Line.ToString().Trim().Length);
-         var format = "{0, -fMax}({1,lineMax},{2,3}) {3, -itemMax}   {4}"
-                     .Replace("fMax", filePathMax.ToString())
-                     .Replace("itemMax", itemMax.ToString())
-                     .Replace("lineMax", lineMax.ToString());
-         foreach (var line in lineItems)
-         {
-            sb.AppendFormat(format, line.fileName, line.position.Line, line.position.Character, line.item.ToString().Trim(), line.code);
-            sb.AppendLine();
-         }
-         return sb.ToString();
-      }
-
-      private string GetNewCode(IDom item)
-      {
-         var ret = new List<string>();
-         // formatting removed from the following line (BuildFormattedSyntax)
-         return RDomCSharp.Factory.BuildSyntax(item).ToString();
-         //   return RDomCSharp.Factory.BuildFormattedSyntax(item).ToString();
-      }
-
-      private string GetOldCode(IDom item)
-      {
-
-         var node = item.RawItem as SyntaxNode;
-         if (node == null)
-         { return "<no syntax node>"; }
-         else
-         {
-            return node.ToFullString();
-         }
-      }
-
-      private LinePosition GetPosition(IDom item)
-      {
-         var node = item.RawItem as SyntaxNode;
-         if (node == null)
-         { return default(LinePosition); }
-         else
-         {
-            var location = node.GetLocation();
-            var linePos = location.GetLineSpan().StartLinePosition;
-            return linePos;
-         }
-      }
-
-      private string GetFileName(IDom item)
-      {
-         var root = item.Ancestors.OfType<IRoot>().FirstOrDefault();
-         if (root != null)
-         { return root.FilePath; }
-         else
-         {
-            var top = item.Ancestors.Last();
-            var node = top as SyntaxNode;
-            if (node == null)
-            { return "<no file name>"; }
-            else
-            { return node.SyntaxTree.FilePath; }
-         }
-      }
    }
 }

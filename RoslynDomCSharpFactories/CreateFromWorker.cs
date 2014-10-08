@@ -273,7 +273,7 @@ namespace RoslynDom.CSharp
          return Corporation.CreateFrom<IStructuredDocumentation>(syntaxNode, newItem, model);
       }
 
-
+      // TODO: Refactor - D'oh
       public Tuple<object, string, LiteralKind> GetArgumentValue(IDom newItem, SemanticModel model, ExpressionSyntax expr)
       {
          // TODO: Refactor this method
@@ -299,20 +299,32 @@ namespace RoslynDom.CSharp
             }
             else
             {
-               var memberAccess = expr as MemberAccessExpressionSyntax ;
+               var defaultAccess = expr as DefaultExpressionSyntax;
+               if (defaultAccess != null)
                {
-                  literalKind = LiteralKind.MemberAccess;
-                  // If this is legal code, this is a constant or an enum
-                  var constant = model.GetConstantValue(memberAccess);
-                  if (constant.HasValue)
+                  literalKind = LiteralKind.Default;
+                  value = Corporation
+                       .CreateFrom<IMisc>(defaultAccess.Type, newItem, model)
+                       .FirstOrDefault()
+                       as IReferencedType;
+               }
+               else
+               {
+                  var memberAccess = expr as MemberAccessExpressionSyntax;
                   {
-                     constantIdentifier = expr.ToString();
-                     value = constant.Value;
-                  }
-                  else
-                  {
-                     constantIdentifier = memberAccess.ToFullString();
-                     value = memberAccess.ToFullString();
+                     literalKind = LiteralKind.MemberAccess;
+                     // If this is legal code, this is a constant or an enum
+                     var constant = model.GetConstantValue(memberAccess);
+                     if (constant.HasValue)
+                     {
+                        constantIdentifier = expr.ToString();
+                        value = constant.Value;
+                     }
+                     else
+                     {
+                        constantIdentifier = memberAccess.ToFullString();
+                        value = memberAccess.ToFullString();
+                     }
                   }
                }
             }
