@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-
-
    public class Whitespace2Collection : IEnumerable<Whitespace2>
    {
       private List<Whitespace2> list = new List<Whitespace2>();
@@ -33,7 +31,7 @@ namespace RoslynDom.Common
       IEnumerator IEnumerable.GetEnumerator()
       { return list.GetEnumerator(); }
 
-      public string ForceLeading{ get; set; }
+      public string ForceLeading { get; set; }
       public string ForceTrailing { get; set; }
 
       public void Add(Whitespace2 item)
@@ -96,9 +94,9 @@ namespace RoslynDom.Common
 
    public class Whitespace2
    {
-      public Whitespace2( LanguageElement languageElement)
+      public Whitespace2(LanguageElement languageElement)
       {
-         LanguagePart = LanguagePart.Current ;
+         LanguagePart = LanguagePart.Current;
          LanguageElement = languageElement;
       }
 

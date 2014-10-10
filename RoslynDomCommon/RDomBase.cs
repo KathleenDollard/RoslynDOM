@@ -16,7 +16,7 @@ namespace RoslynDom
    /// <remarks>
    /// Initialize must be called near end of the constructor. Existing RDom impelementations all do this.
    /// </remarks>
-   public abstract class RDomBase : IDom, INotifyPropertyChanged 
+   public abstract class RDomBase : IDom, INotifyPropertyChanged
    {
 
       private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
@@ -185,26 +185,26 @@ namespace RoslynDom
       public bool NeedsFormatting { get; set; }
 
       public virtual void EnsureNewLineAfter()
-      {         Whitespace2Set.ForceTrailing = "\r\n";      }
+      { Whitespace2Set.ForceTrailing = "\r\n"; }
 
       public virtual void EnsureLeading(string whitespace)
       { Whitespace2Set.ForceLeading = whitespace; }
 
       public event PropertyChangedEventHandler PropertyChanged;
 
-   protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "")
-   {
-      if (!EqualityComparer<T>.Default.Equals(field, value))
+      protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string name = "")
       {
-         field = value;
-         // TODO: Update to null conditionals in C# 6
-         var handler = PropertyChanged;
-         if (handler != null)
+         if (!EqualityComparer<T>.Default.Equals(field, value))
          {
-            handler(this, new PropertyChangedEventArgs(name));
+            field = value;
+            // TODO: Update to null conditionals in C# 6
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+               handler(this, new PropertyChangedEventArgs(name));
+            }
          }
       }
-   }
 
    }
 }

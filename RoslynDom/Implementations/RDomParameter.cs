@@ -12,7 +12,8 @@ namespace RoslynDom
       public RDomParameter(string name, string typeName,
                       int ordinal = 0, bool isOut = false, bool isRef = false,
                       bool isParamArray = false)
-          : this(name, new RDomReferencedType(typeName, true), null, LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
+          : this(name, new RDomReferencedType(typeName, true), null, 
+                LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
       { }
 
       public RDomParameter(string name, IReferencedType type,
