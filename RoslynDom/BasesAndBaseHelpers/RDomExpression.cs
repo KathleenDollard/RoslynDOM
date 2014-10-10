@@ -6,7 +6,7 @@ namespace RoslynDom
 {
    public class RDomExpression : RDomBase<IExpression, ISymbol>, IExpression
    {
-      public RDomExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
+ public RDomExpression (string  _expression,ExpressionType  _expressionType ) : this (null,null,null ) { Expression=_expression; Expression=_expression; ExpressionType=_expressionType; }      public RDomExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }
 

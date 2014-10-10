@@ -41,8 +41,14 @@ namespace RoslynDom
             }
         }
 
-        public IExpression Condition { get; set; }
-        public IVariableDeclaration Variable { get; set; }
-        public IReferencedType  ExceptionType { get; set; }
+        private IExpression _condition ;
+        public IExpression Condition { get {return _condition; }
+set {SetProperty(ref _condition, value); }}
+        private IVariableDeclaration _variable ;
+        public IVariableDeclaration Variable { get {return _variable; }
+set {SetProperty(ref _variable, value); }}
+        public IReferencedType  ExceptionType { get {return _exceptionType; }
+set {SetProperty(ref _exceptionType, value); }}
+        private IReferencedType  _exceptionType ;
     }
 }

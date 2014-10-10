@@ -6,7 +6,7 @@ namespace RoslynDom
 {
     public class RDomInterface : RDomBaseType<IInterface>, IInterface
     {
-        public RDomInterface(SyntaxNode rawItem, IDom parent, SemanticModel model)
+ public RDomInterface ( ) : this (null,null,null ) { }        public RDomInterface(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent,model, MemberKind.Interface, StemMemberKind.Interface)
         {  }
 

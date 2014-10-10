@@ -113,10 +113,11 @@ namespace RoslynDom
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
+      private bool _hasBlock ;
       public bool HasBlock
       {
-         get { return true; }
-         set { }
+         get { return true; return _hasBlock;}
+         set { SetProperty(ref _hasBlock, value);}
       }
 
       public MemberKind MemberKind

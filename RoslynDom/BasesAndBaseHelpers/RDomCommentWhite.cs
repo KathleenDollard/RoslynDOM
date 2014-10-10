@@ -23,8 +23,12 @@ namespace RoslynDom
             MemberKind = oldRDom.MemberKind;
         }
 
-        public StemMemberKind StemMemberKind { get; set; }
-        public MemberKind MemberKind { get; set; }
+        private StemMemberKind _stemMemberKind ;
+        public StemMemberKind StemMemberKind { get {return _stemMemberKind; }
+set {SetProperty(ref _stemMemberKind, value); }}
+        private MemberKind _memberKind ;
+        public MemberKind MemberKind { get {return _memberKind; }
+set {SetProperty(ref _memberKind, value); }}
 
         public override object OriginalRawItem
         { get { return null; } }

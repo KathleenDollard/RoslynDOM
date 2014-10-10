@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
-namespace RoslynDom
+ using System.ComponentModel.DataAnnotations;namespace RoslynDom
 {
    public class RDomFinallyStatement : RDomStatementBlockBase<IFinallyStatement>, IFinallyStatement
    {

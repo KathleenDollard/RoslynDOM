@@ -49,6 +49,8 @@ namespace RoslynDom
       public IEnumerable<ICatchStatement> Catches
       { get { return _catches; } }
 
-      public IFinallyStatement Finally { get; set; }
+      public IFinallyStatement Finally { get {return _finally; }
+set {SetProperty(ref _finally, value); }}
+      private IFinallyStatement _finally ;
    }
 }

@@ -9,7 +9,7 @@ namespace RoslynDom
    public class RDomUsingStatement : RDomBase<IUsingStatement, ISymbol>, IUsingStatement
    {
       private RDomCollection<IStatementCommentWhite> _statements;
-
+ public RDomUsingStatement (IExpression  _expression,IVariableDeclaration  _variable,bool  _hasBlock ) : this (null,null,null ) { Expression=_expression; Expression=_expression; Variable=_variable; Expression=_expression; Variable=_variable; HasBlock=_hasBlock; }
       public RDomUsingStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }

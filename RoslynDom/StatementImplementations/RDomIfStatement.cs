@@ -42,7 +42,9 @@ namespace RoslynDom
          }
       }
 
-      public IExpression Condition { get; set; }
+      private IExpression _condition ;
+      public IExpression Condition { get {return _condition; }
+set {SetProperty(ref _condition, value); }}
 
       public RDomCollection<IElseBaseStatement> Elses
       { get { return _elses; } }

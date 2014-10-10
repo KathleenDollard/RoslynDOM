@@ -84,8 +84,9 @@ namespace RoslynDom
 
       public bool HasBlock
       {
-         get { return true; }
-         set { }
+         get { return true; return _hasBlock;}
+         set { SetProperty(ref _hasBlock, value);}
       }
+      private bool _hasBlock ;
    }
 }

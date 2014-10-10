@@ -35,7 +35,11 @@ namespace RoslynDom
       }
 
 
-      public IExpression Incrementor { get; set; }
-      public IVariableDeclaration Variable { get; set; }
+      private IExpression _incrementor ;
+      public IExpression Incrementor { get {return _incrementor; }
+set {SetProperty(ref _incrementor, value); }}
+      public IVariableDeclaration Variable { get {return _variable; }
+set {SetProperty(ref _variable, value); }}
+      private IVariableDeclaration _variable ;
    }
 }

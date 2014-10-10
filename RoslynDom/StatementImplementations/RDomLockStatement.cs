@@ -9,7 +9,7 @@ namespace RoslynDom
    public class RDomLockStatement : RDomBase<ILockStatement, ISymbol>, ILockStatement
    {
       private RDomCollection<IStatementCommentWhite> _statements;
-
+ public RDomLockStatement (IExpression  _expression,bool  _hasBlock ) : this (null,null,null ) { Expression=_expression; Expression=_expression; HasBlock=_hasBlock; }
       public RDomLockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }

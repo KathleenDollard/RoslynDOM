@@ -8,7 +8,7 @@ namespace RoslynDom
    public class RDomAttributeValue
        : RDomBase<IAttributeValue, ISymbol>, IAttributeValue
    {
-
+ public RDomAttributeValue (string  _name,AttributeValueStyle  _style,object  _value,string  _valueConstantIdentifier,LiteralKind  _valueType,System.Type  _type ) : this (null,null,null ) { Name=_name; Name=_name; Style=_style; Name=_name; Style=_style; Value=_value; Name=_name; Style=_style; Value=_value; ValueConstantIdentifier=_valueConstantIdentifier; Name=_name; Style=_style; Value=_value; ValueConstantIdentifier=_valueConstantIdentifier; ValueType=_valueType; Name=_name; Style=_style; Value=_value; ValueConstantIdentifier=_valueConstantIdentifier; ValueType=_valueType; Type=_type; }
       public RDomAttributeValue(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }

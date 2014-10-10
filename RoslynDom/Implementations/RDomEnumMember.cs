@@ -8,7 +8,7 @@ namespace RoslynDom
    public class RDomEnumMember : RDomBase<IEnumMember, ISymbol>, IEnumMember
    {
       private AttributeCollection _attributes = new AttributeCollection();
-
+ public RDomEnumMember (string  _name,IExpression  _expression ) : this (null,null,null ) { Name=_name; Name=_name; Expression=_expression; }
       public RDomEnumMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }

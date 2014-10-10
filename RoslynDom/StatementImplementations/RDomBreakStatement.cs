@@ -6,7 +6,7 @@ namespace RoslynDom
 {
     public class RDomBreakStatement : RDomBase<IBreakStatement, ISymbol>, IBreakStatement
     {
-
+ public RDomBreakStatement ( ) : this (null,null,null ) { }
         public RDomBreakStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { }

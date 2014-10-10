@@ -23,7 +23,7 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Update_notify_property_changed()
       {
-         var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_2", subDirectories);
+         var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_A", subDirectories);
          UpdateUtilities.DoUpdate(filePairs,
                root => root.Descendants
                      .OfType<IProperty>()
@@ -36,7 +36,7 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Add_RDom_constructors()
       {
-         var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_3", subDirectories);
+         var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_B", subDirectories);
          UpdateUtilities.DoUpdate(filePairs,
                root => GetRDomClasses(root),
                NeedsConstructor,

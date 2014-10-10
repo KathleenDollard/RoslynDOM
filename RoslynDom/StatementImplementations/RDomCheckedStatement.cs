@@ -9,7 +9,7 @@ namespace RoslynDom
    public class RDomCheckedStatement : RDomBase<ICheckedStatement, ISymbol>, ICheckedStatement
    {
       private RDomCollection<IStatementCommentWhite> _statements;
-
+ public RDomCheckedStatement (bool  _unchecked,bool  _hasBlock ) : this (null,null,null ) { Unchecked=_unchecked; Unchecked=_unchecked; HasBlock=_hasBlock; }
       public RDomCheckedStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }

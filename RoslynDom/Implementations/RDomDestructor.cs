@@ -63,20 +63,22 @@ namespace RoslynDom
          set { SetProperty(ref _description, value); }
       }
 
+      private AccessModifier _accessModifier ;
       public AccessModifier AccessModifier
       {
          get
-         { return AccessModifier.Public; }
+         { return AccessModifier.Public; return _accessModifier;}
          set
-         { }
+         { SetProperty(ref _accessModifier, value);}
       }
 
+      private AccessModifier _declaredAccessModifier ;
       public AccessModifier DeclaredAccessModifier
       {
          get
-         { return AccessModifier; }
+         { return AccessModifier; return _declaredAccessModifier;}
          set
-         { }
+         { SetProperty(ref _declaredAccessModifier, value);}
       }
 
       public RDomCollection<IStatementCommentWhite> StatementsAll
@@ -85,10 +87,11 @@ namespace RoslynDom
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
+      private bool _hasBlock ;
       public bool HasBlock
       {
-         get { return true; }
-         set { }
+         get { return true; return _hasBlock;}
+         set { SetProperty(ref _hasBlock, value);}
       }
 
       public MemberKind MemberKind

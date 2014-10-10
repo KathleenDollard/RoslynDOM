@@ -8,7 +8,7 @@ namespace RoslynDom
     public class RDomBlockStatement : RDomBase<IBlockStatement, ISymbol>, IBlockStatement
     {
         private RDomCollection<IStatementCommentWhite> _statements;
-
+ public RDomBlockStatement ( ) : this (null,null,null ) { }
         public RDomBlockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }

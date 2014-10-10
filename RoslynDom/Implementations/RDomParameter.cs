@@ -33,7 +33,6 @@ namespace RoslynDom
             DefaultValueType = defaultValueType;
             DefaultConstantIdentifier = defaultConstantIdentifier;
          }
-
       }
 
    public RDomParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)

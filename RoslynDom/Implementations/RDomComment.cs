@@ -23,9 +23,13 @@ namespace RoslynDom
             IsMultiline = oldRDom.IsMultiline;
         }
 
-        public string Text { get; set; }
+        private string _text ;
+        public string Text { get {return _text; }
+set {SetProperty(ref _text, value); }}
 
-        public bool IsMultiline { get; set; }
+        private bool _isMultiline ;
+        public bool IsMultiline { get {return _isMultiline; }
+set {SetProperty(ref _isMultiline, value); }}
 
         protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
         {

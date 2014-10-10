@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm = System.ComponentModel;
+using cm=System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
@@ -32,7 +32,7 @@ namespace RoslynDom
       /// Type arguments for the type being created
       /// </param>
       public RDomReferencedType(string name, bool displayAlias = false, bool isArray = false,
-                                   params IReferencedType[] typeArgs)
+                                                                      params IReferencedType [] typeArgs)
          : this(null, null, null)
       {
          Name = StringUtilities.NameFromQualifiedName(name);

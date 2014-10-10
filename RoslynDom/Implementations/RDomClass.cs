@@ -9,7 +9,7 @@ namespace RoslynDom
    /// <remarks></remarks>
    public class RDomClass : RDomBaseType<IClass>, IClass
    {
-      public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
+ public RDomClass (string _baseTypeName,bool  _isAbstract,bool  _isSealed,bool  _isStatic ) : this (new RDomReferencedType(_baseTypeName),_isAbstract,_isSealed,_isStatic ) { BaseType=_baseType; BaseType=_baseType; IsAbstract=_isAbstract; BaseType=_baseType; IsAbstract=_isAbstract; IsSealed=_isSealed; BaseType=_baseType; IsAbstract=_isAbstract; IsSealed=_isSealed; IsStatic=_isStatic; } public RDomClass (IReferencedType  _baseType,bool  _isAbstract,bool  _isSealed,bool  _isStatic ) : this (null,null,null ) { BaseType=_baseType; BaseType=_baseType; IsAbstract=_isAbstract; BaseType=_baseType; IsAbstract=_isAbstract; IsSealed=_isSealed; BaseType=_baseType; IsAbstract=_isAbstract; IsSealed=_isSealed; IsStatic=_isStatic; }      public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model, MemberKind.Class, StemMemberKind.Class)
       { }
 

@@ -7,7 +7,7 @@ namespace RoslynDom
 {
    public class RDomStructure : RDomBaseType<IStructure>, IStructure
    {
-      public RDomStructure(SyntaxNode rawItem, IDom parent, SemanticModel model)
+ public RDomStructure ( ) : this (null,null,null ) { }      public RDomStructure(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model, MemberKind.Structure, StemMemberKind.Structure)
       { }
 

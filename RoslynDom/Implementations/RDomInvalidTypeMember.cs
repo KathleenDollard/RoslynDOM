@@ -8,7 +8,7 @@ namespace RoslynDom
    public class RDomInvalidMember : RDomBase<IInvalidMember, ISymbol>, IInvalidMember
    {
       private AttributeCollection _attributes = new AttributeCollection();
-
+ public RDomInvalidMember (string  _name,AccessModifier  _accessModifier,AccessModifier  _declaredAccessModifier,IStructuredDocumentation  _structuredDocumentation,string  _description ) : this (null,null,null ) { Name=_name; Name=_name; AccessModifier=_accessModifier; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; StructuredDocumentation=_structuredDocumentation; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; StructuredDocumentation=_structuredDocumentation; Description=_description; }
       public RDomInvalidMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }

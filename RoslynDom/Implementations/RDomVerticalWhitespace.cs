@@ -25,8 +25,12 @@ namespace RoslynDom
       }
 
       // TODO: This is not going to be updated by the generator, consider how this affects the RoslynDom
-      public int Count { get; set; }
-      public bool IsElastic { get; set; }
+      private int _count ;
+      public int Count { get {return _count; }
+set {SetProperty(ref _count, value); }}
+      private bool _isElastic ;
+      public bool IsElastic { get {return _isElastic; }
+set {SetProperty(ref _isElastic, value); }}
 
       protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
       {

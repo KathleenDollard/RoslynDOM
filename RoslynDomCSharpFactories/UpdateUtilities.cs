@@ -90,10 +90,10 @@ namespace RoslynDom.CSharp
          var output = RDomCSharp.Factory.BuildSyntax(root);
          sb.Append(output.ToFullString());
          var dirName = Path.GetDirectoryName(outputFileName);
-         Directory.CreateDirectory(dirName);
+         if (!string.IsNullOrWhiteSpace(dirName)) Directory.CreateDirectory(dirName);
          File.WriteAllText(outputFileName, sb.ToString());
       }
 
-     
+
    }
 }

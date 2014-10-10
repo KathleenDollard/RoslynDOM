@@ -31,6 +31,8 @@ namespace RoslynDom
          }
       }
 
-      public IExpression Condition { get; set; }
+      public IExpression Condition { get {return _condition; }
+set {SetProperty(ref _condition, value); }}
+      private IExpression _condition ;
    }
 }

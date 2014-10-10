@@ -11,7 +11,7 @@ namespace RoslynDom
    public class RDomTypeParameter : RDomBase<ITypeParameter, ISymbol>, ITypeParameter
    {
       private RDomCollection<IReferencedType> _constraintTypes;
-
+ public RDomTypeParameter (string  _name,int  _ordinal,bool  _hasConstructorConstraint,bool  _hasReferenceTypeConstraint,bool  _hasValueTypeConstraint,Variance  _variance ) : this (null,null,null ) { Name=_name; Name=_name; Ordinal=_ordinal; Name=_name; Ordinal=_ordinal; HasConstructorConstraint=_hasConstructorConstraint; Name=_name; Ordinal=_ordinal; HasConstructorConstraint=_hasConstructorConstraint; HasReferenceTypeConstraint=_hasReferenceTypeConstraint; Name=_name; Ordinal=_ordinal; HasConstructorConstraint=_hasConstructorConstraint; HasReferenceTypeConstraint=_hasReferenceTypeConstraint; HasValueTypeConstraint=_hasValueTypeConstraint; Name=_name; Ordinal=_ordinal; HasConstructorConstraint=_hasConstructorConstraint; HasReferenceTypeConstraint=_hasReferenceTypeConstraint; HasValueTypeConstraint=_hasValueTypeConstraint; Variance=_variance; }
       public RDomTypeParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent, model)
       { Initialize(); }

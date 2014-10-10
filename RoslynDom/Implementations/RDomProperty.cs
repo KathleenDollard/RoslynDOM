@@ -164,6 +164,7 @@ namespace RoslynDom
          set { SetProperty(ref _description, value); }
       }
 
+      private IAccessor _getAccessor ;
       public IAccessor GetAccessor
       {
          get
@@ -171,15 +172,16 @@ namespace RoslynDom
             return _accessors
                   .Where(x => x.AccessorType == AccessorType.Get)
                   .FirstOrDefault();
-         }
+return _getAccessor;         }
          set
          {
             if (value == null) return;
             _accessors.Remove(GetAccessor);
             _accessors.AddOrMove(value);
-         }
+SetProperty(ref _getAccessor, value);         }
       }
 
+      private IAccessor _setAccessor ;
       public IAccessor SetAccessor
       {
          get
@@ -187,13 +189,13 @@ namespace RoslynDom
             return _accessors
                   .Where(x => x.AccessorType == AccessorType.Set)
                   .FirstOrDefault();
-         }
+return _setAccessor;         }
          set
          {
             if (value == null) return;
             _accessors.Remove(SetAccessor);
             _accessors.AddOrMove(value);
-         }
+SetProperty(ref _setAccessor, value);         }
       }
 
       /// <summary></summary>

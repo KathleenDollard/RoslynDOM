@@ -29,6 +29,8 @@ namespace RoslynDom
          }
       }
 
-      public IVariableDeclaration Variable { get; set; }
+      public IVariableDeclaration Variable { get {return _variable; }
+set {SetProperty(ref _variable, value); }}
+      private IVariableDeclaration _variable ;
    }
 }

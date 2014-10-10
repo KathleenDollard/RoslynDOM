@@ -8,7 +8,7 @@ namespace RoslynDom
 {
    public class RDomThrowStatement : RDomBase<IThrowStatement, ISymbol>, IThrowStatement
    {
-
+ public RDomThrowStatement (IExpression  _exceptionExpression ) : this (null,null,null ) { ExceptionExpression=_exceptionExpression; }
       public RDomThrowStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }
