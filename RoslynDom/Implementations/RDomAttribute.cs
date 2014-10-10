@@ -26,10 +26,13 @@ namespace RoslynDom
          { AddOrMoveAttributeValue(value); }
       }
 
-      private string _name ;
+      private string _name;
       [Required]
-      public string Name { get {return _name; }
-set {SetProperty(ref _name, value); }}
+      public string Name
+      {
+         get { return _name; }
+         set { SetProperty(ref _name, value); }
+      }
 
       public void RemoveAttributeValue(IAttributeValue attributeValue)
       { _attributeValues.Remove(attributeValue); }

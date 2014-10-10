@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomEnumMember : RDomBase<IEnumMember, ISymbol>, IEnumMember
@@ -26,12 +26,18 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
-      private string _name ;
+      private string _name;
       [Required]
-      public string Name { get {return _name; }
-set {SetProperty(ref _name, value); }}
-      public IExpression Expression { get {return _expression; }
-set {SetProperty(ref _expression, value); }}
-      private IExpression _expression ;
+      public string Name
+      {
+         get { return _name; }
+         set { SetProperty(ref _name, value); }
+      }
+      public IExpression Expression
+      {
+         get { return _expression; }
+         set { SetProperty(ref _expression, value); }
+      }
+      private IExpression _expression;
    }
 }

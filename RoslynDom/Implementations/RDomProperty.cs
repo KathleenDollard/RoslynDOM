@@ -75,53 +75,95 @@ namespace RoslynDom
          }
       }
 
-      private string _name ;
+      private string _name;
       [Required]
-      public string Name { get {return _name; }
-set {SetProperty(ref _name, value); }}
-      private IReferencedType _propertyType ;
+      public string Name
+      {
+         get { return _name; }
+         set { SetProperty(ref _name, value); }
+      }
+      private IReferencedType _propertyType;
       [Required]
-      public IReferencedType PropertyType { get {return _propertyType; }
-set {SetProperty(ref _propertyType, value); }}
-      private AccessModifier _accessModifier ;
-      public AccessModifier AccessModifier { get {return _accessModifier; }
-set {SetProperty(ref _accessModifier, value); }}
-      private AccessModifier _declaredAccessModifier ;
-      public AccessModifier DeclaredAccessModifier { get {return _declaredAccessModifier; }
-set {SetProperty(ref _declaredAccessModifier, value); }}
-      private bool _isAbstract ;
-      public bool IsAbstract { get {return _isAbstract; }
-set {SetProperty(ref _isAbstract, value); }}
-      private bool _isVirtual ;
-      public bool IsVirtual { get {return _isVirtual; }
-set {SetProperty(ref _isVirtual, value); }}
-      private bool _isOverride ;
-      public bool IsOverride { get {return _isOverride; }
-set {SetProperty(ref _isOverride, value); }}
-      private bool _isSealed ;
-      public bool IsSealed { get {return _isSealed; }
-set {SetProperty(ref _isSealed, value); }}
-      private bool _isStatic ;
-      public bool IsStatic { get {return _isStatic; }
-set {SetProperty(ref _isStatic, value); }}
-      private bool _isNew ;
-      public bool IsNew { get {return _isNew; }
-set {SetProperty(ref _isNew, value); }}
+      public IReferencedType PropertyType
+      {
+         get { return _propertyType; }
+         set { SetProperty(ref _propertyType, value); }
+      }
+      private AccessModifier _accessModifier;
+      public AccessModifier AccessModifier
+      {
+         get { return _accessModifier; }
+         set { SetProperty(ref _accessModifier, value); }
+      }
+      private AccessModifier _declaredAccessModifier;
+      public AccessModifier DeclaredAccessModifier
+      {
+         get { return _declaredAccessModifier; }
+         set { SetProperty(ref _declaredAccessModifier, value); }
+      }
+      private bool _isAbstract;
+      public bool IsAbstract
+      {
+         get { return _isAbstract; }
+         set { SetProperty(ref _isAbstract, value); }
+      }
+      private bool _isVirtual;
+      public bool IsVirtual
+      {
+         get { return _isVirtual; }
+         set { SetProperty(ref _isVirtual, value); }
+      }
+      private bool _isOverride;
+      public bool IsOverride
+      {
+         get { return _isOverride; }
+         set { SetProperty(ref _isOverride, value); }
+      }
+      private bool _isSealed;
+      public bool IsSealed
+      {
+         get { return _isSealed; }
+         set { SetProperty(ref _isSealed, value); }
+      }
+      private bool _isStatic;
+      public bool IsStatic
+      {
+         get { return _isStatic; }
+         set { SetProperty(ref _isStatic, value); }
+      }
+      private bool _isNew;
+      public bool IsNew
+      {
+         get { return _isNew; }
+         set { SetProperty(ref _isNew, value); }
+      }
       // TODO: Check that CanGet/CanSet are updated on the addition of accessor statements, these might need to be calculated
-      private bool _canGet ;
+      private bool _canGet;
       [System.ComponentModel.DefaultValue(true)]
-      public bool CanGet { get {return _canGet; }
-set {SetProperty(ref _canGet, value); }}
-      private bool _canSet ;
+      public bool CanGet
+      {
+         get { return _canGet; }
+         set { SetProperty(ref _canGet, value); }
+      }
+      private bool _canSet;
       [System.ComponentModel.DefaultValue(true)]
-      public bool CanSet { get {return _canSet; }
-set {SetProperty(ref _canSet, value); }}
-      private IStructuredDocumentation _structuredDocumentation ;
-      public IStructuredDocumentation StructuredDocumentation { get {return _structuredDocumentation; }
-set {SetProperty(ref _structuredDocumentation, value); }}
-      private string _description ;
-      public string Description { get {return _description; }
-set {SetProperty(ref _description, value); }}
+      public bool CanSet
+      {
+         get { return _canSet; }
+         set { SetProperty(ref _canSet, value); }
+      }
+      private IStructuredDocumentation _structuredDocumentation;
+      public IStructuredDocumentation StructuredDocumentation
+      {
+         get { return _structuredDocumentation; }
+         set { SetProperty(ref _structuredDocumentation, value); }
+      }
+      private string _description;
+      public string Description
+      {
+         get { return _description; }
+         set { SetProperty(ref _description, value); }
+      }
 
       public IAccessor GetAccessor
       {

@@ -19,13 +19,19 @@ namespace RoslynDom
          ExpressionType = oldRDom.ExpressionType;
       }
 
-      private string _expression ;
+      private string _expression;
       [Required]
-      public string Expression { get {return _expression; }
-set {SetProperty(ref _expression, value); }}
+      public string Expression
+      {
+         get { return _expression; }
+         set { SetProperty(ref _expression, value); }
+      }
       [Required]
-      public ExpressionType ExpressionType { get {return _expressionType; }
-set {SetProperty(ref _expressionType, value); }}
-      private ExpressionType _expressionType ;
+      public ExpressionType ExpressionType
+      {
+         get { return _expressionType; }
+         set { SetProperty(ref _expressionType, value); }
+      }
+      private ExpressionType _expressionType;
    }
 }

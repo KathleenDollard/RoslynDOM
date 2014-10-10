@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomRoot : RDomBaseStemContainer<IRoot, ISymbol>, IRoot
@@ -18,13 +18,19 @@ namespace RoslynDom
          : base(oldRDom)
       { }
 
-      private string _name ;
+      private string _name;
       [Required]
-      public string Name { get {return _name; }
-set {SetProperty(ref _name, value); }}
-      private string _filePath ;
-      public string FilePath { get {return _filePath; }
-set {SetProperty(ref _filePath, value); }}
+      public string Name
+      {
+         get { return _name; }
+         set { SetProperty(ref _name, value); }
+      }
+      private string _filePath;
+      public string FilePath
+      {
+         get { return _filePath; }
+         set { SetProperty(ref _filePath, value); }
+      }
 
       public bool HasSyntaxErrors
       { get { return TypedSyntax.GetDiagnostics().Count() > 0; } }

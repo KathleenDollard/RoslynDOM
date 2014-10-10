@@ -156,6 +156,12 @@ namespace RoslynDomTests
          public IEnumerable<IDom> DescendantsAndSelf
          { get { throw new NotImplementedException(); } }
 
+         public bool NeedsFormatting
+         {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+         }
+
          public object OriginalRawItem
          { get { throw new NotImplementedException(); } }
 

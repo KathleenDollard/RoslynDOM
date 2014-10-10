@@ -35,44 +35,19 @@ namespace RoslynDomExampleTests
       }
 
       private bool DoUpdate<TChange>(IEnumerable<Tuple<string, string>> filePairs,
-                            Func<IRoot, IEnumerable<TChange>> getItemsToChange,
-                            Func<TChange, bool> changeItems)
+                              Func<IRoot, IEnumerable<TChange>> getItemsToChange,
+                              Func<TChange, bool> changeItems)
          where TChange : IDom
       {
          var didAnythingChange = false;
          foreach (var pair in filePairs)
          {
-            if (DoUpdateOnFile(pair.Item1, pair.Item2, getItemsToChange, changeItems))
+            if (UpdateUtilities .DoUpdateOnFile(pair.Item1, pair.Item2, getItemsToChange, changeItems))
             { didAnythingChange = true; }
          }
          return didAnythingChange;
       }
 
-      private bool DoUpdateOnFile<TChange>(string inputFileName, string outputFileName,
-                            Func<IRoot, IEnumerable<TChange>> getItemsToChange,
-                            Func<TChange, bool> doChanges)
-         where TChange : IDom
-      {
-         var root = RDomCSharp.Factory.GetRootFromFile(inputFileName);
-         var itemsToChange = getItemsToChange(root);
-         var didAnythingChange = false;
-         foreach (var item in itemsToChange)
-         {
-            if (doChanges(item))
-            { didAnythingChange = true; }
-         }
-         if (didAnythingChange)
-         { WriteChangesToFile(outputFileName, root); }
-         return didAnythingChange;
-      }
-
-      private static void WriteChangesToFile(string outputFileName, IRoot root)
-      {
-         var sb = new StringBuilder();
-         var output = RDomCSharp.Factory.BuildSyntax(root);
-         sb.Append(output.ToFullString());
-         File.WriteAllText(outputFileName, sb.ToString());
-      }
 
 
       private IEnumerable<Tuple<string, string>> GetFilePairs(string pattern,
@@ -103,15 +78,18 @@ namespace RoslynDomExampleTests
                   || (x.BaseType.Name.StartsWith("RDomBase") && x.BaseType.TypeArguments.Count() == 2)));
       }
 
+      #region Using Statement changes
       private Func<IRoot, bool> AddUsingStatement(params string[] usings)
       {
          return r => r.AddUsingDirectives(usings).Any();
       }
+      #endregion
 
+      #region NotifyPropertyChanged
       private bool AddINotifyPropertyChanged(IClass cl)
       {
          var notifyingProps = cl.Properties
-                              .Where(x => x.CanSet
+                              .Where(x => x.CanSet && x.CanGet
                                     && !x.SetAccessor.Statements.Any()
                                     && !x.GetAccessor.Statements.Any()
                                     && x.AccessModifier == AccessModifier.Public);
@@ -158,7 +136,122 @@ namespace RoslynDomExampleTests
          prop.SetAccessor.StatementsAll.AddOrMove(statement);
          prop.GetAccessor.EnsureNewLineAfter();
       }
+      #endregion
 
+      //#region AddConstructorIfNeeded
+
+      //private bool AddConstructorIfNeeded(IClass cl)
+      //{
+      //   var constructors = cl.Constructors
+      //                     .Where(x => (x.Parameters.First().Type.Name != "SyntaxNode"
+      //                               && x.Parameters.First().Type.Name != cl.Name));
+      //   if (constructors.Any()) { return false; }
+
+      //   RDomConstructor constructor = CreateRDomConstructor(cl);
+      //   var properties = cl.Properties.Where(x => x.CanSet && x.CanGet);
+      //   var assignments = new List<IAssignmentStatement>();
+      //   var altConstructorPairs = new List<Tuple<RDomParameter, RDomParameter, RDomArgument>>();
+
+      //   foreach (var prop in properties)
+      //   {
+      //      RDomParameter param = CreateParameter(assignments, altConstructorPairs, prop);
+      //      constructor.Parameters.AddOrMove(param);
+      //      constructor.StatementsAll.AddOrMoveRange(assignments);
+      //   }
+      //   if (altConstructorPairs.Any())
+      //   {
+      //      IConstructor altConstructor = CreateAlternateConstructor(constructor, altConstructorPairs);
+      //      cl.InsertAfterInitialFields(altConstructor);
+      //   }
+      //   return true;
+      //}
+
+      //private static IConstructor CreateAlternateConstructor(RDomConstructor constructor, List<Tuple<RDomParameter, RDomParameter, RDomArgument>> altConstructorPairs)
+      //{
+      //   var altConstructor = constructor.Copy();
+      //   var argList = new List<RDomArgument>();
+      //   var replaceList = new List<Tuple<IParameter, RDomParameter>>();
+      //   foreach (var param in altConstructor.Parameters)
+      //   {
+      //      var switchTuples = altConstructorPairs.Where(x => x.Item1.Name == param.Name);
+      //      if (switchTuples.Any())
+      //      {
+      //         var switchTuple = switchTuples.First();
+      //         replaceList.Add(Tuple.Create(param, switchTuple.Item2));
+      //         argList.Add(switchTuple.Item3);
+      //      }
+      //      else
+      //      { argList.Add(new RDomArgument(RDomCSharp.Factory.ParseExpression(param.Name))); }
+      //   }
+      //   foreach (var tuple in replaceList)
+      //   { altConstructor.Parameters.Replace(tuple.Item1, tuple.Item2); }
+      //   altConstructor.ConstructorInitializerType = ConstructorInitializerType.This;
+      //   altConstructor.InitializationArguments.Clear();
+      //   altConstructor.InitializationArguments.AddOrMoveRange(argList);
+      //   return altConstructor;
+      //}
+
+      //private RDomParameter CreateParameter(List<IAssignmentStatement> assignments, List<Tuple<RDomParameter, RDomParameter, RDomArgument>> altConstructorPairs, IProperty prop)
+      //{
+      //   var paramName =( prop.Name.StartsWith("_")  ? "" : "_") + StringUtilities.CamelCase(prop.Name);
+      //   var type = prop.PropertyType.Copy();
+      //   var param = new RDomParameter(paramName, type);
+      //   assignments.Add(new RDomAssignmentStatement(
+      //            RDomCSharp.Factory.ParseExpression(prop.Name),
+      //            RDomCSharp.Factory.ParseExpression(paramName)));
+      //   if (!(prop.Attributes.Any(x => x.Name == "Required")))
+      //   {
+      //      param.DefaultValue = GetDefaultValue(prop.PropertyType);
+      //   }
+      //   if (prop.PropertyType.Name == "IReferencedType")
+      //   {
+      //      var paramNewName = paramName + "Name";
+      //      var paramNew = new RDomParameter(paramNewName, new RDomReferencedType("System.String", displayAlias: true));
+      //      var argNew = new RDomArgument(RDomCSharp.Factory.ParseExpression(string.Format("new RDomReferencedType({0})", paramNewName)));
+      //      altConstructorPairs.Add(Tuple.Create(param, paramNew, argNew));
+      //   }
+
+      //   return param;
+      //}
+
+      //private static RDomConstructor CreateRDomConstructor(IClass cl)
+      //{
+      //   var constructor = new RDomConstructor(cl.Name, AccessModifier.Public, constructorInitializerType: ConstructorInitializerType.This);
+      //   var nullParam = new RDomArgument(RDomCSharp.Factory.ParseExpression("null"));
+      //   constructor.InitializationArguments.AddOrMoveRange(new IArgument[] { nullParam, nullParam.Copy(), nullParam.Copy() });
+      //   cl.InsertAfterInitialFields(constructor);
+      //   return constructor;
+      //}
+
+      //private object GetDefaultValue(IReferencedType propertyType)
+      //{
+      //   if (propertyType.Name == "Boolean") return false;
+      //   if (propertyType.Name == "String") return null;
+      //   if (propertyType.Name == "AccessModifier") return AccessModifier.Private;
+      //   if (propertyType.Name == "IStructuredDocumentation") return null;
+      //   if (propertyType.Name == "Boolean") return false;
+      //   if (propertyType.Name == "Int32") return false;
+      //   if (propertyType.Name == "Variance") return Variance.None;
+      //   if (propertyType.Name == "LiteralKind") return LiteralKind.Unknown;
+      //   if (propertyType.Name == "Type") return null;
+      //   if (propertyType.Name == "AssignmentOperator") return AssignmentOperator.Equals;
+      //   if (propertyType.Name == "ConstructorInitializerType") return ConstructorInitializerType.None;
+      //   if (propertyType.Name == "IExpression") return null;
+
+      //   // TODO: FIgure out how to specify default as that is all you can do with Guid
+      //   if (propertyType.Name == "Boolean") return false;
+
+      //   if (propertyType.Name == "IReferencedType") return false;      // force an error
+      //   if (propertyType.Name == "IVariableDeclaration") return false; // force an error
+      //   if (propertyType.Name == "VariableKind") return false;         // force an error
+      //   if (propertyType.Name == "ExpressionType") return false;       // force an error
+      //   if (propertyType.Name == "Operator") return false;             // force an error
+      //   if (propertyType.Name == "INamedTypeSymbol") return false;     // force an error
+      //   return false;                                                  // force an error
+      //}
+
+
+      //#endregion
 
    }
 }

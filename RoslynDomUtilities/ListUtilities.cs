@@ -26,9 +26,9 @@ namespace RoslynDom.Common
                IEnumerable<TRaw> rawItems,
                Func<TRaw, IEnumerable<T>> makeNewItems)
         {
-            if (rawItems == null) throw new NotImplementedException();
+           if (rawItems == null) throw new InvalidOperationException("rawItems can't be null");
+            if (makeNewItems == null) throw new InvalidOperationException("makeNewItems can't be null");
             var ret = new List<T>();
-            if (makeNewItems == null) throw new InvalidOperationException();
             foreach (var rawItem in rawItems)
             {
                 var items = makeNewItems(rawItem);

@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System;
- using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 // TODO: Combine this with Method and constructor
 namespace RoslynDom
 {
@@ -33,7 +33,7 @@ namespace RoslynDom
          DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
          Operator = oldRDom.Operator;
          Type = oldRDom.Type.Copy();
-        }
+      }
 
       private void Initialize()
       {
@@ -54,32 +54,56 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
-      private string _name ;
+      private string _name;
       [Required]
-      public string Name { get {return _name; }
-set {SetProperty(ref _name, value); }}
-      private IReferencedType _type ;
+      public string Name
+      {
+         get { return _name; }
+         set { SetProperty(ref _name, value); }
+      }
+      private IReferencedType _type;
       [Required]
-      public IReferencedType Type { get {return _type; }
-set {SetProperty(ref _type, value); }}
-      private AccessModifier _accessModifier ;
-      public AccessModifier AccessModifier { get {return _accessModifier; }
-set {SetProperty(ref _accessModifier, value); }}
-      private AccessModifier _declaredAccessModifier ;
-      public AccessModifier DeclaredAccessModifier { get {return _declaredAccessModifier; }
-set {SetProperty(ref _declaredAccessModifier, value); }}
-      private Operator _operator ;
-      public Operator Operator { get {return _operator; }
-set {SetProperty(ref _operator, value); }}
-      private bool _isStatic ;
-      public bool IsStatic { get {return _isStatic; }
-set {SetProperty(ref _isStatic, value); }}
-      private IStructuredDocumentation _structuredDocumentation ;
-      public IStructuredDocumentation StructuredDocumentation { get {return _structuredDocumentation; }
-set {SetProperty(ref _structuredDocumentation, value); }}
-      private string _description ;
-      public string Description { get {return _description; }
-set {SetProperty(ref _description, value); }}
+      public IReferencedType Type
+      {
+         get { return _type; }
+         set { SetProperty(ref _type, value); }
+      }
+      private AccessModifier _accessModifier;
+      public AccessModifier AccessModifier
+      {
+         get { return _accessModifier; }
+         set { SetProperty(ref _accessModifier, value); }
+      }
+      private AccessModifier _declaredAccessModifier;
+      public AccessModifier DeclaredAccessModifier
+      {
+         get { return _declaredAccessModifier; }
+         set { SetProperty(ref _declaredAccessModifier, value); }
+      }
+      private Operator _operator;
+      public Operator Operator
+      {
+         get { return _operator; }
+         set { SetProperty(ref _operator, value); }
+      }
+      private bool _isStatic;
+      public bool IsStatic
+      {
+         get { return _isStatic; }
+         set { SetProperty(ref _isStatic, value); }
+      }
+      private IStructuredDocumentation _structuredDocumentation;
+      public IStructuredDocumentation StructuredDocumentation
+      {
+         get { return _structuredDocumentation; }
+         set { SetProperty(ref _structuredDocumentation, value); }
+      }
+      private string _description;
+      public string Description
+      {
+         get { return _description; }
+         set { SetProperty(ref _description, value); }
+      }
 
       public RDomCollection<IParameter> Parameters
       { get { return _parameters; } }

@@ -42,10 +42,11 @@ namespace RoslynDom.CSharp
       public static TNode PrepareForBuildItemSyntaxOutput<TNode>(this TNode node, IDom item)
           where TNode : SyntaxNode
       {
-         var moreLeadingTrivia = BuildSyntaxHelpers.LeadingTrivia(item);
+         var moreLeadingTrivia = LeadingTrivia(item);
          var leadingTriviaList = moreLeadingTrivia.Concat(node.GetLeadingTrivia());
          node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadingTriviaList));
-
+         if (item.NeedsFormatting )
+         { node = (TNode)RDomCSharp.Factory.Format(node); }
          return node;
       }
 

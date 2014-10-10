@@ -10,6 +10,7 @@ using RoslynDom.Common;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Options;
+using Microsoft.CodeAnalysis.CSharp.Formatting;
 
 namespace RoslynDom.CSharp
 {
@@ -78,10 +79,15 @@ namespace RoslynDom.CSharp
 
       public SyntaxNode Format(SyntaxNode node)
       {
-         var span = node.FullSpan;
-         node = Formatter.Format(node, span, new CustomWorkspace()) as SyntaxNode;
+         //var span = node.FullSpan;
+         //node = Formatter.Format(node, span, new CustomWorkspace()) as SyntaxNode;
+         var ws = new CustomWorkspace();
+         var options = ws.GetOptions();
+        // options = options.WithChangedOption(CSharpFormattingOptions.)
+         node = Formatter.Format(node, new CustomWorkspace());
          return node;
       }
+
 
 
       private IRoot GetRootFromStringInternal(SyntaxTree tree, string filePath)

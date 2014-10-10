@@ -182,6 +182,8 @@ namespace RoslynDom
 
       public Whitespace2Collection Whitespace2Set { get; private set; }
 
+      public bool NeedsFormatting { get; set; }
+
       public virtual void EnsureNewLineAfter()
       {         Whitespace2Set.ForceTrailing = "\r\n";      }
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm=System.ComponentModel;
+using cm = System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
@@ -39,8 +39,11 @@ namespace RoslynDom
       { get { return new List<IDom>() { Invocation }; } }
 
       [Required]
-      public IExpression Invocation { get {return _invocation; }
-set {SetProperty(ref _invocation, value); }}
-      private IExpression _invocation ;
+      public IExpression Invocation
+      {
+         get { return _invocation; }
+         set { SetProperty(ref _invocation, value); }
+      }
+      private IExpression _invocation;
    }
 }

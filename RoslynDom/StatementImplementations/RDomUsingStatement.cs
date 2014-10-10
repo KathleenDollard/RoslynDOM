@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomUsingStatement : RDomBase<IUsingStatement, ISymbol>, IUsingStatement
@@ -42,15 +42,24 @@ namespace RoslynDom
          }
       }
 
-      private IExpression _expression ;
-      public IExpression Expression { get {return _expression; }
-set {SetProperty(ref _expression, value); }}
-      private IVariableDeclaration _variable ;
-      public IVariableDeclaration Variable { get {return _variable; }
-set {SetProperty(ref _variable, value); }}
-      private bool _hasBlock ;
-      public bool HasBlock { get {return _hasBlock; }
-set {SetProperty(ref _hasBlock, value); }}
+      private IExpression _expression;
+      public IExpression Expression
+      {
+         get { return _expression; }
+         set { SetProperty(ref _expression, value); }
+      }
+      private IVariableDeclaration _variable;
+      public IVariableDeclaration Variable
+      {
+         get { return _variable; }
+         set { SetProperty(ref _variable, value); }
+      }
+      private bool _hasBlock;
+      public bool HasBlock
+      {
+         get { return _hasBlock; }
+         set { SetProperty(ref _hasBlock, value); }
+      }
 
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }

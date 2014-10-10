@@ -60,7 +60,7 @@ namespace RoslynDom.CSharp
             if (symbol != null)
             {
                 var underlyingNamedTypeSymbol = symbol.EnumUnderlyingType;
-                // TODO: underlying type should be set to Int when there is not type specified,there is always an underlying type
+                // TODO: underlying type should be set to Int when there is not type specified,there is always an underlying type and the int default might be language specific
                 if (syntax.BaseList != null)
                 {
                     createFromWorker.StoreWhitespaceForToken(newItem, syntax.BaseList.ColonToken,

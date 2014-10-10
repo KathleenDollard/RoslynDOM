@@ -149,6 +149,11 @@ namespace RoslynDom.CSharp
          newItem.Whitespace2Set[languagePart, languageElement] = newWS;
       }
 
+      public void StoreStringWhitespace(IDom newItem, LanguageElement languageElement, string leadingWhitespace, string trailingWhitespace)
+      {
+         newItem.Whitespace2Set.Add(new Whitespace2( languageElement,  leadingWhitespace, trailingWhitespace, null));
+      }
+
       private string GetLeadingWhitespaceForToken(IEnumerable<SyntaxTrivia> triviaList)
       {
          var list = new List<string>();

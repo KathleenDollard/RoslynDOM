@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Formatting;
 using RoslynDom.Common;
 
 namespace RoslynDom

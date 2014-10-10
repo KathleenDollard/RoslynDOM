@@ -7,6 +7,7 @@ namespace RoslynDom.Common
       object RawItem { get; }
       object OriginalRawItem { get; }
 
+      bool NeedsFormatting { get; set; }
       Whitespace2Collection Whitespace2Set { get; }
       void EnsureNewLineAfter();
       void EnsureLeading(string whitespace);

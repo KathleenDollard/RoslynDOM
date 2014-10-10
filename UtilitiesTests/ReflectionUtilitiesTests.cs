@@ -121,11 +121,25 @@ namespace TestRoslyn
       }
 
       [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
+      [ExpectedException(typeof(InvalidOperationException))]
+      public void FindMethod_throws_with_null_type()
+      {
+         var methodInfo = ReflectionUtilities.FindMethod(null, "TestFoo3", true);
+      }
+
+      [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
       public void Can_make_generic_type()
       {
          var newType = ReflectionUtilities.MakeGenericType(typeof(B<>), typeof(int));
          Assert.AreEqual("B`1", newType.Name);
          Assert.AreEqual("Int32", newType.GenericTypeArguments.First().Name);
+      }
+
+      [TestMethod, TestCategory(ReflectionUtilitiesCategory)]
+      [ExpectedException(typeof(InvalidOperationException))]
+      public void MakeGenericType_throws_with_null_type()
+      {
+         var methodInfo = ReflectionUtilities.MakeGenericType(null);
       }
 
       [TestMethod]

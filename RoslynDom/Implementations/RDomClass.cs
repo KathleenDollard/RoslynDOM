@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    /// <summary></summary>
@@ -25,7 +25,7 @@ namespace RoslynDom
       public IEnumerable<IField> Fields
       { get { return Members.OfType<IField>().ToList(); } }
 
-       public IEnumerable<IOperator> Operators
+      public IEnumerable<IOperator> Operators
       { get { return Members.OfType<IOperator>().ToList(); } }
 
       public IEnumerable<IConversionOperator> ConversionOperators
@@ -49,18 +49,30 @@ namespace RoslynDom
       public IEnumerable<IEnum> Enums
       { get { return Members.OfType<IEnum>().ToList(); } }
 
-      private IReferencedType _baseType ;
-      public IReferencedType BaseType { get {return _baseType; }
-set {SetProperty(ref _baseType, value); }}
-      private bool _isAbstract ;
-      public bool IsAbstract { get {return _isAbstract; }
-set {SetProperty(ref _isAbstract, value); }}
-      private bool _isSealed ;
-      public bool IsSealed { get {return _isSealed; }
-set {SetProperty(ref _isSealed, value); }}
-      private bool _isStatic ;
-      public bool IsStatic { get {return _isStatic; }
-set {SetProperty(ref _isStatic, value); }}
+      private IReferencedType _baseType;
+      public IReferencedType BaseType
+      {
+         get { return _baseType; }
+         set { SetProperty(ref _baseType, value); }
+      }
+      private bool _isAbstract;
+      public bool IsAbstract
+      {
+         get { return _isAbstract; }
+         set { SetProperty(ref _isAbstract, value); }
+      }
+      private bool _isSealed;
+      public bool IsSealed
+      {
+         get { return _isSealed; }
+         set { SetProperty(ref _isSealed, value); }
+      }
+      private bool _isStatic;
+      public bool IsStatic
+      {
+         get { return _isStatic; }
+         set { SetProperty(ref _isStatic, value); }
+      }
 
       public IEnumerable<IConstructor> Constructors
       { get { return Members.OfType<IConstructor>(); } }

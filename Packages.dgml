@@ -1,6 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DirectedGraph GraphDirection="LeftToRight" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
+    <Node Id="RoslynDomExampleTests" Label="RoslynDomExampleTests" Category="Project" />
+    <Node Id="Microsoft.Bcl.Immutable 1.1.20-beta" Label="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package" />
+    <Node Id="Microsoft.Bcl.Metadata 1.0.11-alpha" Label="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package" />
+    <Node Id="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package" />
+    <Node Id="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Category="Package" />
+    <Node Id="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Category="Package" />
+    <Node Id="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Category="Package" />
+    <Node Id="RoslynDomCSharpFactories 1.0.10-alpha" Label="RoslynDomCSharpFactories 1.0.10-alpha" Category="Package" />
+    <Node Id="Unity 3.5.1405-prerelease" Label="Unity 3.5.1405-prerelease" Category="Package" />
     <Node Id="RoslynDomCSharpFactories" Label="RoslynDomCSharpFactories" Category="Project" />
     <Node Id="Microsoft.Bcl.Immutable 1.1.20-beta" Label="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package" />
     <Node Id="Microsoft.Bcl.Metadata 1.0.11-alpha" Label="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package" />
@@ -13,20 +22,17 @@
     <Node Id="Microsoft.Bcl.Metadata 1.0.11-alpha" Label="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package" />
     <Node Id="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package" />
     <Node Id="Unity 3.5.1405-prerelease" Label="Unity 3.5.1405-prerelease" Category="Package" />
-    <Node Id="RoslynDomExampleTests" Label="RoslynDomExampleTests" Category="Project" />
-    <Node Id="Microsoft.Bcl.Immutable 1.1.20-beta" Label="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package" />
-    <Node Id="Microsoft.Bcl.Metadata 1.0.11-alpha" Label="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package" />
-    <Node Id="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package" />
-    <Node Id="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Category="Package" />
-    <Node Id="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Category="Package" />
-    <Node Id="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Category="Package" />
     <Node Id="RoslynDomTests" Label="RoslynDomTests" Category="Project" />
+    <Node Id="ApprovalTests 3.0.7" Label="ApprovalTests 3.0.7" Category="Package" />
+    <Node Id="ApprovalUtilities 3.0.7" Label="ApprovalUtilities 3.0.7" Category="Package" />
     <Node Id="Microsoft.Bcl.Immutable 1.1.20-beta" Label="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package" />
     <Node Id="Microsoft.Bcl.Metadata 1.0.11-alpha" Label="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package" />
     <Node Id="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package" />
     <Node Id="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Category="Package" />
     <Node Id="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Category="Package" />
     <Node Id="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Label="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Category="Package" />
+    <Node Id="ObjectApproval 0.2.1" Label="ObjectApproval 0.2.1" Category="Package" />
+    <Node Id="StatePrinter 1.0.4" Label="StatePrinter 1.0.4" Category="Package" />
     <Node Id="RoslynDom" Label="RoslynDom" Category="Project" />
     <Node Id="Microsoft.Bcl.Immutable 1.1.20-beta" Label="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package" />
     <Node Id="Microsoft.Bcl.Metadata 1.0.11-alpha" Label="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package" />
@@ -44,12 +50,24 @@
     <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package Dependency" />
+    <Link Source="RoslynDomCSharpFactories 1.0.10-alpha" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Category="Package Dependency" />
+    <Link Source="RoslynDomCSharpFactories 1.0.10-alpha" Target="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Category="Package Dependency" />
+    <Link Source="RoslynDomCSharpFactories 1.0.10-alpha" Target="Unity 3.5.1405-prerelease" Category="Package Dependency" />
+    <Link Source="RoslynDomExampleTests" Target="RoslynDomCSharpFactories 1.0.10-alpha" Category="Installed Package" />
+    <Link Source="Microsoft.Bcl.Metadata 1.0.11-alpha" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
+    <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
+    <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package Dependency" />
+    <Link Source="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package Dependency" />
+    <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Category="Package Dependency" />
+    <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Category="Package Dependency" />
+    <Link Source="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package Dependency" />
     <Link Source="RoslynDomCSharpFactories" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Category="Installed Package" />
     <Link Source="Microsoft.Bcl.Metadata 1.0.11-alpha" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package Dependency" />
     <Link Source="RoslynDomRDomCommon" Target="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Installed Package" />
     <Link Source="RoslynDomRDomCommon" Target="Unity 3.5.1405-prerelease" Category="Installed Package" />
+    <Link Source="ApprovalTests 3.0.7" Target="ApprovalUtilities 3.0.7" Category="Package Dependency" />
     <Link Source="Microsoft.Bcl.Metadata 1.0.11-alpha" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package Dependency" />
@@ -57,15 +75,10 @@
     <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package Dependency" />
-    <Link Source="RoslynDomExampleTests" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Category="Installed Package" />
-    <Link Source="Microsoft.Bcl.Metadata 1.0.11-alpha" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
-    <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
-    <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package Dependency" />
-    <Link Source="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package Dependency" />
-    <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Category="Package Dependency" />
-    <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.CSharp 0.7.4052301-beta" Category="Package Dependency" />
-    <Link Source="Microsoft.CodeAnalysis.Workspaces.Common 0.7.4052301-beta" Target="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Category="Package Dependency" />
+    <Link Source="ObjectApproval 0.2.1" Target="ApprovalTests 3.0.7" Category="Package Dependency" />
     <Link Source="RoslynDomTests" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 0.7.4052301-beta" Category="Installed Package" />
+    <Link Source="RoslynDomTests" Target="ObjectApproval 0.2.1" Category="Installed Package" />
+    <Link Source="RoslynDomTests" Target="StatePrinter 1.0.4" Category="Installed Package" />
     <Link Source="Microsoft.Bcl.Metadata 1.0.11-alpha" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Immutable 1.1.20-beta" Category="Package Dependency" />
     <Link Source="Microsoft.CodeAnalysis.Common 0.7.4052301-beta" Target="Microsoft.Bcl.Metadata 1.0.11-alpha" Category="Package Dependency" />

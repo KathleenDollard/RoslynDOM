@@ -3,8 +3,8 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System;
-using cm=System.ComponentModel;
- using System.ComponentModel.DataAnnotations;
+using cm = System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomEvent : RDomBase<IEvent, IEventSymbol>, IEvent
@@ -40,12 +40,12 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomEvent(string name, string typeName, AccessModifier accessModifier=AccessModifier.Private,
-               bool isAbstract = false, bool isVirtual = false, bool isOverride = false, 
+      public RDomEvent(string name, string typeName, AccessModifier accessModifier = AccessModifier.Private,
+               bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
                bool isSealed = false, bool isStatic = false, bool isNew = false)
        : this(name, new RDomReferencedType(typeName), accessModifier, isAbstract,
-                isVirtual, isOverride,  isSealed, isStatic, isNew)
-      {      }
+                isVirtual, isOverride, isSealed, isStatic, isNew)
+      { }
 
       /// <summary>
       /// Constructor to use when creating a RoslynDom from scratch
@@ -127,44 +127,80 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
-      private string _name ;
+      private string _name;
       [Required]
-      public string Name { get {return _name; }
-set {SetProperty(ref _name, value); }}
-      private IReferencedType _type ;
+      public string Name
+      {
+         get { return _name; }
+         set { SetProperty(ref _name, value); }
+      }
+      private IReferencedType _type;
       [Required]
-      public IReferencedType Type { get {return _type; }
-set {SetProperty(ref _type, value); }}
-      private AccessModifier _accessModifier ;
-      public AccessModifier AccessModifier { get {return _accessModifier; }
-set {SetProperty(ref _accessModifier, value); }}
-      private AccessModifier _declaredAccessModifier ;
-      public AccessModifier DeclaredAccessModifier { get {return _declaredAccessModifier; }
-set {SetProperty(ref _declaredAccessModifier, value); }}
-      private bool _isAbstract ;
-      public bool IsAbstract { get {return _isAbstract; }
-set {SetProperty(ref _isAbstract, value); }}
-      private bool _isVirtual ;
-      public bool IsVirtual { get {return _isVirtual; }
-set {SetProperty(ref _isVirtual, value); }}
-      private bool _isOverride ;
-      public bool IsOverride { get {return _isOverride; }
-set {SetProperty(ref _isOverride, value); }}
-      private bool _isSealed ;
-      public bool IsSealed { get {return _isSealed; }
-set {SetProperty(ref _isSealed, value); }}
-      private bool _isNew ;
-      public bool IsNew { get {return _isNew; }
-set {SetProperty(ref _isNew, value); }}
-      private bool _isStatic ;
-      public bool IsStatic { get {return _isStatic; }
-set {SetProperty(ref _isStatic, value); }}
-      private IStructuredDocumentation _structuredDocumentation ;
-      public IStructuredDocumentation StructuredDocumentation { get {return _structuredDocumentation; }
-set {SetProperty(ref _structuredDocumentation, value); }}
-      private string _description ;
-      public string Description { get {return _description; }
-set {SetProperty(ref _description, value); }}
+      public IReferencedType Type
+      {
+         get { return _type; }
+         set { SetProperty(ref _type, value); }
+      }
+      private AccessModifier _accessModifier;
+      public AccessModifier AccessModifier
+      {
+         get { return _accessModifier; }
+         set { SetProperty(ref _accessModifier, value); }
+      }
+      private AccessModifier _declaredAccessModifier;
+      public AccessModifier DeclaredAccessModifier
+      {
+         get { return _declaredAccessModifier; }
+         set { SetProperty(ref _declaredAccessModifier, value); }
+      }
+      private bool _isAbstract;
+      public bool IsAbstract
+      {
+         get { return _isAbstract; }
+         set { SetProperty(ref _isAbstract, value); }
+      }
+      private bool _isVirtual;
+      public bool IsVirtual
+      {
+         get { return _isVirtual; }
+         set { SetProperty(ref _isVirtual, value); }
+      }
+      private bool _isOverride;
+      public bool IsOverride
+      {
+         get { return _isOverride; }
+         set { SetProperty(ref _isOverride, value); }
+      }
+      private bool _isSealed;
+      public bool IsSealed
+      {
+         get { return _isSealed; }
+         set { SetProperty(ref _isSealed, value); }
+      }
+      private bool _isNew;
+      public bool IsNew
+      {
+         get { return _isNew; }
+         set { SetProperty(ref _isNew, value); }
+      }
+      private bool _isStatic;
+      public bool IsStatic
+      {
+         get { return _isStatic; }
+         set { SetProperty(ref _isStatic, value); }
+      }
+      private IStructuredDocumentation _structuredDocumentation;
+      public IStructuredDocumentation StructuredDocumentation
+      {
+         get { return _structuredDocumentation; }
+         set { SetProperty(ref _structuredDocumentation, value); }
+      }
+      private string _description;
+      public string Description
+      {
+         get { return _description; }
+         set { SetProperty(ref _description, value); }
+      }
 
       public MemberKind MemberKind
       { get { return MemberKind.Event; } }

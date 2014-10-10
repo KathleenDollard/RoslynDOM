@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm=System.ComponentModel;
- using System.ComponentModel.DataAnnotations;
+using cm = System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace RoslynDom
 {
@@ -49,8 +49,11 @@ namespace RoslynDom
          }
       }
 
-      public IExpression Return { get {return _return; }
-set {SetProperty(ref _return, value); }}
-      private IExpression _return ;
+      public IExpression Return
+      {
+         get { return _return; }
+         set { SetProperty(ref _return, value); }
+      }
+      private IExpression _return;
    }
 }

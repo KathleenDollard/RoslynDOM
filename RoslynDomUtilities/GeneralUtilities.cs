@@ -56,7 +56,7 @@ namespace RoslynDom.Common
 
         public static bool IsInteger(object value)
         {
-            if (value == null) throw new NotImplementedException();
+            if (value == null) return false;
             if (value.GetType().IsEnum) return true;
             return value is sbyte
                     || value is byte

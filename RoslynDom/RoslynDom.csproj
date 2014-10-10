@@ -63,6 +63,7 @@
     <Compile Include="BasesAndBaseHelpers\RDomBaseStemContainer.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomCommentWhite.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomExpression.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Implementations\RDomAttributeValue.cs" />
     <Compile Include="Implementations\RDomAttribute.cs" />
     <Compile Include="Implementations\RDomClass.cs" />

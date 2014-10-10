@@ -2,15 +2,7 @@
 
 namespace RoslynDom.Common
 {
-   public struct Foo
-   {
-      string test;
-      public static Foo operator +(Foo x, Foo y)
-      {
-         return default(Foo);
-      }
-   }
-   public interface ITypeMemberContainer : IDom
+    public interface ITypeMemberContainer : IDom
    {
       RDomCollection<ITypeMemberCommentWhite> MembersAll { get; }
       IEnumerable<ITypeMember> Members { get; }

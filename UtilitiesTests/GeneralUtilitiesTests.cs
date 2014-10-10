@@ -139,6 +139,8 @@ namespace TestRoslyn
             string x9 = "42"; Assert.IsFalse(GeneralUtilities.IsInteger(x9));
             bool x10 = true; Assert.IsFalse(GeneralUtilities.IsInteger(x10));
             Color x11 = Color.Red; Assert.IsTrue(GeneralUtilities.IsInteger(x11));
+            string x13 = "red"; Assert.IsFalse(GeneralUtilities.IsInteger(x13));
+            string x14 = null; Assert.IsFalse(GeneralUtilities.IsInteger(x14));
         }
 
         [TestMethod]

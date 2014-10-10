@@ -85,6 +85,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CheckAndFixSpike.cs" />
     <Compile Include="Interrogation.cs" />
     <Compile Include="RoslynDomLoad.cs" />
     <Compile Include="TestFile.cs" />

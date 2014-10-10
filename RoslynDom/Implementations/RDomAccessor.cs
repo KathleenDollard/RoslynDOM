@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
 using System;
- using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
@@ -53,16 +53,25 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
-      private string _name ;
+      private string _name;
       [Required]
-      public string Name { get {return _name; }
-set {SetProperty(ref _name, value); }}
-      private AccessModifier _accessModifier ;
-      public AccessModifier AccessModifier { get {return _accessModifier; }
-set {SetProperty(ref _accessModifier, value); }}
-      private AccessModifier _declaredAccessModifier ;
-      public AccessModifier DeclaredAccessModifier { get {return _declaredAccessModifier; }
-set {SetProperty(ref _declaredAccessModifier, value); }}
+      public string Name
+      {
+         get { return _name; }
+         set { SetProperty(ref _name, value); }
+      }
+      private AccessModifier _accessModifier;
+      public AccessModifier AccessModifier
+      {
+         get { return _accessModifier; }
+         set { SetProperty(ref _accessModifier, value); }
+      }
+      private AccessModifier _declaredAccessModifier;
+      public AccessModifier DeclaredAccessModifier
+      {
+         get { return _declaredAccessModifier; }
+         set { SetProperty(ref _declaredAccessModifier, value); }
+      }
 
       public RDomCollection<IStatementCommentWhite> StatementsAll
       { get { return _statements; } }

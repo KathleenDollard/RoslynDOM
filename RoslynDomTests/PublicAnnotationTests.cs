@@ -404,11 +404,26 @@ namespace RoslynDomTests
              class2.PublicAnnotations.AddValue("kad_Test4", "George");
             Assert.IsFalse(class1.PublicAnnotations.SameIntent(class2.PublicAnnotations, false));
             Assert.IsTrue(class1.PublicAnnotations.SameIntent(class2.PublicAnnotations,true));
-
-
         }
 
         [TestMethod, TestCategory(PublicAnnotationValuesCategory)]
+       [ExpectedException(typeof(InvalidOperationException))]
+        public void Same_intent_throws_with_null_annotations()
+        {
+           var csharpCode = @"
+            using Foo;
+                     
+            //[[ kad_Test3(val1 = ""Fred"", val2 : 42) ]]
+            public class MyClass
+            { }
+            ";
+           var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+           var root2 = root.Copy();
+           var class1 = root.Classes.First();
+           Assert.IsFalse(class1.PublicAnnotations.SameIntent(null));
+        }
+
+       [TestMethod, TestCategory(PublicAnnotationValuesCategory)]
         public void HasValue_public_annotations()
         {
             var csharpCode = @"
