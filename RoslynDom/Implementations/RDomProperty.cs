@@ -14,7 +14,6 @@ namespace RoslynDom
       // The RDomList is used for accessor to reuse the forced parenting in that class
       private RDomCollection<IAccessor> _accessors;
 
-
       public RDomProperty(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }

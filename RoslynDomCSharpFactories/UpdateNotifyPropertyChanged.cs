@@ -16,7 +16,7 @@ namespace RoslynDom.CSharp
          return prop.CanGet && prop.CanSet;
       }
 
- 
+
       public static bool NeedsNotifyPropertyChanged(IProperty prop)
       {
          if (prop.GetAccessor.Statements.Count() != 1) return true;
@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
          // Add the field without further checks because the programmer will find and resolve
          // things like naming collisions
          var parent = prop.Parent as ITypeMemberContainer;
-         var fieldName = StringUtilities.CamelCase(prop.Name);
+         var fieldName = (prop.Name.StartsWith("_") ? "" : "_") + StringUtilities.CamelCase(prop.Name);
          var field = new RDomField(fieldName, prop.ReturnType, declaredAccessModifier: AccessModifier.Private);
          FixWhitespace(field, prop);
          field.Whitespace2Set.Add(new Whitespace2(prop.Whitespace2Set.First().Copy()));

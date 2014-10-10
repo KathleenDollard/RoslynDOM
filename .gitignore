@@ -1,7 +1,10 @@
 
 # RoslynDom
 *.actual
-*_Updated_Files/
+Walkthrough2_Updated_Files*/
+Walkthrough2_Updated_Files_A*/
+Walkthrough2_Updated_Files_B*/
+
 
 packages/
 nuget_packages/

@@ -123,7 +123,7 @@ namespace RoslynDomExampleTests
 
       private RDomParameter CreateParameter(List<IAssignmentStatement> assignments, List<Tuple<RDomParameter, RDomParameter, RDomArgument>> altConstructorPairs, IProperty prop)
       {
-         var paramName = (prop.Name.StartsWith("_") ? "" : "_") + StringUtilities.CamelCase(prop.Name);
+         var paramName = StringUtilities.CamelCase(prop.Name);
          var type = prop.PropertyType.Copy();
          var param = new RDomParameter(paramName, type);
          triviaManager.StoreStringWhitespace(param, LanguageElement.Identifier, "              ", "");
