@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomElseIfStatement : RDomStatementBlockBase<IElseIfStatement>, IElseIfStatement
    {
+
+      public RDomElseIfStatement(IExpression condition)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Condition = condition;
+      }
+
       public RDomElseIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }
@@ -31,8 +39,11 @@ namespace RoslynDom
          }
       }
 
-      public IExpression Condition { get {return _condition; }
-set {SetProperty(ref _condition, value); }}
-      private IExpression _condition ;
+      public IExpression Condition
+      {
+         get { return _condition; }
+         set { SetProperty(ref _condition, value); }
+      }
+      private IExpression _condition;
    }
 }

@@ -12,6 +12,14 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
       private AccessorType _accessorType;
 
+      public RDomPropertyAccessor(string name, AccessorType accessorType, AccessModifier accessModifier = AccessModifier.Private )
+      : this(null, AccessorType.Unknown , null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         AccessModifier = accessModifier;
+      }
+
       public RDomPropertyAccessor(SyntaxNode rawItem, AccessorType accessorType, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       {
@@ -60,12 +68,14 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {
@@ -82,11 +92,11 @@ namespace RoslynDom
       public AccessorType AccessorType
       { get { return _accessorType; } }
 
+      private bool _hasBlock;
       public bool HasBlock
       {
-         get { return true; return _hasBlock;}
-         set { SetProperty(ref _hasBlock, value);}
+         get { return true; return _hasBlock; }
+         set { SetProperty(ref _hasBlock, value); }
       }
-      private bool _hasBlock ;
    }
 }

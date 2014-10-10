@@ -14,6 +14,32 @@ namespace RoslynDom
       // The RDomList is used for accessor to reuse the forced parenting in that class
       private RDomCollection<IAccessor> _accessors;
 
+      public RDomProperty(string name, string propertyTypeName, AccessModifier accessModifier = AccessModifier.Private , 
+                  bool isAbstract=false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false, 
+                  bool isNew = false, bool canGet = false, bool canSet = false)
+         : this(name, new RDomReferencedType(propertyTypeName), accessModifier, isAbstract, isVirtual, isOverride, isSealed, 
+                  isStatic, isNew, canGet, canSet)
+      { }
+
+      public RDomProperty(string name, IReferencedType propertyType, AccessModifier accessModifier = AccessModifier.Private,
+                  bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false,
+                  bool isNew = false, bool canGet = false, bool canSet = false)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         PropertyType = propertyType;
+         AccessModifier = accessModifier;
+         IsAbstract = isAbstract;
+         IsVirtual = isVirtual;
+         IsOverride = isOverride;
+         IsSealed = isSealed;
+         IsStatic = isStatic;
+         IsNew = isNew;
+         CanGet = canGet;
+         CanSet = canSet;
+      }
+
       public RDomProperty(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }
@@ -81,6 +107,7 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IReferencedType _propertyType;
       [Required]
       public IReferencedType PropertyType
@@ -88,54 +115,63 @@ namespace RoslynDom
          get { return _propertyType; }
          set { SetProperty(ref _propertyType, value); }
       }
+
       private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
          set { SetProperty(ref _declaredAccessModifier, value); }
       }
+
       private bool _isAbstract;
       public bool IsAbstract
       {
          get { return _isAbstract; }
          set { SetProperty(ref _isAbstract, value); }
       }
+
       private bool _isVirtual;
       public bool IsVirtual
       {
          get { return _isVirtual; }
          set { SetProperty(ref _isVirtual, value); }
       }
+
       private bool _isOverride;
       public bool IsOverride
       {
          get { return _isOverride; }
          set { SetProperty(ref _isOverride, value); }
       }
+
       private bool _isSealed;
       public bool IsSealed
       {
          get { return _isSealed; }
          set { SetProperty(ref _isSealed, value); }
       }
+
       private bool _isStatic;
       public bool IsStatic
       {
          get { return _isStatic; }
          set { SetProperty(ref _isStatic, value); }
       }
+
       private bool _isNew;
       public bool IsNew
       {
          get { return _isNew; }
          set { SetProperty(ref _isNew, value); }
       }
+
       // TODO: Check that CanGet/CanSet are updated on the addition of accessor statements, these might need to be calculated
       private bool _canGet;
       [System.ComponentModel.DefaultValue(true)]
@@ -144,6 +180,7 @@ namespace RoslynDom
          get { return _canGet; }
          set { SetProperty(ref _canGet, value); }
       }
+
       private bool _canSet;
       [System.ComponentModel.DefaultValue(true)]
       public bool CanSet
@@ -151,12 +188,14 @@ namespace RoslynDom
          get { return _canSet; }
          set { SetProperty(ref _canSet, value); }
       }
+
       private IStructuredDocumentation _structuredDocumentation;
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
          set { SetProperty(ref _structuredDocumentation, value); }
       }
+
       private string _description;
       public string Description
       {
@@ -164,7 +203,6 @@ namespace RoslynDom
          set { SetProperty(ref _description, value); }
       }
 
-      private IAccessor _getAccessor ;
       public IAccessor GetAccessor
       {
          get
@@ -172,16 +210,15 @@ namespace RoslynDom
             return _accessors
                   .Where(x => x.AccessorType == AccessorType.Get)
                   .FirstOrDefault();
-return _getAccessor;         }
+         }
          set
          {
             if (value == null) return;
             _accessors.Remove(GetAccessor);
             _accessors.AddOrMove(value);
-SetProperty(ref _getAccessor, value);         }
+         }
       }
 
-      private IAccessor _setAccessor ;
       public IAccessor SetAccessor
       {
          get
@@ -189,13 +226,13 @@ SetProperty(ref _getAccessor, value);         }
             return _accessors
                   .Where(x => x.AccessorType == AccessorType.Set)
                   .FirstOrDefault();
-return _setAccessor;         }
+         }
          set
          {
             if (value == null) return;
             _accessors.Remove(SetAccessor);
             _accessors.AddOrMove(value);
-SetProperty(ref _setAccessor, value);         }
+         }
       }
 
       /// <summary></summary>

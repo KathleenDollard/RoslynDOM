@@ -1,13 +1,19 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomForStatement : RDomBaseLoop<IForStatement>, IForStatement
    {
+      public RDomForStatement(IVariableDeclaration variable, IExpression condition, IExpression incrementor)
+          : this((SyntaxNode)null, null, null)
+      {
+         NeedsFormatting = true;
+         Variable = variable;
+         Condition = condition;
+         Incrementor = incrementor;
+      }
 
       public RDomForStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
@@ -35,11 +41,18 @@ namespace RoslynDom
       }
 
 
-      private IExpression _incrementor ;
-      public IExpression Incrementor { get {return _incrementor; }
-set {SetProperty(ref _incrementor, value); }}
-      public IVariableDeclaration Variable { get {return _variable; }
-set {SetProperty(ref _variable, value); }}
-      private IVariableDeclaration _variable ;
+      private IExpression _incrementor;
+      public IExpression Incrementor
+      {
+         get { return _incrementor; }
+         set { SetProperty(ref _incrementor, value); }
+      }
+
+      public IVariableDeclaration Variable
+      {
+         get { return _variable; }
+         set { SetProperty(ref _variable, value); }
+      }
+      private IVariableDeclaration _variable;
    }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public abstract class RDomBaseVariable : RDomBase<IVariableDeclaration, ISymbol>, IVariableDeclaration
@@ -40,6 +41,7 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IReferencedType _type;
       [Required]
       public IReferencedType Type
@@ -47,29 +49,33 @@ namespace RoslynDom
          get { return _type; }
          set { SetProperty(ref _type, value); }
       }
+
       private IExpression _initializer;
       public IExpression Initializer
       {
          get { return _initializer; }
          set { SetProperty(ref _initializer, value); }
       }
+
       private bool _isImplicitlyTyped;
       public bool IsImplicitlyTyped
       {
          get { return _isImplicitlyTyped; }
          set { SetProperty(ref _isImplicitlyTyped, value); }
       }
+
       private bool _isAliased;
       public bool IsAliased
       {
          get { return _isAliased; }
          set { SetProperty(ref _isAliased, value); }
       }
+
+      private VariableKind _variableKind;
       public VariableKind VariableKind
       {
          get { return _variableKind; }
          set { SetProperty(ref _variableKind, value); }
       }
-      private VariableKind _variableKind;
    }
 }

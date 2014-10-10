@@ -48,6 +48,7 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IExpression _valueExpression;
       [Required]
       public IExpression ValueExpression
@@ -55,12 +56,14 @@ namespace RoslynDom
          get { return _valueExpression; }
          set { SetProperty(ref _valueExpression, value); }
       }
+
       private bool _isRef;
       public bool IsRef
       {
          get { return _isRef; }
          set { SetProperty(ref _isRef, value); }
       }
+
       private bool _isOut;
       public bool IsOut
       {

@@ -7,7 +7,15 @@ namespace RoslynDom
 {
    public class RDomRoot : RDomBaseStemContainer<IRoot, ISymbol>, IRoot
    {
- public RDomRoot (string  _name,string  _filePath ) : this (null,null,null ) { Name=_name; Name=_name; FilePath=_filePath; }      // This takes a parent because in the future there will be a rootGroup concept for multiple files
+      public RDomRoot(string name = null, string filePath = null)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name ?? "<root>" ; // Default value not used because change may occur and using code not recompiled
+         FilePath = filePath;
+      }   
+      
+      // This takes a parent because in the future there will be a rootGroup concept for multiple files
       public RDomRoot(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }

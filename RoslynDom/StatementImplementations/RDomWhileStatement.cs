@@ -1,12 +1,18 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
- using System.ComponentModel.DataAnnotations;namespace RoslynDom
+
+namespace RoslynDom
 {
-    public class RDomWhileStatement : RDomBaseLoop<IWhileStatement>, IWhileStatement
+   public class RDomWhileStatement : RDomBaseLoop<IWhileStatement>, IWhileStatement
     {
-        public RDomWhileStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+      public RDomWhileStatement(IExpression condition)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Condition = condition;
+      }
+
+      public RDomWhileStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         {
             this.TestAtEnd = true;

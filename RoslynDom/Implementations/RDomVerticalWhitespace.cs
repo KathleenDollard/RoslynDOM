@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomVerticalWhitespace : RDomCommentWhite, IVerticalWhitespace
    {
-      public RDomVerticalWhitespace(int count, bool isElastic)
+      public RDomVerticalWhitespace(int count, bool isElastic = false)
           : base(StemMemberKind.Whitespace, MemberKind.Whitespace)
       {
          Count = count;
@@ -25,12 +25,19 @@ namespace RoslynDom
       }
 
       // TODO: This is not going to be updated by the generator, consider how this affects the RoslynDom
-      private int _count ;
-      public int Count { get {return _count; }
-set {SetProperty(ref _count, value); }}
-      private bool _isElastic ;
-      public bool IsElastic { get {return _isElastic; }
-set {SetProperty(ref _isElastic, value); }}
+      private int _count;
+      public int Count
+      {
+         get { return _count; }
+         set { SetProperty(ref _count, value); }
+      }
+
+      private bool _isElastic;
+      public bool IsElastic
+      {
+         get { return _isElastic; }
+         set { SetProperty(ref _isElastic, value); }
+      }
 
       protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
       {

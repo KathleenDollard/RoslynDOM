@@ -1,14 +1,20 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomTryStatement : RDomStatementBlockBase<ITryStatement>, ITryStatement
    {
       private RDomCollection<ICatchStatement> _catches;
+
+      public RDomTryStatement(IFinallyStatement finallyStatement = null)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Finally = finallyStatement;
+      }
 
       public RDomTryStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
@@ -49,8 +55,11 @@ namespace RoslynDom
       public IEnumerable<ICatchStatement> Catches
       { get { return _catches; } }
 
-      public IFinallyStatement Finally { get {return _finally; }
-set {SetProperty(ref _finally, value); }}
-      private IFinallyStatement _finally ;
+      private IFinallyStatement _finally;
+      public IFinallyStatement Finally
+      {
+         get { return _finally; }
+         set { SetProperty(ref _finally, value); }
+      }
    }
 }

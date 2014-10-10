@@ -9,16 +9,30 @@ namespace RoslynDom
    {
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomParameter(string name, IReferencedType type, 
-                      int ordinal = 0, bool isOut = false,  bool isRef = false,
-                      bool isParamArray = false)
-       : this(name, type, null, LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
-      {      }
-
-      public RDomParameter(string name, IReferencedType type, object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
+      public RDomParameter(string name, string typeName,
                       int ordinal = 0, bool isOut = false, bool isRef = false,
                       bool isParamArray = false)
-       : this(null, null, null)
+          : this(name, new RDomReferencedType(typeName, true), null, LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
+      { }
+
+      public RDomParameter(string name, IReferencedType type,
+                      int ordinal = 0, bool isOut = false, bool isRef = false,
+                      bool isParamArray = false)
+         : this(name, type, null, LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
+      { }
+
+      public RDomParameter(string name, string typeName,
+                     object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
+                     int ordinal = 0, bool isOut = false, bool isRef = false,
+                     bool isParamArray = false)
+         : this(name, new RDomReferencedType(typeName, true), defaultValue, defaultValueType, defaultConstantIdentifier, ordinal, isOut, isRef, isParamArray)
+      { }
+
+      public RDomParameter(string name, IReferencedType type,
+                   object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
+                   int ordinal = 0, bool isOut = false, bool isRef = false,
+                   bool isParamArray = false)
+         : this(null, null, null)
       {
          Name = name;
          Type = type;
@@ -35,8 +49,8 @@ namespace RoslynDom
          }
       }
 
-   public RDomParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
-          : base(rawItem, parent, model)
+      public RDomParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
+             : base(rawItem, parent, model)
       { }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
@@ -65,6 +79,7 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IReferencedType _type;
       [Required]
       public IReferencedType Type
@@ -72,53 +87,61 @@ namespace RoslynDom
          get { return _type; }
          set { SetProperty(ref _type, value); }
       }
+
       private int _ordinal;
       public int Ordinal
       {
          get { return _ordinal; }
          set { SetProperty(ref _ordinal, value); }
       }
+
       private bool _isOut;
       public bool IsOut
       {
          get { return _isOut; }
          set { SetProperty(ref _isOut, value); }
       }
+
       private bool _isRef;
       public bool IsRef
       {
          get { return _isRef; }
          set { SetProperty(ref _isRef, value); }
       }
+
       private bool _isParamArray;
       public bool IsParamArray
       {
          get { return _isParamArray; }
          set { SetProperty(ref _isParamArray, value); }
       }
+
       private bool _isOptional;
       public bool IsOptional
       {
          get { return _isOptional; }
          set { SetProperty(ref _isOptional, value); }
       }
+
       private object _defaultValue;
       public object DefaultValue
       {
          get { return _defaultValue; }
          set { SetProperty(ref _defaultValue, value); }
       }
+
       private LiteralKind _defaultValueType;
       public LiteralKind DefaultValueType
       {
          get { return _defaultValueType; }
          set { SetProperty(ref _defaultValueType, value); }
       }
+
+      private string _defaultConstantIdentifier;
       public string DefaultConstantIdentifier
       {
          get { return _defaultConstantIdentifier; }
          set { SetProperty(ref _defaultConstantIdentifier, value); }
       }
-      private string _defaultConstantIdentifier;
    }
 }

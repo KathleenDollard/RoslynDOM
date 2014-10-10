@@ -63,8 +63,9 @@ namespace RoslynDomExampleTests
       private bool NeedsConstructor(IClass cl)
       {
          var constructors = cl.Constructors
-                           .Where(x => (x.Parameters.First().Type.Name != "SyntaxNode"
-                                     && x.Parameters.First().Type.Name != cl.Name));
+                           .Where(x => (! x.Parameters.Any()
+                                     || ( x.Parameters.First().Type.Name != "SyntaxNode"
+                                          && x.Parameters.First().Type.Name != cl.Name)));
          if (constructors.Any()) { return false; }
          return true;
       }
@@ -140,7 +141,7 @@ namespace RoslynDomExampleTests
          if (prop.PropertyType.Name == "IReferencedType")
          {
             var paramNewName = paramName + "Name";
-            var paramNew = new RDomParameter(paramNewName, new RDomReferencedType("System.String", displayAlias: true));
+            var paramNew = new RDomParameter(paramName, "System.String");
             var argNew = new RDomArgument(RDomCSharp.Factory.ParseExpression(string.Format("new RDomReferencedType({0})", paramNewName)));
             altConstructorPairs.Add(Tuple.Create(param, paramNew, argNew));
          }

@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public abstract class RDomBaseType<T>
@@ -30,7 +31,6 @@ namespace RoslynDom
          _stemMemberKind = stemMemberKind;
          Initialize();
       }
-
 
       internal RDomBaseType(T oldIDom)
            : base(oldIDom)
@@ -77,12 +77,14 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {

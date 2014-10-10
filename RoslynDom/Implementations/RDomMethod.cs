@@ -13,6 +13,33 @@ namespace RoslynDom
       private RDomCollection<IStatementCommentWhite> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
+      public RDomMethod(string name, string returnTypeName, AccessModifier accessModifier = AccessModifier.Private ,
+               bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, 
+               bool isNew = false, bool isStatic = false,
+               bool isExtensionMethod = false)
+          : this(name, new RDomReferencedType(returnTypeName), accessModifier,  isAbstract, isVirtual,
+                     isOverride, isSealed, isNew, isStatic, isExtensionMethod)
+      { }
+
+      public RDomMethod(string name, IReferencedType returnType, AccessModifier accessModifier = AccessModifier.Private,
+               bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false,
+               bool isNew = false, bool isStatic = false,
+               bool isExtensionMethod = false)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         ReturnType = returnType;
+         AccessModifier = accessModifier;
+         IsAbstract = isAbstract;
+         IsVirtual = isVirtual;
+         IsOverride = isOverride;
+         IsSealed = isSealed;
+         IsNew = isNew;
+         IsStatic = isStatic;
+         IsExtensionMethod = isExtensionMethod;
+      }
+
       public RDomMethod(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }
@@ -70,6 +97,7 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IReferencedType _returnType;
       [Required]
       public IReferencedType ReturnType
@@ -77,66 +105,77 @@ namespace RoslynDom
          get { return _returnType; }
          set { SetProperty(ref _returnType, value); }
       }
+
       private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
          set { SetProperty(ref _declaredAccessModifier, value); }
       }
+
       private bool _isAbstract;
       public bool IsAbstract
       {
          get { return _isAbstract; }
          set { SetProperty(ref _isAbstract, value); }
       }
+
       private bool _isVirtual;
       public bool IsVirtual
       {
          get { return _isVirtual; }
          set { SetProperty(ref _isVirtual, value); }
       }
+
       private bool _isOverride;
       public bool IsOverride
       {
          get { return _isOverride; }
          set { SetProperty(ref _isOverride, value); }
       }
+
       private bool _isSealed;
       public bool IsSealed
       {
          get { return _isSealed; }
          set { SetProperty(ref _isSealed, value); }
       }
+
       private bool _isNew;
       public bool IsNew
       {
          get { return _isNew; }
          set { SetProperty(ref _isNew, value); }
       }
+
       private bool _isStatic;
       public bool IsStatic
       {
          get { return _isStatic; }
          set { SetProperty(ref _isStatic, value); }
       }
+
       private bool _isExtensionMethod;
       public bool IsExtensionMethod
       {
          get { return _isExtensionMethod; }
          set { SetProperty(ref _isExtensionMethod, value); }
       }
+
       private IStructuredDocumentation _structuredDocumentation;
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
          set { SetProperty(ref _structuredDocumentation, value); }
       }
+
       private string _description;
       public string Description
       {
@@ -156,11 +195,10 @@ namespace RoslynDom
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
-      private bool _hasBlock ;
       public bool HasBlock
       {
-         get { return true; return _hasBlock;}
-         set { SetProperty(ref _hasBlock, value);}
+         get { return true; }
+         set { }
       }
 
       public MemberKind MemberKind

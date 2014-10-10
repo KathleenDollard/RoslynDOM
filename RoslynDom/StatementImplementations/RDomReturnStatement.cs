@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm=System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+using cm = System.ComponentModel;
 
 namespace RoslynDom
 {

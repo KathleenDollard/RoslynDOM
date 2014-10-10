@@ -8,7 +8,15 @@ namespace RoslynDom
    public class RDomEnumMember : RDomBase<IEnumMember, ISymbol>, IEnumMember
    {
       private AttributeCollection _attributes = new AttributeCollection();
- public RDomEnumMember (string  _name,IExpression  _expression ) : this (null,null,null ) { Name=_name; Name=_name; Expression=_expression; }
+
+      public RDomEnumMember(string name, IExpression expression)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         Expression = expression;
+      }
+
       public RDomEnumMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }
@@ -33,11 +41,12 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
+      private IExpression _expression;
       public IExpression Expression
       {
          get { return _expression; }
          set { SetProperty(ref _expression, value); }
       }
-      private IExpression _expression;
    }
 }

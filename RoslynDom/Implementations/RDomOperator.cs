@@ -13,6 +13,18 @@ namespace RoslynDom
       private RDomCollection<IStatementCommentWhite> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
+      public RDomOperator(string name, string typeName, Operator op)
+          : this(name, new RDomReferencedType(typeName, true), op)
+      { }
+
+      public RDomOperator(string name, IReferencedType type, Operator op)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         Type = type;
+         Operator = op;
+      }
       public RDomOperator(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }
@@ -61,6 +73,7 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IReferencedType _type;
       [Required]
       public IReferencedType Type
@@ -68,36 +81,42 @@ namespace RoslynDom
          get { return _type; }
          set { SetProperty(ref _type, value); }
       }
+
       private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
          set { SetProperty(ref _declaredAccessModifier, value); }
       }
+
       private Operator _operator;
       public Operator Operator
       {
          get { return _operator; }
          set { SetProperty(ref _operator, value); }
       }
+
       private bool _isStatic;
       public bool IsStatic
       {
          get { return _isStatic; }
          set { SetProperty(ref _isStatic, value); }
       }
+
       private IStructuredDocumentation _structuredDocumentation;
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
          set { SetProperty(ref _structuredDocumentation, value); }
       }
+
       private string _description;
       public string Description
       {
@@ -114,11 +133,10 @@ namespace RoslynDom
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
-      private bool _hasBlock ;
       public bool HasBlock
       {
-         get { return true; return _hasBlock;}
-         set { SetProperty(ref _hasBlock, value);}
+         get { return true; }
+         set { }
       }
 
       public MemberKind MemberKind

@@ -9,8 +9,26 @@ namespace RoslynDom
    /// <remarks></remarks>
    public class RDomClass : RDomBaseType<IClass>, IClass
    {
- public RDomClass (string _baseTypeName,bool  _isAbstract,bool  _isSealed,bool  _isStatic ) : this (new RDomReferencedType(_baseTypeName),_isAbstract,_isSealed,_isStatic ) { BaseType=_baseType; BaseType=_baseType; IsAbstract=_isAbstract; BaseType=_baseType; IsAbstract=_isAbstract; IsSealed=_isSealed; BaseType=_baseType; IsAbstract=_isAbstract; IsSealed=_isSealed; IsStatic=_isStatic; } public RDomClass (IReferencedType  _baseType,bool  _isAbstract,bool  _isSealed,bool  _isStatic ) : this (null,null,null ) { BaseType=_baseType; BaseType=_baseType; IsAbstract=_isAbstract; BaseType=_baseType; IsAbstract=_isAbstract; IsSealed=_isSealed; BaseType=_baseType; IsAbstract=_isAbstract; IsSealed=_isSealed; IsStatic=_isStatic; }      public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
-         : base(rawItem, parent, model, MemberKind.Class, StemMemberKind.Class)
+      public RDomClass(string name, AccessModifier accessModifier = AccessModifier.Private, 
+                  string baseTypeName = null, bool isAbstract = false, bool isSealed = false, bool isStatic = false)
+          : this(name, accessModifier, new RDomReferencedType(baseTypeName), isAbstract, isSealed, isStatic)
+      { }
+
+      public RDomClass(string name, AccessModifier accessModifier = AccessModifier.Private,
+                  IReferencedType baseType = null, bool isAbstract = false, bool isSealed = false, bool isStatic = false)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         AccessModifier = accessModifier;
+         BaseType = baseType;
+         IsAbstract = isAbstract;
+         IsSealed = isSealed;
+         IsStatic = isStatic;
+      }
+
+      public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        : base(rawItem, parent, model, MemberKind.Class, StemMemberKind.Class)
       { }
 
       internal RDomClass(RDomClass oldRDom)

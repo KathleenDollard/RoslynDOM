@@ -11,7 +11,20 @@ namespace RoslynDom
    public class RDomTypeParameter : RDomBase<ITypeParameter, ISymbol>, ITypeParameter
    {
       private RDomCollection<IReferencedType> _constraintTypes;
- public RDomTypeParameter (string  _name,int  _ordinal,bool  _hasConstructorConstraint,bool  _hasReferenceTypeConstraint,bool  _hasValueTypeConstraint,Variance  _variance ) : this (null,null,null ) { Name=_name; Name=_name; Ordinal=_ordinal; Name=_name; Ordinal=_ordinal; HasConstructorConstraint=_hasConstructorConstraint; Name=_name; Ordinal=_ordinal; HasConstructorConstraint=_hasConstructorConstraint; HasReferenceTypeConstraint=_hasReferenceTypeConstraint; Name=_name; Ordinal=_ordinal; HasConstructorConstraint=_hasConstructorConstraint; HasReferenceTypeConstraint=_hasReferenceTypeConstraint; HasValueTypeConstraint=_hasValueTypeConstraint; Name=_name; Ordinal=_ordinal; HasConstructorConstraint=_hasConstructorConstraint; HasReferenceTypeConstraint=_hasReferenceTypeConstraint; HasValueTypeConstraint=_hasValueTypeConstraint; Variance=_variance; }
+
+      public RDomTypeParameter(string name, int ordinal = 0, bool hasConstructorConstraint = false, 
+               bool hasReferenceTypeConstraint = false, bool hasValueTypeConstraint = false, Variance variance = Variance.None)
+        : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         Ordinal = ordinal;
+         HasConstructorConstraint = hasConstructorConstraint;
+         HasReferenceTypeConstraint = hasReferenceTypeConstraint;
+         HasValueTypeConstraint = hasValueTypeConstraint;
+         Variance = variance;
+      }
+
       public RDomTypeParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent, model)
       { Initialize(); }
@@ -45,30 +58,35 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private int _ordinal;
       public int Ordinal
       {
          get { return _ordinal; }
          set { SetProperty(ref _ordinal, value); }
       }
+
       private bool _hasConstructorConstraint;
       public bool HasConstructorConstraint
       {
          get { return _hasConstructorConstraint; }
          set { SetProperty(ref _hasConstructorConstraint, value); }
       }
+
       private bool _hasReferenceTypeConstraint;
       public bool HasReferenceTypeConstraint
       {
          get { return _hasReferenceTypeConstraint; }
          set { SetProperty(ref _hasReferenceTypeConstraint, value); }
       }
+
       private bool _hasValueTypeConstraint;
       public bool HasValueTypeConstraint
       {
          get { return _hasValueTypeConstraint; }
          set { SetProperty(ref _hasValueTypeConstraint, value); }
       }
+
       private Variance _variance;
       public Variance Variance
       {

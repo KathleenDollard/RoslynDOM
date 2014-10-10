@@ -141,60 +141,70 @@ namespace RoslynDom
          get { return _type; }
          set { SetProperty(ref _type, value); }
       }
+
       private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
          set { SetProperty(ref _declaredAccessModifier, value); }
       }
+
       private bool _isAbstract;
       public bool IsAbstract
       {
          get { return _isAbstract; }
          set { SetProperty(ref _isAbstract, value); }
       }
+
       private bool _isVirtual;
       public bool IsVirtual
       {
          get { return _isVirtual; }
          set { SetProperty(ref _isVirtual, value); }
       }
+
       private bool _isOverride;
       public bool IsOverride
       {
          get { return _isOverride; }
          set { SetProperty(ref _isOverride, value); }
       }
+
       private bool _isSealed;
       public bool IsSealed
       {
          get { return _isSealed; }
          set { SetProperty(ref _isSealed, value); }
       }
+
       private bool _isNew;
       public bool IsNew
       {
          get { return _isNew; }
          set { SetProperty(ref _isNew, value); }
       }
+
       private bool _isStatic;
       public bool IsStatic
       {
          get { return _isStatic; }
          set { SetProperty(ref _isStatic, value); }
       }
+
       private IStructuredDocumentation _structuredDocumentation;
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
          set { SetProperty(ref _structuredDocumentation, value); }
       }
+
       private string _description;
       public string Description
       {

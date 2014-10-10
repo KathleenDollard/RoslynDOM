@@ -2,11 +2,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
- using System.ComponentModel.DataAnnotations;namespace RoslynDom
+
+namespace RoslynDom
 {
    public class RDomFinallyStatement : RDomStatementBlockBase<IFinallyStatement>, IFinallyStatement
    {
+
+      public RDomFinallyStatement()
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+      }
+
       public RDomFinallyStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }

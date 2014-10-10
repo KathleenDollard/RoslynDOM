@@ -12,6 +12,18 @@ namespace RoslynDom
       private RDomCollection<IStatementCommentWhite> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
+      public RDomConversionOperator(string name, string typeName, bool isImplicit)
+            : this(name,  new RDomReferencedType(typeName), isImplicit)
+      {}
+      public RDomConversionOperator(string name, IReferencedType type, bool isImplicit)
+            : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         AccessModifier = accessModifier;
+         Type = type;
+         IsImplicit = isImplicit;
+      }
       public RDomConversionOperator(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }
@@ -113,11 +125,13 @@ namespace RoslynDom
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
-      private bool _hasBlock ;
+      private bool _hasBlock;
+      private readonly AccessModifier accessModifier;
+
       public bool HasBlock
       {
-         get { return true; return _hasBlock;}
-         set { SetProperty(ref _hasBlock, value);}
+         get { return true; return _hasBlock; }
+         set { SetProperty(ref _hasBlock, value); }
       }
 
       public MemberKind MemberKind

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
@@ -26,7 +26,7 @@ namespace RoslynDom
          Initialize();
          // Really need to keep them in order so need to iterate entire list in order
          var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;
-         foreach (var memberin oldRDom.StemMembersAll)
+         foreach (var member in oldRDom.StemMembersAll)
          {
             if (TryCopyMember<RDomClass>(member, m => new RDomClass(m))) continue;
             if (TryCopyMember<RDomStructure>(member, m => new RDomStructure(m))) continue;
@@ -89,7 +89,7 @@ namespace RoslynDom
          return AddUsingDirective(usingDirective);
       }
 
-      public IEnumerable<IUsingDirective> AddUsingDirectives(params IUsingDirective [] usingDirectives)
+      public IEnumerable<IUsingDirective> AddUsingDirectives(params IUsingDirective[] usingDirectives)
       {
          StemMembersAll.AddOrMoveRange(usingDirectives);
          return usingDirectives;
@@ -113,7 +113,7 @@ namespace RoslynDom
          return AddNamespace(nspace);
       }
 
-      public IEnumerable<INamespace> AddNamespaces(params INamespace [] namespaces)
+      public IEnumerable<INamespace> AddNamespaces(params INamespace[] namespaces)
       {
          StemMembersAll.AddOrMoveRange(namespaces);
          return namespaces;

@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using cm=System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomInvocationStatement : RDomBase<IInvocationStatement, ISymbol>, IInvocationStatement

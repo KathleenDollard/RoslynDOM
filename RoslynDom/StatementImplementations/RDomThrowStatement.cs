@@ -1,14 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomThrowStatement : RDomBase<IThrowStatement, ISymbol>, IThrowStatement
    {
- public RDomThrowStatement (IExpression  _exceptionExpression ) : this (null,null,null ) { ExceptionExpression=_exceptionExpression; }
+      public RDomThrowStatement(IExpression exceptionExpression = null)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         ExceptionExpression = exceptionExpression;
+      }
+
       public RDomThrowStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }
@@ -21,11 +24,11 @@ namespace RoslynDom
          ExceptionExpression = oldRDom.ExceptionExpression.Copy();
       }
 
+      private IExpression _exceptionExpression;
       public IExpression ExceptionExpression
       {
          get { return _exceptionExpression; }
          set { SetProperty(ref _exceptionExpression, value); }
       }
-      private IExpression _exceptionExpression;
    }
 }

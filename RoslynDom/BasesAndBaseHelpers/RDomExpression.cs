@@ -1,13 +1,21 @@
-using System;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomExpression : RDomBase<IExpression, ISymbol>, IExpression
    {
- public RDomExpression (string  _expression,ExpressionType  _expressionType ) : this (null,null,null ) { Expression=_expression; Expression=_expression; ExpressionType=_expressionType; }      public RDomExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
-         : base(rawItem, parent, model)
+      public RDomExpression(string expression, ExpressionType expressionType)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Expression = expression;
+         ExpressionType = expressionType;
+      }
+
+      public RDomExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
+        : base(rawItem, parent, model)
       { }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
@@ -26,12 +34,13 @@ namespace RoslynDom
          get { return _expression; }
          set { SetProperty(ref _expression, value); }
       }
-      [Required]
+
+      private ExpressionType _expressionType;
+     [Required]
       public ExpressionType ExpressionType
       {
          get { return _expressionType; }
          set { SetProperty(ref _expressionType, value); }
       }
-      private ExpressionType _expressionType;
    }
 }

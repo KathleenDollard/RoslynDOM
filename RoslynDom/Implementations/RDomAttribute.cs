@@ -11,7 +11,14 @@ namespace RoslynDom
    public class RDomAttribute : RDomBase<IAttribute, ISymbol>, IAttribute
    {
       private List<IAttributeValue> _attributeValues = new List<IAttributeValue>();
- public RDomAttribute (string  _name ) : this (null,null,null ) { Name=_name; }
+
+      public RDomAttribute(string name)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+      }
+
       public RDomAttribute(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }

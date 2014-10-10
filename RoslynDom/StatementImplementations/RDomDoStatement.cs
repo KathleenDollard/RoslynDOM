@@ -1,13 +1,19 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
- using System.ComponentModel.DataAnnotations;namespace RoslynDom
-{
-    public class RDomDoStatement : RDomBaseLoop<IDoStatement>, IDoStatement
-    {
 
-        public RDomDoStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
+namespace RoslynDom
+{
+   public class RDomDoStatement : RDomBaseLoop<IDoStatement>, IDoStatement
+    {
+      public RDomDoStatement(IExpression condition,bool testAtEnd = false)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         TestAtEnd = testAtEnd;
+         Condition = condition;
+      }
+
+      public RDomDoStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
         { Initialize(); }
 

@@ -12,7 +12,20 @@ namespace RoslynDom
    {
       private AttributeCollection _attributes = new AttributeCollection();
       private RDomCollection<IEnumMember> _values;
- public RDomEnum (string  _name,AccessModifier  _accessModifier,AccessModifier  _declaredAccessModifier,string _underlyingTypeName,IStructuredDocumentation  _structuredDocumentation,string  _description ) : this (_name,_accessModifier,_declaredAccessModifier,new RDomReferencedType(_underlyingTypeName),_structuredDocumentation,_description ) { Name=_name; Name=_name; AccessModifier=_accessModifier; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; UnderlyingType=_underlyingType; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; UnderlyingType=_underlyingType; StructuredDocumentation=_structuredDocumentation; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; UnderlyingType=_underlyingType; StructuredDocumentation=_structuredDocumentation; Description=_description; } public RDomEnum (string  _name,AccessModifier  _accessModifier,AccessModifier  _declaredAccessModifier,IReferencedType  _underlyingType,IStructuredDocumentation  _structuredDocumentation,string  _description ) : this (null,null,null ) { Name=_name; Name=_name; AccessModifier=_accessModifier; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; UnderlyingType=_underlyingType; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; UnderlyingType=_underlyingType; StructuredDocumentation=_structuredDocumentation; Name=_name; AccessModifier=_accessModifier; DeclaredAccessModifier=_declaredAccessModifier; UnderlyingType=_underlyingType; StructuredDocumentation=_structuredDocumentation; Description=_description; }
+
+      public RDomEnum(string name, AccessModifier accessModifier = AccessModifier.Private, string underlyingTypeName = null)
+          : this(name, accessModifier, new RDomReferencedType(underlyingTypeName))
+      { }
+
+      public RDomEnum(string name, AccessModifier accessModifier = AccessModifier.Private, IReferencedType underlyingType = null)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         AccessModifier = accessModifier;
+         UnderlyingType = underlyingType;
+      }
+
       public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
           : base(rawItem, parent, model)
       { Initialize(); }
@@ -54,30 +67,35 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
          set { SetProperty(ref _declaredAccessModifier, value); }
       }
+
       private IReferencedType _underlyingType;
       public IReferencedType UnderlyingType
       {
          get { return _underlyingType; }
          set { SetProperty(ref _underlyingType, value); }
       }
+
       private IStructuredDocumentation _structuredDocumentation;
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
          set { SetProperty(ref _structuredDocumentation, value); }
       }
+
       private string _description;
       public string Description
       {

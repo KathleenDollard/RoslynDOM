@@ -8,7 +8,18 @@ namespace RoslynDom
    public class RDomAttributeValue
        : RDomBase<IAttributeValue, ISymbol>, IAttributeValue
    {
- public RDomAttributeValue (string  _name,AttributeValueStyle  _style,object  _value,string  _valueConstantIdentifier,LiteralKind  _valueType,System.Type  _type ) : this (null,null,null ) { Name=_name; Name=_name; Style=_style; Name=_name; Style=_style; Value=_value; Name=_name; Style=_style; Value=_value; ValueConstantIdentifier=_valueConstantIdentifier; Name=_name; Style=_style; Value=_value; ValueConstantIdentifier=_valueConstantIdentifier; ValueType=_valueType; Name=_name; Style=_style; Value=_value; ValueConstantIdentifier=_valueConstantIdentifier; ValueType=_valueType; Type=_type; }
+      public RDomAttributeValue(string name, AttributeValueStyle style = AttributeValueStyle.Positional,
+               object value = null, string valueConstantIdentifier = null, LiteralKind valueType = LiteralKind.Unknown)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         Style = style;
+         Value = value;
+         ValueConstantIdentifier = valueConstantIdentifier;
+         ValueType = valueType;
+      }
+
       public RDomAttributeValue(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }
@@ -33,35 +44,40 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private AttributeValueStyle _style;
       public AttributeValueStyle Style
       {
          get { return _style; }
          set { SetProperty(ref _style, value); }
       }
+
       private object _value;
       public object Value
       {
          get { return _value; }
          set { SetProperty(ref _value, value); }
       }
+
       private string _valueConstantIdentifier;
       public string ValueConstantIdentifier
       {
          get { return _valueConstantIdentifier; }
          set { SetProperty(ref _valueConstantIdentifier, value); }
       }
+
       private LiteralKind _valueType;
       public LiteralKind ValueType
       {
          get { return _valueType; }
          set { SetProperty(ref _valueType, value); }
       }
+
+      private Type _type;
       public Type Type
       {
          get { return _type; }
          set { SetProperty(ref _type, value); }
       }
-      private Type _type;
    }
 }

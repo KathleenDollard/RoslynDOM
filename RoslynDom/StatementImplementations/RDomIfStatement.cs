@@ -4,11 +4,19 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomIfStatement : RDomStatementBlockBase<IIfStatement>, IIfStatement
    {
       private RDomCollection<IElseBaseStatement> _elses;
+
+      public RDomIfStatement(IExpression  condition)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Condition = condition;
+      }
 
       public RDomIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
@@ -42,9 +50,12 @@ namespace RoslynDom
          }
       }
 
-      private IExpression _condition ;
-      public IExpression Condition { get {return _condition; }
-set {SetProperty(ref _condition, value); }}
+      private IExpression _condition;
+      public IExpression Condition
+      {
+         get { return _condition; }
+         set { SetProperty(ref _condition, value); }
+      }
 
       public RDomCollection<IElseBaseStatement> Elses
       { get { return _elses; } }

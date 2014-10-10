@@ -11,6 +11,14 @@ namespace RoslynDom
       private RDomCollection<IStatementCommentWhite> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
+      public RDomDestructor(string name, AccessModifier accessModifier = AccessModifier.Private)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Name = name;
+         AccessModifier = accessModifier;
+      }
+
       public RDomDestructor(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }
@@ -50,12 +58,14 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IStructuredDocumentation _structuredDocumentation;
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
          set { SetProperty(ref _structuredDocumentation, value); }
       }
+
       private string _description;
       public string Description
       {
@@ -63,22 +73,22 @@ namespace RoslynDom
          set { SetProperty(ref _description, value); }
       }
 
-      private AccessModifier _accessModifier ;
+      private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get
-         { return AccessModifier.Public; return _accessModifier;}
+         { return AccessModifier.Public; return _accessModifier; }
          set
-         { SetProperty(ref _accessModifier, value);}
+         { SetProperty(ref _accessModifier, value); }
       }
 
-      private AccessModifier _declaredAccessModifier ;
+      private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {
          get
-         { return AccessModifier; return _declaredAccessModifier;}
+         { return AccessModifier; return _declaredAccessModifier; }
          set
-         { SetProperty(ref _declaredAccessModifier, value);}
+         { SetProperty(ref _declaredAccessModifier, value); }
       }
 
       public RDomCollection<IStatementCommentWhite> StatementsAll
@@ -87,11 +97,11 @@ namespace RoslynDom
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
-      private bool _hasBlock ;
+      private bool _hasBlock;
       public bool HasBlock
       {
-         get { return true; return _hasBlock;}
-         set { SetProperty(ref _hasBlock, value);}
+         get { return true; return _hasBlock; }
+         set { SetProperty(ref _hasBlock, value); }
       }
 
       public MemberKind MemberKind

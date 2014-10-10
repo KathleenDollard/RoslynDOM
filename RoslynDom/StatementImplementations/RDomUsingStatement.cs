@@ -1,15 +1,30 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomUsingStatement : RDomBase<IUsingStatement, ISymbol>, IUsingStatement
    {
       private RDomCollection<IStatementCommentWhite> _statements;
- public RDomUsingStatement (IExpression  _expression,IVariableDeclaration  _variable,bool  _hasBlock ) : this (null,null,null ) { Expression=_expression; Expression=_expression; Variable=_variable; Expression=_expression; Variable=_variable; HasBlock=_hasBlock; }
+
+      public RDomUsingStatement(IExpression expression, bool hasBlock)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Expression = expression;
+         HasBlock = hasBlock;
+      }
+
+      public RDomUsingStatement( IVariableDeclaration variable, bool hasBlock)
+      : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Variable = variable;
+         HasBlock = hasBlock;
+      }
+
       public RDomUsingStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }
@@ -48,12 +63,14 @@ namespace RoslynDom
          get { return _expression; }
          set { SetProperty(ref _expression, value); }
       }
+
       private IVariableDeclaration _variable;
       public IVariableDeclaration Variable
       {
          get { return _variable; }
          set { SetProperty(ref _variable, value); }
       }
+
       private bool _hasBlock;
       public bool HasBlock
       {

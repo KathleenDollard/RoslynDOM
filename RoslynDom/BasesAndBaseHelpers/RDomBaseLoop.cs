@@ -51,12 +51,14 @@ namespace RoslynDom
          get { return _condition; }
          set { SetProperty(ref _condition, value); }
       }
+
       private bool _testAtEnd;
       public bool TestAtEnd
       {
          get { return _testAtEnd; }
          set { SetProperty(ref _testAtEnd, value); }
       }
+
       private bool _hasBlock;
       public bool HasBlock
       {

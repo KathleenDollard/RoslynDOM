@@ -7,6 +7,13 @@ namespace RoslynDom
 {
    public class RDomForEachStatement : RDomBaseLoop<IForEachStatement>, IForEachStatement
    {
+      public RDomForEachStatement(IVariableDeclaration variable, IExpression condition)
+          : this(null, null, null)
+      {
+         NeedsFormatting = true;
+         Variable = variable;
+         Condition = condition;
+      }
 
       public RDomForEachStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
@@ -29,8 +36,11 @@ namespace RoslynDom
          }
       }
 
-      public IVariableDeclaration Variable { get {return _variable; }
-set {SetProperty(ref _variable, value); }}
-      private IVariableDeclaration _variable ;
+      private IVariableDeclaration _variable;
+      public IVariableDeclaration Variable
+      {
+         get { return _variable; }
+         set { SetProperty(ref _variable, value); }
+      }
    }
 }
