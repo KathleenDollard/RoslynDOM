@@ -7,12 +7,11 @@ namespace RoslynDom
 {
    public class RDomForEachStatement : RDomBaseLoop<IForEachStatement>, IForEachStatement
    {
-      public RDomForEachStatement(IVariableDeclaration variable, IExpression condition)
-          : this(null, null, null)
+      public RDomForEachStatement(IVariableDeclaration variable, IExpression condition, bool hasBlock = false)
+          : base(condition, false, hasBlock)
       {
-         NeedsFormatting = true;
-         Variable = variable;
-         Condition = condition;
+         Initialize();
+         _variable = variable;
       }
 
       public RDomForEachStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)

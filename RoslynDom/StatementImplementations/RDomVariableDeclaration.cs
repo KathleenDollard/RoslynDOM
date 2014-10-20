@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
- using System.ComponentModel.DataAnnotations;
- using System.ComponentModel.DataAnnotations;namespace RoslynDom
+
+namespace RoslynDom
 {
-    public class RDomVariableDeclaration : RDomBaseVariable
+   public class RDomVariableDeclaration : RDomBaseVariable
     {
       public RDomVariableDeclaration(string name, string typeName, IExpression initializer = null,
                bool isImplicitlyTyped = false, bool isAliased = false, VariableKind variableKind = VariableKind.Local)
@@ -13,15 +12,8 @@ using RoslynDom.Common;
 
       public RDomVariableDeclaration(string name, IReferencedType type, IExpression initializer = null,
               bool isImplicitlyTyped = false, bool isAliased = false, VariableKind variableKind = VariableKind.Local)
-           : this((SyntaxNode)null, null, null)
-      {
-         Name = name;
-         Type = type;
-         Initializer = initializer;
-         IsImplicitlyTyped = isImplicitlyTyped;
-         IsAliased = isAliased;
-         VariableKind = variableKind;
-      }
+           : base(name, type, initializer, isImplicitlyTyped, isAliased, variableKind)
+      {      }
 
       public RDomVariableDeclaration(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)

@@ -9,7 +9,6 @@ namespace RoslynDom
       public RDomEmptyStatement()
       : this(null, null, null)
       {
-         NeedsFormatting = true;
       }
 
       public RDomEmptyStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)

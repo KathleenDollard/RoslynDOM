@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.Linq;
-using cm=System.ComponentModel;
+using cm = System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
@@ -65,14 +65,14 @@ namespace RoslynDom
                       bool isVolatile = false, bool isConstant = false)
        : this(null, null, null)
       {
-         Name = name;
-         ReturnType = type;
-         DeclaredAccessModifier = declaredAccessModifier;
-         IsStatic = isStatic;
-         IsNew = isNew;
-         IsReadOnly = isReadOnly;
-         IsVolatile = isVolatile;
-         IsConstant = isConstant;
+         _name = name;
+         _returnType = type;
+         _declaredAccessModifier = declaredAccessModifier;
+         _isStatic = isStatic;
+         _isNew = isNew;
+         _isReadOnly = isReadOnly;
+         _isVolatile = isVolatile;
+         _isConstant = isConstant;
          this.Whitespace2Set.Add(new Whitespace2(LanguageElement.EndOfLine, "", "\r\n", ""));
          this.Whitespace2Set.Add(new Whitespace2(LanguageElement.Identifier, "", " ", ""));
          this.Whitespace2Set.Add(new Whitespace2(LanguageElement.Static, "", " ", ""));
@@ -98,14 +98,15 @@ namespace RoslynDom
           : base(oldRDom)
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         ReturnType = oldRDom.ReturnType;
-         IsStatic = oldRDom.IsStatic;
-         IsReadOnly = oldRDom.IsReadOnly;
-         IsConstant = oldRDom.IsConstant;
-         IsVolatile = oldRDom.IsVolatile;
-         IsNew = oldRDom.IsNew;
+         _name = oldRDom.Name;
+         _returnType = oldRDom.ReturnType;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _isStatic = oldRDom.IsStatic;
+         _isReadOnly = oldRDom.IsReadOnly;
+         _isConstant = oldRDom.IsConstant;
+         _isVolatile = oldRDom.IsVolatile;
+         _isNew = oldRDom.IsNew;
          Initializer = oldRDom.Initializer == null
                          ? null
                          : oldRDom.Initializer.Copy();

@@ -8,9 +8,7 @@ namespace RoslynDom
    {
       public RDomBreakStatement()
       : this(null, null, null)
-      {
-         NeedsFormatting = true;
-      }
+      { }
 
       public RDomBreakStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)

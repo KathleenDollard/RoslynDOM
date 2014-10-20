@@ -8,12 +8,8 @@ namespace RoslynDom
    public class RDomStructure : RDomBaseType<IStructure>, IStructure
    {
       public RDomStructure(string name, AccessModifier accessModifier = AccessModifier.Private)
-      : this(null, null, null)
-      {
-         NeedsFormatting = true;
-         Name = name;
-         AccessModifier = accessModifier;
-      }
+      : base(name, accessModifier, MemberKind.Structure, StemMemberKind.Structure)
+      { }
 
       public RDomStructure(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent, model, MemberKind.Structure, StemMemberKind.Structure)
@@ -21,7 +17,7 @@ namespace RoslynDom
 
       internal RDomStructure(RDomStructure oldRDom)
           : base(oldRDom)
-      { }
+      {}
 
       public IEnumerable<IClass> Classes
       { get { return Members.OfType<IClass>().ToList(); } }

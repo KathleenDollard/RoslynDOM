@@ -36,7 +36,7 @@ namespace RoslynDom
       }
 
       private ExpressionType _expressionType;
-     [Required]
+      [Required]
       public ExpressionType ExpressionType
       {
          get { return _expressionType; }

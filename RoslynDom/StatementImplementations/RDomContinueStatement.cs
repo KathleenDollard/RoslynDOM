@@ -9,7 +9,6 @@ namespace RoslynDom
       public RDomContinueStatement()
       : this(null, null, null)
       {
-         NeedsFormatting = true;
       }
 
       public RDomContinueStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)

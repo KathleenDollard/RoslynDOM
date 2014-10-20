@@ -13,9 +13,8 @@ namespace RoslynDom
       public RDomCheckedStatement(bool uncheck, bool hasBlock)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Unchecked = uncheck;
-         HasBlock = hasBlock;
+         _unchecked = uncheck;
+         _hasBlock = hasBlock;
       }
 
       public RDomCheckedStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -30,8 +29,8 @@ namespace RoslynDom
          Initialize();
          var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
          StatementsAll.AddOrMoveRange(statements);
-         HasBlock = oldRDom.HasBlock;
-         Unchecked = oldRDom.Unchecked;
+         _hasBlock = oldRDom.HasBlock;
+         _unchecked = oldRDom.Unchecked;
       }
 
       protected void Initialize()

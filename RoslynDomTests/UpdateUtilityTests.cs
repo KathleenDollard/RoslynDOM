@@ -21,7 +21,7 @@ namespace RoslynDomTests
                         { }";
          IRoot root = RDomCSharp.Factory.GetRootFromString(csharpCode);
          Assert.IsNotNull(root);
-         UpdateUtilities.WriteRootToFile(fileName, root);
+         UpdateUtilities.WriteToFile(fileName, root);
          File.Exists(fileName);
          var actual = File.ReadAllText(fileName);
          Assert.AreEqual(csharpCode, actual);
@@ -39,7 +39,7 @@ namespace RoslynDomTests
                         { }";
          IRoot root = RDomCSharp.Factory.GetRootFromString(csharpCode);
          Assert.IsNotNull(root);
-         UpdateUtilities.WriteRootToFile(fileName, root);
+         UpdateUtilities.WriteToFile(fileName, root);
          File.Exists(fileName);
          var actual = File.ReadAllText(fileName);
          Assert.AreEqual(csharpCode, actual);

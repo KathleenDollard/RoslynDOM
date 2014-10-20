@@ -12,8 +12,7 @@ namespace RoslynDom
       public RDomElseIfStatement(IExpression condition)
           : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Condition = condition;
+         _condition = condition;
       }
 
       public RDomElseIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -25,7 +24,7 @@ namespace RoslynDom
       internal RDomElseIfStatement(RDomElseIfStatement oldRDom)
           : base(oldRDom)
       {
-         Condition = oldRDom.Condition.Copy();
+         _condition = oldRDom.Condition.Copy();
       }
 
       public override IEnumerable<IDom> Children

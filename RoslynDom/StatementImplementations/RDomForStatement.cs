@@ -6,13 +6,11 @@ namespace RoslynDom
 {
    public class RDomForStatement : RDomBaseLoop<IForStatement>, IForStatement
    {
-      public RDomForStatement(IVariableDeclaration variable, IExpression condition, IExpression incrementor)
-          : this((SyntaxNode)null, null, null)
+      public RDomForStatement(IVariableDeclaration variable, IExpression condition, IExpression incrementor, bool hasBlock)
+          : base(condition, false, hasBlock)
       {
-         NeedsFormatting = true;
-         Variable = variable;
-         Condition = condition;
-         Incrementor = incrementor;
+         _incrementor = incrementor;
+         _variable = variable;
       }
 
       public RDomForStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -24,8 +22,8 @@ namespace RoslynDom
       internal RDomForStatement(RDomForStatement oldRDom)
           : base(oldRDom)
       {
-         Incrementor = oldRDom.Incrementor.Copy();
-         Variable = oldRDom.Variable.Copy();
+         _incrementor = oldRDom.Incrementor.Copy();
+         _variable = oldRDom.Variable.Copy();
       }
 
       public override IEnumerable<IDom> Children

@@ -6,20 +6,15 @@ namespace RoslynDom
    public class RDomDeclarationStatement : RDomBaseVariable, IDeclarationStatement
    {
       public RDomDeclarationStatement(string name, string typeName, IExpression initializer = null,
-               bool isImplicitlyTyped = false, bool isAliased = false, VariableKind variableKind = VariableKind.Local)
-            : this(name, new RDomReferencedType(typeName, true), initializer, isImplicitlyTyped, isAliased, variableKind)
+               bool isImplicitlyTyped = false, bool isAliased = false, bool isConst = false, VariableKind variableKind = VariableKind.Local)
+            : this(name, new RDomReferencedType(typeName, true), initializer, isImplicitlyTyped, isAliased, isConst, variableKind)
       { }
 
       public RDomDeclarationStatement(string name, IReferencedType type, IExpression initializer = null,
-              bool isImplicitlyTyped = false, bool isAliased = false, VariableKind variableKind = VariableKind.Local)
-           : this((SyntaxNode)null, null, null)
+              bool isImplicitlyTyped = false, bool isAliased = false, bool isConst = false, VariableKind variableKind = VariableKind.Local)
+           : base(name, type, initializer, isImplicitlyTyped, isAliased, variableKind)
       {
-         Name = name;
-         Type = type;
-         Initializer = initializer;
-         IsImplicitlyTyped = isImplicitlyTyped;
-         IsAliased = isAliased;
-         VariableKind = variableKind;
+         _isConst = IsConst;
       }
 
       public RDomDeclarationStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -31,7 +26,7 @@ namespace RoslynDom
       internal RDomDeclarationStatement(RDomDeclarationStatement oldRDom)
            : base(oldRDom)
       {
-         IsConst = oldRDom.IsConst;
+         _isConst = oldRDom.IsConst;
       }
 
       private bool _isConst;

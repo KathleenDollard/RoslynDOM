@@ -7,6 +7,17 @@ namespace RoslynDom
 {
    public abstract class RDomBaseVariable : RDomBase<IVariableDeclaration, ISymbol>, IVariableDeclaration
    {
+      protected RDomBaseVariable(string name, IReferencedType type, IExpression initializer, bool isImplicitlyTyped, bool isAliased, VariableKind variableKind)
+          : this(null, null, null)
+      {
+         _name = name;
+         _type = type;
+         _initializer = initializer;
+         _isImplicitlyTyped = IsImplicitlyTyped;
+         _isAliased = isAliased;
+         _variableKind = variableKind;
+      }
+
       protected RDomBaseVariable(SyntaxNode rawItem, IDom parent, SemanticModel model)
           : base(rawItem, parent, model)
       { }
@@ -16,11 +27,12 @@ namespace RoslynDom
       internal RDomBaseVariable(IVariableDeclaration oldRDom)
           : base(oldRDom)
       {
-         VariableKind = oldRDom.VariableKind;
-         IsImplicitlyTyped = oldRDom.IsImplicitlyTyped;
-         IsAliased = oldRDom.IsAliased;
-         Type = oldRDom.Type.Copy();
-         if (oldRDom.Initializer != null) Initializer = oldRDom.Initializer.Copy();
+         _name = oldRDom.Name;
+         _type = oldRDom.Type.Copy();
+         _isImplicitlyTyped = oldRDom.IsImplicitlyTyped;
+         _isAliased = oldRDom.IsAliased;
+         _variableKind = oldRDom.VariableKind;
+         if (oldRDom.Initializer != null) _initializer = oldRDom.Initializer.Copy();
       }
 
       public override IEnumerable<IDom> Children

@@ -8,7 +8,6 @@ namespace RoslynDom
       public RDomElseStatement()
           : this(null, null, null)
       {
-         NeedsFormatting = true;
       }
 
       public RDomElseStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)

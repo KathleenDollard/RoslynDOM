@@ -15,9 +15,8 @@ namespace RoslynDom
       public RDomPropertyAccessor(string name, AccessorType accessorType, AccessModifier accessModifier = AccessModifier.Private )
       : this(null, AccessorType.Unknown , null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         AccessModifier = accessModifier;
+         _name = name;
+         _accessModifier = accessModifier;
       }
 
       public RDomPropertyAccessor(SyntaxNode rawItem, AccessorType accessorType, IDom parent, SemanticModel model)
@@ -37,9 +36,10 @@ namespace RoslynDom
          var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
          StatementsAll.AddOrMoveRange(newStatements);
 
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         HasBlock = oldRDom.HasBlock;
+         _name = oldRDom.Name;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _hasBlock = oldRDom.HasBlock;
          _accessorType = oldRDom.AccessorType;
       }
 

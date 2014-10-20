@@ -21,23 +21,21 @@ namespace RoslynDomExampleTests
       private TriviaManager triviaManager = new TriviaManager();
 
       [TestMethod]
-      public void Update_notify_property_changed()
-      {
-         var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_A", subDirectories);
-         UpdateUtilities.DoUpdate(filePairs,
-               root => root.Descendants
-                     .OfType<IProperty>()
-                     .Where(x => UpdateNotifyPropertyChanged.ShouldNotifyPropertyChanged(x))
-                     .Where(x => IsInRDomClass(x)),
-               UpdateNotifyPropertyChanged.NeedsNotifyPropertyChanged,
-               UpdateNotifyPropertyChanged.FixNotifyPropertyChanged);
-      }
+public void Update_notify_property_changed()
+{
+   var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_A", subDirectories);
+   UpdateUtilities.DoUpdateOnFiles(filePairs,
+         root => root.Descendants
+               .OfType<IProperty>()
+               .Where(x => IsInRDomClass(x)),
+         new UpdateNotifyPropertyChanged());
+}
 
       [TestMethod]
       public void Add_RDom_constructors()
       {
          var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_B", subDirectories);
-         UpdateUtilities.DoUpdate(filePairs,
+         UpdateUtilities.DoUpdateOnFiles(filePairs,
                root => GetRDomClasses(root),
                NeedsConstructor,
                AddConstructor);
@@ -63,8 +61,8 @@ namespace RoslynDomExampleTests
       private bool NeedsConstructor(IClass cl)
       {
          var constructors = cl.Constructors
-                           .Where(x => (! x.Parameters.Any()
-                                     || ( x.Parameters.First().Type.Name != "SyntaxNode"
+                           .Where(x => (!x.Parameters.Any()
+                                     || (x.Parameters.First().Type.Name != "SyntaxNode"
                                           && x.Parameters.First().Type.Name != cl.Name)));
          if (constructors.Any()) { return false; }
          return true;

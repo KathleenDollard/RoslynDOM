@@ -20,10 +20,10 @@ namespace RoslynDom
                      bool isRef = false, bool isOut = false)
        : this(null, null, null)
       {
-         Name = name;
-         ValueExpression = valueExpression;
-         IsRef = isRef;
-         IsOut = isOut;
+         _name = name;
+         _valueExpression = valueExpression;
+         _isRef = isRef;
+         _isOut = isOut;
       }
 
       public RDomArgument(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -36,10 +36,10 @@ namespace RoslynDom
       internal RDomArgument(RDomArgument oldRDom)
           : base(oldRDom)
       {
-         Name = oldRDom.Name;
-         IsRef = oldRDom.IsRef;
-         IsOut = oldRDom.IsOut;
-         ValueExpression = oldRDom.ValueExpression.Copy();
+         _name = oldRDom.Name;
+         _isRef = oldRDom.IsRef;
+         _isOut = oldRDom.IsOut;
+         _valueExpression = oldRDom.ValueExpression.Copy();
       }
 
       private string _name;

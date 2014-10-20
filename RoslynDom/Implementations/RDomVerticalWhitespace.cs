@@ -13,15 +13,15 @@ namespace RoslynDom
       public RDomVerticalWhitespace(int count, bool isElastic = false)
           : base(StemMemberKind.Whitespace, MemberKind.Whitespace)
       {
-         Count = count;
-         IsElastic = isElastic;
+         _count = count;
+         _isElastic = isElastic;
       }
 
       internal RDomVerticalWhitespace(RDomVerticalWhitespace oldRDom)
           : base(oldRDom)
       {
-         Count = oldRDom.Count;
-         IsElastic = oldRDom.IsElastic;
+         _count = oldRDom.Count;
+         _isElastic = oldRDom.IsElastic;
       }
 
       // TODO: This is not going to be updated by the generator, consider how this affects the RoslynDom

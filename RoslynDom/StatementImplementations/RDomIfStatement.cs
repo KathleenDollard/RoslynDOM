@@ -14,8 +14,7 @@ namespace RoslynDom
       public RDomIfStatement(IExpression  condition)
           : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Condition = condition;
+         _condition = condition;
       }
 
       public RDomIfStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -30,7 +29,7 @@ namespace RoslynDom
          Initialize();
          var newElses = RoslynDomUtilities.CopyMembers(oldRDom.Elses);
          Elses.AddOrMoveRange(newElses);
-         Condition = oldRDom.Condition.Copy();
+         _condition = oldRDom.Condition.Copy();
       }
 
       private void Initialize()

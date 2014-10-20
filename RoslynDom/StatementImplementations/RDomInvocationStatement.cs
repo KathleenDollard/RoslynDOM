@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm=System.ComponentModel;
+using cm = System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace RoslynDom
@@ -18,7 +18,7 @@ namespace RoslynDom
       public RDomInvocationStatement(IExpression expression, bool suppressNewLine = false)
        : this(null, null, null)
       {
-         Invocation = expression;
+         _invocation = expression;
          if (!suppressNewLine)
          { Whitespace2Set.Add(new Whitespace2(LanguageElement.EndOfLine, "", "\r\n", "")); }
       }
@@ -33,18 +33,18 @@ namespace RoslynDom
       internal RDomInvocationStatement(RDomInvocationStatement oldRDom)
          : base(oldRDom)
       {
-         Invocation = oldRDom.Invocation.Copy();
+         _invocation = oldRDom.Invocation.Copy();
       }
 
       public override IEnumerable<IDom> Children
       { get { return new List<IDom>() { Invocation }; } }
 
       [Required]
+      private IExpression _invocation;
       public IExpression Invocation
       {
          get { return _invocation; }
          set { SetProperty(ref _invocation, value); }
       }
-      private IExpression _invocation;
    }
 }

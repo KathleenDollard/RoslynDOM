@@ -16,15 +16,12 @@ namespace RoslynDom
 
       public RDomClass(string name, AccessModifier accessModifier = AccessModifier.Private,
                   IReferencedType baseType = null, bool isAbstract = false, bool isSealed = false, bool isStatic = false)
-          : this(null, null, null)
+      : base(name, accessModifier, MemberKind.Class, StemMemberKind.Class)
       {
-         NeedsFormatting = true;
-         Name = name;
-         AccessModifier = accessModifier;
-         BaseType = baseType;
-         IsAbstract = isAbstract;
-         IsSealed = isSealed;
-         IsStatic = isStatic;
+         _baseType = baseType;
+         _isAbstract = isAbstract;
+         _isSealed = isSealed;
+         _isStatic = isStatic;
       }
 
       public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -34,10 +31,10 @@ namespace RoslynDom
       internal RDomClass(RDomClass oldRDom)
          : base(oldRDom)
       {
-         if (oldRDom.BaseType != null) { BaseType = oldRDom.BaseType.Copy(); }
-         IsAbstract = oldRDom.IsAbstract;
-         IsSealed = oldRDom.IsSealed;
-         IsStatic = oldRDom.IsStatic;
+         if (oldRDom.BaseType != null) { _baseType = oldRDom.BaseType.Copy(); }
+         _isAbstract = oldRDom.IsAbstract;
+         _isSealed = oldRDom.IsSealed;
+         _isStatic = oldRDom.IsStatic;
       }
 
       public IEnumerable<IField> Fields

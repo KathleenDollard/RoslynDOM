@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Math;
 
 namespace RoslynDom
 {
@@ -15,10 +16,18 @@ namespace RoslynDom
       public class Playspace
       {
          [TestMethod]
-         public void Play()
+         public async void Play()
          {
+            var i = 2;
             var output = "";
-           
+            var x = output;
+            var y = PI;
+            try
+            { }
+            catch
+            {
+               await new Task(null);
+            }
          }
 
          public class BarBase { }
@@ -118,7 +127,7 @@ namespace RoslynDomTests
 
       private const string Foo = "FooText";
 
-      [MyAttr(Foo, typeof(string), "Bar", AnotherClass.Foo4, typeof(PlaySpace ))]
+      [MyAttr(Foo, typeof(string), "Bar", AnotherClass.Foo4, typeof(PlaySpace))]
       public void Foo3(string x = Foo)
       {
       }
@@ -159,7 +168,7 @@ namespace RoslynDomTests
    {
       public static void Foo()
       {
-         #region 
+         #region
          try
          { }
          catch (Exception ex)

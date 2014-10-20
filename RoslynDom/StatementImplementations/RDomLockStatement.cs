@@ -12,9 +12,8 @@ namespace RoslynDom
       public RDomLockStatement(IExpression expression, bool hasBlock)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Expression = expression;
-         HasBlock = hasBlock;
+         _expression = expression;
+         _hasBlock = hasBlock;
       }
 
       public RDomLockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -29,8 +28,8 @@ namespace RoslynDom
          Initialize();
          var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
          StatementsAll.AddOrMoveRange(statements);
-         HasBlock = oldRDom.HasBlock;
-         Expression = oldRDom.Expression.Copy();
+         _hasBlock = oldRDom.HasBlock;
+         _expression = oldRDom.Expression.Copy();
       }
 
       private void Initialize()

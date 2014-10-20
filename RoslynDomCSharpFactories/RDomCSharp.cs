@@ -61,6 +61,12 @@ namespace RoslynDom.CSharp
          return syntaxGroup.Single();
       }
 
+      public SyntaxTree BuildSyntaxTree(IRoot root)
+      {
+         var rootNode = BuildSyntax(root);
+         return SyntaxFactory.SyntaxTree(rootNode);
+      }
+
       public IExpression ParseExpression(string expressionAsString)
       {
          var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);

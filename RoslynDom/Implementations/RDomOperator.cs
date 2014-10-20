@@ -20,11 +20,11 @@ namespace RoslynDom
       public RDomOperator(string name, IReferencedType type, Operator op)
           : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         Type = type;
-         Operator = op;
+         _name = name;
+         _type = type;
+         _operator = op;
       }
+
       public RDomOperator(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }
@@ -43,8 +43,9 @@ namespace RoslynDom
          IsStatic = oldRDom.IsStatic;
          AccessModifier = oldRDom.AccessModifier;
          DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         Operator = oldRDom.Operator;
-         Type = oldRDom.Type.Copy();
+         _name = oldRDom.Name;
+         _type = oldRDom.Type.Copy();
+         _operator = oldRDom.Operator;
       }
 
       private void Initialize()

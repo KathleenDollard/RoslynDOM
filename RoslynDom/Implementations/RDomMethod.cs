@@ -27,17 +27,16 @@ namespace RoslynDom
                bool isExtensionMethod = false)
           : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         ReturnType = returnType;
-         AccessModifier = accessModifier;
-         IsAbstract = isAbstract;
-         IsVirtual = isVirtual;
-         IsOverride = isOverride;
-         IsSealed = isSealed;
-         IsNew = isNew;
-         IsStatic = isStatic;
-         IsExtensionMethod = isExtensionMethod;
+         _name = name;
+         _returnType = returnType;
+         _accessModifier = accessModifier;
+         _isAbstract = isAbstract;
+         _isVirtual = isVirtual;
+         _isOverride = isOverride;
+         _isSealed = isSealed;
+         _isNew = isNew;
+         _isStatic = isStatic;
+         _isExtensionMethod = isExtensionMethod;
       }
 
       public RDomMethod(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -58,16 +57,17 @@ namespace RoslynDom
          var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
          StatementsAll.AddOrMoveRange(newStatements);
 
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         ReturnType = oldRDom.ReturnType;
-         IsAbstract = oldRDom.IsAbstract;
-         IsVirtual = oldRDom.IsVirtual;
-         IsOverride = oldRDom.IsOverride;
-         IsSealed = oldRDom.IsSealed;
-         IsStatic = oldRDom.IsStatic;
-         IsNew = oldRDom.IsNew;
-         IsExtensionMethod = oldRDom.IsExtensionMethod;
+         _name = oldRDom.Name;
+         _returnType = oldRDom.ReturnType;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _isAbstract = oldRDom.IsAbstract;
+         _isVirtual = oldRDom.IsVirtual;
+         _isOverride = oldRDom.IsOverride;
+         _isSealed = oldRDom.IsSealed;
+         _isStatic = oldRDom.IsStatic;
+         _isNew = oldRDom.IsNew;
+         _isExtensionMethod = oldRDom.IsExtensionMethod;
       }
 
       private void Initialize()

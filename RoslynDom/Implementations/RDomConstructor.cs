@@ -17,11 +17,10 @@ namespace RoslynDom
                       bool isStatic = false, ConstructorInitializerType constructorInitializerType = ConstructorInitializerType.None)
        : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         DeclaredAccessModifier = declaredAccessModifier;
-         IsStatic = isStatic;
-         ConstructorInitializerType = constructorInitializerType;
+         _name = name;
+         _declaredAccessModifier = declaredAccessModifier;
+         _isStatic = isStatic;
+         _constructorInitializerType = constructorInitializerType;
       }
 
       public RDomConstructor(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -42,9 +41,10 @@ namespace RoslynDom
          var newInitializationArguments = RoslynDomUtilities.CopyMembers(oldRDom._initializationArguments);
          InitializationArguments.AddOrMoveRange(newInitializationArguments);
          ConstructorInitializerType = oldRDom.ConstructorInitializerType;
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         IsStatic = oldRDom.IsStatic;
+         _name = oldRDom.Name;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _isStatic = oldRDom.IsStatic;
       }
 
       private void Initialize()

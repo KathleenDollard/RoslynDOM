@@ -81,15 +81,15 @@ namespace RoslynDom
                bool isSealed = false, bool isStatic = false, bool isNew = false)
        : this(null, null, null)
       {
-         Name = name;
-         Type = type;
-         AccessModifier = accessModifier;
-         IsAbstract = isAbstract;
-         IsVirtual = isVirtual;
-         IsOverride = isOverride;
-         IsSealed = isSealed;
-         IsStatic = isStatic;
-         IsNew = isNew;
+         _name = name;
+         _type = type;
+         _accessModifier = accessModifier;
+         _isAbstract = isAbstract;
+         _isVirtual = isVirtual;
+         _isOverride = isOverride;
+         _isSealed = isSealed;
+         _isStatic = isStatic;
+         _isNew = isNew;
       }
 
       [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
@@ -104,15 +104,16 @@ namespace RoslynDom
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
 
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         Type = oldRDom.Type;
-         IsAbstract = oldRDom.IsAbstract;
-         IsVirtual = oldRDom.IsVirtual;
-         IsOverride = oldRDom.IsOverride;
-         IsSealed = oldRDom.IsSealed;
-         IsStatic = oldRDom.IsStatic;
-         IsNew = oldRDom.IsNew;
+         _name = oldRDom.Name;
+         _type = oldRDom.Type;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _isAbstract = oldRDom.IsAbstract;
+         _isVirtual = oldRDom.IsVirtual;
+         _isOverride = oldRDom.IsOverride;
+         _isSealed = oldRDom.IsSealed;
+         _isStatic = oldRDom.IsStatic;
+         _isNew = oldRDom.IsNew;
       }
 
       public override IEnumerable<IDom> Children

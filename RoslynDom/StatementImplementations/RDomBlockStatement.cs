@@ -12,7 +12,6 @@ namespace RoslynDom
       public RDomBlockStatement()
       : this(null, null, null)
       {
-         NeedsFormatting = true;
       }
 
       public RDomBlockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)

@@ -18,10 +18,9 @@ namespace RoslynDom
                   IExpression  condition = null)
           : this((SyntaxNode)null, null, null)
       {
-         NeedsFormatting = true;
-         ExceptionType = exceptionType;
-         Variable = variable;
-         Condition = condition;
+         _exceptionType = exceptionType;
+         _variable = variable;
+         _condition = condition;
       }
 
       public RDomCatchStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -34,11 +33,11 @@ namespace RoslynDom
           : base(oldRDom)
       {
          if (oldRDom.Condition != null)
-         { Condition = oldRDom.Condition.Copy(); }
+         { _condition = oldRDom.Condition.Copy(); }
          if (oldRDom.Variable != null)
-         { Variable = oldRDom.Variable.Copy(); }
+         { _variable = oldRDom.Variable.Copy(); }
          if (oldRDom.ExceptionType != null)
-         { ExceptionType = oldRDom.ExceptionType.Copy(); }
+         { _exceptionType = oldRDom.ExceptionType.Copy(); }
       }
 
       public override IEnumerable<IDom> Children

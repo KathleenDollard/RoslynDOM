@@ -6,29 +6,27 @@ namespace RoslynDom
    {
       internal RDomCommentWhite(StemMemberKind stemMemberKind, MemberKind memberKind)
       {
-         StemMemberKind = stemMemberKind;
-         MemberKind = memberKind;
+         _stemMemberKind = stemMemberKind;
+         _memberKind = memberKind;
       }
 
       internal RDomCommentWhite(RDomCommentWhite oldRDom)
           : base(oldRDom)
       {
-         StemMemberKind = oldRDom.StemMemberKind;
-         MemberKind = oldRDom.MemberKind;
+         _stemMemberKind = oldRDom.StemMemberKind;
+         _memberKind = oldRDom.MemberKind;
       }
 
       private StemMemberKind _stemMemberKind;
       public StemMemberKind StemMemberKind
       {
          get { return _stemMemberKind; }
-         set { SetProperty(ref _stemMemberKind, value); }
       }
 
       private MemberKind _memberKind;
       public MemberKind MemberKind
       {
          get { return _memberKind; }
-         set { SetProperty(ref _memberKind, value); }
       }
 
       public override object OriginalRawItem

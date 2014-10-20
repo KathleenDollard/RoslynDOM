@@ -11,6 +11,15 @@ namespace RoslynDom
    {
       private RDomCollection<IStatementCommentWhite> _statements;
 
+      protected RDomBaseLoop(IExpression condition, bool testAtEnd, bool hasBlock)
+          : this(null, null, null)
+      {
+         Initialize();
+         _condition = condition;
+         _testAtEnd = testAtEnd;
+         _hasBlock = hasBlock;
+      }
+
       internal RDomBaseLoop(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       {
@@ -23,9 +32,9 @@ namespace RoslynDom
          Initialize();
          var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
          StatementsAll.AddOrMoveRange(statements);
-         Condition = oldRDom.Condition.Copy();
-         HasBlock = oldRDom.HasBlock;
-         TestAtEnd = oldRDom.TestAtEnd;
+         _condition = oldRDom.Condition.Copy();
+         _testAtEnd = oldRDom.TestAtEnd;
+         _hasBlock = oldRDom.HasBlock;
       }
 
       protected void Initialize()

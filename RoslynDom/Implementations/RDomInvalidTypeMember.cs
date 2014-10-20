@@ -11,9 +11,8 @@ namespace RoslynDom
       public RDomInvalidMember(string name, AccessModifier accessModifier = AccessModifier.Private)
             : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         AccessModifier = accessModifier;
+         _name = name;
+         _accessModifier = accessModifier;
       }
 
       public RDomInvalidMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -27,7 +26,8 @@ namespace RoslynDom
       {
          Initialize();
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         AccessModifier = oldRDom.AccessModifier;
+         _accessModifier = oldRDom.AccessModifier;
+         _name = oldRDom.Name;
          DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
       }
 

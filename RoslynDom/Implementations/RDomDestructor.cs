@@ -14,9 +14,8 @@ namespace RoslynDom
       public RDomDestructor(string name, AccessModifier accessModifier = AccessModifier.Private)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         AccessModifier = accessModifier;
+         _name = name;
+         _accessModifier = accessModifier;
       }
 
       public RDomDestructor(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -32,6 +31,8 @@ namespace RoslynDom
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
          StatementsAll.AddOrMoveRange(newStatements);
+         _name = oldRDom.Name;
+         _accessModifier = oldRDom.AccessModifier;
       }
 
       private void Initialize()

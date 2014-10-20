@@ -61,8 +61,6 @@
     <Compile Include="Factories\RDomEventFactory.cs" />
     <Compile Include="TriviaManager.cs" />
     <Compile Include="Trivia\TriviaForClasss.cs" />
-    <Compile Include="UpdateNotifyPropertyChanged.cs" />
-    <Compile Include="UpdateUtilities.cs" />
     <Compile Include="WhitespaceLookups.cs" />
     <Compile Include="ContainerCheck.cs" />
     <Compile Include="Factories\RDomConstructorFactory.cs" />

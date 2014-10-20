@@ -4,25 +4,23 @@ using RoslynDom.Common;
 namespace RoslynDom
 {
    public class RDomWhileStatement : RDomBaseLoop<IWhileStatement>, IWhileStatement
-    {
-      public RDomWhileStatement(IExpression condition)
-          : this(null, null, null)
+   {
+      public RDomWhileStatement(IExpression condition, bool testAtEnd = false, bool hasBlock = false)
+          : base(condition,  testAtEnd, hasBlock )
       {
-         NeedsFormatting = true;
-         Condition = condition;
       }
 
       public RDomWhileStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)
-        {
-            this.TestAtEnd = true;
-            Initialize();
-        }
+      {
+         TestAtEnd = true;
+         Initialize();
+      }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
-          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
-        internal RDomWhileStatement(RDomWhileStatement oldRDom)
-            : base(oldRDom)
-        { }
-    }
+      [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
+      internal RDomWhileStatement(RDomWhileStatement oldRDom)
+          : base(oldRDom)
+      { }
+   }
 }

@@ -12,17 +12,15 @@ namespace RoslynDom
       public RDomUsingStatement(IExpression expression, bool hasBlock)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Expression = expression;
-         HasBlock = hasBlock;
+         _expression = expression;
+         _hasBlock = hasBlock;
       }
 
       public RDomUsingStatement( IVariableDeclaration variable, bool hasBlock)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Variable = variable;
-         HasBlock = hasBlock;
+         _variable = variable;
+         _hasBlock = hasBlock;
       }
 
       public RDomUsingStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -37,9 +35,9 @@ namespace RoslynDom
          Initialize();
          var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
          StatementsAll.AddOrMoveRange(statements);
-         HasBlock = oldRDom.HasBlock;
-         if (oldRDom.Expression != null) Expression = oldRDom.Expression.Copy();
-         if (oldRDom.Variable != null) Variable = oldRDom.Variable.Copy();
+         _hasBlock = oldRDom.HasBlock;
+         if (oldRDom.Expression != null) _expression = oldRDom.Expression.Copy();
+         if (oldRDom.Variable != null) _variable = oldRDom.Variable.Copy();
       }
 
       private void Initialize()

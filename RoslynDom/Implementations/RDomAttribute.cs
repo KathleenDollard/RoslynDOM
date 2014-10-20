@@ -15,8 +15,7 @@ namespace RoslynDom
       public RDomAttribute(string name)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
+         _name = name;
       }
 
       public RDomAttribute(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -28,6 +27,7 @@ namespace RoslynDom
       internal RDomAttribute(RDomAttribute oldRDom)
           : base(oldRDom)
       {
+         _name = oldRDom.Name;
          var newAttributeValues = RoslynDomUtilities.CopyMembers(oldRDom._attributeValues);
          foreach (var value in newAttributeValues)
          { AddOrMoveAttributeValue(value); }

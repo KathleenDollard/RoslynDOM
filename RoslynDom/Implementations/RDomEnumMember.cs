@@ -12,9 +12,8 @@ namespace RoslynDom
       public RDomEnumMember(string name, IExpression expression)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         Expression = expression;
+         _name = name;
+         _expression = expression;
       }
 
       public RDomEnumMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -27,8 +26,8 @@ namespace RoslynDom
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          if (oldRDom.Expression != null)
-         { Expression = oldRDom.Expression.Copy(); }
-         Name = oldRDom.Name;
+         { _expression = oldRDom.Expression.Copy(); }
+         _name = oldRDom.Name;
       }
 
       public AttributeCollection Attributes

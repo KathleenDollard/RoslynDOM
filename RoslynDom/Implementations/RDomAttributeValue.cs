@@ -12,12 +12,11 @@ namespace RoslynDom
                object value = null, string valueConstantIdentifier = null, LiteralKind valueType = LiteralKind.Unknown)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         Style = style;
-         Value = value;
-         ValueConstantIdentifier = valueConstantIdentifier;
-         ValueType = valueType;
+         _name = name;
+         _style = style;
+         _value = value;
+         _valueConstantIdentifier = valueConstantIdentifier;
+         _valueType = valueType;
       }
 
       public RDomAttributeValue(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -30,11 +29,13 @@ namespace RoslynDom
            RDomAttributeValue oldRDom)
           : base(oldRDom)
       {
-         ValueType = oldRDom.ValueType;
-         Value = oldRDom.Value;
+         _name = oldRDom.Name;
+         _style = oldRDom.Style;
+         _value = oldRDom.Value;
+         _valueConstantIdentifier = oldRDom.ValueConstantIdentifier;
+         _valueType = oldRDom.ValueType;
          // TODO: manage type
          Type = oldRDom.Type;
-         Style = oldRDom.Style;
       }
 
       private string _name;

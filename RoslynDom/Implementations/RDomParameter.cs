@@ -35,18 +35,18 @@ namespace RoslynDom
                    bool isParamArray = false)
          : this(null, null, null)
       {
-         Name = name;
-         Type = type;
-         Ordinal = ordinal;
-         IsOut = isOut;
-         IsRef = isRef;
-         IsParamArray = isParamArray;
-         IsOptional = defaultValueType != LiteralKind.Unknown;
+         _name = name;
+         _type = type;
+         _ordinal = ordinal;
+         _isOut = isOut;
+         _isRef = isRef;
+         _isParamArray = isParamArray;
+         _isOptional = defaultValueType != LiteralKind.Unknown;
          if (IsOptional)
          {
-            DefaultValue = defaultValue;
-            DefaultValueType = defaultValueType;
-            DefaultConstantIdentifier = defaultConstantIdentifier;
+            _defaultValue = defaultValue;
+            _defaultValueType = defaultValueType;
+            _defaultConstantIdentifier = defaultConstantIdentifier;
          }
       }
 
@@ -60,14 +60,16 @@ namespace RoslynDom
           : base(oldRDom)
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         Type = oldRDom.Type;
-         IsOut = oldRDom.IsOut;
-         IsRef = oldRDom.IsRef;
-         IsParamArray = oldRDom.IsParamArray;
-         IsOptional = oldRDom.IsOptional;
-         DefaultValue = oldRDom.DefaultValue;
-         DefaultValueType = oldRDom.DefaultValueType;
-         Ordinal = oldRDom.Ordinal;
+         _name = oldRDom.Name;
+         _type = oldRDom.Type;
+         _ordinal = oldRDom.Ordinal;
+         _isOut = oldRDom.IsOut;
+         _isRef = oldRDom.IsRef;
+         _isParamArray = oldRDom.IsParamArray;
+         _isOptional = oldRDom.IsOptional;
+         _defaultValue = oldRDom.DefaultValue;
+         _defaultValueType = oldRDom.DefaultValueType;
+         _defaultConstantIdentifier = oldRDom.DefaultConstantIdentifier;
       }
 
       public AttributeCollection Attributes

@@ -23,9 +23,9 @@ namespace RoslynDom
       public RDomAssignmentStatement(IExpression left, IExpression expression, AssignmentOperator op = AssignmentOperator.Equals)
        : this(null, null, null)
       {
-         Left = left;
-         Expression = expression;
-         Operator = op;
+         _left = left;
+         _expression = expression;
+         _operator = op;
       }
 
       [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
@@ -38,9 +38,9 @@ namespace RoslynDom
       internal RDomAssignmentStatement(RDomAssignmentStatement oldRDom)
           : base(oldRDom)
       {
-         Left = oldRDom.Left.Copy();
-         Expression = oldRDom.Expression.Copy();
-         Operator = oldRDom.Operator;
+         _left = oldRDom.Left.Copy();
+         _expression = oldRDom.Expression.Copy();
+         _operator = oldRDom.Operator;
       }
 
       public override IEnumerable<IDom> Children

@@ -11,7 +11,6 @@ namespace RoslynDom
       public RDomFinallyStatement()
           : this(null, null, null)
       {
-         NeedsFormatting = true;
       }
 
       public RDomFinallyStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)

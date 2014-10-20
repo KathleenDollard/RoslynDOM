@@ -17,7 +17,7 @@ namespace RoslynDom
       public RDomReturnStatement(IExpression expression, bool suppressNewLine = false)
        : this(null, null, null)
       {
-         Return = expression;
+         _return = expression;
          if (!suppressNewLine)
          { Whitespace2Set.Add(new Whitespace2(LanguageElement.EndOfLine, "", "\r\n", "")); }
          Whitespace2Set.Add(new Whitespace2(LanguageElement.ReturnKeyword, "", " ", ""));
@@ -34,7 +34,7 @@ namespace RoslynDom
           : base(oldRDom)
       {
          if (oldRDom.Return != null)
-         { Return = oldRDom.Return.Copy(); }
+         { _return = oldRDom.Return.Copy(); }
       }
 
       public override IEnumerable<IDom> Children

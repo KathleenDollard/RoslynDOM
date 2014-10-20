@@ -85,7 +85,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="CheckAndFixSpike.cs" />
+    <Compile Include="Walkthrough_2_CodeChanges.cs" />
     <Compile Include="Interrogation.cs" />
     <Compile Include="RoslynDomLoad.cs" />
     <Compile Include="TestFile.cs" />
@@ -119,6 +119,10 @@
       <Project>{8ae6f765-35a1-492f-84a1-86807155aa2c}</Project>
       <Name>RoslynDomCSharpFactories</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RoslynDomCSharpRefactorings\RoslynDomCSharpRefactorings.csproj">
+      <Project>{05a6bb8c-9f6b-431f-b658-5e78590393ca}</Project>
+      <Name>RoslynDomCSharpRefactorings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RoslynDomRDomCommon\RoslynDomRDomCommon.csproj">
       <Project>{1e5b8601-b717-471d-a9ee-0c03d15491a5}</Project>
       <Name>RoslynDomRDomCommon</Name>
@@ -132,6 +136,7 @@
       <Name>RoslynDom</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -8,8 +8,8 @@ namespace RoslynDom
       public RDomUsingDirective(string name, string alias = null)
         : base(null, null, null)
       {
-         Name = name;
-         Alias = alias;
+         _name = name;
+         _alias = alias;
       }
 
       public RDomUsingDirective(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -19,8 +19,8 @@ namespace RoslynDom
       internal RDomUsingDirective(RDomUsingDirective oldRDom)
           : base(oldRDom)
       {
-         Name = oldRDom.Name;
-         Alias = oldRDom.Alias;
+         _name = oldRDom.Name;
+         _alias = oldRDom.Alias;
       }
 
       private string _name;

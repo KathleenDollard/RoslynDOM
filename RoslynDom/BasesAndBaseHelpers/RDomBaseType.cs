@@ -19,6 +19,14 @@ namespace RoslynDom
       private RDomCollection<ITypeParameter> _typeParameters;
       private AttributeCollection _attributes = new AttributeCollection();
 
+      protected RDomBaseType(string name, AccessModifier accessModifier,
+            MemberKind memberKind,
+            StemMemberKind stemMemberKind) : this(null, null, null, memberKind, stemMemberKind )
+      {
+         _name = name;
+         _accessModifier = accessModifier;
+      }
+
       internal RDomBaseType(
             SyntaxNode rawItem,
             IDom parent,
@@ -37,11 +45,12 @@ namespace RoslynDom
       {
          Initialize();
          var oldRDom = oldIDom as RDomBaseType<T>;
+         _name = oldRDom.Name;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
          _memberKind = oldRDom._memberKind;
          _stemMemberKind = oldRDom._stemMemberKind;
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
          MembersAll.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._members));
          TypeParameters.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._typeParameters));
 
@@ -130,6 +139,7 @@ namespace RoslynDom
       // may also change as "all" is confusing with other use in RoslynDon
       public RDomCollection<IReferencedType> ImplementedInterfaces
       { get { return _implementedInterfaces; } }
+
       public IEnumerable<IReferencedType> AllImplementedInterfaces
       {
          get
@@ -155,11 +165,11 @@ namespace RoslynDom
          set { SetProperty(ref _structuredDocumentation, value); }
       }
 
+      private string _description;
       public string Description
       {
          get { return _description; }
          set { SetProperty(ref _description, value); }
       }
-      private string _description;
    }
 }

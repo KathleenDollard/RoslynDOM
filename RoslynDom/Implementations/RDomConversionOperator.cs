@@ -13,16 +13,15 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
 
       public RDomConversionOperator(string name, string typeName, bool isImplicit)
-            : this(name,  new RDomReferencedType(typeName), isImplicit)
-      {}
+            : this(name, new RDomReferencedType(typeName), isImplicit)
+      { }
       public RDomConversionOperator(string name, IReferencedType type, bool isImplicit)
             : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         AccessModifier = accessModifier;
-         Type = type;
-         IsImplicit = isImplicit;
+         _name = name;
+         _accessModifier = accessModifier;
+         _type = type;
+         _isImplicit = isImplicit;
       }
       public RDomConversionOperator(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
@@ -34,17 +33,18 @@ namespace RoslynDom
            : base(oldRDom)
       {
          Initialize();
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         IsImplicit = oldRDom.IsImplicit;
-         IsStatic = oldRDom.IsStatic;
+         _name = oldRDom.Name;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _isImplicit = oldRDom.IsImplicit;
+         _isStatic = oldRDom.IsStatic;
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
          Parameters.AddOrMoveRange(newParameters);
          var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
          StatementsAll.AddOrMoveRange(newStatements);
 
-         Type = oldRDom.Type.Copy();
+         _type = oldRDom.Type.Copy();
       }
 
       private void Initialize()

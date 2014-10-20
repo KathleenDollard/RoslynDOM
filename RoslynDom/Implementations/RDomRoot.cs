@@ -10,9 +10,8 @@ namespace RoslynDom
       public RDomRoot(string name = null, string filePath = null)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name ?? "<root>" ; // Default value not used because change may occur and using code not recompiled
-         FilePath = filePath;
+         _name = name ?? "<root>" ; // Default value not used because change may occur and using code not recompiled
+         _filePath = filePath;
       }   
       
       // This takes a parent because in the future there will be a rootGroup concept for multiple files
@@ -24,7 +23,10 @@ namespace RoslynDom
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomRoot(RDomRoot oldRDom)
          : base(oldRDom)
-      { }
+      {
+         _name = oldRDom.Name;
+         _filePath = oldRDom.FilePath;
+      }
 
       private string _name;
       [Required]

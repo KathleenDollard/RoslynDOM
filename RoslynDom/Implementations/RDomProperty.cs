@@ -26,7 +26,6 @@ namespace RoslynDom
                   bool isNew = false, bool canGet = false, bool canSet = false)
           : this(null, null, null)
       {
-         NeedsFormatting = true;
          Name = name;
          PropertyType = propertyType;
          AccessModifier = accessModifier;
@@ -53,19 +52,20 @@ namespace RoslynDom
          var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
          Parameters.AddOrMoveRange(newParameters);
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
          GetAccessor = oldRDom.GetAccessor == null ? null : oldRDom.GetAccessor.Copy();
          SetAccessor = oldRDom.SetAccessor == null ? null : oldRDom.SetAccessor.Copy();
-         PropertyType = oldRDom.PropertyType;
-         IsAbstract = oldRDom.IsAbstract;
-         IsVirtual = oldRDom.IsVirtual;
-         IsOverride = oldRDom.IsOverride;
-         IsSealed = oldRDom.IsSealed;
-         IsStatic = oldRDom.IsStatic;
-         IsNew = oldRDom.IsNew;
-         CanGet = oldRDom.CanGet;
-         CanSet = oldRDom.CanSet;
+         _name = oldRDom.Name;
+         _propertyType = oldRDom.PropertyType;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _isAbstract = oldRDom.IsAbstract;
+         _isVirtual = oldRDom.IsVirtual;
+         _isOverride = oldRDom.IsOverride;
+         _isSealed = oldRDom.IsSealed;
+         _isStatic = oldRDom.IsStatic;
+         _isNew = oldRDom.IsNew;
+         _canGet = oldRDom.CanGet;
+         _canSet = oldRDom.CanSet;
       }
 
       private void Initialize()

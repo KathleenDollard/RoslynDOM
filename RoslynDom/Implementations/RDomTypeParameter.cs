@@ -16,13 +16,12 @@ namespace RoslynDom
                bool hasReferenceTypeConstraint = false, bool hasValueTypeConstraint = false, Variance variance = Variance.None)
         : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         Ordinal = ordinal;
-         HasConstructorConstraint = hasConstructorConstraint;
-         HasReferenceTypeConstraint = hasReferenceTypeConstraint;
-         HasValueTypeConstraint = hasValueTypeConstraint;
-         Variance = variance;
+         _name = name;
+         _ordinal = ordinal;
+         _hasConstructorConstraint = hasConstructorConstraint;
+         _hasReferenceTypeConstraint = hasReferenceTypeConstraint;
+         _hasValueTypeConstraint = hasValueTypeConstraint;
+         _variance = variance;
       }
 
       public RDomTypeParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -34,11 +33,12 @@ namespace RoslynDom
       {
          Initialize();
          _constraintTypes = new RDomCollection<IReferencedType>(this);
-         Variance = oldRDom.Variance;
-         Ordinal = oldRDom.Ordinal;
-         HasConstructorConstraint = oldRDom.HasConstructorConstraint;
-         HasReferenceTypeConstraint = oldRDom.HasReferenceTypeConstraint;
-         HasValueTypeConstraint = oldRDom.HasValueTypeConstraint;
+         _name = oldRDom.Name;
+         _variance = oldRDom.Variance;
+         _ordinal = oldRDom.Ordinal;
+         _hasConstructorConstraint = oldRDom.HasConstructorConstraint;
+         _hasReferenceTypeConstraint = oldRDom.HasReferenceTypeConstraint;
+         _hasValueTypeConstraint = oldRDom.HasValueTypeConstraint;
          var newConstraints = RoslynDomUtilities.CopyMembers(oldRDom._constraintTypes);
          ConstraintTypes.AddOrMoveRange(newConstraints);
       }

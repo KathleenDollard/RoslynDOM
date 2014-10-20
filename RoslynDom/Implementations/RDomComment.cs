@@ -1,11 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
    public class RDomComment : RDomCommentWhite, IComment
@@ -13,14 +6,14 @@ namespace RoslynDom
       public RDomComment(string text, bool isMultiline = false)
           : base(StemMemberKind.Comment, MemberKind.Comment)
       {
-         Text = text;
-         IsMultiline = isMultiline;
+         _text = text;
+         _isMultiline = isMultiline;
       }
       internal RDomComment(RDomComment oldRDom)
           : base(oldRDom)
       {
-         Text = oldRDom.Text;
-         IsMultiline = oldRDom.IsMultiline;
+         _text = oldRDom.Text;
+         _isMultiline = oldRDom.IsMultiline;
       }
 
       private string _text;

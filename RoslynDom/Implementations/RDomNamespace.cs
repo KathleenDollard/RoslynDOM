@@ -9,21 +9,22 @@ namespace RoslynDom
       public RDomNamespace(string name, Guid group = default(Guid))
         : base(null, null, null)
       {
-         Name = name;
-         Group = group;
+         _name = name;
+         _group = group;
       }
 
       public RDomNamespace(SyntaxNode rawItem, IDom parent, SemanticModel model, string name, Guid group)
            : base(rawItem, parent, model)
       {
-         Name = name;
-         Group = group;
+         _name = name;
+         _group = group;
       }
 
       internal RDomNamespace(RDomNamespace oldRDom)
           : base(oldRDom)
       {
-         Group = oldRDom.Group;
+         _name = oldRDom.Name;
+         _group = oldRDom.Group;
       }
 
       private string _name;

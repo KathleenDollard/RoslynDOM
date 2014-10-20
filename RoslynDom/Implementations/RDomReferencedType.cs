@@ -35,10 +35,10 @@ namespace RoslynDom
                                 params IReferencedType[] typeArgs)
          : this(null, null, null)
       {
-         Name = StringUtilities.NameFromQualifiedName(name);
-         Namespace = StringUtilities.NamespaceFromQualifiedName(name);
-         DisplayAlias = displayAlias;
-         IsArray = isArray;
+         _name = StringUtilities.NameFromQualifiedName(name);
+         _namespace = StringUtilities.NamespaceFromQualifiedName(name);
+         _displayAlias = displayAlias;
+         _isArray = isArray;
          TypeArguments.AddOrMoveRange(typeArgs);
       }
 
@@ -57,11 +57,11 @@ namespace RoslynDom
           : base(oldRDom)
       {
          Initialize();
-         Name = oldRDom.Name;
-         Namespace = oldRDom.Namespace;
-         DisplayAlias = oldRDom.DisplayAlias;
-         IsArray = oldRDom.IsArray;
-         ContainingType = oldRDom.ContainingType;
+         _name = oldRDom.Name;
+         _namespace = oldRDom.Namespace;
+         _displayAlias = oldRDom.DisplayAlias;
+         _isArray = oldRDom.IsArray;
+         _containingType = oldRDom.ContainingType;
          TypeArguments.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._typeArguments));
       }
 

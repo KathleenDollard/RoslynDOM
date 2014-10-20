@@ -12,8 +12,7 @@ namespace RoslynDom
       public RDomTryStatement(IFinallyStatement finallyStatement = null)
           : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Finally = finallyStatement;
+         _finally = finallyStatement;
       }
 
       public RDomTryStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -29,7 +28,7 @@ namespace RoslynDom
          // Initialize called in base
          var newCatches = RoslynDomUtilities.CopyMembers(oldRDom.Catches);
          CatchesAll.AddOrMoveRange(newCatches);
-         Finally = oldRDom.Finally.Copy();
+         _finally = oldRDom.Finally.Copy();
       }
 
       private void Initialize()

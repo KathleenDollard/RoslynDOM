@@ -20,10 +20,9 @@ namespace RoslynDom
       public RDomEnum(string name, AccessModifier accessModifier = AccessModifier.Private, IReferencedType underlyingType = null)
           : this(null, null, null)
       {
-         NeedsFormatting = true;
-         Name = name;
-         AccessModifier = accessModifier;
-         UnderlyingType = underlyingType;
+         _name = name;
+         _accessModifier = accessModifier;
+         _underlyingType = underlyingType;
       }
 
       public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -37,9 +36,10 @@ namespace RoslynDom
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          var newValues = RoslynDomUtilities.CopyMembers(oldRDom._values);
          Members.AddOrMoveRange(newValues);
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         UnderlyingType = oldRDom.UnderlyingType;
+         _name = oldRDom.Name;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _underlyingType = oldRDom.UnderlyingType;
       }
 
       private void Initialize()

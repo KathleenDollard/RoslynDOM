@@ -8,8 +8,7 @@ namespace RoslynDom
       public RDomThrowStatement(IExpression exceptionExpression = null)
       : this(null, null, null)
       {
-         NeedsFormatting = true;
-         ExceptionExpression = exceptionExpression;
+         _exceptionExpression = exceptionExpression;
       }
 
       public RDomThrowStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -21,7 +20,7 @@ namespace RoslynDom
       internal RDomThrowStatement(RDomThrowStatement oldRDom)
           : base(oldRDom)
       {
-         ExceptionExpression = oldRDom.ExceptionExpression.Copy();
+         _exceptionExpression = oldRDom.ExceptionExpression.Copy();
       }
 
       private IExpression _exceptionExpression;
