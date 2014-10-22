@@ -46,8 +46,8 @@ namespace RoslynDomTests
             [Foo(""Fred"", bar:3, bar2:""Sam"")]
             public struct Struct1 {}
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var attribute1 = root1.Classes.First().Attributes.Attributes.First();
          var attribute2 = root2.Structures.First().Attributes.Attributes.First();
          Assert.IsTrue(attribute1.SameIntent(attribute2));
@@ -64,8 +64,8 @@ namespace RoslynDomTests
             [Foo(""Fred"", bar2=""Sam"", bar=3)]
             public class Class1 {}
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var class1 = root1.Classes.First();
          var class2 = root2.Classes.First();
          var attribute1 = class1.Attributes.Attributes.First();
@@ -86,8 +86,8 @@ namespace RoslynDomTests
                   bar2:""Sam"")]
             public class Class1 {}
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var class1 = root1.Classes.First();
          var class2 = root2.Classes.First();
          var attribute1 = class1.Attributes.Attributes.First();
@@ -107,8 +107,8 @@ namespace RoslynDomTests
             [Foo2(""Fred"", bar2=""Sam"", bar=3)]
             public class Class1 {}
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var class1 = root1.Classes.First();
          var class2 = root2.Classes.First();
          var attribute1 = class1.Attributes.Attributes.First();
@@ -128,8 +128,8 @@ namespace RoslynDomTests
             [Foo(""Fred"", bar2=""Sam"", bar=3)]
             public class Class1 {}
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var class1 = root1.Classes.First();
          var class2 = root2.Classes.First();
          var attribute1 = class1.Attributes.Attributes.First();
@@ -149,8 +149,8 @@ namespace RoslynDomTests
             [Foo(""Fred"", bar2=""Sam"", bar=3)]
             public class Class1 {}
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var class1 = root1.Classes.First();
          var class2 = root2.Classes.First();
          var attribute1 = class1.Attributes.Attributes.First();
@@ -178,8 +178,8 @@ namespace RoslynDomTests
                 public void Foo(string bar, int bar2) {}
             }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var method1 = root1.Classes.First().Methods.First();
          var method2 = root2.Classes.First().Methods.First();
          Assert.IsTrue(method1.SameIntent(method2));
@@ -385,8 +385,8 @@ namespace RoslynDomTests
                 public string Foo{get; set;}
             }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var property1 = root1.Classes.First().Properties.First();
          var property2 = root2.Structures.First().Properties.First();
          Assert.IsTrue(property1.SameIntent(property2));
@@ -522,8 +522,8 @@ namespace RoslynDomTests
             public struct Struct1 
             { public string Foo; }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var field1 = root1.Classes.First().Fields.First();
          var field2 = root2.Structures.First().Fields.First();
          Assert.IsTrue(field1.SameIntent(field2));
@@ -667,8 +667,8 @@ namespace RoslynDomTests
             public struct Struct1 
             { public Struct1(){} }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var constr1 = root1.Classes.First().Constructors.First();
          var constr2 = root2.Structures.First().Constructors.First();
          Assert.IsTrue(constr1.SameIntent(constr2));
@@ -694,7 +694,7 @@ namespace RoslynDomTests
             {
                 public Class1(int x) {}
             }";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root1 = RDom.CSharp.Load(csharpCode);
          Assert.AreEqual(1, root1.Classes.First().Constructors.Count());
 
          var csharpCodeChanged = csharpCode.Replace("x", "y");
@@ -926,8 +926,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var class1 = root1.RootClasses.First();
          var class2 = root2.RootClasses.First();
          Assert.IsTrue(class1.SameIntent(class2));
@@ -955,8 +955,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var class1 = root1.RootClasses.First();
          var class2 = root2.RootClasses.First();
          Assert.IsTrue(class1.SameIntent(class2));
@@ -1152,8 +1152,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var structure1 = root1.RootStructures.First();
          var structure2 = root2.RootStructures.First();
          Assert.IsTrue(structure1.SameIntent(structure2));
@@ -1181,8 +1181,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var structure1 = root1.RootStructures.First();
          var structure2 = root2.RootStructures.First();
          Assert.IsTrue(structure1.SameIntent(structure2));
@@ -1284,8 +1284,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var interface1 = root1.RootInterfaces.First();
          var interface2 = root2.RootInterfaces.First();
          Assert.IsTrue(interface1.SameIntent(interface2));
@@ -1313,8 +1313,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var interface1 = root1.RootInterfaces.First();
          var interface2 = root2.RootInterfaces.First();
          Assert.IsTrue(interface1.SameIntent(interface2));
@@ -1414,8 +1414,8 @@ namespace RoslynDomTests
                      }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var enum1 = root1.RootEnums.First();
          var enum2 = root2.RootEnums.First();
          Assert.IsTrue(enum1.SameIntent(enum2));
@@ -1444,8 +1444,8 @@ namespace RoslynDomTests
                      }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var enum1 = root1.RootEnums.First();
          var enum2 = root2.RootEnums.First();
          Assert.IsTrue(enum1.SameIntent(enum2));
@@ -1600,8 +1600,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          Assert.IsTrue(root1.SameIntent(root2));
       }
 
@@ -1650,8 +1650,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root1 = RDom.CSharp.Load(csharpCode);
+         var root2 = RDom.CSharp.Load(csharpCode);
          Assert.IsTrue(root1.SameIntent(root2));
          root2.Name = "Fred";
          Assert.IsFalse(root1.SameIntent(root2));
@@ -1721,8 +1721,8 @@ namespace RoslynDomTests
                     }
                 }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var nspace2 = root2.Namespaces.First();
          Assert.IsTrue(root1.UsingDirectives.First().SameIntent(nspace2.UsingDirectives.First()));
       }
@@ -1792,8 +1792,8 @@ namespace RoslynDomTests
                         } 
                     }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var statement1 = root1.Descendants.OfType<IDeclarationStatement>().First();
          var statement2 = root2.Descendants.OfType<IDeclarationStatement>().First();
          Assert.IsTrue(statement1.SameIntent(statement2));
@@ -2154,7 +2154,7 @@ namespace RoslynDomTests
                         finally { Console.WriteLine(42);}
                     }
             }";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root1 = RDom.CSharp.Load(csharpCode);
          var root2 = root1.Copy();
          var statement1 = root1.Classes.First().Methods.First().Statements.First() as ITryStatement;
 
@@ -2372,7 +2372,7 @@ namespace RoslynDomTests
                     }
             }
             ";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root1 = RDom.CSharp.Load(csharpCode);
          var root2 = root1.Copy();
 
          var class1 = root1.Classes.First();
@@ -2430,8 +2430,8 @@ namespace RoslynDomTests
                             }
                         } 
                     }";
-         var root1 = RDomCSharp.Factory.GetRootFromString(csharpCode1);
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCode2);
+         var root1 = RDom.CSharp.Load(csharpCode1);
+         var root2 = RDom.CSharp.Load(csharpCode2);
          var statement1 = root1.Descendants.OfType<IDeclarationStatement>().First();
          var statement2 = root2.Descendants.OfType<IDeclarationStatement>().First();
          var expr1 = statement1.Initializer;
@@ -2505,7 +2505,7 @@ namespace RoslynDomTests
             public class MyClass3
             { }
             ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var classes = root.RootClasses.ToArray();
          var annot1 = classes[0].PublicAnnotations.GetPublicAnnotation("kad_Test3");
          var annot2 = classes[1].PublicAnnotations.GetPublicAnnotation("kad_Test3");
@@ -2521,7 +2521,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var class1 = root.RootClasses.First();
          Assert.IsFalse(StandardSameIntent.CheckSameIntent(class1, null));
          Assert.IsFalse(StandardSameIntent.CheckSameIntent(null, class1));
@@ -2531,18 +2531,18 @@ namespace RoslynDomTests
 
       private void AssertSameIntent(bool shouldMatch, string initial, string changed, bool skipBuildSyntax = false)
       {
-         var root1 = RDomCSharp.Factory.GetRootFromString(initial);
+         var root1 = RDom.CSharp.Load(initial);
          var root1Copy = root1.Copy();
          Assert.IsTrue(root1.SameIntent(root1Copy), "Initial didn't match copy");
-         var root2 = RDomCSharp.Factory.GetRootFromString(changed);
+         var root2 = RDom.CSharp.Load(changed);
          var root2Copy = root2.Copy();
          Assert.IsTrue(root2.SameIntent(root2Copy), "Changed didn't match copy");
          Assert.AreEqual(shouldMatch, root1.SameIntent(root2), "Initial to Changed match wrong");
          if (!skipBuildSyntax)
          {
-            var output1 = RDomCSharp.Factory.BuildSyntax(root1);
+            var output1 = RDom.CSharp.GetSyntaxNode(root1);
             Assert.AreEqual(initial, output1.ToFullString(), "BuildSyntax for initial didn't match");
-            var output2 = RDomCSharp.Factory.BuildSyntax(root2);
+            var output2 = RDom.CSharp.GetSyntaxNode(root2);
             Assert.AreEqual(changed, output2.ToFullString(), "BuildSyntax for changed didn't match");
          }
       }

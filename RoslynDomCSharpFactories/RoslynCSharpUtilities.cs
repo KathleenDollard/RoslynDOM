@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
         {
             StatementSyntax statementBlock;
             var statementSyntaxList = statements
-                         .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                         .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                          .ToList();
             var hasBlock = parent.HasBlock;
             if (hasBlock || statements.Count() > 1)

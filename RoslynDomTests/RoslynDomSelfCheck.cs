@@ -24,8 +24,8 @@ namespace RoslynDomTests
          foreach (var file in files)
          {
             var csharpCode = File.ReadAllText(file);
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var actual = RDomCSharp.Factory.BuildSyntax(root);
+            var root = RDom.CSharp.Load(csharpCode);
+            var actual = RDom.CSharp.GetSyntaxNode(root);
             Assert.IsNotNull(root);
             if (actual.ToFullString() != csharpCode)
             {
@@ -41,8 +41,8 @@ namespace RoslynDomTests
          var dirName = @"..\..\..\RoslynDom\Implementations";
          var file = dirName + @"\RDomAttributeValue.cs";
          var csharpCode = File.ReadAllText(file);
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
          var actualString = actual.ToFullString();
          Assert.IsNotNull(root);
          if (actualString != csharpCode)

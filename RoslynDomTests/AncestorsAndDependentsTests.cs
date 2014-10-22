@@ -347,7 +347,7 @@ namespace RoslynDomTests
             }           
             ";
 
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var actual = root.ReportHierarchy();
             var expected = "RoslynDom.RDomRoot : Root\r\n  RoslynDom.RDomVerticalWhitespace : \r\n  RoslynDom.RDomClass : Bar\r\n    RoslynDom.RDomProperty : FooBar\r\n      RoslynDom.RDomPropertyAccessor : get_FooBar\r\n        RoslynDom.RDomDeclarationStatement : z {UInt16}\r\n          RoslynDom.RDomExpression : 432\r\n        RoslynDom.RDomReturnStatement : \r\n          RoslynDom.RDomExpression : z.ToString()\r\n      RoslynDom.RDomPropertyAccessor : set_FooBar\r\n        RoslynDom.RDomAssignmentStatement : \r\n          RoslynDom.RDomExpression : value\r\n";
             Assert.AreEqual(expected, actual);
@@ -372,13 +372,13 @@ namespace RoslynDomTests
                  int descendantCount,
                  string assertId)
         {
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var item = itemDelegate(root);
             var itemParent = itemParentDelegate(root);
             if (!string.IsNullOrWhiteSpace(assertId)) assertId += ": ";
             if (syntaxStringStart != null)
             {
-                var str = RDomCSharp.Factory.BuildSyntax(item).ToString();
+                var str = RDom.CSharp.GetSyntaxNode(item).ToString();
                 Assert.AreEqual(syntaxStringStart, str.Substring(0, syntaxStringStart.Length), assertId + "Syntax strings don't match");
             }
             Assert.AreEqual(rootDescendantCount, root.Descendants.Count(), assertId + "Root descendants wrong");
@@ -387,7 +387,7 @@ namespace RoslynDomTests
             Assert.AreEqual(childCount, item.Children.Count(), assertId + "Child count wrong");
             Assert.AreEqual(descendantCount, item.Descendants.Count(), assertId + "Descendant count wrong");
 
-            var output = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+            var output = RDom.CSharp.GetSyntaxNode(root).ToFullString();
             Assert.AreEqual(csharpCode, output, "BuildSyntax doesn't match");
         }
 

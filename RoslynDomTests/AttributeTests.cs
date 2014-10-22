@@ -751,17 +751,17 @@ namespace Test
                         [Ignore]                  
                         public int myProperty { get; } }";
          var csharpCodeChanged = csharpCode.Replace(", TestClass", "");
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-         var syntax2 = RDomCSharp.Factory.BuildSyntax(root2).ToFullString();
+         var root2 = RDom.CSharp.Load(csharpCodeChanged);
+         var syntax2 = RDom.CSharp.GetSyntaxNode(root2).ToFullString();
 
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var prop = root.Classes.First().Properties.First();
          Assert.AreEqual(3, prop.Attributes.Count());
          var attr = prop.Attributes.ElementAt(1);
          prop.Attributes.RemoveAttribute(attr);
          Assert.AreEqual(2, prop.Attributes.Count());
 
-         var syntax = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+         var syntax = RDom.CSharp.GetSyntaxNode(root).ToFullString();
          Assert.AreEqual(syntax2, syntax);
       }
 
@@ -776,10 +776,10 @@ namespace Test
                             public string foo;
                         }";
          var csharpCodeChanged = csharpCode.Replace(", true", "");
-         var root2 = RDomCSharp.Factory.GetRootFromString(csharpCodeChanged);
-         var syntax2 = RDomCSharp.Factory.BuildSyntax(root2).ToFullString();
+         var root2 = RDom.CSharp.Load(csharpCodeChanged);
+         var syntax2 = RDom.CSharp.GetSyntaxNode(root2).ToFullString();
 
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var field = root.Classes.First().Fields.First();
          var attr = field.Attributes.ElementAt(1);
          Assert.AreEqual(2, field.Attributes.Count());
@@ -789,7 +789,7 @@ namespace Test
          Assert.AreEqual(2, field.Attributes.Count());
          Assert.AreEqual(1, attr.AttributeValues.Count());
 
-         var syntax = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+         var syntax = RDom.CSharp.GetSyntaxNode(root).ToFullString();
          Assert.AreEqual(syntax2, syntax);
       }
 
@@ -799,7 +799,7 @@ namespace Test
           Func<IRoot, IEnumerable<IAttribute>> makeAttributes,
           int count, bool skipBuildSyntaxCheck, params string[] names)
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var attributes = makeAttributes(root).ToArray();
          Assert.AreEqual(count, attributes.Count());
          for (int i = 0; i < attributes.Count(); i++)
@@ -808,7 +808,7 @@ namespace Test
          }
          if (!skipBuildSyntaxCheck)
          {
-            var output = RDomCSharp.Factory.BuildSyntax(root);
+            var output = RDom.CSharp.GetSyntaxNode(root);
             var actual = output.ToFullString();
             Assert.AreEqual(csharpCode, actual);
          }

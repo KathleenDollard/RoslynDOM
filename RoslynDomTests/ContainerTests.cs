@@ -23,7 +23,7 @@ namespace RoslynDomTests
                         internal class Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var structure = root.Structures.First();
             Assert.AreEqual(3, structure.Classes.Count());
             Assert.AreEqual(0, structure.Structures.Count());
@@ -43,7 +43,7 @@ namespace RoslynDomTests
                         internal struct Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var structure = root.Structures.First();
             Assert.AreEqual(0, structure.Classes.Count());
             Assert.AreEqual(3, structure.Structures.Count());
@@ -64,7 +64,7 @@ namespace RoslynDomTests
                         internal interface Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var structure = root.Structures.First();
             Assert.AreEqual(0, structure.Classes.Count());
             Assert.AreEqual(0, structure.Structures.Count());
@@ -85,7 +85,7 @@ namespace RoslynDomTests
                         internal enum Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var structure = root.Structures.First();
             Assert.AreEqual(0, structure.Classes.Count());
             Assert.AreEqual(0, structure.Structures.Count());
@@ -106,7 +106,7 @@ namespace RoslynDomTests
                         internal enum Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var structure = root.Structures.First();
             Assert.AreEqual(1, structure.Classes.Count());
             Assert.AreEqual(1, structure.Structures.Count());
@@ -130,7 +130,7 @@ namespace RoslynDomTests
                         internal class Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var cl = root.Classes.First();
             Assert.AreEqual(3, cl.Classes.Count());
             Assert.AreEqual(0, cl.Structures.Count());
@@ -150,7 +150,7 @@ namespace RoslynDomTests
                         internal struct Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var cl = root.Classes.First();
             Assert.AreEqual(0, cl.Classes.Count());
             Assert.AreEqual(3, cl.Structures.Count());
@@ -171,7 +171,7 @@ namespace RoslynDomTests
                         internal interface Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var cl = root.Classes.First();
             Assert.AreEqual(0, cl.Classes.Count());
             Assert.AreEqual(0, cl.Structures.Count());
@@ -192,7 +192,7 @@ namespace RoslynDomTests
                         internal enum Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var cl = root.Classes.First();
             Assert.AreEqual(0, cl.Classes.Count());
             Assert.AreEqual(0, cl.Structures.Count());
@@ -213,7 +213,7 @@ namespace RoslynDomTests
                         internal enum Bar2{};
                         }
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var cl = root.Classes.First();
             Assert.AreEqual(1, cl.Classes.Count());
             Assert.AreEqual(1, cl.Structures.Count());

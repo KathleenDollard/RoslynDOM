@@ -222,8 +222,8 @@ namespace RoslynDom.CSharp
 
          foreach (var typeConstraint in itemAsT.ConstraintTypes)
          {
-            var typeSyntax = (TypeSyntax)RDomCSharp.Factory
-                            .BuildSyntax(typeConstraint);
+            var typeSyntax = (TypeSyntax)RDom.CSharp
+                            .GetSyntaxNode(typeConstraint);
             var typeConstraintSyntax = SyntaxFactory.TypeConstraint(typeSyntax);
             list.Add(typeConstraintSyntax);
          }

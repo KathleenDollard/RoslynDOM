@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IInvocationStatement;
-            var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Invocation);
+            var expressionSyntax = RDom.CSharp.GetSyntaxNode(itemAsT.Invocation);
             var node = SyntaxFactory.ExpressionStatement((ExpressionSyntax)expressionSyntax);
 
             node = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(node,

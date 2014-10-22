@@ -19,7 +19,7 @@ namespace RoslynDomTests
                         using System.Diagnostics.Tracing;
                         namespace Namespace1
                         { }";
-         IRoot root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         IRoot root = RDom.CSharp.Load(csharpCode);
          Assert.IsNotNull(root);
          UpdateUtilities.WriteToFile(fileName, root);
          File.Exists(fileName);
@@ -37,7 +37,7 @@ namespace RoslynDomTests
                         using System.Diagnostics.Tracing;
                         namespace Namespace1
                         { }";
-         IRoot root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         IRoot root = RDom.CSharp.Load(csharpCode);
          Assert.IsNotNull(root);
          UpdateUtilities.WriteToFile(fileName, root);
          File.Exists(fileName);

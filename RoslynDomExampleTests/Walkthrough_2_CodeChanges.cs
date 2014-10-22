@@ -76,8 +76,8 @@ namespace RoslynDomExampleTests
          var properties = cl.Properties.Where(x => x.CanSet && x.CanGet);
          var assignments = new List<IAssignmentStatement>();
          assignments.Add(new RDomAssignmentStatement(
-                  RDomCSharp.Factory.ParseExpression("NeedsFormatting"),
-                  RDomCSharp.Factory.ParseExpression("true")));
+                  RDom.CSharp.ParseExpression("NeedsFormatting"),
+                  RDom.CSharp.ParseExpression("true")));
          triviaManager.StoreStringWhitespace(assignments.First(), LanguageElement.EndOfLine, "", "\r\n");
          var altConstructorPairs = new List<Tuple<RDomParameter, RDomParameter, RDomArgument>>();
 
@@ -110,7 +110,7 @@ namespace RoslynDomExampleTests
                argList.Add(switchTuple.Item3);
             }
             else
-            { argList.Add(new RDomArgument(RDomCSharp.Factory.ParseExpression(param.Name))); }
+            { argList.Add(new RDomArgument(RDom.CSharp.ParseExpression(param.Name))); }
          }
          foreach (var tuple in replaceList)
          { altConstructor.Parameters.Replace(tuple.Item1, tuple.Item2); }
@@ -128,8 +128,8 @@ namespace RoslynDomExampleTests
          triviaManager.StoreStringWhitespace(param, LanguageElement.Identifier, "              ", "");
          triviaManager.StoreStringWhitespace(param, LanguageElement.EndOfLine, "", "\r\n");
          var newAssignment = new RDomAssignmentStatement(
-                  RDomCSharp.Factory.ParseExpression(prop.Name),
-                  RDomCSharp.Factory.ParseExpression(paramName));
+                  RDom.CSharp.ParseExpression(prop.Name),
+                  RDom.CSharp.ParseExpression(paramName));
          triviaManager.StoreStringWhitespace(newAssignment, LanguageElement.EndOfLine, "", "\r\n");
          assignments.Add(newAssignment);
          if (!(prop.Attributes.Any(x => x.Name == "Required")))
@@ -140,7 +140,7 @@ namespace RoslynDomExampleTests
          {
             var paramNewName = paramName + "Name";
             var paramNew = new RDomParameter(paramName, "System.String");
-            var argNew = new RDomArgument(RDomCSharp.Factory.ParseExpression(string.Format("new RDomReferencedType({0})", paramNewName)));
+            var argNew = new RDomArgument(RDom.CSharp.ParseExpression(string.Format("new RDomReferencedType({0})", paramNewName)));
             altConstructorPairs.Add(Tuple.Create(param, paramNew, argNew));
          }
 
@@ -150,7 +150,7 @@ namespace RoslynDomExampleTests
       private static RDomConstructor CreateRDomConstructor(IClass cl)
       {
          var constructor = new RDomConstructor(cl.Name, AccessModifier.Public, constructorInitializerType: ConstructorInitializerType.This);
-         var nullParam = new RDomArgument(RDomCSharp.Factory.ParseExpression("null"));
+         var nullParam = new RDomArgument(RDom.CSharp.ParseExpression("null"));
          constructor.InitializationArguments.AddOrMoveRange(new IArgument[] { nullParam, nullParam.Copy(), nullParam.Copy() });
          cl.InsertAfterInitialFields(constructor);
          return constructor;

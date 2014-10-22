@@ -87,7 +87,7 @@ namespace RoslynDom.CSharp
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
          var membersSyntax = itemAsT.Members
-                     .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                      .ToList();
          node = node.WithMembers(SyntaxFactory.List(membersSyntax));
 

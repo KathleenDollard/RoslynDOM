@@ -80,7 +80,7 @@ namespace RoslynDom.CSharp
                 //var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable);
                 var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(
                             itemAsT.Variable.IsImplicitlyTyped, itemAsT.Variable.Type);
-                var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Variable.Initializer);
+                var expressionSyntax = RDom.CSharp.GetSyntaxNode(itemAsT.Variable.Initializer);
                 var equalsValueClause = SyntaxFactory.EqualsValueClause((ExpressionSyntax)expressionSyntax);
                 equalsValueClause = BuildSyntaxHelpers.AttachWhitespace(equalsValueClause, itemAsT.Variable.Whitespace2Set, WhitespaceLookup);
 
@@ -93,7 +93,7 @@ namespace RoslynDom.CSharp
             }
             else
             {
-                var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression) as ExpressionSyntax;
+                var expressionSyntax = RDom.CSharp.GetSyntaxNode(itemAsT.Expression) as ExpressionSyntax;
                 node = node.WithExpression(expressionSyntax);
             }
 

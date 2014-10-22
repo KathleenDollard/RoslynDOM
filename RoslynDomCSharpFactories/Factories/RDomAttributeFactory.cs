@@ -73,7 +73,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.Attribute(nameSyntax);
             node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, WhitespaceLookup);
             var attributeArgList = itemAsT.AttributeValues
-                            .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                            .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                             .OfType<AttributeArgumentSyntax>()
                             .ToList();
 

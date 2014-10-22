@@ -20,16 +20,16 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Walkthrogh_1_Load_and_check_code()
       {
-         var factory = RDomCSharp.Factory;
-         var root = factory.GetRootFromFile(fileName);
-         var output = factory.BuildSyntax(root).ToString();
+         var factory = RDom.CSharp;
+         var root = factory.LoadFromFile(fileName);
+         var output = factory.GetSyntaxNode(root).ToString();
          File.WriteAllText(outputFileName, output);
       }
 
       [TestMethod]
       public void Walkthrogh_2_2_Navigate_and_interrogate_code()
       {
-         var root = RDomCSharp.Factory.GetRootFromFile(fileName);
+         var root = RDom.CSharp.LoadFromFile(fileName);
          Assert.AreEqual(1, root.UsingDirectives.Count());
          Assert.AreEqual("System", root.UsingDirectives.First().Name);
          Assert.AreEqual(1, root.Namespaces.Count());
@@ -43,8 +43,8 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Walkthrogh_2_4_Ask_harder_questions()
       {
-         var factory = RDomCSharp.Factory;
-         var root = factory.GetRootFromFile(fileName);
+         var factory = RDom.CSharp;
+         var root = factory.LoadFromFile(fileName);
 
          // Explore variables that have any uint type
          var uintVars = root
@@ -81,7 +81,7 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Walkthrogh_3_Find_implicit_variables_of_concern()
       {
-         var root = RDomCSharp.Factory.GetRootFromFile(fileName);
+         var root = RDom.CSharp.LoadFromFile(fileName);
          var candidates = FindImplicitVariablesOfConcern(root);
          var report = ReportCodeLines(candidates);
          var expected = "Walkthrough_1_code.cs(13, 16) RoslynDom.RDomDeclarationStatement : ret {String}   var ret = lastName;\r\nWalkthrough_1_code.cs(51, 16) RoslynDom.RDomDeclarationStatement : x3 {Int32}     var x3 = x2;\r\n";
@@ -111,14 +111,14 @@ namespace RoslynDomExampleTests
       public void Walkthrogh_4_Fix_implicit_variables_of_concern()
       {
          // Assumes Walkthrough_3 passes
-         var root = RDomCSharp.Factory.GetRootFromFile(fileName);
+         var root = RDom.CSharp.LoadFromFile(fileName);
          var candidates = FindImplicitVariablesOfConcern(root);
 
          foreach (var candidate in candidates)
          {
             candidate.IsImplicitlyTyped = false;
          }
-         var output = RDomCSharp.Factory.BuildSyntax(root.RootClasses.First());
+         var output = RDom.CSharp.GetSyntaxNode(root.RootClasses.First());
          // For testing, force chhanges through secondary mechanism
          var initialCode = File.ReadAllText(fileName);
          var expected = initialCode
@@ -134,7 +134,7 @@ namespace RoslynDomExampleTests
       public void Walkthrogh_4_Fix_non_aliased()
       {
          // Assumes Walkthrough_3 passes
-         var root = RDomCSharp.Factory.GetRootFromFile(fileName);
+         var root = RDom.CSharp.LoadFromFile(fileName);
          var candidates = FindImplicitVariablesOfConcern(root);
 
          foreach (var candidate in candidates)
@@ -142,7 +142,7 @@ namespace RoslynDomExampleTests
             candidate.IsImplicitlyTyped = false;
             candidate.Type.DisplayAlias = true;
          }
-         var output = RDomCSharp.Factory.BuildSyntax(root.RootClasses.First());
+         var output = RDom.CSharp.GetSyntaxNode(root.RootClasses.First());
          // For testing, force chhanges through secondary mechanism
          var initialCode = File.ReadAllText(fileName);
          var expected = initialCode
@@ -186,8 +186,8 @@ namespace RoslynDomExampleTests
       private string GetNewCode(IDom item)
       {
          var ret = new List<string>();
-         var node = RDomCSharp.Factory.BuildSyntax(item);
-         node = RDomCSharp.Factory.Format(node);
+         var node = RDom.CSharp.GetSyntaxNode(item);
+         node = RDom.CSharp.Format(node);
          return node.ToString();
          //   return RDomCSharp.Factory.BuildFormattedSyntax(item).ToString();
       }

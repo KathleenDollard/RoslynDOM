@@ -13,7 +13,7 @@ namespace RoslynDom.CSharp
     
         public bool ContainerCheck()
         {
-          return  RDomCSharp.Factory.ContainerCheck();
+          return  RDom.CSharp.ContainerCheck();
         }
     }
 }

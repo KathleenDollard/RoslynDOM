@@ -80,7 +80,7 @@ namespace RoslynDom.CSharp
          else
          {
             var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup);
-            var condition = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition);
+            var condition = (ExpressionSyntax)RDom.CSharp.GetSyntaxNode(itemAsT.Condition);
             node = MakeSyntax(itemAsT, condition, statement);
          }
 

@@ -72,7 +72,7 @@ namespace RoslynDom.CSharp
 
          var kind = Mappings.SyntaxKindFromOperator(itemAsT.Operator);
          var opToken = SyntaxFactory.Token(kind);
-         var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.Type).First();
+         var returnTypeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(itemAsT.Type).First();
          var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
          var node = SyntaxFactory.OperatorDeclaration(returnTypeSyntax, opToken)
                          .WithModifiers(modifiers);
@@ -84,7 +84,7 @@ namespace RoslynDom.CSharp
          //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
          var parameterList = itemAsT.Parameters
-                     .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                      .OfType<ParameterSyntax>()
                      .ToList();
          var parameterListSyntax = SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterList));

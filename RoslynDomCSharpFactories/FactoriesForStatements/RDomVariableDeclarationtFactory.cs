@@ -133,7 +133,7 @@ namespace RoslynDom.CSharp
          if (itemAsT.IsImplicitlyTyped)
          { typeSyntax = SyntaxFactory.IdentifierName("var"); }
          else
-         { typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Type)); }
+         { typeSyntax = (TypeSyntax)(RDom.CSharp.GetSyntaxNode(itemAsT.Type)); }
          switch (itemAsT.VariableKind)
          {
             //case VariableKind.Unknown:
@@ -159,7 +159,7 @@ namespace RoslynDom.CSharp
          var node = SyntaxFactory.VariableDeclarator(itemAsT.Name);
          if (itemAsT.Initializer != null)
          {
-            var expressionSyntax = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Initializer);
+            var expressionSyntax = (ExpressionSyntax)RDom.CSharp.GetSyntaxNode(itemAsT.Initializer);
             expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, itemAsT.Whitespace2Set[LanguageElement.Expression]);
             var equalsToken = SyntaxFactory.Token(SyntaxKind.EqualsToken);
             equalsToken = BuildSyntaxHelpers.AttachWhitespaceToToken(equalsToken, itemAsT.Whitespace2Set[LanguageElement.EqualsAssignmentOperator]);

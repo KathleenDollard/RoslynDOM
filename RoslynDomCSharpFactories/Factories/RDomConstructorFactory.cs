@@ -105,7 +105,7 @@ namespace RoslynDom.CSharp
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
          var parameterList = itemAsT.Parameters
-                     .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                      .OfType<ParameterSyntax>()
                      .ToList();
 
@@ -163,7 +163,7 @@ namespace RoslynDom.CSharp
 
       private ArgumentSyntax GetArgumentSyntax(IArgument arg)
       {
-         var expressionSyntax = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(arg.ValueExpression);
+         var expressionSyntax = (ExpressionSyntax)RDom.CSharp.GetSyntaxNode(arg.ValueExpression);
          expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, arg.Whitespace2Set[LanguageElement.Expression]);
          var argSyntax = SyntaxFactory.Argument(expressionSyntax);
          argSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirst(argSyntax, arg.Whitespace2Set[LanguageElement.ConstructorInitializerArgument ]);

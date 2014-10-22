@@ -144,7 +144,7 @@ namespace RoslynDom.CSharp
                   Func<TChange, bool> needsChange,
                   Func<TChange, bool> fixItem)
       {
-         var root = RDomCSharp.Factory.GetRootFromSyntaxTree(tree);
+         var root = RDom.CSharp.Load(tree);
          var items = getItems(root);
          foreach (var item in items)
          {
@@ -154,7 +154,7 @@ namespace RoslynDom.CSharp
                { didAnythingChange = true; }
             }
          }
-         var retTree = RDomCSharp.Factory.BuildSyntaxTree(root);
+         var retTree = RDom.CSharp.GetSyntaxTree(root);
          return retTree;
       }
 
@@ -193,7 +193,7 @@ namespace RoslynDom.CSharp
 
       public static void WriteToFile(string outputFileName, IRoot root)
       {
-         var output = RDomCSharp.Factory.BuildSyntax(root);
+         var output = RDom.CSharp.GetSyntaxNode(root);
          WriteToFile(outputFileName, output.ToFullString());
       }
 

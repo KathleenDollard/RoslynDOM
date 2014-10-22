@@ -557,10 +557,10 @@ public class Bar
                 int statementCount,
                 Action<IEnumerable<IStatement>> verifyDelegate)
         {
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var root2 = root.Copy();
-            var output = RDomCSharp.Factory.BuildSyntax(root);
-            var output2 = RDomCSharp.Factory.BuildSyntax(root2);
+            var output = RDom.CSharp.GetSyntaxNode(root);
+            var output2 = RDom.CSharp.GetSyntaxNode(root2);
             var method = root.RootClasses.First().Methods.First();
             var statements = method.Statements;
             Assert.AreEqual(statementCount, statements.Count());
@@ -577,9 +577,9 @@ public class Bar
                 Action<IEnumerable<IStatement>> getVerifyDelegate,
                 Action<IEnumerable<IStatement>> setVerifyDelegate)
         {
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             Assert.AreEqual(rootDescendantCount, root.Descendants.Count());
-            var output = RDomCSharp.Factory.BuildSyntax(root);
+            var output = RDom.CSharp.GetSyntaxNode(root);
             var prop = root.RootClasses.First().Properties.First();
 
             var getStatements = prop.GetAccessor.Statements;

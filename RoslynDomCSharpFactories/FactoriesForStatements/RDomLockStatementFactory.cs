@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as ILockStatement;
             var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup);
-            var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression) as ExpressionSyntax;
+            var expressionSyntax = RDom.CSharp.GetSyntaxNode(itemAsT.Expression) as ExpressionSyntax;
             var node = SyntaxFactory.LockStatement(expressionSyntax, statement);
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);

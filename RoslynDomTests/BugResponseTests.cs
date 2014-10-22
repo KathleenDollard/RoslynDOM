@@ -20,7 +20,7 @@ namespace RoslynDomTests
             public class MyClass
             { }
             ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             // The issue here is tha the system is unforgiving of the single close square bracket  
             Assert.IsFalse (root.PublicAnnotations.HasPublicAnnotation("_xf_OutputForEach"));
         }
@@ -37,7 +37,7 @@ namespace RoslynDomTests
                                 set { MyStaticClass1._flotDialogue = value; }
                             }
                         }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var symbol = ((RDomProperty)root.Classes.First().Properties.First()).TypedSymbol as IPropertySymbol;
             Assert.IsNotNull(symbol);
             Assert.AreEqual("_flotDialogue", symbol.Name);
@@ -60,8 +60,8 @@ namespace RoslynDomTests
             var x3 = x2;
         }
      }";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-            var output = RDomCSharp.Factory.BuildSyntax(root);
+            var root = RDom.CSharp.Load(csharpCode);
+            var output = RDom.CSharp.GetSyntaxNode(root);
             Assert.AreEqual(csharpCode, output.ToFullString());
         }
 

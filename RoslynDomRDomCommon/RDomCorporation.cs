@@ -198,7 +198,6 @@ namespace RoslynDom
          return factorySet.Factories;
       }
 
-
       private FactorySet GetFactorySet(Type kind)
       {
          foreach (var setPair in factorySets)
@@ -209,7 +208,6 @@ namespace RoslynDom
          }
          return null;
       }
-
 
    }
 

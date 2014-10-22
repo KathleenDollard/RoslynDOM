@@ -32,15 +32,15 @@ public class Class1
     }
 }
             ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var statements = root.Classes.First().Methods.First().Statements.ToArray();
             var expected1 = "        if (x == 42){Console.WriteLine();}\r\n";
             var expected2 = "        if (x == 42)\r\n        {  Console.WriteLine(); }\r\n";
             var expected3 = "        if (x == 42)\r\n        {\r\n            Console.WriteLine();\r\n        }\r\n";
-            var actual = RDomCSharp.Factory.BuildSyntax(root);
-            var actual1 = RDomCSharp.Factory.BuildSyntax(statements[1]);
-            var actual2 = RDomCSharp.Factory.BuildSyntax(statements[2]);
-            var actual3 = RDomCSharp.Factory.BuildSyntax(statements[3]);
+            var actual = RDom.CSharp.GetSyntaxNode(root);
+            var actual1 = RDom.CSharp.GetSyntaxNode(statements[1]);
+            var actual2 = RDom.CSharp.GetSyntaxNode(statements[2]);
+            var actual3 = RDom.CSharp.GetSyntaxNode(statements[3]);
             // Problem was managing Whitespace trivia and NOT ALSO EOL trivia for each token. 
             // Partially fixed in CreateFrom. Either there is a bug there ors omethign is 
             // funny in BUildSyntax, which might be the presence of two WS.

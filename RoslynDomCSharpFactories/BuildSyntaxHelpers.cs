@@ -46,7 +46,7 @@ namespace RoslynDom.CSharp
          var leadingTriviaList = moreLeadingTrivia.Concat(node.GetLeadingTrivia());
          node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadingTriviaList));
          if (item.NeedsFormatting )
-         { node = (TNode)RDomCSharp.Factory.Format(node); }
+         { node = (TNode)RDom.CSharp.Format(node); }
          return node;
       }
 
@@ -294,13 +294,13 @@ namespace RoslynDom.CSharp
          {
             if (asClass.BaseType != null)
             {
-               var baseTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntax(asClass.BaseType);
+               var baseTypeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxNode(asClass.BaseType);
                list.Add(baseTypeSyntax);
             }
          }
          foreach (var interf in item.ImplementedInterfaces)
          {
-            var interfTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntax(interf);
+            var interfTypeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxNode(interf);
             list.Add(interfTypeSyntax);
          }
 
@@ -372,14 +372,14 @@ namespace RoslynDom.CSharp
          {
             var type = value as RDomReferencedType;
             if (type == null) throw new InvalidOperationException();
-            var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
+            var typeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(type).First();
             expr = SyntaxFactory.TypeOfExpression(typeSyntax);
          }
          else if (valueType == LiteralKind.Default)
          {
             var type = value as RDomReferencedType;
             if (type == null) throw new InvalidOperationException();
-            var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First();
+            var typeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(type).First();
             expr = SyntaxFactory.DefaultExpression(typeSyntax);
          }
          else if (valueType == LiteralKind.MemberAccess)
@@ -406,7 +406,7 @@ namespace RoslynDom.CSharp
          // This works oddly because it uncollapses the list
          // This code is largely repeated in interface and class factories, but is very hard to refactor because of shallow Roslyn (Microsoft) architecture
          var typeParamsAndConstraints = itemAsT.TypeParameters
-                     .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                      .ToList();
 
          var typeParameterSyntaxList = BuildSyntaxHelpers.GetTypeParameterSyntaxList(

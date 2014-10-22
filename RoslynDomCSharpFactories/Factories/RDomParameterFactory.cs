@@ -73,7 +73,7 @@ namespace RoslynDom.CSharp
          Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
 
          var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
-         var syntaxType = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(itemAsT.Type));
+         var syntaxType = (TypeSyntax)(RDom.CSharp.GetSyntaxNode(itemAsT.Type));
          syntaxType = BuildSyntaxHelpers.RemoveLeadingSpaces(syntaxType);
 
          var node = SyntaxFactory.Parameter(nameSyntax)

@@ -19,7 +19,7 @@ namespace RoslynDomTests
                 public string Foo{get; set;} 
             }
             ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             Assert.IsFalse(root.HasSyntaxErrors);
 
         }
@@ -34,7 +34,7 @@ namespace RoslynDomTests
                 public string Foo(getx; set;} 
             }
             ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             Assert.IsTrue(root.HasSyntaxErrors);
 
         }

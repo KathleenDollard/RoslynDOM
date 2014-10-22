@@ -71,7 +71,7 @@ namespace RoslynDom.CSharp
       {
          var itemAsT = item as IProperty;
          var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
-         var returnType = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.ReturnType).First();
+         var returnType = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(itemAsT.ReturnType).First();
          var node = SyntaxFactory.PropertyDeclaration(returnType, nameSyntax);
          var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
          node = node.WithModifiers(modifiers);
@@ -80,10 +80,10 @@ namespace RoslynDom.CSharp
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
          var accessors = SyntaxFactory.List<AccessorDeclarationSyntax>();
-         var getAccessorSyntax = RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.GetAccessor).FirstOrDefault();
+         var getAccessorSyntax = RDom.CSharp.GetSyntaxGroup(itemAsT.GetAccessor).FirstOrDefault();
          if (getAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)getAccessorSyntax); }
 
-         var setAccessorSyntax = RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.SetAccessor).FirstOrDefault();
+         var setAccessorSyntax = RDom.CSharp.GetSyntaxGroup(itemAsT.SetAccessor).FirstOrDefault();
          if (setAccessorSyntax != null) { accessors = accessors.Add((AccessorDeclarationSyntax)setAccessorSyntax); }
 
          var accessorList = SyntaxFactory.AccessorList(accessors);

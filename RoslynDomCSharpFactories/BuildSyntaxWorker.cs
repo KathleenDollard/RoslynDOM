@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
         public BlockSyntax GetStatementBlock(IEnumerable<IStatementCommentWhite> statements)
         {
             var statementSyntaxList = statements
-                              .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                              .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                               .ToList();
             return SyntaxFactory.Block(SyntaxFactory.List(statementSyntaxList));
         }
@@ -54,7 +54,7 @@ namespace RoslynDom.CSharp
                 typeSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(typeSyntax, type.Whitespace2Set.First());
             }
             else
-            { typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(type).First(); }
+            { typeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(type).First(); }
             return typeSyntax;
 
             //if (itemAsVariable.IsImplicitlyTyped)

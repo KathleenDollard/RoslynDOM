@@ -81,7 +81,7 @@ namespace RoslynDom.CSharp
          var itemAsT = item as IEvent;
          var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
 
-         var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.Type).First();
+         var typeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(itemAsT.Type).First();
          var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
          var variableNode = SyntaxFactory.VariableDeclarator(nameSyntax);
          var variableNodes = SyntaxFactory.SeparatedList(new VariableDeclaratorSyntax[] { variableNode });

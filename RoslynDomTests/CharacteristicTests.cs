@@ -582,7 +582,7 @@ public class Foo1
   public interface Foo4  {}
   public enum Foo5  {}
 }";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var classOuter = root.Classes.First();
          var classNested = classOuter.Classes.First();
          var structureNested = classOuter.Structures.First();
@@ -615,7 +615,7 @@ public struct Foo1
   public interface Foo4  {}
   public enum Foo5  {}
 }";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var classOuter = root.Structures.First();
          var classNested = classOuter.Classes.First();
          var structureNested = classOuter.Structures.First();
@@ -646,7 +646,7 @@ public struct Foo1
          var csharpCode = @"
 public enum Foo1 : byte {}
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var en = root.Enums.First();
          Assert.AreEqual("Byte", en.UnderlyingType.Name);
          Assert.AreEqual("System.Byte", en.UnderlyingType.QualifiedName);
@@ -675,7 +675,7 @@ public enum Foo1 : byte {}
       [TestMethod, TestCategory(ImplementedInterfacesCategory)]
       public void Can_get_implemented_interfaces_for_class()
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
+         var root = RDom.CSharp.Load(csharpCodeForInterfaceTests);
          var classes = root.Classes.ToArray();
          Assert.AreEqual(2, classes[0].ImplementedInterfaces.Count());
          Assert.AreEqual(2, classes[1].ImplementedInterfaces.Count());
@@ -686,7 +686,7 @@ public enum Foo1 : byte {}
       public void Can_get_all_implemented_interfaces_for_class()
       {
          Assert.Inconclusive();
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
+         var root = RDom.CSharp.Load(csharpCodeForInterfaceTests);
          var classes = root.Classes.ToArray();
          Assert.AreEqual(2, classes[0].AllImplementedInterfaces.Count());
          Assert.AreEqual(3, classes[1].AllImplementedInterfaces.Count());
@@ -697,7 +697,7 @@ public enum Foo1 : byte {}
       [TestMethod, TestCategory(ImplementedInterfacesCategory)]
       public void Can_get_implemented_interfaces_for_structure()
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
+         var root = RDom.CSharp.Load(csharpCodeForInterfaceTests);
          var structures = root.Structures.ToArray();
          Assert.AreEqual(2, structures[0].ImplementedInterfaces.Count());
       }
@@ -706,7 +706,7 @@ public enum Foo1 : byte {}
       public void Can_get_all_implemented_interfaces_for_structure()
       {
          Assert.Inconclusive();
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
+         var root = RDom.CSharp.Load(csharpCodeForInterfaceTests);
          var structures = root.Structures.ToArray();
          Assert.AreEqual(2, structures[0].AllImplementedInterfaces.Count());
       }
@@ -714,7 +714,7 @@ public enum Foo1 : byte {}
       [TestMethod, TestCategory(ImplementedInterfacesCategory)]
       public void Can_get_implemented_interfaces_for_interface()
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
+         var root = RDom.CSharp.Load(csharpCodeForInterfaceTests);
          var interfaces = root.Interfaces.ToArray();
          Assert.AreEqual(2, interfaces[0].ImplementedInterfaces.Count());
          Assert.AreEqual(3, interfaces[1].ImplementedInterfaces.Count());
@@ -725,7 +725,7 @@ public enum Foo1 : byte {}
       public void Can_get_all_implemented_interfaces_for_interface()
       {
          Assert.Inconclusive();
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCodeForInterfaceTests);
+         var root = RDom.CSharp.Load(csharpCodeForInterfaceTests);
          var interfaces = root.Interfaces.ToArray();
          Assert.AreEqual(2, interfaces[0].AllImplementedInterfaces.Count());
          Assert.AreEqual(4, interfaces[1].AllImplementedInterfaces.Count());
@@ -742,7 +742,7 @@ public enum Foo1 : byte {}
 public class Foo1  {}
 public class Foo2 : Foo1 {}
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var classes = root.Classes.ToArray();
          Assert.IsNull(classes[0].BaseType);
          Assert.IsNotNull(classes[1].BaseType);
@@ -765,8 +765,8 @@ public class Foo
    public string Foo5(this A a, int i = 0, string s = """"){}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root).ToFullString();
          // StatePrinterApprovals.Verify(root);
          var methods = root.Classes.First().Methods.ToArray();
          Assert.AreEqual(0, methods[0].Parameters.Count());
@@ -797,7 +797,7 @@ public class Foo
    public string Foo2(int[] i){}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var methods = root.Classes.First().Methods.ToArray();
          ParameterCheck(methods[0].Parameters.First(), 0, "i", "Int32", isArray: true);
 
@@ -814,7 +814,7 @@ public class Foo
    public string Foo4(ref int[] i, out string[] s, params string[] moreStrings){}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          // StatePrinterApprovals.Verify(root);
          var methods = root.Classes.First().Methods.ToArray();
          ParameterCheck(methods[0].Parameters.First(), 0, "i", "Int32", isArray: true);
@@ -836,7 +836,7 @@ public class Foo
    public string Foo4(params string[] moreStrings){}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var parameter = root.Classes.First().Methods.First().Parameters.First();
          ParameterCheck(parameter, 0, "moreStrings", "String", isParamArray: true, isArray: true);
 
@@ -851,7 +851,7 @@ public static class Foo
    public static string Foo5(this A a, int i = 0, string s = """"){}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
          ParameterCheck(parameters[0], 0, "a", "A");
          ParameterCheck(parameters[1], 1, "i", "Int32", isOptional: true, defaultValue: 0);
@@ -868,10 +868,10 @@ public static class Foo
    public static string Foo5(this A a, int i = 0, string s = ""Fred""){}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var method = root.Classes.First().Methods.First();
          Assert.IsTrue(method.IsExtensionMethod);
-         Assert.AreEqual(csharpCode, RDomCSharp.Factory.BuildSyntax(root).ToFullString());
+         Assert.AreEqual(csharpCode, RDom.CSharp.GetSyntaxNode(root).ToFullString());
          var method2 = method.Copy();
          Assert.IsTrue(method.SameIntent(method2));
 
@@ -896,10 +896,10 @@ namespace Test
         public void Foo(string Foo = Const.Test){}
     }
 }";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var parameter = root.RootClasses.ElementAt(1).Methods.First().Parameters.First();
          ParameterCheck(parameter, 0, "Foo", "String", isOptional: true, defaultValue: "TestContract", defaultConstantIdentifier: "Const.Test");
-         var actual = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+         var actual = RDom.CSharp.GetSyntaxNode(root).ToFullString();
          Assert.AreEqual(csharpCode, actual);
       }
 
@@ -916,11 +916,11 @@ namespace Test
         protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations){}
     }
 }";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var parameters = root.RootClasses.ElementAt(0).Methods.First().Parameters.ToArray();
          ParameterCheck(parameters[0], 0, "other", "TLocal");
          ParameterCheck(parameters[1], 1, "skipPublicAnnotations", "Boolean");
-         var actual = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
+         var actual = RDom.CSharp.GetSyntaxNode(root).ToFullString();
          Assert.AreEqual(csharpCode, actual);
       }
 
@@ -958,7 +958,7 @@ public class Foo
    public BadName Foo4(int i){}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var methods = root.Classes.First().Methods.ToArray();
          Assert.AreEqual("System.String", methods[0].ReturnType.QualifiedName);
          Assert.AreEqual("System.Int32", methods[1].ReturnType.QualifiedName);
@@ -979,7 +979,7 @@ public class Foo
    public BadName Foo4{ get; set; }
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var properties = root.Classes.First().Properties.ToArray();
          Assert.AreEqual("System.Diagnostics.Tracing.EventKeyword", properties[2].PropertyType.QualifiedName);
          Assert.AreEqual("BadName", properties[3].PropertyType.Name);
@@ -999,7 +999,7 @@ public class Foo
    public BadName Foo4;
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var fields = root.Classes.First().Fields.ToArray();
          Assert.AreEqual("String", fields[0].ReturnType.Name);
          Assert.AreEqual("Int32", fields[1].ReturnType.Name);
@@ -1017,7 +1017,7 @@ public class Foo
    public void Foo3(string s, int i, System.Diagnostics.Tracing.EventKeyword keyword, BadName whatever){}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
          Assert.AreEqual("String", parameters[0].Type.Name);
          Assert.AreEqual("Int32", parameters[1].Type.Name);
@@ -1041,7 +1041,7 @@ namespace Foo
    namespace Bar2 {}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var namespaces = root.ChildNamespaces;
          var allNamespaces = root.DescendantNamespaces;
          var nonEmptyNamespaces = root.Namespaces;
@@ -1067,7 +1067,7 @@ namespace Foo
    namespace Bar2 {}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var namespaces = root.ChildNamespaces;
          var allNamespaces = root.DescendantNamespaces;
          var nonEmptyNamespaces = root.Namespaces;
@@ -1083,7 +1083,7 @@ namespace Foo
          var csharpCode = @"
 public enum Foo1 : byte {}
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var namespaces = root.ChildNamespaces;
          var allNamespaces = root.DescendantNamespaces;
          var nonEmptyNamespaces = root.Namespaces;
@@ -1106,7 +1106,7 @@ namespace Foo
    namespace Bar2 {}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var topNamespace = root.ChildNamespaces.First();
          var namespaces = topNamespace.Namespaces;
          var allNamespaces = topNamespace.DescendantNamespaces;
@@ -1133,7 +1133,7 @@ namespace Foo
    namespace Bar2 {}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var topNamespace = root.DescendantNamespaces.First();
          var namespaces = topNamespace.ChildNamespaces;
          var allNamespaces = topNamespace.DescendantNamespaces;
@@ -1153,7 +1153,7 @@ namespace Namespace1
    public enum Foo1 : byte {}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var topNamespace = root.Namespaces.First();
          var namespaces = topNamespace.Namespaces;
          var allNamespaces = topNamespace.Namespaces;
@@ -1181,7 +1181,7 @@ public class Foo
    public enum Foo7{}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var members = root.Classes.First().Members.ToArray();
          Assert.AreEqual(MemberKind.Property, members[0].MemberKind);
          Assert.AreEqual(MemberKind.Method, members[1].MemberKind);
@@ -1209,7 +1209,7 @@ public class Foo
    public enum Foo7{}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var members = root.Classes.First().Members.ToArray();
          Assert.AreEqual(MemberKind.Constructor, members[0].RequestValue("MemberKind"));
          Assert.AreEqual(MemberKind.Property, members[1].RequestValue("MemberKind"));
@@ -1231,7 +1231,7 @@ public class Foo
    public string Foo1{get; set;}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var members = root.Classes.First().Members.ToArray();
          Assert.IsNull(members[0].RequestValue("MemberKindX"));
       }
@@ -1246,7 +1246,7 @@ public class Foo
    public string Foo1(int Bar) {}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var parameters = root.Classes.First().Methods.First().Parameters.ToArray();
          Assert.AreEqual(false, (bool)parameters[0].RequestValue("IsOut"));
       }
@@ -1265,7 +1265,7 @@ public class Foo
    public string Foo3{set;}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var properties = root.Classes.First().Properties.ToArray();
          Assert.IsTrue(properties[0].CanGet);
          Assert.IsTrue(properties[0].CanSet);
@@ -1287,8 +1287,8 @@ public class Foo
    public string Foo3{internal get; set; }
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
 
          var properties = root.Classes.First().Properties.ToArray();
          VerifyPropertyAccess(properties[0], AccessModifier.Public, AccessModifier.Public, AccessModifier.Private);
@@ -1319,7 +1319,7 @@ public class Foo
    public string Foo1{get; set;}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var cl = (RDomClass)root.Classes.First();
          Assert.AreEqual("Foo", cl.Name);
       }
@@ -1336,7 +1336,7 @@ namespace Namespace1
    public class Foo2{}
 }
 ";
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var cl = root.RootClasses.ToArray();
          Assert.AreEqual("Foo", ((RDomClass)cl[0]). Name);
          Assert.AreEqual("Foo1", ((RDomClass)cl[1]).Name);
@@ -1348,8 +1348,8 @@ namespace Namespace1
       private IEnumerable<IHasAccessModifier> VerifyAccessModifier(string csharpCode,
                   Func<IRoot, IEnumerable<IHasAccessModifier>> getItems, params AccessModifier[] modifiers)
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
          var items = getItems(root);
          for (int i = 0; i < items.Count(); i++)
          { Assert.AreEqual(modifiers[i], items.ElementAt(i).AccessModifier); }
@@ -1359,8 +1359,8 @@ namespace Namespace1
 
       private IHasReturnType VerifyType(string csharpCode, Func<IRoot, IDom> getItem, string fullName)
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
          var item = getItem(root) as IHasReturnType;
          var retType = item.ReturnType;
          Assert.IsNotNull(retType);
@@ -1375,8 +1375,8 @@ namespace Namespace1
 
       private IEvent VerifyEvent(string csharpCode, Func<IRoot, IEvent> getItem, string fullName)
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
          var item = getItem(root);
          var type = item.Type;
          Assert.IsNotNull(type);
@@ -1394,8 +1394,8 @@ namespace Namespace1
                    params Tuple<bool, bool, bool, bool, bool, bool>[] expectedValues)
           where T : IOOTypeMember, ICanBeNew, ICanBeStatic
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
          var items = getItems(root);
          for (int i = 0; i < items.Count(); i++)
          {
@@ -1413,8 +1413,8 @@ namespace Namespace1
                    params Tuple<bool>[] expectedValues)
           where T : ICanBeStatic
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
          var items = getItems(root);
          for (int i = 0; i < items.Count(); i++)
          {
@@ -1426,8 +1426,8 @@ namespace Namespace1
       private void VerifyOOClass(string csharpCode, Func<IRoot, IEnumerable<IClass>> getItems,
            params Tuple<bool, bool, bool>[] expectedValues)
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
          var items = getItems(root);
          for (int i = 0; i < items.Count(); i++)
          {
@@ -1441,8 +1441,8 @@ namespace Namespace1
       private void VerifyOOField(string csharpCode, Func<IRoot, IEnumerable<IField>> getItems,
            params Tuple<bool>[] expectedValues)
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
-         var actual = RDomCSharp.Factory.BuildSyntax(root);
+         var root = RDom.CSharp.Load(csharpCode);
+         var actual = RDom.CSharp.GetSyntaxNode(root);
          var items = getItems(root);
          for (int i = 0; i < items.Count(); i++)
          {

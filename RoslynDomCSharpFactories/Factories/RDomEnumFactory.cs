@@ -94,7 +94,7 @@ namespace RoslynDom.CSharp
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
             var memberList = itemAsT.Members
-                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                         .OfType<EnumMemberDeclarationSyntax>()
                         .ToList();
             if (memberList.Any())
@@ -111,7 +111,7 @@ namespace RoslynDom.CSharp
         {
             if (item.UnderlyingType != null)
             {
-                var underlyingTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntax(item.UnderlyingType);
+                var underlyingTypeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxNode(item.UnderlyingType);
                 underlyingTypeSyntax = BuildSyntaxHelpers.AttachWhitespace(
                     underlyingTypeSyntax, item.UnderlyingType.Whitespace2Set, whitespaceLookup);
 

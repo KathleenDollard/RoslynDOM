@@ -68,14 +68,14 @@ namespace RoslynDom.CSharp
 
       protected override ForStatementSyntax MakeSyntax(RDomForStatement itemAsT, ExpressionSyntax condition, StatementSyntax statementBlock)
       {
-         var declaratorSyntax = (VariableDeclaratorSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Variable);
+         var declaratorSyntax = (VariableDeclaratorSyntax)RDom.CSharp.GetSyntaxNode(itemAsT.Variable);
          var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(
                      itemAsT.Variable.IsImplicitlyTyped, itemAsT.Variable.Type);
          //var typeSyntax = BuildSyntaxWorker.GetVariableTypeSyntax(itemAsT.Variable);
          var nodeDeclaratorInList = SyntaxFactory.SeparatedList(SyntaxFactory.List<VariableDeclaratorSyntax>(new VariableDeclaratorSyntax[] { declaratorSyntax }));
          var nodeDeclaration = SyntaxFactory.VariableDeclaration(typeSyntax, nodeDeclaratorInList);
          nodeDeclaration = BuildSyntaxHelpers.AttachWhitespace(nodeDeclaration, itemAsT.Whitespace2Set, WhitespaceLookup, LanguagePart.Variable);
-         var incrementorSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Incrementor);
+         var incrementorSyntax = RDom.CSharp.GetSyntaxNode(itemAsT.Incrementor);
          incrementorSyntax = BuildSyntaxHelpers.AttachWhitespace(incrementorSyntax, itemAsT.Whitespace2Set, WhitespaceLookup, LanguagePart.Iterator);
 
          var secondSemiColonToken = SyntaxFactory.Token(SyntaxKind.SemicolonToken);

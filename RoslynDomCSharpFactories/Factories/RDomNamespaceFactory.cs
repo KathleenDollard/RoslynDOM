@@ -76,13 +76,13 @@ namespace RoslynDom.CSharp
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsNamespace.Whitespace2Set, WhitespaceLookup);
 
             var usingsSyntax = itemAsNamespace.UsingDirectives
-                        .Select(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                        .Select(x => RDom.CSharp.GetSyntaxGroup(x))
                         .OfType<UsingDirectiveSyntax>()
                         .ToList();
             if (usingsSyntax.Count() > 0) { node = node.WithUsings(SyntaxFactory.List<UsingDirectiveSyntax>(usingsSyntax)); }
 
             var membersSyntax = itemAsNamespace.StemMembers
-                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                         .OfType<MemberDeclarationSyntax>()
                         .ToList();
             if (membersSyntax.Count() > 0) { node = node.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(membersSyntax)); }

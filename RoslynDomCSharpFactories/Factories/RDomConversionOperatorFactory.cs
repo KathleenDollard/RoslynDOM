@@ -74,7 +74,7 @@ namespace RoslynDom.CSharp
 
             var kind = itemAsT.IsImplicit ? SyntaxKind.ImplicitKeyword : SyntaxKind.ExplicitKeyword;
             var opToken = SyntaxFactory.Token(kind);
-            var typeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.Type).First();
+            var typeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(itemAsT.Type).First();
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
             var node = SyntaxFactory.ConversionOperatorDeclaration(opToken, typeSyntax)
                             .WithModifiers(modifiers);
@@ -86,7 +86,7 @@ namespace RoslynDom.CSharp
             //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             var parameterList = itemAsT.Parameters
-                        .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                        .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                         .OfType<ParameterSyntax>()
                         .ToList();
             var parameterListSyntax = SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(parameterList));

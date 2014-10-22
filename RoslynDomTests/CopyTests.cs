@@ -230,7 +230,7 @@ namespace RoslynDomTests
          Assert.IsTrue(statements[2] is RDomDeclarationStatement);
          Assert.IsTrue(statements[3] is RDomAssignmentStatement);
          Assert.IsTrue(statements[4] is RDomReturnStatement);
-         var outputNew = RDomCSharp.Factory.BuildSyntax(newItem);
+         var outputNew = RDom.CSharp.GetSyntaxNode(newItem);
          Assert.AreEqual(cSharpMethodCode, outputNew.ToFullString());
       }
 
@@ -248,7 +248,7 @@ namespace RoslynDomTests
 @"            }";
          var newItem = VerifyClone(csharpCode,
             root => root.RootClasses.First().Methods.First());
-         var outputNew = RDomCSharp.Factory.BuildSyntax(newItem);
+         var outputNew = RDom.CSharp.GetSyntaxNode(newItem);
          Assert.AreEqual(cSharpMethodCode, outputNew.ToFullString());
       }
 
@@ -422,16 +422,16 @@ namespace RoslynDomTests
           Func<string, string> fixupOutput = null)
           where T : IDom<T>
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var testItem = makeTestItem(root);
          var newItem = testItem.Copy();
          Assert.IsNotNull(newItem);
          Assert.IsTrue(newItem.SameIntent(testItem));
-         var output = RDomCSharp.Factory.BuildSyntax(root);
+         var output = RDom.CSharp.GetSyntaxNode(root);
          var actual = output.ToFullString();
          Assert.AreEqual(csharpCode, actual);
-         var outputOldText = RDomCSharp.Factory.BuildSyntax(testItem).ToString();
-         var outputNewText = RDomCSharp.Factory.BuildSyntax(newItem).ToString();
+         var outputOldText = RDom.CSharp.GetSyntaxNode(testItem).ToString();
+         var outputNewText = RDom.CSharp.GetSyntaxNode(newItem).ToString();
          if (fixupOutput != null)
          { outputNewText = fixupOutput(outputNewText); }
          Assert.AreEqual(outputOldText, outputNewText);

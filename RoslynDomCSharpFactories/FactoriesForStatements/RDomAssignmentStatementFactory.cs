@@ -78,11 +78,11 @@ namespace RoslynDom.CSharp
         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
         {
             var itemAsT = item as IAssignmentStatement;
-            var leftSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Left);
+            var leftSyntax = RDom.CSharp.GetSyntaxNode(itemAsT.Left);
             leftSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(leftSyntax,
                         itemAsT.Whitespace2Set[LanguageElement.LeftExpression]);
 
-            var expressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Expression);
+            var expressionSyntax = RDom.CSharp.GetSyntaxNode(itemAsT.Expression);
             expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax,
                         itemAsT.Whitespace2Set[LanguageElement.Expression]);
 

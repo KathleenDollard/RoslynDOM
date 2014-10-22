@@ -125,7 +125,7 @@ namespace RoslynDom.CSharp
                 var syntax = SyntaxFactory.CatchClause();
                 if (ctch.ExceptionType != null)
                 {
-                    TypeSyntax typeSyntax = (TypeSyntax)(RDomCSharp.Factory.BuildSyntax(ctch.ExceptionType));
+                    TypeSyntax typeSyntax = (TypeSyntax)(RDom.CSharp.GetSyntaxNode(ctch.ExceptionType));
                     var declaration = SyntaxFactory.CatchDeclaration(typeSyntax);
                     if (ctch.Variable != null)
                     { declaration = declaration.WithIdentifier(SyntaxFactory.Identifier(ctch.Variable.Name)); }

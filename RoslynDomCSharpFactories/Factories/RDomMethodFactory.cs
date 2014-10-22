@@ -72,7 +72,7 @@ namespace RoslynDom.CSharp
          var itemAsT = item as IMethod;
          var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
 
-         var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.ReturnType).First();
+         var returnTypeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(itemAsT.ReturnType).First();
          var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
          var node = SyntaxFactory.MethodDeclaration(returnTypeSyntax, nameSyntax)
                          .WithModifiers(modifiers);
@@ -82,7 +82,7 @@ namespace RoslynDom.CSharp
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
          var parameterList = itemAsT.Parameters
-                     .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                      .OfType<ParameterSyntax>()
                      .ToList();
          if (itemAsT.IsExtensionMethod)
@@ -110,7 +110,7 @@ namespace RoslynDom.CSharp
          // This works oddly because it uncollapses the list
          // This code is largely repeated in interface and class factories, but is very hard to refactor because of shallow Roslyn (Microsoft) architecture
          var typeParamsAndConstraints = itemAsT.TypeParameters
-                     .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
+                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
                      .ToList();
 
          node = BuildSyntaxHelpers.BuildTypeParameterSyntax(

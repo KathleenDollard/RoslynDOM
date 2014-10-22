@@ -91,7 +91,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IField;
             var nameSyntax = SyntaxFactory.Identifier(itemAsT.Name);
-            var returnTypeSyntax = (TypeSyntax)RDomCSharp.Factory.BuildSyntaxGroup(itemAsT.ReturnType).First();
+            var returnTypeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxGroup(itemAsT.ReturnType).First();
             var modifiers = BuildSyntaxHelpers.BuildModfierSyntax(itemAsT);
             if (itemAsT.IsReadOnly) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)); }
             if (itemAsT.IsConstant)
@@ -103,7 +103,7 @@ namespace RoslynDom.CSharp
             var declaratorNode = SyntaxFactory.VariableDeclarator(nameSyntax);
             if (itemAsT.Initializer != null)
             {
-                var expressionSyntax = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Initializer);
+                var expressionSyntax = (ExpressionSyntax)RDom.CSharp.GetSyntaxNode(itemAsT.Initializer);
                 expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, itemAsT.Whitespace2Set[LanguageElement.Expression]);
                 var equalsToken = SyntaxFactory.Token(SyntaxKind.EqualsToken);
                 equalsToken = BuildSyntaxHelpers.AttachWhitespaceToToken(equalsToken, itemAsT.Whitespace2Set[LanguageElement.EqualsAssignmentOperator]);

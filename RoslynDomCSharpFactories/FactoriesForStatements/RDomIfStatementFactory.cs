@@ -135,7 +135,7 @@ namespace RoslynDom.CSharp
 
         private ExpressionSyntax GetCondition(IHasCondition itemAsT)
         {
-            var expression = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.Condition);
+            var expression = (ExpressionSyntax)RDom.CSharp.GetSyntaxNode(itemAsT.Condition);
             expression = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expression,
                         itemAsT.Whitespace2Set[LanguageElement.Expression]);
             return expression;

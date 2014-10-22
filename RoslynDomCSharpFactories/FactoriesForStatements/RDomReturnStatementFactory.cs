@@ -55,7 +55,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.ReturnStatement();
             if (itemAsT.Return != null)
             {
-                var returnExpressionSyntax = RDomCSharp.Factory.BuildSyntax(itemAsT.Return);
+                var returnExpressionSyntax = RDom.CSharp.GetSyntaxNode(itemAsT.Return);
                 node = node.WithExpression((ExpressionSyntax)returnExpressionSyntax);
             }
 

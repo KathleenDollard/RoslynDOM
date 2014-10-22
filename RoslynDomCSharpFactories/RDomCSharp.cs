@@ -14,63 +14,63 @@ using Microsoft.CodeAnalysis.CSharp.Formatting;
 
 namespace RoslynDom.CSharp
 {
-   public class RDomCSharp
+   public class RDom
    {
       [ExcludeFromCodeCoverage]
       // until move to C# 6 - I want to support name of as soon as possible
       protected static string nameof<T>(T value) { return ""; }
 
-      private static RDomCSharp factory = new RDomCSharp();
+      private static RDom csharp = new RDom();
       private RDomCorporation corporation = new RDomCorporation();
 
-      private RDomCSharp() { }
+      private RDom() { }
 
-      public static RDomCSharp Factory
-      { get { return factory; } }
+      public static RDom CSharp
+      { get { return csharp; } }
 
-      public IRoot GetRootFromFile(string fileName)
+      public IRoot LoadFromFile(string fileName)
       {
          var code = File.ReadAllText(fileName);
          SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
          // TODO: Consider whether to expand the filename to full path
-         return GetRootFromStringInternal(tree, fileName);
+         return LoadFromInternal(tree, fileName);
       }
 
-      public IRoot GetRootFromString(string code)
+      public IRoot Load(string code)
       {
          SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-         return GetRootFromStringInternal(tree, null);
+         return LoadFromInternal(tree, null);
       }
 
-      public IRoot GetRootFromDocument(Document document)
+      public IRoot Load(Document document)
       {
          Guardian.Assert.IsNotNull(document, nameof(document));
          SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
-         return GetRootFromStringInternal(tree, document.FilePath);
+         return LoadFromInternal(tree, document.FilePath);
       }
 
-      public IRoot GetRootFromSyntaxTree(SyntaxTree tree)
+      public IRoot Load(SyntaxTree tree)
       {
-         return GetRootFromStringInternal(tree, tree.FilePath);
+         return LoadFromInternal(tree, tree.FilePath);
       }
 
-      public SyntaxNode BuildSyntax(IDom item)
+      public SyntaxNode GetSyntaxNode(IDom item)
       {
-         var syntaxGroup = BuildSyntaxGroup(item);
+         var syntaxGroup = GetSyntaxGroup(item);
          if (syntaxGroup == null || !syntaxGroup.Any()) return null;
          return syntaxGroup.Single();
       }
 
-      public SyntaxTree BuildSyntaxTree(IRoot root)
+      public SyntaxTree GetSyntaxTree(IRoot root)
       {
-         var rootNode = BuildSyntax(root);
+         var rootNode = GetSyntaxNode(root);
          return SyntaxFactory.SyntaxTree(rootNode);
       }
 
       public IExpression ParseExpression(string expressionAsString)
       {
          var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);
-         expressionSyntax = RDomCSharp.Factory.Format(expressionSyntax) as ExpressionSyntax;
+         expressionSyntax = RDom.CSharp.Format(expressionSyntax) as ExpressionSyntax;
          var expression = corporation.CreateFrom<IExpression>(expressionSyntax, null, null).FirstOrDefault();
          return expression;
       }
@@ -96,7 +96,7 @@ namespace RoslynDom.CSharp
 
 
 
-      private IRoot GetRootFromStringInternal(SyntaxTree tree, string filePath)
+      private IRoot LoadFromInternal(SyntaxTree tree, string filePath)
       {
          var compilation = CSharpCompilation.Create("MyCompilation",
                                         options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
@@ -108,7 +108,7 @@ namespace RoslynDom.CSharp
          return root;
       }
 
-      internal IEnumerable<SyntaxNode> BuildSyntaxGroup(IDom item)
+      internal IEnumerable<SyntaxNode> GetSyntaxGroup(IDom item)
       {
          IEnumerable<SyntaxNode> syntaxNodes;
          if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }

@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
         {
             var itemAsT = item as IThrowStatement;
             var node = SyntaxFactory.ThrowStatement();
-            var exception = (ExpressionSyntax)RDomCSharp.Factory.BuildSyntax(itemAsT.ExceptionExpression);
+            var exception = (ExpressionSyntax)RDom.CSharp.GetSyntaxNode(itemAsT.ExceptionExpression);
             if (exception != null) node = node.WithExpression(exception);
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);

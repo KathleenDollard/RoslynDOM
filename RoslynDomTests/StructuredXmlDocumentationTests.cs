@@ -55,7 +55,7 @@ namespace RoslynDomTests
                   Func<IRoot,IHasStructuredDocumentation > makeItem,
                   string description)
       {
-         var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+         var root = RDom.CSharp.Load(csharpCode);
          var root2 = root.Copy();
          var item = makeItem(root);
          var item2 = makeItem(root2);
@@ -63,8 +63,8 @@ namespace RoslynDomTests
          Assert.AreEqual(description, item.Description);
          Assert.AreEqual(description, item2.Description);
          Assert.IsTrue(item.SameIntent(item2));
-         var actual1 = RDomCSharp.Factory.BuildSyntax(root).ToFullString();
-         var actual2 = RDomCSharp.Factory.BuildSyntax(root2).ToFullString();
+         var actual1 = RDom.CSharp.GetSyntaxNode(root).ToFullString();
+         var actual2 = RDom.CSharp.GetSyntaxNode(root2).ToFullString();
          Assert.AreEqual(csharpCode, actual1);
          Assert.AreEqual(csharpCode, actual2);
 

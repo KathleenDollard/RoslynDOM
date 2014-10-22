@@ -56,7 +56,7 @@ private static string AddFieldForProperty(IProperty prop)
 
 private static void UpdatePropertyGet(IProperty prop, string fieldName)
 {
-   var retExpression = RDomCSharp.Factory.ParseExpression(fieldName);
+   var retExpression = RDom.CSharp.ParseExpression(fieldName);
    var statement = new RDomReturnStatement(retExpression, true);
    prop.GetAccessor.StatementsAll.AddOrMove(statement);
    prop.GetAccessor.EnsureNewLineAfter();
@@ -64,7 +64,7 @@ private static void UpdatePropertyGet(IProperty prop, string fieldName)
 
 private static void UpdatePropertySet(IProperty prop, string fieldName)
 {
-   var expression = RDomCSharp.Factory.ParseExpression(string.Format("SetProperty(ref {0}, value)", fieldName));
+   var expression = RDom.CSharp.ParseExpression(string.Format("SetProperty(ref {0}, value)", fieldName));
    var statement = new RDomInvocationStatement(expression, true);
    prop.SetAccessor.StatementsAll.AddOrMove(statement);
    prop.GetAccessor.EnsureNewLineAfter();

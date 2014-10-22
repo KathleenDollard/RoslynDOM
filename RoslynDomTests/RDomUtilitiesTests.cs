@@ -21,7 +21,7 @@ namespace RoslynDomTests
                         public class Foo
                         {}
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var cl = root.Classes.First();
             var list = new RDomCollection<IClass>(root);
             list.AddOrMove(cl);
@@ -110,7 +110,7 @@ namespace RoslynDomTests
                         public class FooE{}
                         public class FooG{}
                         ";
-            var root = RDomCSharp.Factory.GetRootFromString(csharpCode);
+            var root = RDom.CSharp.Load(csharpCode);
             var classes = root.Classes.ToArray();
 
             // Basic functionality
