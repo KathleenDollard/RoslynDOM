@@ -67,6 +67,9 @@ namespace RoslynDom.CSharp
          return SyntaxFactory.SyntaxTree(rootNode);
       }
 
+      public string GetSourceCode(IDom item)
+      { return GetSyntaxNode(item).ToFullString(); }
+
       public IExpression ParseExpression(string expressionAsString)
       {
          var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);
