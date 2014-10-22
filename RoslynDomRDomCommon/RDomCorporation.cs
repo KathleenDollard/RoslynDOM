@@ -18,11 +18,27 @@ namespace RoslynDom
       private Provider provider = new Provider();
       private Dictionary<Type, Tuple<IRDomFactory, IRDomFactory>> domFactoryLookup;
       private Worker worker;
+      private bool isInitialized;
 
       // factory sets are grouped by the types IRoot, IStemMember, ITypeMember, IStatement, IExpression, IMisc and hopefully soon None
       // These types are NOT exclusive, four types are both stem members and type members: class, struct, interface and enum
       private List<Tuple<Type, FactorySet>> factorySets;
 
+      public RDomCorporation()
+      {
+         provider.ConfigureContainer(this);
+         factorySets = new List<Tuple<Type, FactorySet>>();
+         var factories = provider.GetFactories();
+         var factoryTypeTuple = factories
+                           .Select(x => Tuple.Create(x, GetKindType(x.GetType())));
+         CreateDomLookup(factoryTypeTuple);
+         CreateFactorySets(factoryTypeTuple);
+
+         var createFromWorker = provider.GetCreateFromWorker();
+         var buildSyntaxWorker = provider.GetBuildSyntaxWorker();
+         worker = new Worker(createFromWorker, buildSyntaxWorker);
+
+      }
 
       public Worker Worker
       {
@@ -129,21 +145,25 @@ namespace RoslynDom
 
       private void Initialize()
       {
-         if (factorySets == null)
+         if (isInitialized )
          {
-            provider.ConfigureContainer(this);
-            factorySets = new List<Tuple<Type, FactorySet>>();
-            var factories = provider.GetFactories();
-            var factoryTypeTuple = factories
-                              .Select(x => Tuple.Create(x, GetKindType(x.GetType())));
-            CreateDomLookup(factoryTypeTuple);
-            CreateFactorySets(factoryTypeTuple);
-
-            var createFromWorker = provider.GetCreateFromWorker();
-            var buildSyntaxWorker = provider.GetBuildSyntaxWorker();
-            worker = new Worker(createFromWorker, buildSyntaxWorker);
             provider.CheckContainer();
          }
+         //if (factorySets == null)
+         //{
+            //provider.ConfigureContainer(this);
+            //factorySets = new List<Tuple<Type, FactorySet>>();
+            //var factories = provider.GetFactories();
+            //var factoryTypeTuple = factories
+            //                  .Select(x => Tuple.Create(x, GetKindType(x.GetType())));
+            //CreateDomLookup(factoryTypeTuple);
+            //CreateFactorySets(factoryTypeTuple);
+
+            //var createFromWorker = provider.GetCreateFromWorker();
+            //var buildSyntaxWorker = provider.GetBuildSyntaxWorker();
+            //worker = new Worker(createFromWorker, buildSyntaxWorker);
+            //provider.CheckContainer();
+         //}
       }
 
       private void CreateDomLookup(IEnumerable<Tuple<IRDomFactory, Type[]>> factoryTuples)
