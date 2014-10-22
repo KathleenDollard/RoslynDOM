@@ -9,7 +9,7 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IDirective : IStemMemberCommentWhite, ITypeMemberCommentWhite, IStatementCommentWhite, IMisc
+    public interface IDirective :  ICommentWhite
     {
-    }
+   }
 }

@@ -13,6 +13,10 @@ namespace RoslynDom.CSharp
                   where TSyntax : SyntaxNode
                   where T : class, IDom;
 
+      //IEnumerable<IRegion> GetRegion<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      //            where TSyntax : SyntaxNode
+      //            where T : class, IDom;
+
       IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
           where TSyntax : SyntaxNode
           where T : class, IDom;

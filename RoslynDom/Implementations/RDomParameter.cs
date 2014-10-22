@@ -75,6 +75,13 @@ namespace RoslynDom
       public AttributeCollection Attributes
       { get { return _attributes; } }
 
+      public override object RequestValue(string propertyName)
+      {
+         if (propertyName == "TypeName")
+         { return Type.Name; }
+         return base.RequestValue(propertyName);
+      }
+
       private string _name;
       [Required]
       public string Name

@@ -36,6 +36,8 @@ namespace RoslynDom
             if (TryCopyMember<RDomUsingDirective>(member, m => new RDomUsingDirective(m))) continue;
             if (TryCopyMember<RDomVerticalWhitespace>(member, m => new RDomVerticalWhitespace(m))) continue;
             if (TryCopyMember<RDomComment>(member, m => new RDomComment(m))) continue;
+            if (TryCopyMember<RDomRegionStart>(member, m => new RDomRegionStart(m))) continue;
+            if (TryCopyMember<RDomRegionEnd>(member, m => new RDomRegionEnd(m, this))) continue;
             throw new InvalidOperationException();
          }
       }

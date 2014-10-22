@@ -6,11 +6,19 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IRegionDirective : IDirective
-    {
+   /// <summary>
+   /// 
+   /// </summary>
+   public interface IRegionStart : IDirective, IDom<IRegionStart>
+   {
+      IRegionEnd RegionEnd { get; }
+   }
 
-    }
+   /// <summary>
+   /// 
+   /// </summary>
+   public interface IRegionEnd : IDirective, IDom<IRegionEnd>
+   {
+      IRegionStart RegionStart { get; }
+   }
 }

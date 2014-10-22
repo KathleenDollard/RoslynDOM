@@ -21,15 +21,15 @@ namespace RoslynDomExampleTests
       private TriviaManager triviaManager = new TriviaManager();
 
       [TestMethod]
-public void Update_notify_property_changed()
-{
-   var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_A", subDirectories);
-   UpdateUtilities.DoUpdateOnFiles(filePairs,
-         root => root.Descendants
-               .OfType<IProperty>()
-               .Where(x => IsInRDomClass(x)),
-         new UpdateNotifyPropertyChanged());
-}
+      public void Update_notify_property_changed()
+      {
+         var filePairs = UpdateUtilities.GetFilePairs("*.cs", inputDirectory, outputDirectory + "_A", subDirectories);
+         UpdateUtilities.DoUpdateOnFiles(filePairs,
+               root => root.Descendants
+                     .OfType<IProperty>()
+                     .Where(x => IsInRDomClass(x)),
+               new UpdateNotifyPropertyChanged());
+      }
 
       [TestMethod]
       public void Add_RDom_constructors()

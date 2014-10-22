@@ -259,6 +259,13 @@ namespace RoslynDom.CSharp
          return Corporation.CreateFrom<ICommentWhite>(syntaxNode, newItem, model);
       }
 
+      //public IEnumerable<IRegion> GetRegion<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      //    where T : class, IDom
+      //    where TSyntax : SyntaxNode
+      //{
+      //   return Corporation.CreateFrom<IRegion>(syntaxNode, newItem, model);
+      //}
+
       public IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
          where T : class, IDom
          where TSyntax : SyntaxNode

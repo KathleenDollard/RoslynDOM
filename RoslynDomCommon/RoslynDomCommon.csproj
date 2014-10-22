@@ -148,6 +148,7 @@
     <Compile Include="Interfaces\ITypeParameter.cs" />
     <Compile Include="Interfaces\IUsingDirective.cs" />
     <Compile Include="BaseInterfaces\IPublicAnnotation.cs" />
+    <Compile Include="IRetrieveValue.cs" />
     <Compile Include="ISameIntent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublicAnnotation.cs" />

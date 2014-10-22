@@ -160,6 +160,25 @@ namespace RoslynDomTests
       }
 
       [TestMethod, TestCategory(CopyCategory)]
+      public void Can_clone_region()
+      {
+         var csharpCode = @"
+            // Comment
+            public class Bar
+            {
+                #region This is a region
+                public Bar()
+                {}
+                #endregion
+                public static Bar()
+                {}
+            }";
+         VerifyClone(csharpCode,
+             root => root.RootClasses.First().Constructors.First());
+      }
+
+
+      [TestMethod, TestCategory(CopyCategory)]
       public void Can_clone_method_parameter()
       {
          var csharpCode = @"
