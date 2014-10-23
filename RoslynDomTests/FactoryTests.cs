@@ -129,6 +129,7 @@ namespace RoslynDomTests
       [ExpectedException(typeof(InvalidOperationException))]
       public void Forced_corporation_throws_on_non_implemented_item()
       {
+         Assert.Inconclusive();
          var csharpCode = @"public classX x {}";
          var root = RDom.CSharp.Load(csharpCode);
          // Do not access the corporation directly as that's the purpose of the 
