@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
          newItem.Name = newItem.TypedSymbol.Name;
 
          var type = Corporation
-                         .CreateFrom<IMisc>(syntax.Type, newItem, model)
+                         .Create(syntax.Type, newItem, model)
                          .FirstOrDefault()
                          as IReferencedType;
          newItem.PropertyType = type;
@@ -60,9 +60,9 @@ namespace RoslynDom.CSharp
          var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
          var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
          if (getAccessorSyntax != null)
-         { newItem.GetAccessor = (IAccessor)Corporation.CreateFrom<IMisc>(getAccessorSyntax, newItem, model).FirstOrDefault(); }
+         { newItem.GetAccessor = (IAccessor)Corporation.Create(getAccessorSyntax, newItem, model).FirstOrDefault(); }
          if (setAccessorSyntax != null)
-         { newItem.SetAccessor = (IAccessor)Corporation.CreateFrom<IMisc>(setAccessorSyntax, newItem, model).FirstOrDefault(); }
+         { newItem.SetAccessor = (IAccessor)Corporation.Create(setAccessorSyntax, newItem, model).FirstOrDefault(); }
 
          return newItem;
       }

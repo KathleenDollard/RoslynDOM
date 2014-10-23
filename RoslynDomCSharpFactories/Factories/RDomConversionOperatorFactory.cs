@@ -53,7 +53,7 @@ namespace RoslynDom.CSharp
             newItem.Name = newItem.TypedSymbol.Name;
 
             var type = Corporation
-                            .CreateFrom<IMisc>(syntax.Type, newItem, model)
+                            .Create(syntax.Type, newItem, model)
                             .FirstOrDefault()
                             as IReferencedType;
             newItem.Type = type;
@@ -61,7 +61,7 @@ namespace RoslynDom.CSharp
             newItem.IsStatic = newItem.Symbol.IsStatic;
             newItem.IsImplicit = (syntax.ImplicitOrExplicitKeyword.CSharpKind() == SyntaxKind.ImplicitKeyword);
 
-            var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
+            var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
                                 .OfType<IParameter>();
             newItem.Parameters.AddOrMoveRange(parameters);
 

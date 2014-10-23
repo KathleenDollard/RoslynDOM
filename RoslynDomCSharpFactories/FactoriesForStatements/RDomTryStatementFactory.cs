@@ -59,20 +59,20 @@ namespace RoslynDom.CSharp
                 if (ctch.Declaration != null)
                 {
                     var type = Corporation
-                                  .CreateFrom<IMisc>(ctch.Declaration.Type, newCatch, model)
+                                  .Create(ctch.Declaration.Type, newCatch, model)
                                   .FirstOrDefault()
                                   as IReferencedType;
                     newCatch.ExceptionType = type;
                     CreateFromWorker.StoreWhitespace(newCatch, ctch.Declaration, LanguagePart.Current, WhitespaceLookup);
                     if (!string.IsNullOrWhiteSpace(ctch.Declaration.Identifier.ToString()))
                     {
-                        newCatch.Variable = Corporation.CreateFrom<IMisc>(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
+                        newCatch.Variable = Corporation.Create(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
                         newCatch.Variable.Type = type;
                     }
                 }
                 if (ctch.Filter != null)
                 {
-                    newCatch.Condition = Corporation.CreateFrom<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault();
+                    newCatch.Condition = Corporation.Create<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault();
                     CreateFromWorker.StoreWhitespace(newCatch.Condition, ctch.Filter, LanguagePart.Current, WhitespaceLookup);
                 }
                 newItem.CatchesAll.AddOrMove(newCatch);

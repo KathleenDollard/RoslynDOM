@@ -56,7 +56,8 @@ namespace RoslynDom.CSharp
          var condition = GetConditionFromSyntax(syntax);
          var statement = GetStatementFromSyntax(syntax);
 
-         newItem.Condition = Corporation.CreateFrom<IExpression>(condition, newItem, model).FirstOrDefault();
+         var conditionObj = Corporation.Create<IExpression>(condition, newItem, model).FirstOrDefault() ;
+         newItem.Condition = conditionObj as IExpression;
          CreateFromWorker.InitializeStatements(newItem, statement, newItem, model);
 
          Guardian.Assert.IsNotNull(condition, nameof(condition));

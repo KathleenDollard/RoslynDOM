@@ -82,6 +82,18 @@ namespace RoslynDom.Common
       public void NeitherCreateFromNorListOverridden<TKind>(Type type, SyntaxNode item)
       { throw new InvalidOperationException(); }
 
+      public void UnreachableFactoryDetected(string fullName)
+      {
+         throw new NotImplementedException();
+      }
+
+      internal void DuplicateFactories(string syntaxNodeName, string ignoredFactoryName)
+      {
+         Console.WriteLine(string.Format("Duplicate factories {0} : {1}", syntaxNodeName, ignoredFactoryName ));
+      }
+
+
+
 
       /// <summary>
       /// Call to inform of an unexpected null. 
@@ -107,6 +119,11 @@ namespace RoslynDom.Common
       {
          if (factorySet == null)
          { throw new InvalidOperationException(); }
+      }
+
+      internal void FactoryNotFound(SyntaxNode node)
+      {
+         throw new NotImplementedException();
       }
 
       internal void FactoryNotFound(IDom item)

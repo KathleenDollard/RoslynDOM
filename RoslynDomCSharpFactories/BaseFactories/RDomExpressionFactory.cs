@@ -10,42 +10,60 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    public class RDomExpressionFactory
-                 : RDomExpressionFactory<RDomExpression, ExpressionSyntax>
-    {
-        public RDomExpressionFactory(RDomCorporation corporation)
-            :base (corporation)
-        {        }
+   public class RDomExpressionFactory
+                : RDomExpressionFactory<RDomExpression, ExpressionSyntax>
+   {
+      public RDomExpressionFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
 
-        protected  override IExpression CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            var syntax = syntaxNode as ExpressionSyntax;
-           
-            var newItem = new RDomExpression( syntaxNode, parent, model);
-            newItem.Expression = syntax.ToString();
-            newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);
+      public override Type[] SyntaxNodeTypes
+      { get { return null; } }
 
-            return newItem ;
+      public override Type[] ExplicitNodeTypes
+      { get { return new Type[] { typeof(IExpression) }; } }
 
-        }
+      public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
+      {
+         get
+         {
+            return (syntax, parent, model) =>
+            {
+               if (syntax is ExpressionSyntax) { return true; }
+               return false;
+            };
+         }
+      }
 
-        private ExpressionType ExpressionTypeFromSyntax(SyntaxNode syntaxNode)
-        {
-            if (syntaxNode is LiteralExpressionSyntax) { return ExpressionType.Literal; }
-            if (syntaxNode is ObjectCreationExpressionSyntax ) { return ExpressionType.ObjectCreation ; }
-            if (syntaxNode is InvocationExpressionSyntax ) { return ExpressionType.Invocation ; }
-            if (syntaxNode is IdentifierNameSyntax) { return ExpressionType.Identifier; }
-            if (syntaxNode is BinaryExpressionSyntax ) { return ExpressionType.Complex; }
-            return ExpressionType.Unknown; 
-        }
+      protected override IExpression CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      {
+         var syntax = syntaxNode as ExpressionSyntax;
+
+         var newItem = new RDomExpression(syntaxNode, parent, model);
+         newItem.Expression = syntax.ToString();
+         newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);
+
+         return newItem;
+
+      }
+
+      private ExpressionType ExpressionTypeFromSyntax(SyntaxNode syntaxNode)
+      {
+         if (syntaxNode is LiteralExpressionSyntax) { return ExpressionType.Literal; }
+         if (syntaxNode is ObjectCreationExpressionSyntax) { return ExpressionType.ObjectCreation; }
+         if (syntaxNode is InvocationExpressionSyntax) { return ExpressionType.Invocation; }
+         if (syntaxNode is IdentifierNameSyntax) { return ExpressionType.Identifier; }
+         if (syntaxNode is BinaryExpressionSyntax) { return ExpressionType.Complex; }
+         return ExpressionType.Unknown;
+      }
 
 
-        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-        {
-            var itemAsT = item as IExpression;
-            var node = SyntaxFactory.ParseExpression(itemAsT.Expression);
-            // TODO: return new SyntaxNode[] { node.Format() };
-            return new SyntaxNode[] { node };
-        }
-    }
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+      {
+         var itemAsT = item as IExpression;
+         var node = SyntaxFactory.ParseExpression(itemAsT.Expression);
+         // TODO: return new SyntaxNode[] { node.Format() };
+         return new SyntaxNode[] { node };
+      }
+   }
 }

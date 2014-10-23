@@ -45,7 +45,7 @@ namespace RoslynDom.CSharp
          newItem.Name = newItem.TypedSymbol.Name;
 
          var type = Corporation
-                          .CreateFrom<IMisc>(syntax.Type, newItem, model)
+                          .Create(syntax.Type, newItem, model)
                           .FirstOrDefault()
                           as IReferencedType;
          newItem.Type = type;

@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
          //newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
          //newItem.IsStatic = newItem.Symbol.IsStatic;
 
-         var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
+         var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
                              .OfType<IParameter>();
          newItem.Parameters.AddOrMoveRange(parameters);
 
@@ -75,7 +75,7 @@ namespace RoslynDom.CSharp
             foreach (var arg in initializerSyntax.ArgumentList.Arguments)
             {
                var newArg = new RDomArgument(arg, newItem, model);
-               newArg.ValueExpression = Corporation.CreateFrom<IExpression>(arg.Expression, newItem, model).FirstOrDefault();
+               newArg.ValueExpression = Corporation.Create<IExpression>(arg.Expression, newItem, model).FirstOrDefault();
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newArg, arg, LanguagePart.Current, LanguageElement.ConstructorInitializerArgument);
                CreateFromWorker.StoreListMemberWhitespace(arg,
                     SyntaxKind.CommaToken, LanguageElement.ConstructorInitializerArgument, newArg);

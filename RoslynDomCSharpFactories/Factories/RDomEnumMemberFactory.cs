@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
             if (syntax.EqualsValue != null)
             {
                 newItem.Expression = Corporation
-                    .CreateFrom<IExpression>(syntax.EqualsValue.Value, newItem, model)
+                    .Create<IExpression>(syntax.EqualsValue.Value, newItem, model)
                     .FirstOrDefault();
             }
             return newItem;

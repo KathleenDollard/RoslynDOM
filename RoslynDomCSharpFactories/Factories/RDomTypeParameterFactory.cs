@@ -169,7 +169,7 @@ namespace RoslynDom.CSharp
       private void StoreTypeConstraint(TypeConstraintSyntax asType, RDomTypeParameter newItem, SemanticModel model)
       {
          var newConstraintType = Corporation
-                 .CreateFrom<IMisc>(asType.Type, newItem, model)
+                 .Create(asType.Type, newItem, model)
                  .FirstOrDefault()
                  as IReferencedType;
          StoreConstraintWhitespace(asType, newConstraintType);

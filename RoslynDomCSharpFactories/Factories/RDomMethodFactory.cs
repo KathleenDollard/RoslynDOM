@@ -53,14 +53,14 @@ namespace RoslynDom.CSharp
          newItem.Name = newItem.TypedSymbol.Name;
 
          var returnType = Corporation
-                         .CreateFrom<IMisc>(syntax.ReturnType, newItem, model)
+                         .Create(syntax.ReturnType, newItem, model)
                          .FirstOrDefault()
                          as IReferencedType;
          newItem.ReturnType = returnType;
 
          newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
 
-         var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.CreateFrom<IMisc>(x, newItem, model))
+         var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
                              .OfType<IParameter>();
          newItem.Parameters.AddOrMoveRange(parameters);
 

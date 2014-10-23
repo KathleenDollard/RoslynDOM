@@ -25,7 +25,22 @@ namespace RoslynDom.CSharp
          Corporation = corporation;
       }
 
+      //public abstract string Language { get; }
+      public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
+
       protected RDomCorporation Corporation { get; private set; }
+
+      public virtual Type[] SyntaxNodeTypes
+      { get { return new Type[] { typeof(TSyntax) }; } }
+
+      public virtual Type[] ExplicitNodeTypes
+      { get { return null; } }
+
+      public virtual Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
+      { get { return null; } }
+
+      public virtual Type DomType
+      {  get { return typeof(T); } }
 
       private ICSharpBuildSyntaxWorker _buildSyntaxWorker;
       internal ICSharpBuildSyntaxWorker BuildSyntaxWorker
@@ -58,7 +73,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-      public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
+
 
       public virtual bool CanCreateFrom(SyntaxNode syntaxNode)
       {
@@ -94,7 +109,7 @@ namespace RoslynDom.CSharp
       {
          var ret = new List<TKind>();
 
-         var newItems = CreateListFrom(syntaxNode, parent, model);
+         var newItems = CreateListFromInterim(syntaxNode, parent, model);
          // Whitespace and comments have to appear before new items 
          if (typeof(IStatement).IsAssignableFrom(typeof(T))
             || typeof(ITypeMember).IsAssignableFrom(typeof(T))
@@ -107,8 +122,13 @@ namespace RoslynDom.CSharp
                ret.AddRange(whiteComment.OfType<TKind>());
             }
          }
-         ret.AddRange(newItems);
+         ret.AddRange(newItems.OfType<TKind>());
          return ret;
+      }
+
+      protected virtual IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      {
+         return CreateListFrom(syntaxNode, parent, model);
       }
 
       protected virtual IEnumerable<TKind> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)

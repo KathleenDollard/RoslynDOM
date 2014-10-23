@@ -18,7 +18,20 @@ namespace RoslynDom.CSharp
            public override RDomPriority Priority
         { get { return RDomPriority.Normal - 1; } }
 
-        public override bool CanCreateFrom(SyntaxNode syntaxNode)
+      public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
+      {
+         get
+         {
+            return (syntax, parent, model) =>
+            {
+               var statement = syntax as ExpressionStatementSyntax;
+               if (statement == null) { return false; }
+               return (!(statement.Expression is BinaryExpressionSyntax));
+            };
+         }
+      }
+
+      public override bool CanCreateFrom(SyntaxNode syntaxNode)
         {  // Restates the obvious to clarify this is the default
             return syntaxNode is ExpressionStatementSyntax;
         }
@@ -32,7 +45,7 @@ namespace RoslynDom.CSharp
                                     LanguageElement.Expression);
 
             var expression = syntax.Expression;
-            newItem.Invocation = Corporation.CreateFrom<IExpression>(expression, newItem, model).FirstOrDefault();
+            newItem.Invocation = Corporation.Create<IExpression>(expression, newItem, model).FirstOrDefault();
 
             return newItem;
         }

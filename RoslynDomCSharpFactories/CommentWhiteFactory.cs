@@ -26,6 +26,12 @@ namespace RoslynDom.CSharp
       public override bool CanCreateFrom(SyntaxNode syntaxNode)
       { return true; }
 
+      public override Type[] SyntaxNodeTypes
+      { get { return null; } }
+
+      public override Type[] ExplicitNodeTypes
+      { get { return new Type[] { typeof(ICommentWhite) }; } }
+
       protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          return InternalCreateFrom(syntaxNode, parent, model);
@@ -61,7 +67,7 @@ namespace RoslynDom.CSharp
                      ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, true));
                      lastWasComment = true;
                      break;
-                  case SyntaxKind.RegionDirectiveTrivia :
+                  case SyntaxKind.RegionDirectiveTrivia:
                      ret.Add(MakeRegion(syntaxNode, precedingTrivia, trivia, parent));
                      //lastWasComment = true;
                      break;
@@ -106,7 +112,7 @@ namespace RoslynDom.CSharp
                                  .Where(x => x is RegionDirectiveTriviaSyntax);
          if (startDirectives.Count() != 1) { throw new NotImplementedException(); }
          var startSyntax = startDirectives.Single();
-         var newRegion = new RDomRegionEnd(regionSyntax, parent, null, startSyntax );
+         var newRegion = new RDomRegionEnd(regionSyntax, parent, null, startSyntax);
          return newRegion;
       }
 

@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
 
             newItem.Name = newItem.TypedSymbol.Name;
 
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.CreateFrom<ITypeMemberCommentWhite>(x, newItem, model));
+            var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model)).OfType<ITypeMemberCommentWhite>();
             // this is a hack because the membersare appearing with a scope
             foreach (var member in members.OfType<ITypeMember>())
             { member.AccessModifier = AccessModifier.None; }
@@ -105,40 +105,59 @@ namespace RoslynDom.CSharp
         }
     }
 
-    public class RDomInterfaceTypeMemberFactory
-       : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
-    {
-        public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
-            : base(corporation)
-        { }
+   public class RDomInterfaceTypeMemberFactory
+      : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
+   {
+      public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
 
-        protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            return RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-        }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-        {
-            return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item, BuildSyntaxWorker, Corporation);
-        }
-    }
+      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      {
+         var ret = RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
+         return new IDom[] { ret };
+      }
+
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+      {
+         return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item, BuildSyntaxWorker, Corporation);
+      }
+   }
+
+   //public class RDomInterfaceTypeMemberFactory
+   //   : RDomTypeMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
+   //{
+   //   public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
+   //      : base(corporation)
+   //   { }
+
+   //   protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+   //   {
+   //      return RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
+   //   }
+   //   public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+   //   {
+   //      return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item, BuildSyntaxWorker, Corporation);
+   //   }
+   //}
 
 
-    public class RDomInterfaceStemMemberFactory
-           : RDomStemMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
-    {
-        public RDomInterfaceStemMemberFactory(RDomCorporation corporation)
-            : base(corporation)
-        { }
+   //public class RDomInterfaceStemMemberFactory
+   //       : RDomStemMemberFactory<RDomInterface, InterfaceDeclarationSyntax>
+   //{
+   //   public RDomInterfaceStemMemberFactory(RDomCorporation corporation)
+   //      : base(corporation)
+   //   { }
 
-        protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-        {
-            return RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-        }
-        public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-        {
-            return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item, BuildSyntaxWorker, Corporation);
-        }
-    }
+   //   protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+   //   {
+   //      return RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
+   //   }
+   //   public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+   //   {
+   //      return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item, BuildSyntaxWorker, Corporation);
+   //   }
+   //}
 
 
 

@@ -17,9 +17,10 @@ namespace RoslynDom.Common
         void InitializeStatements(IStatementBlock statementBlock, SyntaxNode syntaxNode, IDom parent, SemanticModel model);
         IEnumerable<TKind> CreateInvalidMembers<TKind>(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
                         where TKind : class;
-    }
+      IEnumerable<IDom> CreateInvalidMembers2(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
+   }
 
-    public interface IBuildSyntaxWorker
+   public interface IBuildSyntaxWorker
     {
         RDomPriority Priority { get; }
     }

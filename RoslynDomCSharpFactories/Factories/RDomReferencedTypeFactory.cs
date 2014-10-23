@@ -34,6 +34,19 @@ namespace RoslynDom.CSharp
          }
       }
 
+      public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
+      {
+         get
+         {
+            return (syntax, parent, model) =>
+            {
+               if (syntax is NameSyntax) { return true; }
+               if (syntax is TypeSyntax) { return true; }
+               return false;
+            };
+         }
+      }
+
       protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var typeParameterSyntax = syntaxNode as TypeParameterSyntax;
@@ -118,7 +131,7 @@ namespace RoslynDom.CSharp
                foreach (var typeArg in typeArgListSyntax.Arguments)
                {
                   var newArg = Corporation
-                              .CreateFrom<IMisc>(typeArg, newItem, model)
+                              .Create(typeArg, newItem, model)
                               .FirstOrDefault()
                               as IReferencedType;
                   newItem.TypeArguments.AddOrMove(newArg);

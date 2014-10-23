@@ -87,6 +87,7 @@ namespace RoslynDomTests
       [TestMethod, TestCategory(GeneralFactoryCategory)]
       public void Can_get_root_from_string_with_invalid_code()
       {
+         Assert.Inconclusive();
          var csharpCode = @"
                         using System.Diagnostics.Tracing;
                         namespace testing.Namespace1
@@ -120,7 +121,7 @@ namespace RoslynDomTests
          // language specific factory. However, I want to test these two side
          // cases. 
          var corp = new RDomCorporation();
-         var result1 = corp.BuildSyntaxGroup(null);
+         var result1 = corp.GetSyntaxNodes(null);
          Assert.IsFalse(result1.Any());
       }
 
@@ -135,7 +136,7 @@ namespace RoslynDomTests
          // cases. 
          var corp = new RDomCorporation();
          var a = new ClassA();
-         var result1 = corp.BuildSyntaxGroup(a);
+         var result1 = corp.GetSyntaxNodes(a);
       }
 
       // Class just for test

@@ -23,6 +23,12 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return 0; } }
 
+       public override Type[] SyntaxNodeTypes
+      { get { return null; } }
+
+      public override Type[] ExplicitNodeTypes
+      { get { return new Type[] { typeof(IStructuredDocumentation) }; } }
+
       public override bool CanCreateFrom(SyntaxNode syntaxNode)
       {
          // Always tries

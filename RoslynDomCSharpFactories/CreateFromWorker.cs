@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
          var blockSyntax = syntaxNode as BlockSyntax;
          if (blockSyntax != null)
          {
-            var statements = ListUtilities.CreateFromList(blockSyntax.Statements, x => Corporation.CreateFrom<IStatementCommentWhite>(x, parent, model));
+            var statements = ListUtilities.CreateFromList(blockSyntax.Statements, x => Corporation.Create(x, parent, model)).OfType<IStatementCommentWhite>();
             itemAsStatement.StatementsAll.AddOrMoveRange(statements);
             itemAsStatement.HasBlock = true;
             return;
@@ -43,7 +43,7 @@ namespace RoslynDom.CSharp
          var statementSyntax = syntaxNode as StatementSyntax;
          if (statementSyntax != null)
          {
-            var statements = Corporation.CreateFrom<IStatementCommentWhite>(statementSyntax, parent, model);
+            var statements = Corporation.Create(statementSyntax, parent, model).OfType<IStatementCommentWhite>();
             if (statements.Count() > 1) throw new NotImplementedException();
             var statement = statements.First();
             var statementAsBlockStatement = statement as IBlockStatement;
@@ -112,7 +112,7 @@ namespace RoslynDom.CSharp
             // Force whitespace
             if (attributeList != null)
             {
-               var attr = Corporation.CreateFrom<IAttribute>(attributeList, itemAsHasAttributes, model);
+               var attr = Corporation.Create(attributeList, itemAsHasAttributes, model).OfType<IAttribute>() ;
                attributes.AddRange(attr);
             }
          }
@@ -171,7 +171,7 @@ namespace RoslynDom.CSharp
                var itemAsClass = itemAsT as RDomClass;
                var syntax = types.First();
                if (itemAsClass == null) throw new InvalidOperationException();
-               var newBaseType = Corporation.CreateFrom<IMisc>(syntax, itemAsT, model).Single()
+               var newBaseType = Corporation.Create(syntax, itemAsT, model).Single()
                                        as IReferencedType;
                itemAsClass.BaseType = newBaseType;
                //StoreWhitespace(newBaseType, syntax,
@@ -180,7 +180,7 @@ namespace RoslynDom.CSharp
             }
             foreach (var implementedInterfaceSyntax in types)
             {
-               var newInterface = Corporation.CreateFrom<IMisc>(implementedInterfaceSyntax, itemAsT, model).Single()
+               var newInterface = Corporation.Create(implementedInterfaceSyntax, itemAsT, model).Single()
                                as IReferencedType;
                //StoreWhitespace(newInterface, implementedInterfaceSyntax,
                //              LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
@@ -217,7 +217,7 @@ namespace RoslynDom.CSharp
          var typeParameters = typeParameterList.Parameters;
          foreach (var p in typeParameters)
          {
-            var newBase = Corporation.CreateFrom<IMisc>(p, itemAsT, model).Single()
+            var newBase = Corporation.Create(p, itemAsT, model).Single()
                             as ITypeParameter;
             itemAsT.TypeParameters.AddOrMove(newBase);
          }
@@ -246,8 +246,8 @@ namespace RoslynDom.CSharp
                  IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
                  SemanticModel model)
       {
-         var usings = ListUtilities.CreateFromList(usingSyntaxes, x => Corporation.CreateFrom<IStemMemberCommentWhite>(x, newItem, model));
-         var members = ListUtilities.CreateFromList(memberSyntaxes, x => Corporation.CreateFrom<IStemMemberCommentWhite>(x, newItem, model));
+         var usings = ListUtilities.CreateFromList(usingSyntaxes, x => Corporation.Create(x, newItem, model)).OfType< IStemMemberCommentWhite>();
+         var members = ListUtilities.CreateFromList(memberSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
          newItem.StemMembersAll.AddOrMoveRange(usings);
          newItem.StemMembersAll.AddOrMoveRange(members);
       }
@@ -256,28 +256,21 @@ namespace RoslynDom.CSharp
           where T : class, IDom
           where TSyntax : SyntaxNode
       {
-         return Corporation.CreateFrom<ICommentWhite>(syntaxNode, newItem, model);
+         return Corporation.Create<ICommentWhite>(syntaxNode, newItem, model);
       }
-
-      //public IEnumerable<IRegion> GetRegion<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
-      //    where T : class, IDom
-      //    where TSyntax : SyntaxNode
-      //{
-      //   return Corporation.CreateFrom<IRegion>(syntaxNode, newItem, model);
-      //}
 
       public IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
          where T : class, IDom
          where TSyntax : SyntaxNode
       {
-         return Corporation.CreateFrom<IPublicAnnotation>(syntaxNode, newItem, model);
+         return Corporation.Create<IPublicAnnotation>(syntaxNode, newItem, model);
       }
 
       public IEnumerable<IStructuredDocumentation> GetStructuredDocumenation<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
           where T : class, IDom
           where TSyntax : SyntaxNode
       {
-         return Corporation.CreateFrom<IStructuredDocumentation>(syntaxNode, newItem, model);
+         return Corporation.Create<IStructuredDocumentation>(syntaxNode, newItem, model);
       }
 
       // TODO: Refactor - D'oh
@@ -300,7 +293,7 @@ namespace RoslynDom.CSharp
             {
                literalKind = LiteralKind.Type;
                value = Corporation
-                    .CreateFrom<IMisc>(typeExpression.Type, newItem, model)
+                    .Create(typeExpression.Type, newItem, model)
                     .FirstOrDefault()
                     as IReferencedType;
             }
@@ -311,7 +304,7 @@ namespace RoslynDom.CSharp
                {
                   literalKind = LiteralKind.Default;
                   value = Corporation
-                       .CreateFrom<IMisc>(defaultAccess.Type, newItem, model)
+                       .Create(defaultAccess.Type, newItem, model)
                        .FirstOrDefault()
                        as IReferencedType;
                }
@@ -345,6 +338,13 @@ namespace RoslynDom.CSharp
          var ret = new RDomInvalidMember(syntaxNode, parent, model) as TKind;
          Guardian.Assert.IsNotNull(ret, nameof(ret));
          return new List<TKind>() { };
+      }
+
+      public IEnumerable<IDom> CreateInvalidMembers2(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      {
+         var ret = new RDomInvalidMember(syntaxNode, parent, model);
+         Guardian.Assert.IsNotNull(ret, nameof(ret));
+         return new List<IDom>() { ret };
       }
 
       public void StoreWhitespace(IDom newItem, SyntaxNode syntaxNode, LanguagePart languagePart, WhitespaceKindLookup whitespaceLookup)

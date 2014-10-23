@@ -61,7 +61,7 @@ namespace RoslynDom.CSharp
             }
 
             var type = Corporation
-                             .CreateFrom<IMisc>(rawEvent.Declaration.Type, newItem, model)
+                             .Create(rawEvent.Declaration.Type, newItem, model)
                              .FirstOrDefault()
                              as IReferencedType;
             newItem.Type = type;

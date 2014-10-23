@@ -57,12 +57,12 @@ namespace RoslynDom.CSharp
                 // Not yet, and might never support as Kendall Miller said "huh, that works?" on Twitter
                 if (declaration.Variables.Count() > 1) throw new NotImplementedException();
 
-                var newVariable = Corporation.CreateFrom<IMisc>(syntax.Declaration, newItem, model).FirstOrDefault();
+                var newVariable = Corporation.Create(syntax.Declaration, newItem, model).FirstOrDefault();
                 newItem.Variable = (IVariableDeclaration)newVariable;
             }
             else
             {
-                var expr = Corporation.CreateFrom<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
+                var expr = Corporation.Create<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
                 CreateFromWorker.StoreWhitespace(expr, syntax.Expression, LanguagePart.Current, WhitespaceLookup);
                 newItem.Expression = expr;
             }

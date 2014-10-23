@@ -28,7 +28,7 @@ namespace RoslynDom.CSharp
             foreach (var attr in attributes)
             {
                 // TODO: Regroup attributes on group here
-                var nodes = Corporation.BuildSyntaxGroup(attr);
+                var nodes = Corporation.GetSyntaxNodes(attr);
                 if (nodes.Any())
                 { ret.AddRange(nodes); }
             }

@@ -32,6 +32,28 @@ namespace RoslynDom.CSharp
          }
       }
 
+      public override Type[] ExplicitNodeTypes
+      { get { return new Type[] { typeof(IVariableDeclaration) }; } }
+
+      public override Type[] SyntaxNodeTypes
+      { get { return new Type[] { typeof(VariableDeclarationSyntax), typeof(CatchDeclarationSyntax) }; } }
+
+      //public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
+      //{
+      //   get
+      //   {
+      //      // TODO: Pull For out of this becuase because it can just build from the Declaration
+      //      return (syntax, parent, model) =>
+      //      {
+      //         if (syntax is VariableDeclarationSyntax) { return true; }
+      //         if (syntax is ForEachStatementSyntax && parent is RDomForEachStatement) { return true; }
+      //         if (syntax is ForStatementSyntax && parent is RDomForStatement) { return true; }
+      //         if (syntax is CatchDeclarationSyntax && parent is RDomCatchStatement) { return true; }
+      //         return false;
+      //      };
+      //   }
+      //}
+
       public override bool CanCreateFrom(SyntaxNode syntaxNode)
       {
          return syntaxNode is VariableDeclarationSyntax
@@ -92,7 +114,7 @@ namespace RoslynDom.CSharp
             if (decl.Initializer != null)
             {
                var equalsClause = decl.Initializer;
-               newItem.Initializer = Corporation.CreateFrom<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
+               newItem.Initializer = Corporation.Create<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
                CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model);
                CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
@@ -108,7 +130,7 @@ namespace RoslynDom.CSharp
          newItem.Name = newItem.TypedSymbol.Name;
          var declaredType = typeSyntax.ToString();
          var returnType = Corporation
-                         .CreateFrom<IMisc>(typeSyntax, newItem, model)
+                         .Create(typeSyntax, newItem, model)
                          .FirstOrDefault()
                          as IReferencedType;
          newItem.Type = returnType;

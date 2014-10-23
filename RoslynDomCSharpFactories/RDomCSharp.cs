@@ -21,7 +21,7 @@ namespace RoslynDom.CSharp
       protected static string nameof<T>(T value) { return ""; }
 
       private static RDom csharp = new RDom();
-      private RDomCorporation corporation = new RDomCorporation();
+      private RDomCorporation corporation = new RDomCorporation(LanguageNames.CSharp);
 
       private RDom() { }
 
@@ -74,7 +74,7 @@ namespace RoslynDom.CSharp
       {
          var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);
          expressionSyntax = RDom.CSharp.Format(expressionSyntax) as ExpressionSyntax;
-         var expression = corporation.CreateFrom<IExpression>(expressionSyntax, null, null).FirstOrDefault();
+         var expression = corporation.Create<IExpression>(expressionSyntax, null, null).FirstOrDefault();
          return expression;
       }
 
@@ -101,12 +101,14 @@ namespace RoslynDom.CSharp
 
       private IRoot LoadFromInternal(SyntaxTree tree, string filePath)
       {
+         //corporation.CheckContainer();
          var compilation = CSharpCompilation.Create("MyCompilation",
                                         options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                                         syntaxTrees: new[] { tree },
                                         references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
          var model = compilation.GetSemanticModel(tree);
-         var root = corporation.CreateFrom<IRoot>(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();
+         var root = corporation.Create(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault() as IRoot;
+         //var root = corporation.CreateFrom<IRoot>(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();
          root.FilePath = filePath;
          return root;
       }
@@ -129,7 +131,7 @@ namespace RoslynDom.CSharp
          node = null;
          var itemAsKind = item as TKind;
          if (itemAsKind == null) { return false; }
-         node = corporation.BuildSyntaxGroup(item);
+         node = corporation.GetSyntaxNodes(item);
          return true;
       }
 
@@ -137,9 +139,9 @@ namespace RoslynDom.CSharp
         {
                     Tuple.Create(typeof(IMisc),2),
                     Tuple.Create(typeof(IExpression),1),
-                    Tuple.Create(typeof(IStatementCommentWhite),6),
+                    Tuple.Create(typeof(IStatementCommentWhite),2),
                     Tuple.Create(typeof(ITypeMemberCommentWhite),6),
-                    Tuple.Create(typeof(IStemMemberCommentWhite),6),
+                    Tuple.Create(typeof(IStemMemberCommentWhite),2),
                     Tuple.Create(typeof(IRoot),1),
                     Tuple.Create(typeof(IPublicAnnotation),1),
                     Tuple.Create(typeof(IAttribute),1),
@@ -153,15 +155,15 @@ namespace RoslynDom.CSharp
             Guardian.Assert.BadContainer();
             return false;
          }
-
-         foreach (var tuple in expectations)
-         {
-            if (corporation.CountFactorySet(tuple.Item1) < tuple.Item2)
-            {
-               Guardian.Assert.BadContainer();
-               return false;
-            }
-         }
+         // TODO: Create reality check on load
+         //foreach (var tuple in expectations)
+         //{
+         //   if (corporation.CountFactorySet(tuple.Item1) < tuple.Item2)
+         //   {
+         //      Guardian.Assert.BadContainer();
+         //      return false;
+         //   }
+         //}
          return true;
       }
    }
