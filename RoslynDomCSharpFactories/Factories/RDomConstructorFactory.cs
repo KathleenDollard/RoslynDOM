@@ -56,9 +56,10 @@ namespace RoslynDom.CSharp
          //newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
          //newItem.IsStatic = newItem.Symbol.IsStatic;
 
-         var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
-                             .OfType<IParameter>();
-         newItem.Parameters.AddOrMoveRange(parameters);
+         newItem.Parameters.CreateAndAdd(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model).Cast<IParameter>());
+         //var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
+         //                    .OfType<IParameter>();
+         //newItem.Parameters.AddOrMoveRange(parameters);
 
 
          if (syntax.Initializer == null)

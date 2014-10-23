@@ -46,9 +46,10 @@ namespace RoslynDom.CSharp
          InitializeBaseList(syntax, newItem, model, createFromWorker, corporation);
          newItem.Name = newItem.TypedSymbol.Name;
 
-         var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model))
-                         .OfType<IEnumMember>();
-         newItem.Members.AddOrMoveRange(members);
+         newItem.Members.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<IEnumMember>());
+         //var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model))
+         //                .OfType<IEnumMember>();
+         //newItem.Members.AddOrMoveRange(members);
 
          return newItem;
       }

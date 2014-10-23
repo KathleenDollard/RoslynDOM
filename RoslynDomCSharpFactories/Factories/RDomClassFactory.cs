@@ -53,9 +53,9 @@ namespace RoslynDom.CSharp
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         var members = ListUtilities.MakeList(syntax, x => x.Members,
-                  x => corporation.Create(x, newItem, model)).OfType<ITypeMemberCommentWhite>();
-         newItem.MembersAll.AddOrMoveRange(members);
+         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<ITypeMemberCommentWhite>());
+         //var members = ListUtilities.MakeList(syntax, x => x.Members,                  x => corporation.Create(x, newItem, model)).OfType<ITypeMemberCommentWhite>();
+         //newItem.MembersAll.AddOrMoveRange(members);
 
          newItem.IsAbstract = newItem.Symbol.IsAbstract;
          newItem.IsSealed = newItem.Symbol.IsSealed;

@@ -53,6 +53,9 @@ namespace RoslynDom
       public bool InsertOrMoveMember(int index, IDom item)
       { return _statements.InsertOrMove(index, item); }
 
+      public IEnumerable<IDom> GetMembers()
+      { return _statements.ToList(); }
+
       private void Initialize()
       {
          _parameters = new RDomCollection<IParameter>(this);

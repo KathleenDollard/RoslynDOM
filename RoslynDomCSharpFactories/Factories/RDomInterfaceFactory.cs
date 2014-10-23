@@ -9,74 +9,79 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RoslynDom.CSharp
 {
-    internal static class RDomInterfaceFactoryHelper
-    {
-        [ExcludeFromCodeCoverage]
-        private static string nameof<T>(T value) { return ""; }
+   internal static class RDomInterfaceFactoryHelper
+   {
+      [ExcludeFromCodeCoverage]
+      private static string nameof<T>(T value) { return ""; }
 
-        private static WhitespaceKindLookup _whitespaceLookup;
+      private static WhitespaceKindLookup _whitespaceLookup;
 
-        private static WhitespaceKindLookup whitespaceLookup
-        {
-            get
+      private static WhitespaceKindLookup whitespaceLookup
+      {
+         get
+         {
+            if (_whitespaceLookup == null)
             {
-                if (_whitespaceLookup == null)
-                {
-                    _whitespaceLookup = new WhitespaceKindLookup();
-                    _whitespaceLookup.Add(LanguageElement.InterfaceKeyword, SyntaxKind.InterfaceKeyword);
-                    _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
-                    _whitespaceLookup.Add(LanguageElement.InterfaceStartDelimiter, SyntaxKind.OpenBraceToken);
-                    _whitespaceLookup.Add(LanguageElement.InterfaceEndDelimiter, SyntaxKind.CloseBraceToken);
-                    _whitespaceLookup.Add(LanguageElement.TypeParameterStartDelimiter, SyntaxKind.LessThanToken);
-                    _whitespaceLookup.Add(LanguageElement.TypeParameterEndDelimiter, SyntaxKind.GreaterThanToken);
-                    _whitespaceLookup.Add(LanguageElement.BaseListPrefix, SyntaxKind.ColonToken);
-                    _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
-                    _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
-                }
-                return _whitespaceLookup;
+               _whitespaceLookup = new WhitespaceKindLookup();
+               _whitespaceLookup.Add(LanguageElement.InterfaceKeyword, SyntaxKind.InterfaceKeyword);
+               _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+               _whitespaceLookup.Add(LanguageElement.InterfaceStartDelimiter, SyntaxKind.OpenBraceToken);
+               _whitespaceLookup.Add(LanguageElement.InterfaceEndDelimiter, SyntaxKind.CloseBraceToken);
+               _whitespaceLookup.Add(LanguageElement.TypeParameterStartDelimiter, SyntaxKind.LessThanToken);
+               _whitespaceLookup.Add(LanguageElement.TypeParameterEndDelimiter, SyntaxKind.GreaterThanToken);
+               _whitespaceLookup.Add(LanguageElement.BaseListPrefix, SyntaxKind.ColonToken);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
             }
-        }
+            return _whitespaceLookup;
+         }
+      }
 
-        public static RDomInterface CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
-        {
-            var syntax = syntaxNode as InterfaceDeclarationSyntax;
-            var newItem = new RDomInterface(syntaxNode, parent, model);
-            createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-            createFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
-            createFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
+      public static RDomInterface CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
+      {
+         var syntax = syntaxNode as InterfaceDeclarationSyntax;
+         var newItem = new RDomInterface(syntaxNode, parent, model);
+         createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         createFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
+         createFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 
-            newItem.Name = newItem.TypedSymbol.Name;
+         newItem.Name = newItem.TypedSymbol.Name;
 
-            var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model)).OfType<ITypeMemberCommentWhite>();
-            // this is a hack because the membersare appearing with a scope
-            foreach (var member in members.OfType<ITypeMember>())
-            { member.AccessModifier = AccessModifier.None; }
-            newItem.MembersAll.AddOrMoveRange(members);
+         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<ITypeMemberCommentWhite>());
+         // this is a hack because the membersare appearing with a scope
+         foreach (var member in newItem.MembersAll.OfType<ITypeMember>())
+         { member.AccessModifier = AccessModifier.None; }
 
-            return newItem;
-        }
+         //var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model)).OfType<ITypeMemberCommentWhite>();
+         //// this is a hack because the membersare appearing with a scope
+         //foreach (var member in members.OfType<ITypeMember>())
+         //{ member.AccessModifier = AccessModifier.None; }
+         //newItem.MembersAll.AddOrMoveRange(members);
 
-            public static IEnumerable<SyntaxNode> BuildSyntax(IDom item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
-        {
-            var itemAsT = item as IInterface;
-            Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
+         return newItem;
+      }
 
-            var modifiers = itemAsT.BuildModfierSyntax();
-            var identifier = SyntaxFactory.Identifier(itemAsT.Name);
+      public static IEnumerable<SyntaxNode> BuildSyntax(IDom item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
+      {
+         var itemAsT = item as IInterface;
+         Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
 
-            var node = SyntaxFactory.InterfaceDeclaration(identifier)
-                .WithModifiers(modifiers);
+         var modifiers = itemAsT.BuildModfierSyntax();
+         var identifier = SyntaxFactory.Identifier(itemAsT.Name);
 
-            var baseList = BuildSyntaxHelpers.GetBaseList(itemAsT);
-            if (baseList != null) { node = node.WithBaseList(baseList); }
+         var node = SyntaxFactory.InterfaceDeclaration(identifier)
+             .WithModifiers(modifiers);
 
-            var attributes = buildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
-            if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
+         var baseList = BuildSyntaxHelpers.GetBaseList(itemAsT);
+         if (baseList != null) { node = node.WithBaseList(baseList); }
 
-            var membersSyntax = itemAsT.Members
-                        .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
-                        .ToList();
-            node = node.WithMembers(SyntaxFactory.List(membersSyntax));
+         var attributes = buildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
+         if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
+
+         var membersSyntax = itemAsT.Members
+                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
+                     .ToList();
+         node = node.WithMembers(SyntaxFactory.List(membersSyntax));
 
          node = BuildSyntaxHelpers.BuildTypeParameterSyntax(
                    itemAsT, node, whitespaceLookup,
@@ -101,9 +106,9 @@ namespace RoslynDom.CSharp
          //}
 
          node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, whitespaceLookup);
-            return node.PrepareForBuildSyntaxOutput(item);
-        }
-    }
+         return node.PrepareForBuildSyntaxOutput(item);
+      }
+   }
 
    public class RDomInterfaceTypeMemberFactory
       : RDomBaseItemFactory<RDomInterface, InterfaceDeclarationSyntax>

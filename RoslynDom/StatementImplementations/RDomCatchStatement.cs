@@ -7,7 +7,7 @@ namespace RoslynDom
 {
    public class RDomCatchStatement : RDomStatementBlockBase<ICatchStatement>, ICatchStatement
    {
-
+      // TODO: Fix ambiguous overloads
       public RDomCatchStatement(string exceptionTypeName = null, IVariableDeclaration variable = null,
                     IExpression condition = null)
             : this(string.IsNullOrWhiteSpace( exceptionTypeName) ? null : new RDomReferencedType(exceptionTypeName),

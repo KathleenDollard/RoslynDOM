@@ -58,9 +58,10 @@ namespace RoslynDom.CSharp
 
          newItem.Operator = Mappings.OperatorFromCSharpKind(syntax.OperatorToken.CSharpKind());
 
-         var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
-                                      .OfType<IParameter>();
-         newItem.Parameters.AddOrMoveRange(parameters);
+         newItem.Parameters.CreateAndAdd(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model).Cast<IParameter>());
+         //var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
+         //                             .OfType<IParameter>();
+         //newItem.Parameters.AddOrMoveRange(parameters);
 
          return newItem;
       }

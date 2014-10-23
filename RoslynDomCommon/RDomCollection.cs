@@ -114,7 +114,7 @@ namespace RoslynDom.Common
       {
          var itemAsKind = item as T;
          if (itemAsKind == null) return false;
-         return Remove( itemAsKind);
+         return Remove(itemAsKind);
       }
 
       public bool Replace(T oldItem, T newItem)
@@ -133,7 +133,7 @@ namespace RoslynDom.Common
          return Replace(oldItemAsKind, newItemAsKind);
       }
 
-      public RDomCollection <T> Copy(IDom newParent)
+      public RDomCollection<T> Copy(IDom newParent)
       {
          var newList = new RDomCollection<T>(newParent);
          foreach (var item in _list)
@@ -151,6 +151,138 @@ namespace RoslynDom.Common
          var items = _list.ToList();
          foreach (var item in items)
          { _list.Remove(item); }
+      }
+
+      /// <summary>
+      /// Create an item from a single input and add to collection
+      /// </summary>
+      /// <typeparam name="TInput"></typeparam>
+      /// <param name="input"></param>
+      /// <param name="createDeleg"></param>
+      /// <returns></returns>
+      public bool CreateAndAdd<TInput>(TInput input, Func<TInput, T> createDeleg)
+      {
+         return AddOrMove(createDeleg(input));
+      }
+
+      /// <summary>
+      /// Create a set of items from a single input and add to collection
+      /// </summary>
+      /// <typeparam name="TInput"></typeparam>
+      /// <param name="input"></param>
+      /// <param name="createDeleg"></param>
+      /// <returns></returns>
+      public bool CreateAndAdd<TInput>(TInput input, Func<TInput, IEnumerable<T>> createDeleg)
+      {
+         return AddOrMoveRange(createDeleg(input));
+      }
+
+      /// <summary>
+      /// Create a single item from each of a set of inputs and add to collection
+      /// </summary>
+      /// <typeparam name="TInput"></typeparam>
+      /// <param name="input"></param>
+      /// <param name="createDeleg"></param>
+      /// <returns></returns>
+      public bool CreateAndAdd<TInput>(IEnumerable<TInput> input, Func<TInput, T> createDeleg)
+      {
+         var ret = true;
+         foreach (var item in input)
+         {
+            if (!CreateAndAdd(item, createDeleg)) ret = false;
+         }
+         return ret;
+      }
+
+      /// <summary>
+      /// Create a set of items from each of a set of inputs and add to collection
+      /// </summary>
+      /// <typeparam name="TInput"></typeparam>
+      /// <param name="input"></param>
+      /// <param name="createDeleg"></param>
+      /// <returns></returns>
+      public bool CreateAndAdd<TInput>(IEnumerable<TInput> input, Func<TInput, IEnumerable<T>> createDeleg)
+      {
+         var ret = true;
+         foreach (var item in input)
+         {
+            if (!CreateAndAdd(item, createDeleg)) ret = false;
+         }
+         return ret;
+      }
+
+      /// <summary>
+      /// Create a set of items from a set retrieved from a single item and add to collection
+      /// </summary>
+      /// <typeparam name="TInput"></typeparam>
+      /// <typeparam name="TRaw"></typeparam>
+      /// <param name="input"></param>
+      /// <param name="getItemsDeleg"></param>
+      /// <param name="createDeleg"></param>
+      /// <returns></returns>
+      public bool CreateAndAdd<TInput, TRaw>(TInput input,
+                       Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
+                       Func<TRaw, IEnumerable<T>> createDeleg)
+      {
+         return CreateAndAdd(getItemsDeleg(input), createDeleg);
+      }
+
+      /// <summary>
+      /// Create a set of items from a set retrieved from a set of items and add to collection
+      /// </summary>
+      /// <typeparam name="TInput"></typeparam>
+      /// <typeparam name="TRaw"></typeparam>
+      /// <param name="inputs"></param>
+      /// <param name="getItemsDeleg"></param>
+      /// <param name="createDeleg"></param>
+      /// <returns></returns>
+      public bool CreateAndAdd<TInput, TRaw>(IEnumerable<TInput> inputs,
+                       Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
+                       Func<TRaw, IEnumerable<T>> createDeleg)
+      {
+         var ret = true;
+         foreach (var input in inputs)
+         {
+            if (!CreateAndAdd(input, getItemsDeleg, createDeleg)) ret = false;
+         }
+         return ret;
+      }
+
+      /// <summary>
+      /// Create an item from each of a set retrieved from a single item and add to collection
+      /// </summary>
+      /// <typeparam name="TInput"></typeparam>
+      /// <typeparam name="TRaw"></typeparam>
+      /// <param name="input"></param>
+      /// <param name="getItemsDeleg"></param>
+      /// <param name="createDeleg"></param>
+      /// <returns></returns>
+      public bool CreateAndAdd<TInput, TRaw>(TInput input,
+                       Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
+                       Func<TRaw, T> createDeleg)
+      {
+         return CreateAndAdd(getItemsDeleg(input), createDeleg);
+      }
+
+      /// <summary>
+      /// Create an item from each of a set retrieved from a set of items and add to collection
+      /// </summary>
+      /// <typeparam name="TInput"></typeparam>
+      /// <typeparam name="TRaw"></typeparam>
+      /// <param name="inputs"></param>
+      /// <param name="getItemsDeleg"></param>
+      /// <param name="createDeleg"></param>
+      /// <returns></returns>
+      public bool CreateAndAdd<TInput, TRaw>(IEnumerable<TInput> inputs,
+                       Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
+                       Func<TRaw, T> createDeleg)
+      {
+         var ret = true;
+         foreach (var input in inputs)
+         {
+            if (!CreateAndAdd(input, getItemsDeleg, createDeleg)) ret = false;
+         }
+         return ret;
       }
 
       private void UpdateParent(T item)

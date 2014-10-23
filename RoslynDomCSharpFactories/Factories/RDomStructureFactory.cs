@@ -43,8 +43,9 @@ namespace RoslynDom.CSharp
          createFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
          newItem.Name = newItem.TypedSymbol.Name;
 
-         var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model)).OfType< ITypeMemberCommentWhite>();
-         newItem.MembersAll.AddOrMoveRange(members);
+         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<ITypeMemberCommentWhite>());
+         //var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model)).OfType< ITypeMemberCommentWhite>();
+         //newItem.MembersAll.AddOrMoveRange(members);
 
          return newItem;
       }

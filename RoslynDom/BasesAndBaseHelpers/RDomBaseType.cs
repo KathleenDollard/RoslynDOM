@@ -52,7 +52,7 @@ namespace RoslynDom
          _stemMemberKind = oldRDom._stemMemberKind;
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          _members = oldRDom.MembersAll.Copy(this);
-         _typeParameters  = oldRDom.TypeParameters .Copy(this);
+         _typeParameters = oldRDom.TypeParameters.Copy(this);
 
          // TODO: _allImplementedInterfaces = oldRDom._allImplementedInterfaces.Select(x => x.Copy());
          _implementedInterfaces.AddOrMoveRange(oldRDom._implementedInterfaces.Select(x => x.Copy()));
@@ -66,7 +66,7 @@ namespace RoslynDom
 
          var typeSymbol = Symbol as ITypeSymbol;
          // TODO: _allImplementedInterfaces = typeSymbol.AllInterfaces
-         if (typeSymbol == null) throw new NotImplementedException();
+         //if (typeSymbol == null) throw new NotImplementedException();
       }
 
       public bool AddOrMoveMember(IDom item)
@@ -77,6 +77,9 @@ namespace RoslynDom
 
       public bool InsertOrMoveMember(int index, IDom item)
       { return _members.InsertOrMove(index, item); }
+
+      public IEnumerable<IDom> GetMembers()
+      { return MembersAll.ToList(); }
 
       public override IEnumerable<IDom> Children
       {

@@ -13,11 +13,11 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
       private RDomCollection<IEnumMember> _members;
 
-      public RDomEnum(string name, AccessModifier accessModifier = AccessModifier.Private, string underlyingTypeName = null)
-          : this(name, accessModifier, new RDomReferencedType(underlyingTypeName))
+      public RDomEnum(string name, string underlyingTypeName = null, AccessModifier accessModifier = AccessModifier.Private)
+          : this(name, new RDomReferencedType(underlyingTypeName), accessModifier)
       { }
 
-      public RDomEnum(string name, AccessModifier accessModifier = AccessModifier.Private, IReferencedType underlyingType = null)
+      public RDomEnum(string name, IReferencedType underlyingType , AccessModifier accessModifier = AccessModifier.Private)
           : this(null, null, null)
       {
          _name = name;

@@ -112,10 +112,11 @@ namespace RoslynDom.CSharp
 
          if (syntax.ArgumentList != null)
          {
-            var values = ListUtilities.MakeList(syntax, x => x.ArgumentList.Arguments, x => Corporation.Create(x, newItem, model))
-                .OfType<IAttributeValue>();
-            foreach (var value in values)
-            { newItem.AddOrMoveAttributeValue(value); }
+            newItem.AttributeValues.CreateAndAdd(syntax, x => x.ArgumentList.Arguments, x => Corporation.Create(x, newItem, model).Cast<IAttributeValue>());
+            //var values = ListUtilities.MakeList(syntax, x => x.ArgumentList.Arguments, x => Corporation.Create(x, newItem, model))
+            //      .OfType<IAttributeValue>();
+            //  foreach (var value in values)
+            //  { newItem.AddOrMoveAttributeValue(value); }
          }
          return newItem;
       }

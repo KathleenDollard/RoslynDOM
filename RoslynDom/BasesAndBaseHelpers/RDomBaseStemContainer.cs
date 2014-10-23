@@ -42,6 +42,9 @@ namespace RoslynDom
       public bool InsertOrMoveMember(int index, IDom item)
       { return _members.InsertOrMove(index, item); }
 
+      public IEnumerable<IDom> GetMembers()
+      { return StemMembersAll.ToList(); }
+
       public override IEnumerable<IDom> Children
       {
          get

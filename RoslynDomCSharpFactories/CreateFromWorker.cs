@@ -35,8 +35,9 @@ namespace RoslynDom.CSharp
          var blockSyntax = syntaxNode as BlockSyntax;
          if (blockSyntax != null)
          {
-            var statements = ListUtilities.CreateFromList(blockSyntax.Statements, x => Corporation.Create(x, parent, model)).OfType<IStatementCommentWhite>();
-            itemAsStatement.StatementsAll.AddOrMoveRange(statements);
+            //var statements = ListUtilities.CreateFromList(blockSyntax.Statements, x => Corporation.Create(x, parent, model)).OfType<IStatementCommentWhite>();
+            //itemAsStatement.StatementsAll.AddOrMoveRange(statements);
+            itemAsStatement.StatementsAll.CreateAndAdd(blockSyntax.Statements, x => Corporation.Create(x, parent, model).Cast<IStatementCommentWhite>());
             itemAsStatement.HasBlock = true;
             return;
          }
@@ -246,10 +247,12 @@ namespace RoslynDom.CSharp
                  IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
                  SemanticModel model)
       {
-         var usings = ListUtilities.CreateFromList(usingSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
-         var members = ListUtilities.CreateFromList(memberSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
-         newItem.StemMembersAll.AddOrMoveRange(usings);
-         newItem.StemMembersAll.AddOrMoveRange(members);
+         newItem.StemMembersAll.CreateAndAdd(usingSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberCommentWhite>());
+         newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberCommentWhite>());
+         //var usings = ListUtilities.CreateFromList(usingSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
+         //var members = ListUtilities.CreateFromList(memberSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
+         //newItem.StemMembersAll.AddOrMoveRange(usings);
+         //newItem.StemMembersAll.AddOrMoveRange(members);
       }
 
       public IEnumerable<ICommentWhite> GetCommentWhite<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)

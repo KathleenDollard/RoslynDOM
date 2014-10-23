@@ -9,13 +9,13 @@ namespace RoslynDom
    /// <remarks></remarks>
    public class RDomClass : RDomBaseType<IClass>, IClass
    {
-      public RDomClass(string name, AccessModifier accessModifier = AccessModifier.Private, 
-                  string baseTypeName = null, bool isAbstract = false, bool isSealed = false, bool isStatic = false)
-          : this(name, accessModifier, new RDomReferencedType(baseTypeName), isAbstract, isSealed, isStatic)
+      public RDomClass(string name, string baseTypeName = null,AccessModifier accessModifier = AccessModifier.Private, 
+                   bool isAbstract = false, bool isSealed = false, bool isStatic = false)
+          : this(name,new RDomReferencedType(baseTypeName), accessModifier,  isAbstract, isSealed, isStatic)
       { }
 
-      public RDomClass(string name, AccessModifier accessModifier = AccessModifier.Private,
-                  IReferencedType baseType = null, bool isAbstract = false, bool isSealed = false, bool isStatic = false)
+      public RDomClass(string name, IReferencedType baseType, AccessModifier accessModifier = AccessModifier.Private,
+                   bool isAbstract = false, bool isSealed = false, bool isStatic = false)
       : base(name, accessModifier, MemberKind.Class, StemMemberKind.Class)
       {
          _baseType = baseType;
