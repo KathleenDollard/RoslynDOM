@@ -2,7 +2,7 @@
 {
  
     public interface ITypeMember :
-            ITypeMemberCommentWhite , 
+            ITypeMemberAndDetail , 
             IMember, 
             IHasAttributes, 
             IHasAccessModifier, 

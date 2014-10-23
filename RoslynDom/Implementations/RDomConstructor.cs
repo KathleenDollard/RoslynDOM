@@ -10,7 +10,7 @@ namespace RoslynDom
    {
       private RDomCollection<IParameter> _parameters;
       private RDomCollection<IArgument> _initializationArguments;
-      private RDomCollection<IStatementCommentWhite> _statements;
+      private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
       public RDomConstructor(string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
@@ -59,7 +59,7 @@ namespace RoslynDom
       private void Initialize()
       {
          _parameters = new RDomCollection<IParameter>(this);
-         _statements = new RDomCollection<IStatementCommentWhite>(this);
+         _statements = new RDomCollection<IStatementAndDetail>(this);
          _initializationArguments = new RDomCollection<IArgument>(this);
       }
       public override IEnumerable<IDom> Children
@@ -125,7 +125,7 @@ namespace RoslynDom
       public RDomCollection<IParameter> Parameters
       { get { return _parameters; } }
 
-      public RDomCollection<IStatementCommentWhite> StatementsAll
+      public RDomCollection<IStatementAndDetail> StatementsAll
       { get { return _statements; } }
 
       public IEnumerable<IStatement> Statements

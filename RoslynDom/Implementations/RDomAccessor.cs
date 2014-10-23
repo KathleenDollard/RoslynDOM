@@ -8,7 +8,7 @@ namespace RoslynDom
 {
    public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
    {
-      private RDomCollection<IStatementCommentWhite> _statements;
+      private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
       private AccessorType _accessorType;
 
@@ -44,7 +44,7 @@ namespace RoslynDom
 
       protected void Initialize()
       {
-         _statements = new RDomCollection<IStatementCommentWhite>(this);
+         _statements = new RDomCollection<IStatementAndDetail>(this);
       }
 
       public bool AddOrMoveMember(IDom item)
@@ -94,7 +94,7 @@ namespace RoslynDom
          set { SetProperty(ref _declaredAccessModifier, value); }
       }
 
-      public RDomCollection<IStatementCommentWhite> StatementsAll
+      public RDomCollection<IStatementAndDetail> StatementsAll
       { get { return _statements; } }
 
       public IEnumerable<IStatement> Statements

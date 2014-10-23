@@ -4,16 +4,16 @@ using RoslynDom.Common;
 
 namespace RoslynDom
 {
-   public abstract class RDomCommentWhite<T> : RDomBase<T>, ICommentWhite<T>
-       where T : class, ICommentWhite<T>
+   public abstract class RDomDetail<T> : RDomBase<T>, IDetail<T>
+       where T : class, IDetail<T>
    {
-      internal RDomCommentWhite(StemMemberKind stemMemberKind, MemberKind memberKind)
+      internal RDomDetail(StemMemberKind stemMemberKind, MemberKind memberKind)
       {
          _stemMemberKind = stemMemberKind;
          _memberKind = memberKind;
       }
 
-      internal RDomCommentWhite(T oldRDom)
+      internal RDomDetail(T oldRDom)
           : base(oldRDom)
       {
          _stemMemberKind = oldRDom.StemMemberKind;

@@ -11,7 +11,7 @@ namespace RoslynDom
        where T : class, IDom<T>
        where TSymbol : ISymbol
    {
-      private RDomCollection<IStemMemberCommentWhite> _members;
+      private RDomCollection<IStemMemberAndDetail> _members;
 
       internal RDomBaseStemContainer(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
@@ -30,7 +30,7 @@ namespace RoslynDom
 
       private void Initialize()
       {
-         _members = new RDomCollection<IStemMemberCommentWhite>(this);
+         _members = new RDomCollection<IStemMemberAndDetail>(this);
       }
 
       public bool AddOrMoveMember(IDom item)
@@ -112,7 +112,7 @@ namespace RoslynDom
          return AddNamespaces(namespaces);
       }
 
-      public RDomCollection<IStemMemberCommentWhite> StemMembersAll
+      public RDomCollection<IStemMemberAndDetail> StemMembersAll
       { get { return _members; } }
 
       public IEnumerable<IStemMember> StemMembers

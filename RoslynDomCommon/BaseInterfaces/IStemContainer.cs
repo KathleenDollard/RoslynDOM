@@ -5,7 +5,7 @@ namespace RoslynDom.Common
    public interface IStemContainer : INestedContainer, IContainer
    {
       IEnumerable<IUsingDirective> UsingDirectives { get; }
-      RDomCollection<IStemMemberCommentWhite> StemMembersAll { get; }
+      RDomCollection<IStemMemberAndDetail> StemMembersAll { get; }
       IEnumerable<IStemMember> StemMembers { get; }
 
       /// <summary>

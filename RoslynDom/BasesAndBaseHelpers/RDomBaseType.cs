@@ -11,7 +11,7 @@ namespace RoslynDom
        : RDomBase<T, INamedTypeSymbol>, IType<T>, ITypeMemberContainer
        where T : class, IType<T>
    {
-      private RDomCollection<ITypeMemberCommentWhite> _members;
+      private RDomCollection<ITypeMemberAndDetail> _members;
       private RDomCollection<IReferencedType> _implementedInterfaces;
       private IEnumerable<IReferencedType> _allImplementedInterfaces;
       private MemberKind _memberKind;
@@ -52,7 +52,7 @@ namespace RoslynDom
          _stemMemberKind = oldRDom._stemMemberKind;
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          _members = oldRDom.MembersAll.Copy(this);
-         _typeParameters = oldRDom.TypeParameters.Copy(this);
+         _typeParameters  = oldRDom.TypeParameters .Copy(this);
 
          // TODO: _allImplementedInterfaces = oldRDom._allImplementedInterfaces.Select(x => x.Copy());
          _implementedInterfaces.AddOrMoveRange(oldRDom._implementedInterfaces.Select(x => x.Copy()));
@@ -60,7 +60,7 @@ namespace RoslynDom
 
       private void Initialize()
       {
-         _members = new RDomCollection<ITypeMemberCommentWhite>(this);
+         _members = new RDomCollection<ITypeMemberAndDetail>(this);
          _typeParameters = new RDomCollection<ITypeParameter>(this);
          _implementedInterfaces = new RDomCollection<IReferencedType>(this);
 
@@ -79,7 +79,7 @@ namespace RoslynDom
       { return _members.InsertOrMove(index, item); }
 
       public IEnumerable<IDom> GetMembers()
-      { return MembersAll.ToList(); }
+      {         return MembersAll.ToList(); }
 
       public override IEnumerable<IDom> Children
       {
@@ -131,7 +131,7 @@ namespace RoslynDom
       public RDomCollection<ITypeParameter> TypeParameters
       { get { return _typeParameters; } }
 
-      public RDomCollection<ITypeMemberCommentWhite> MembersAll
+      public RDomCollection<ITypeMemberAndDetail> MembersAll
       { get { return _members; } }
 
       public IEnumerable<ITypeMember> Members

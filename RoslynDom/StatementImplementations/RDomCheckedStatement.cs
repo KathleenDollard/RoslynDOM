@@ -8,7 +8,7 @@ namespace RoslynDom
 {
    public class RDomCheckedStatement : RDomBase<ICheckedStatement, ISymbol>, ICheckedStatement
    {
-      private RDomCollection<IStatementCommentWhite> _statements;
+      private RDomCollection<IStatementAndDetail> _statements;
 
       public RDomCheckedStatement(bool uncheck, bool hasBlock)
       : this(null, null, null)
@@ -34,7 +34,7 @@ namespace RoslynDom
 
       protected void Initialize()
       {
-         _statements = new RDomCollection<IStatementCommentWhite>(this);
+         _statements = new RDomCollection<IStatementAndDetail>(this);
       }
 
       public override IEnumerable<IDom> Children
@@ -63,7 +63,7 @@ namespace RoslynDom
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
-      public RDomCollection<IStatementCommentWhite> StatementsAll
+      public RDomCollection<IStatementAndDetail> StatementsAll
       { get { return _statements; } }
    }
 }

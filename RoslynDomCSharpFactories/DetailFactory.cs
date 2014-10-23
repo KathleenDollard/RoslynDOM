@@ -11,12 +11,12 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-   public class CommentWhiteFactory : RDomBaseItemFactory<ICommentWhite, SyntaxNode>
+   public class DetailFactory : RDomBaseItemFactory<IDetail, SyntaxNode>
    {
       // TODO: Consider IOC for trivia manager
       private TriviaManager triviaManager = new TriviaManager();
 
-      public CommentWhiteFactory(RDomCorporation corporation)
+      public DetailFactory(RDomCorporation corporation)
           : base(corporation)
       { }
 
@@ -30,18 +30,18 @@ namespace RoslynDom.CSharp
       { get { return null; } }
 
       public override Type[] ExplicitNodeTypes
-      { get { return new Type[] { typeof(ICommentWhite) }; } }
+      { get { return new Type[] { typeof(IDetail) }; } }
 
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          return InternalCreateFrom(syntaxNode, parent, model);
       }
 
-      private IEnumerable<ICommentWhite> InternalCreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      private IEnumerable<IDetail> InternalCreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          // The parent of the syntax is the next item. The parent of the region is the thing it's attached to
          parent = parent.Parent;
-         var ret = new List<ICommentWhite>();
+         var ret = new List<IDetail>();
          if (!syntaxNode.HasLeadingTrivia) return ret;
          var triviaList = syntaxNode.GetLeadingTrivia();
          var lastWasComment = false;

@@ -9,7 +9,7 @@ namespace RoslynDom.CSharp
 {
    internal interface ICSharpCreateFromWorker : ICreateFromWorker
    {
-      IEnumerable<ICommentWhite> GetCommentWhite<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
                   where TSyntax : SyntaxNode
                   where T : class, IDom;
 

@@ -37,7 +37,7 @@ namespace RoslynDom.CSharp
             return SyntaxFactory.List<AttributeListSyntax>( attributeSyntaxes);
         }
 
-        public BlockSyntax GetStatementBlock(IEnumerable<IStatementCommentWhite> statements)
+        public BlockSyntax GetStatementBlock(IEnumerable<IStatementAndDetail> statements)
         {
             var statementSyntaxList = statements
                               .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))

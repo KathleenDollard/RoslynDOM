@@ -94,7 +94,7 @@ namespace RoslynDom
          return true;
       }
 
-      public IEnumerable<IDom> Create(SyntaxNode node, IDom parent, SemanticModel model, bool skipCommentWhitespace = false)
+      public IEnumerable<IDom> Create(SyntaxNode node, IDom parent, SemanticModel model, bool skipDetail = false)
       {
          return FindFactoryAndCreate(node.GetType(), syntaxNodeLookup, node, parent, model);
       }

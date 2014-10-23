@@ -9,15 +9,15 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface ICommentWhite : IStemMemberCommentWhite, ITypeMemberCommentWhite, IStatementCommentWhite, IMisc
+    public interface IDetail : IStemMemberAndDetail, ITypeMemberAndDetail, IStatementAndDetail, IMisc
     {
     }
 
    /// <summary>
    /// 
    /// </summary>
-   public interface ICommentWhite<T> : ICommentWhite, IDom<T>
-         where T : ICommentWhite<T>
+   public interface IDetail<T> : IDetail, IDom<T>
+         where T : IDetail<T>
    {
    }
 }

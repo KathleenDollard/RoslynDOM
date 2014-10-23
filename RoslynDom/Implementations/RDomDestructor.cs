@@ -8,7 +8,7 @@ namespace RoslynDom
 {
    public class RDomDestructor : RDomBase<IDestructor, IMethodSymbol>, IDestructor
    {
-      private RDomCollection<IStatementCommentWhite> _statements;
+      private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
       public RDomDestructor(string name, AccessModifier accessModifier = AccessModifier.Private)
@@ -36,7 +36,7 @@ namespace RoslynDom
 
       private void Initialize()
       {
-         _statements = new RDomCollection<IStatementCommentWhite>(this);
+         _statements = new RDomCollection<IStatementAndDetail>(this);
       }
 
       public bool AddOrMoveMember(IDom item)
@@ -104,7 +104,7 @@ namespace RoslynDom
          { SetProperty(ref _declaredAccessModifier, value); }
       }
 
-      public RDomCollection<IStatementCommentWhite> StatementsAll
+      public RDomCollection<IStatementAndDetail> StatementsAll
       { get { return _statements; } }
 
       public IEnumerable<IStatement> Statements

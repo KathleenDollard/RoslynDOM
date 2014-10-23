@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
 
             foreach (var statementSyntax in syntax.Statements)
             {
-                var statements = Corporation.Create(statementSyntax, newItem, model).OfType<IStatementCommentWhite>();
+                var statements = Corporation.Create(statementSyntax, newItem, model).OfType<IStatementAndDetail>();
                 newItem.Statements.AddOrMoveRange(statements);
             }
 

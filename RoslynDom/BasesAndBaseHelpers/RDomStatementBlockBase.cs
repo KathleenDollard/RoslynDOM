@@ -8,7 +8,7 @@ namespace RoslynDom
    public class RDomStatementBlockBase<T> : RDomBase<T, ISymbol>, IStatementBlock
        where T : class, IStatementBlock, IDom<T>
    {
-      private RDomCollection<IStatementCommentWhite> _statements;
+      private RDomCollection<IStatementAndDetail> _statements;
 
       public RDomStatementBlockBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
@@ -24,7 +24,7 @@ namespace RoslynDom
 
       private void Initialize()
       {
-         _statements = new RDomCollection<IStatementCommentWhite>(this);
+         _statements = new RDomCollection<IStatementAndDetail>(this);
       }
 
       public override IEnumerable<IDom> Children
@@ -44,7 +44,7 @@ namespace RoslynDom
          set { SetProperty(ref _hasBlock, value); }
       }
 
-      public RDomCollection<IStatementCommentWhite> StatementsAll
+      public RDomCollection<IStatementAndDetail> StatementsAll
       { get { return _statements; } }
 
       public IEnumerable<IStatement> Statements

@@ -8,7 +8,7 @@ using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
-   public class RDomVerticalWhitespace : RDomCommentWhite<IVerticalWhitespace>, IVerticalWhitespace
+   public class RDomVerticalWhitespace : RDomDetail<IVerticalWhitespace>, IVerticalWhitespace
    {
       public RDomVerticalWhitespace(int count, bool isElastic = false)
           : base(StemMemberKind.Whitespace, MemberKind.Whitespace)

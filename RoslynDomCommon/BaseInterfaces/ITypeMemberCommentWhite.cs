@@ -1,6 +1,6 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface ITypeMemberCommentWhite : IDom
+    public interface ITypeMemberAndDetail : IDom
     {
         MemberKind MemberKind { get; }
     }

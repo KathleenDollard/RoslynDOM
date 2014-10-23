@@ -7,7 +7,7 @@ namespace RoslynDom
 {
    public class RDomLockStatement : RDomBase<ILockStatement, ISymbol>, ILockStatement
    {
-      private RDomCollection<IStatementCommentWhite> _statements;
+      private RDomCollection<IStatementAndDetail> _statements;
 
       public RDomLockStatement(IExpression expression, bool hasBlock)
       : this(null, null, null)
@@ -33,7 +33,7 @@ namespace RoslynDom
 
       private void Initialize()
       {
-         _statements = new RDomCollection<IStatementCommentWhite>(this);
+         _statements = new RDomCollection<IStatementAndDetail>(this);
       }
 
       public override IEnumerable<IDom> Children
@@ -63,7 +63,7 @@ namespace RoslynDom
       public IEnumerable<IStatement> Statements
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
-      public RDomCollection<IStatementCommentWhite> StatementsAll
+      public RDomCollection<IStatementAndDetail> StatementsAll
       { get { return _statements; } }
    }
 }

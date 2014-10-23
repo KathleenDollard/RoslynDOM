@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
 
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
-         var list = new List<IStatementCommentWhite>();
+         var list = new List<IStatementAndDetail>();
          var rawDeclaration = syntaxNode as LocalDeclarationStatementSyntax;
 
          // VariableDeclarationFactory does most of the work, and at present returns a single
@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
             newItem.IsConst = rawDeclaration.IsConst;
          }
-         list.AddRange(newItems.OfType<IStatementCommentWhite>());
+         list.AddRange(newItems.OfType<IStatementAndDetail>());
          return list;
       }
 

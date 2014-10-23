@@ -9,7 +9,7 @@ namespace RoslynDom
    public class RDomConversionOperator : RDomBase<IConversionOperator, IMethodSymbol>, IConversionOperator
    {
       private RDomCollection<IParameter> _parameters;
-      private RDomCollection<IStatementCommentWhite> _statements;
+      private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
       public RDomConversionOperator(string name, string typeName, bool isImplicit)
@@ -47,7 +47,7 @@ namespace RoslynDom
 
       private void Initialize()
       {
-         _statements = new RDomCollection<IStatementCommentWhite>(this);
+         _statements = new RDomCollection<IStatementAndDetail>(this);
          _parameters = new RDomCollection<IParameter>(this);
       }
 
@@ -129,7 +129,7 @@ namespace RoslynDom
       public RDomCollection<IParameter> Parameters
       { get { return _parameters; } }
 
-      public RDomCollection<IStatementCommentWhite> StatementsAll
+      public RDomCollection<IStatementAndDetail> StatementsAll
       { get { return _statements; } }
 
       public IEnumerable<IStatement> Statements

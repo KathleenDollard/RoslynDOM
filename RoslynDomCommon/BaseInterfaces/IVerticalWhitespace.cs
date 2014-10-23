@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-   public interface IVerticalWhitespace : ICommentWhite<IVerticalWhitespace>, IStemMemberCommentWhite, ITypeMemberCommentWhite, IStatementCommentWhite
+   public interface IVerticalWhitespace : IDetail<IVerticalWhitespace>, IStemMemberAndDetail, ITypeMemberAndDetail, IStatementAndDetail
     {
         int Count { get; set; }
         bool IsElastic { get; set; }

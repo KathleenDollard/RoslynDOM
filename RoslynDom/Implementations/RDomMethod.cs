@@ -10,7 +10,7 @@ namespace RoslynDom
    {
       private RDomCollection<IParameter> _parameters;
       private RDomCollection<ITypeParameter> _typeParameters;
-      private RDomCollection<IStatementCommentWhite> _statements;
+      private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
       public RDomMethod(string name, string returnTypeName, AccessModifier accessModifier = AccessModifier.Private,
@@ -70,7 +70,7 @@ namespace RoslynDom
       {
          _typeParameters = new RDomCollection<ITypeParameter>(this);
          _parameters = new RDomCollection<IParameter>(this);
-         _statements = new RDomCollection<IStatementCommentWhite>(this);
+         _statements = new RDomCollection<IStatementAndDetail>(this);
       }
 
       public bool AddOrMoveMember(IDom item)
@@ -197,7 +197,7 @@ namespace RoslynDom
       public RDomCollection<IParameter> Parameters
       { get { return _parameters; } }
 
-      public RDomCollection<IStatementCommentWhite> StatementsAll
+      public RDomCollection<IStatementAndDetail> StatementsAll
       { get { return _statements; } }
 
       public IEnumerable<IStatement> Statements

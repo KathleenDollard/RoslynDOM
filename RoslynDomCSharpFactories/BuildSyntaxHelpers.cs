@@ -96,12 +96,12 @@ namespace RoslynDom.CSharp
       public static SyntaxTriviaList LeadingTrivia(IDom item)
       {
          var leadingTrivia = new List<SyntaxTrivia>();
-         leadingTrivia.AddRange(BuildCommentWhite(item));
+         leadingTrivia.AddRange(BuildDetail(item));
          leadingTrivia.AddRange(BuildSyntaxHelpers.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation));
          return SyntaxFactory.TriviaList(leadingTrivia);
       }
 
-      private static IEnumerable<SyntaxTrivia> BuildCommentWhite<T>(T item)
+      private static IEnumerable<SyntaxTrivia> BuildDetail<T>(T item)
          where T : IDom
       {
          var trivias = new List<SyntaxTrivia>();
@@ -111,43 +111,12 @@ namespace RoslynDom.CSharp
          var candidates = parentAsContainer.GetMembers();
          var commentWhites = candidates
                              .PreviousSiblingsUntil(item, x => !(x is IComment || x is IVerticalWhitespace))
-                             .OfType<ICommentWhite>();
+                             .OfType<IDetail>();
          trivias.AddRange(MakeWhiteCommentTrivia(commentWhites));
          return trivias;
       }
 
-
-      //private static IEnumerable<SyntaxTrivia> BuildCommentWhite(IDom item)
-      //{
-      //   var ret = new List<SyntaxTrivia>();
-      //   // This can happen if someone copies an item to a new item, does not attach it to a tree, 
-      //   // and asks for the syntax. It's actually expected to sometimes be unattached. 
-      //   if (item.Parent == null) { return ret; }
-      //   if (TryBuildCommentWhiteFor<IStemMemberCommentWhite, IStemContainer>(item, ret, x => x.StemMembersAll)) { return ret; }
-      //   if (TryBuildCommentWhiteFor<ITypeMemberCommentWhite, ITypeMemberContainer>(item, ret, x => x.MembersAll)) { return ret; }
-      //   if (TryBuildCommentWhiteFor<IStatementCommentWhite, IStatementContainer>(item, ret, x => x.StatementsAll)) { return ret; }
-      //   return ret;
-      //}
-
-      //private static bool TryBuildCommentWhiteFor<TKind, TParent>
-      //            (IDom item, List<SyntaxTrivia> trivias, Func<TParent, IEnumerable<TKind>> getCandidates)
-      //    where TParent : class
-      //    where TKind : class
-      //{
-      //   var itemAsTKind = item as TKind;
-      //   if (itemAsTKind == null) { return false; }
-      //   // if item is TKind, parent may not be TParent because types can be multiply rooted (stem or nested type)
-      //   var parentAsTParent = item.Parent as TParent;
-      //   if (parentAsTParent == null) return false;
-      //   var candidates = getCandidates(parentAsTParent);
-      //   var commentWhites = candidates
-      //                       .PreviousSiblingsUntil(itemAsTKind, x => !(x is IComment || x is IVerticalWhitespace))
-      //                       .OfType<ICommentWhite>();
-      //   trivias.AddRange(MakeWhiteCommentTrivia(commentWhites));
-      //   return true;
-      //}
-
-      private static IEnumerable<SyntaxTrivia> MakeWhiteCommentTrivia(IEnumerable<ICommentWhite> commentWhites)
+      private static IEnumerable<SyntaxTrivia> MakeWhiteCommentTrivia(IEnumerable<IDetail> commentWhites)
       {
          var ret = new List<SyntaxTrivia>();
          foreach (var item in commentWhites)

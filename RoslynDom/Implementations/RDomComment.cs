@@ -1,7 +1,7 @@
 using RoslynDom.Common;
 namespace RoslynDom
 {
-   public class RDomComment : RDomCommentWhite<IComment>, IComment
+   public class RDomComment : RDomDetail<IComment>, IComment
    {
       public RDomComment(string text, bool isMultiline = false)
           : base(StemMemberKind.Comment, MemberKind.Comment)

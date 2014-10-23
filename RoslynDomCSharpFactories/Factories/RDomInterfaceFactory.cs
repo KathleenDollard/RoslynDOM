@@ -47,16 +47,10 @@ namespace RoslynDom.CSharp
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<ITypeMemberCommentWhite>());
+         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
          // this is a hack because the membersare appearing with a scope
          foreach (var member in newItem.MembersAll.OfType<ITypeMember>())
          { member.AccessModifier = AccessModifier.None; }
-
-         //var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model)).OfType<ITypeMemberCommentWhite>();
-         //// this is a hack because the membersare appearing with a scope
-         //foreach (var member in members.OfType<ITypeMember>())
-         //{ member.AccessModifier = AccessModifier.None; }
-         //newItem.MembersAll.AddOrMoveRange(members);
 
          return newItem;
       }

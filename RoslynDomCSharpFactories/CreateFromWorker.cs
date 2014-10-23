@@ -35,16 +35,14 @@ namespace RoslynDom.CSharp
          var blockSyntax = syntaxNode as BlockSyntax;
          if (blockSyntax != null)
          {
-            //var statements = ListUtilities.CreateFromList(blockSyntax.Statements, x => Corporation.Create(x, parent, model)).OfType<IStatementCommentWhite>();
-            //itemAsStatement.StatementsAll.AddOrMoveRange(statements);
-            itemAsStatement.StatementsAll.CreateAndAdd(blockSyntax.Statements, x => Corporation.Create(x, parent, model).Cast<IStatementCommentWhite>());
+            itemAsStatement.StatementsAll.CreateAndAdd(blockSyntax.Statements, x => Corporation.Create(x, parent, model).Cast<IStatementAndDetail>());
             itemAsStatement.HasBlock = true;
             return;
          }
          var statementSyntax = syntaxNode as StatementSyntax;
          if (statementSyntax != null)
          {
-            var statements = Corporation.Create(statementSyntax, parent, model).OfType<IStatementCommentWhite>();
+            var statements = Corporation.Create(statementSyntax, parent, model).OfType<IStatementAndDetail>();
             if (statements.Count() > 1) throw new NotImplementedException();
             var statement = statements.First();
             var statementAsBlockStatement = statement as IBlockStatement;
@@ -247,19 +245,15 @@ namespace RoslynDom.CSharp
                  IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
                  SemanticModel model)
       {
-         newItem.StemMembersAll.CreateAndAdd(usingSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberCommentWhite>());
-         newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberCommentWhite>());
-         //var usings = ListUtilities.CreateFromList(usingSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
-         //var members = ListUtilities.CreateFromList(memberSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
-         //newItem.StemMembersAll.AddOrMoveRange(usings);
-         //newItem.StemMembersAll.AddOrMoveRange(members);
+         newItem.StemMembersAll.CreateAndAdd(usingSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberAndDetail>());
+         newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberAndDetail>());
       }
 
-      public IEnumerable<ICommentWhite> GetCommentWhite<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
           where T : class, IDom
           where TSyntax : SyntaxNode
       {
-         return Corporation.Create<ICommentWhite>(syntaxNode, newItem, model);
+         return Corporation.Create<IDetail>(syntaxNode, newItem, model);
       }
 
       public IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)

@@ -116,7 +116,7 @@ namespace RoslynDom.CSharp
             var newItem = newItems.FirstOrDefault();
             if (newItem != null)
             {
-               var whiteComment = CreateFromWorker.GetCommentWhite(syntaxNode, newItem, model);
+               var whiteComment = CreateFromWorker.GetDetail(syntaxNode, newItem, model);
                ret.AddRange(whiteComment.OfType<IDom>());
             }
          }
