@@ -13,11 +13,11 @@ namespace RoslynDom
       private RDomCollection<IStatementCommentWhite> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomMethod(string name, string returnTypeName, AccessModifier accessModifier = AccessModifier.Private ,
-               bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, 
+      public RDomMethod(string name, string returnTypeName, AccessModifier accessModifier = AccessModifier.Private,
+               bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false,
                bool isNew = false, bool isStatic = false,
                bool isExtensionMethod = false)
-          : this(name, new RDomReferencedType(returnTypeName), accessModifier,  isAbstract, isVirtual,
+          : this(name, new RDomReferencedType(returnTypeName), accessModifier, isAbstract, isVirtual,
                      isOverride, isSealed, isNew, isStatic, isExtensionMethod)
       { }
 
@@ -48,14 +48,10 @@ namespace RoslynDom
       internal RDomMethod(RDomMethod oldRDom)
            : base(oldRDom)
       {
-         Initialize();
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
-         Parameters.AddOrMoveRange(newParameters);
-         var newTypeParameters = RoslynDomUtilities.CopyMembers(oldRDom._typeParameters);
-         TypeParameters.AddOrMoveRange(newTypeParameters);
-         var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-         StatementsAll.AddOrMoveRange(newStatements);
+         _parameters = oldRDom.Parameters.Copy(this);
+         _typeParameters = oldRDom.TypeParameters.Copy(this);
+         _statements = oldRDom.StatementsAll.Copy(this);
 
          _name = oldRDom.Name;
          _returnType = oldRDom.ReturnType;

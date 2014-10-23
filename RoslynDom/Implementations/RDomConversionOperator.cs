@@ -39,10 +39,8 @@ namespace RoslynDom
          _isImplicit = oldRDom.IsImplicit;
          _isStatic = oldRDom.IsStatic;
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
-         Parameters.AddOrMoveRange(newParameters);
-         var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-         StatementsAll.AddOrMoveRange(newStatements);
+         _parameters = oldRDom.Parameters.Copy(this);
+         _statements = oldRDom.StatementsAll.Copy(this);
 
          _type = oldRDom.Type.Copy();
       }

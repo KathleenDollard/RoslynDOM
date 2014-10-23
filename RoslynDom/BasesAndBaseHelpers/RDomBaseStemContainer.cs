@@ -24,35 +24,8 @@ namespace RoslynDom
            : base(oldIDom)
       {
          Initialize();
-         // Really need to keep them in order so need to iterate entire list in order
          var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;
-         foreach (var member in oldRDom.StemMembersAll)
-         {
-            if (TryCopyMember<RDomClass>(member, m => new RDomClass(m))) continue;
-            if (TryCopyMember<RDomStructure>(member, m => new RDomStructure(m))) continue;
-            if (TryCopyMember<RDomInterface>(member, m => new RDomInterface(m))) continue;
-            if (TryCopyMember<RDomEnum>(member, m => new RDomEnum(m))) continue;
-            if (TryCopyMember<RDomNamespace>(member, m => new RDomNamespace(m))) continue;
-            if (TryCopyMember<RDomUsingDirective>(member, m => new RDomUsingDirective(m))) continue;
-            if (TryCopyMember<RDomVerticalWhitespace>(member, m => new RDomVerticalWhitespace(m))) continue;
-            if (TryCopyMember<RDomComment>(member, m => new RDomComment(m))) continue;
-            if (TryCopyMember<RDomRegionStart>(member, m => new RDomRegionStart(m))) continue;
-            if (TryCopyMember<RDomRegionEnd>(member, m => new RDomRegionEnd(m, this))) continue;
-            throw new InvalidOperationException();
-         }
-      }
-
-      private bool TryCopyMember<TLocal>(IStemMemberCommentWhite member, Func<TLocal, TLocal> constructDelegate)
-          where TLocal : class, IStemMemberCommentWhite
-      {
-         var memberAsT = member as TLocal;
-         if (memberAsT != null)
-         {
-            var newMember = constructDelegate(memberAsT);
-            StemMembersAll.AddOrMove(newMember);
-            return true;
-         }
-         return false;
+         _members = oldRDom.StemMembersAll.Copy(this);
       }
 
       private void Initialize()

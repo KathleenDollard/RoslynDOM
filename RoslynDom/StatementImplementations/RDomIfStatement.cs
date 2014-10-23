@@ -26,9 +26,7 @@ namespace RoslynDom
       internal RDomIfStatement(RDomIfStatement oldRDom)
           : base(oldRDom)
       {
-         Initialize();
-         var newElses = RoslynDomUtilities.CopyMembers(oldRDom.Elses);
-         Elses.AddOrMoveRange(newElses);
+         _elses = oldRDom.Elses.Copy(this);
          _condition = oldRDom.Condition.Copy();
       }
 

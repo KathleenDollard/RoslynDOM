@@ -10,7 +10,7 @@ namespace RoslynDom
                Justification = "Because this represents an attribute, it's an appropriate name")]
    public class RDomAttribute : RDomBase<IAttribute, ISymbol>, IAttribute
    {
-      private List<IAttributeValue> _attributeValues = new List<IAttributeValue>();
+      private RDomCollection<IAttributeValue> _attributeValues;
 
       public RDomAttribute(string name)
       : this(null, null, null)
@@ -20,7 +20,7 @@ namespace RoslynDom
 
       public RDomAttribute(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
-      { }
+      { _attributeValues = new RDomCollection<IAttributeValue>(this); }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
@@ -28,9 +28,7 @@ namespace RoslynDom
           : base(oldRDom)
       {
          _name = oldRDom.Name;
-         var newAttributeValues = RoslynDomUtilities.CopyMembers(oldRDom._attributeValues);
-         foreach (var value in newAttributeValues)
-         { AddOrMoveAttributeValue(value); }
+         _attributeValues = oldRDom.AttributeValues.Copy(this);
       }
 
       private string _name;
@@ -45,9 +43,9 @@ namespace RoslynDom
       { _attributeValues.Remove(attributeValue); }
 
       public void AddOrMoveAttributeValue(IAttributeValue attributeValue)
-      { _attributeValues.Add(attributeValue); }
+      { _attributeValues.AddOrMove(attributeValue); }
 
-      public IEnumerable<IAttributeValue> AttributeValues
+      public RDomCollection <IAttributeValue> AttributeValues
       { get { return _attributeValues; } }
    }
 }

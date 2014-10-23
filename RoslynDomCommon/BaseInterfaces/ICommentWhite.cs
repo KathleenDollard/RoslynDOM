@@ -12,4 +12,12 @@ namespace RoslynDom.Common
     public interface ICommentWhite : IStemMemberCommentWhite, ITypeMemberCommentWhite, IStatementCommentWhite, IMisc
     {
     }
+
+   /// <summary>
+   /// 
+   /// </summary>
+   public interface ICommentWhite<T> : ICommentWhite, IDom<T>
+         where T : ICommentWhite<T>
+   {
+   }
 }

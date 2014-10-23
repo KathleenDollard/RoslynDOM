@@ -11,7 +11,7 @@ namespace RoslynDom
    public class RDomEnum : RDomBase<IEnum, ISymbol>, IEnum
    {
       private AttributeCollection _attributes = new AttributeCollection();
-      private RDomCollection<IEnumMember> _values;
+      private RDomCollection<IEnumMember> _members;
 
       public RDomEnum(string name, AccessModifier accessModifier = AccessModifier.Private, string underlyingTypeName = null)
           : this(name, accessModifier, new RDomReferencedType(underlyingTypeName))
@@ -32,10 +32,8 @@ namespace RoslynDom
       internal RDomEnum(RDomEnum oldRDom)
           : base(oldRDom)
       {
-         Initialize();
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         var newValues = RoslynDomUtilities.CopyMembers(oldRDom._values);
-         Members.AddOrMoveRange(newValues);
+         _members = oldRDom.Members.Copy(this);
          _name = oldRDom.Name;
          _accessModifier = oldRDom.AccessModifier;
          _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
@@ -44,7 +42,7 @@ namespace RoslynDom
 
       private void Initialize()
       {
-         _values = new RDomCollection<IEnumMember>(this);
+         _members = new RDomCollection<IEnumMember>(this);
       }
 
       public override IEnumerable<IDom> Children
@@ -52,7 +50,7 @@ namespace RoslynDom
          get
          {
             var list = base.Children.ToList();
-            list.AddRange(_values);
+            list.AddRange(_members);
             return list;
          }
       }
@@ -119,7 +117,7 @@ namespace RoslynDom
       { get { return Parent as IType; } }
 
       public RDomCollection<IEnumMember> Members
-      { get { return _values; } }
+      { get { return _members; } }
 
       public MemberKind MemberKind
       { get { return MemberKind.Enum; } }

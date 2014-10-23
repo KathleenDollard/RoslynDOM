@@ -11,7 +11,7 @@ namespace RoslynDom.Common
         // TODO: Consider: Not supporting methods on attributes yet
         // TODO: Consider: Not including Attribute usage, scope and other info about the attribute class at this point
         // Do not currently see a use for an IHasProperties interface for Class/Attribute similarities
-        IEnumerable<IAttributeValue> AttributeValues { get; }
+        RDomCollection <IAttributeValue> AttributeValues { get; }
         void RemoveAttributeValue(IAttributeValue attributeValue);
         void AddOrMoveAttributeValue(IAttributeValue attributeValue);
     }

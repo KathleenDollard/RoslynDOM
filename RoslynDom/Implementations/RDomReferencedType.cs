@@ -62,7 +62,7 @@ namespace RoslynDom
          _displayAlias = oldRDom.DisplayAlias;
          _isArray = oldRDom.IsArray;
          _containingType = oldRDom.ContainingType;
-         TypeArguments.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._typeArguments));
+         _typeArguments = oldRDom.TypeArguments.Copy(this);
       }
 
       private void Initialize()

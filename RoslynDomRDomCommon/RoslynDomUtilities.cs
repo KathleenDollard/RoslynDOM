@@ -34,31 +34,31 @@ namespace RoslynDom
              .Where(x => x.StemMembers.Where(y => y.StemMemberKind != StemMemberKind.Namespace).Count() != 0);
       }
 
-      public static IEnumerable<T> CopyMembers<T>(IEnumerable<T> members)
-      {
-         var ret = new List<T>();
-         if (members != null)
-         {
-            foreach (var member in members)
-            {
-               ret.Add(Copy(member));
-            }
-         }
-         return ret;
-      }
+      //public static IEnumerable<T> CopyMembers<T>(IEnumerable<T> members)
+      //{
+      //   var ret = new List<T>();
+      //   if (members != null)
+      //   {
+      //      foreach (var member in members)
+      //      {
+      //         ret.Add(Copy(member));
+      //      }
+      //   }
+      //   return ret;
+      //}
 
-      public static T Copy<T>(T oldItem)
-      {
-         var type = oldItem.GetType();
-         var constructors = type.GetTypeInfo()
-             .DeclaredConstructors
-             .Where(x => x.GetParameters().Count() == 1
-             && type.IsAssignableFrom(x.GetParameters().First().ParameterType));
-         Guardian.Assert.RDomHasOneCloneContructor(constructors, type);
-         var constructor = constructors.FirstOrDefault();
-         var newItem = constructor.Invoke(new object[] { oldItem });
-         return (T)newItem;
-      }
+      //public static T Copy<T>(T oldItem)
+      //{
+      //   var type = oldItem.GetType();
+      //   var constructors = type.GetTypeInfo()
+      //       .DeclaredConstructors
+      //       .Where(x => x.GetParameters().Count() == 1
+      //       && type.IsAssignableFrom(x.GetParameters().First().ParameterType));
+      //   Guardian.Assert.RDomHasOneCloneContructor(constructors, type);
+      //   var constructor = constructors.FirstOrDefault();
+      //   var newItem = constructor.Invoke(new object[] { oldItem });
+      //   return (T)newItem;
+      //}
 
       public static string GetNamespace(IDom item)
       {

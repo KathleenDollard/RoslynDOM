@@ -51,8 +51,8 @@ namespace RoslynDom
          _memberKind = oldRDom._memberKind;
          _stemMemberKind = oldRDom._stemMemberKind;
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         MembersAll.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._members));
-         TypeParameters.AddOrMoveRange(RoslynDomUtilities.CopyMembers(oldRDom._typeParameters));
+         _members = oldRDom.MembersAll.Copy(this);
+         _typeParameters  = oldRDom.TypeParameters .Copy(this);
 
          // TODO: _allImplementedInterfaces = oldRDom._allImplementedInterfaces.Select(x => x.Copy());
          _implementedInterfaces.AddOrMoveRange(oldRDom._implementedInterfaces.Select(x => x.Copy()));

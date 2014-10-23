@@ -39,8 +39,7 @@ namespace RoslynDom
          _hasConstructorConstraint = oldRDom.HasConstructorConstraint;
          _hasReferenceTypeConstraint = oldRDom.HasReferenceTypeConstraint;
          _hasValueTypeConstraint = oldRDom.HasValueTypeConstraint;
-         var newConstraints = RoslynDomUtilities.CopyMembers(oldRDom._constraintTypes);
-         ConstraintTypes.AddOrMoveRange(newConstraints);
+         _constraintTypes = oldRDom.ConstraintTypes.Copy(this);
       }
 
       protected void Initialize()

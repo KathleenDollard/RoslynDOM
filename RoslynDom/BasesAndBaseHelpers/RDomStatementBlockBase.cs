@@ -18,8 +18,7 @@ namespace RoslynDom
           : base(oldRDom)
       {
          Initialize();
-         var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
-         StatementsAll.AddOrMoveRange(statements);
+         _statements = oldRDom.StatementsAll.Copy(this);
          HasBlock = oldRDom.HasBlock;
       }
 

@@ -40,12 +40,20 @@ namespace RoslynDom.Common
          return AddOrMove(itemAsKind);
       }
 
-      public void AddOrMoveRange(IEnumerable<T> items)
+      public bool AddOrMoveRange(IEnumerable<T> items)
       {
          // Don't use AddRange because we need to manage parents
-         if (items == null) throw new NotImplementedException();
+         if (items == null) return false;
          foreach (var item in items)
          { AddOrMove(item); }
+         return true;
+      }
+
+      public bool AddOrMoveRange<TLocal>(IEnumerable<TLocal> items)
+      {
+         var itemsAsKind = items.OfType<T>();
+         if (items.Count() != items.Count()) return false;
+         return AddOrMoveRange(itemsAsKind);
       }
 
       public bool InsertOrMove(int index, T item)
@@ -123,6 +131,19 @@ namespace RoslynDom.Common
          var newItemAsKind = newItem as T;
          if (oldItemAsKind == null || newItemAsKind == null) return false;
          return Replace(oldItemAsKind, newItemAsKind);
+      }
+
+      public RDomCollection <T> Copy(IDom newParent)
+      {
+         var newList = new RDomCollection<T>(newParent);
+         foreach (var item in _list)
+         {
+            var copyMethod = item.GetType().GetMethod("Copy");
+            if (copyMethod == null) throw new NotImplementedException();
+            var newItem = copyMethod.Invoke(item, null);
+            newList.AddOrMove(newItem);
+         }
+         return newList;
       }
 
       public void Clear()

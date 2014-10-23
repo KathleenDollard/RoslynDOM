@@ -29,8 +29,7 @@ namespace RoslynDom
       {
          Initialize();
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-         StatementsAll.AddOrMoveRange(newStatements);
+         _statements = oldRDom.StatementsAll.Copy(this);
          _name = oldRDom.Name;
          _accessModifier = oldRDom.AccessModifier;
       }

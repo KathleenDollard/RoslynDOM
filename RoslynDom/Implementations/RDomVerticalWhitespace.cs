@@ -8,7 +8,7 @@ using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
 namespace RoslynDom
 {
-   public class RDomVerticalWhitespace : RDomCommentWhite, IVerticalWhitespace
+   public class RDomVerticalWhitespace : RDomCommentWhite<IVerticalWhitespace>, IVerticalWhitespace
    {
       public RDomVerticalWhitespace(int count, bool isElastic = false)
           : base(StemMemberKind.Whitespace, MemberKind.Whitespace)
@@ -39,11 +39,11 @@ namespace RoslynDom
          set { SetProperty(ref _isElastic, value); }
       }
 
-      protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
-      {
-         var otherAsT = other as IVerticalWhitespace;
-         if (otherAsT == null) return false;
-         return (Count == otherAsT.Count);
-      }
+      //protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
+      //{
+      //   var otherAsT = other as IVerticalWhitespace;
+      //   if (otherAsT == null) return false;
+      //   return (Count == otherAsT.Count);
+      //}
    }
 }

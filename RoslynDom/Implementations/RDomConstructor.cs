@@ -34,13 +34,10 @@ namespace RoslynDom
       {
          Initialize();
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
-         Parameters.AddOrMoveRange(newParameters);
-         var newStatements = RoslynDomUtilities.CopyMembers(oldRDom._statements);
-         StatementsAll.AddOrMoveRange(newStatements);
-         var newInitializationArguments = RoslynDomUtilities.CopyMembers(oldRDom._initializationArguments);
-         InitializationArguments.AddOrMoveRange(newInitializationArguments);
-         ConstructorInitializerType = oldRDom.ConstructorInitializerType;
+         _parameters = oldRDom.Parameters.Copy(this);
+         _statements = oldRDom.StatementsAll.Copy(this);
+         _initializationArguments = oldRDom.InitializationArguments.Copy(this);
+         _constructorInitializerType = oldRDom.ConstructorInitializerType;
          _name = oldRDom.Name;
          _accessModifier = oldRDom.AccessModifier;
          _declaredAccessModifier = oldRDom.DeclaredAccessModifier;

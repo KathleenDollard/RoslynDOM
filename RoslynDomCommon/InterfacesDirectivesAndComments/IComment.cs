@@ -9,7 +9,7 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IComment : ICommentWhite, IStemMemberCommentWhite, ITypeMemberCommentWhite, IStatementCommentWhite
+    public interface IComment : ICommentWhite<IComment>, IStemMemberCommentWhite, ITypeMemberCommentWhite, IStatementCommentWhite
     {
         string Text { get; set; }
         bool IsMultiline { get; set; }

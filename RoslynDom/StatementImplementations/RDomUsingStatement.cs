@@ -33,8 +33,7 @@ namespace RoslynDom
           : base(oldRDom)
       {
          Initialize();
-         var statements = RoslynDomUtilities.CopyMembers(oldRDom.Statements);
-         StatementsAll.AddOrMoveRange(statements);
+         _statements = oldRDom.StatementsAll.Copy(this);
          _hasBlock = oldRDom.HasBlock;
          if (oldRDom.Expression != null) _expression = oldRDom.Expression.Copy();
          if (oldRDom.Variable != null) _variable = oldRDom.Variable.Copy();

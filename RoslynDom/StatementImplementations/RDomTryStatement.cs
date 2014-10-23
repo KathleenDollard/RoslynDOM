@@ -24,10 +24,7 @@ namespace RoslynDom
       internal RDomTryStatement(RDomTryStatement oldRDom)
           : base(oldRDom)
       {
-         Initialize();
-         // Initialize called in base
-         var newCatches = RoslynDomUtilities.CopyMembers(oldRDom.Catches);
-         CatchesAll.AddOrMoveRange(newCatches);
+         _catches = oldRDom.CatchesAll.Copy(this);
          _finally = oldRDom.Finally.Copy();
       }
 

@@ -49,8 +49,7 @@ namespace RoslynDom
           : base(oldRDom)
       {
          Initialize();
-         var newParameters = RoslynDomUtilities.CopyMembers(oldRDom._parameters);
-         Parameters.AddOrMoveRange(newParameters);
+         _parameters = oldRDom.Parameters.Copy(this);
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          GetAccessor = oldRDom.GetAccessor == null ? null : oldRDom.GetAccessor.Copy();
          SetAccessor = oldRDom.SetAccessor == null ? null : oldRDom.SetAccessor.Copy();
