@@ -31,12 +31,7 @@ namespace RoslynDom.CSharp
 
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
-         return InternalCreateFrom(syntaxNode, parent, model);
-      }
-
-      private IEnumerable<IDetail> InternalCreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-      {
-         // The parent of the syntax is the next item. The parent of the region is the thing it's attached to
+          // The parent of the syntax is the next item. The parent of the region is the thing it's attached to
          parent = parent.Parent;
          var ret = new List<IDetail>();
          if (!syntaxNode.HasLeadingTrivia) return ret;

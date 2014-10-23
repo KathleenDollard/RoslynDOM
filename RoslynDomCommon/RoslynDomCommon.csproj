@@ -40,7 +40,7 @@
     <Compile Include="BaseInterfaces\IClassOrStructure.cs" />
     <Compile Include="BaseInterfaces\IContainer.cs" />
     <Compile Include="BaseInterfaces\IDirective.cs" />
-    <Compile Include="BaseInterfaces\ICommentWhite.cs" />
+    <Compile Include="BaseInterfaces\IDetail.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IDefineDirective.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IElseIfDirective.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IEndIfDirective.cs" />
@@ -148,7 +148,7 @@
     <Compile Include="BaseInterfaces\ITypeMemberContainer.cs" />
     <Compile Include="Interfaces\ITypeParameter.cs" />
     <Compile Include="Interfaces\IUsingDirective.cs" />
-    <Compile Include="BaseInterfaces\IPublicAnnotation.cs" />
+    <Compile Include="InterfacesDirectivesAndComments\IPublicAnnotation.cs" />
     <Compile Include="IRetrieveValue.cs" />
     <Compile Include="ISameIntent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
