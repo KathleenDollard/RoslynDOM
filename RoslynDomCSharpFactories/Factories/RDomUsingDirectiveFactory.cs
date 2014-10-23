@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomUsingDirectiveStemMemberFactory
-           : RDomStemMemberFactory<RDomUsingDirective, UsingDirectiveSyntax>
+           : RDomBaseItemFactory<RDomUsingDirective, UsingDirectiveSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -34,7 +34,7 @@ namespace RoslynDom.CSharp
 
 
 
-      protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as UsingDirectiveSyntax;
          var newItem = new RDomUsingDirective(syntaxNode, parent, model);

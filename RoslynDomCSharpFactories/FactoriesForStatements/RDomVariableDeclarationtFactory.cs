@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomVariableDeclarationFactory
-       : RDomMiscFactory<RDomVariableDeclaration, VariableDeclaratorSyntax>
+       : RDomBaseItemFactory<RDomVariableDeclaration, VariableDeclaratorSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -62,7 +62,7 @@ namespace RoslynDom.CSharp
              || syntaxNode is ForEachStatementSyntax;
       }
 
-      protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var rawVariableDeclaration = syntaxNode as VariableDeclarationSyntax;
          if (rawVariableDeclaration != null)

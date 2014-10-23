@@ -15,9 +15,7 @@ namespace RoslynDom.Common
             where T : class, IDom;
         void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model);
         void InitializeStatements(IStatementBlock statementBlock, SyntaxNode syntaxNode, IDom parent, SemanticModel model);
-        IEnumerable<TKind> CreateInvalidMembers<TKind>(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-                        where TKind : class;
-      IEnumerable<IDom> CreateInvalidMembers2(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
+      IEnumerable<IDom> CreateInvalidMembers(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
    }
 
    public interface IBuildSyntaxWorker

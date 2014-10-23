@@ -101,6 +101,18 @@ namespace RoslynDom.CSharp
          return SyntaxFactory.TriviaList(leadingTrivia);
       }
 
+      private static IEnumerable<SyntaxTrivia> BuildCommentWhite2(IDom item)
+      {
+         var ret = new List<SyntaxTrivia>();
+         // This can happen if someone copies an item to a new item, does not attach it to a tree, 
+         // and asks for the syntax. It's actually expected to sometimes be unattached. 
+         if (item.Parent == null) { return ret; }
+         if (TryBuildCommentWhiteFor<IStemMemberCommentWhite, IStemContainer>(item, ret, x => x.StemMembersAll)) { return ret; }
+         if (TryBuildCommentWhiteFor<ITypeMemberCommentWhite, ITypeMemberContainer>(item, ret, x => x.MembersAll)) { return ret; }
+         if (TryBuildCommentWhiteFor<IStatementCommentWhite, IStatementContainer>(item, ret, x => x.StatementsAll)) { return ret; }
+         return ret;
+      }
+
 
       private static IEnumerable<SyntaxTrivia> BuildCommentWhite(IDom item)
       {

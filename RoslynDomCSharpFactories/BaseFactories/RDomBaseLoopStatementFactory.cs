@@ -11,7 +11,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public abstract class RDomBaseLoopStatementFactory<T, TSyntax>
-        : RDomStatementFactory<T, TSyntax>
+        : RDomBaseItemFactory<T, TSyntax>
        where T : class, IDom, ILoop
        where TSyntax : SyntaxNode
    {
@@ -49,7 +49,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-      protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as TSyntax;
          var newItem = MakeNewItem(syntax, parent, model);

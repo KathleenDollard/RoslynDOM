@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomLockStatementFactory
-                : RDomStatementFactory<RDomLockStatement, LockStatementSyntax>
+                : RDomBaseItemFactory<RDomLockStatement, LockStatementSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -36,7 +36,7 @@ namespace RoslynDom.CSharp
             }
         }
 
-        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as LockStatementSyntax;
             var newItem = new RDomLockStatement(syntaxNode, parent, model);

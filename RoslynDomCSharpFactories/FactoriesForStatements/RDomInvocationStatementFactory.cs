@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomInvocationStatementFactory
-         : RDomStatementFactory<RDomInvocationStatement, ExpressionStatementSyntax>
+         : RDomBaseItemFactory<RDomInvocationStatement, ExpressionStatementSyntax>
     {
         public RDomInvocationStatementFactory(RDomCorporation corporation)
          : base(corporation)
@@ -36,7 +36,7 @@ namespace RoslynDom.CSharp
             return syntaxNode is ExpressionStatementSyntax;
         }
 
-        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as ExpressionStatementSyntax;
             var newItem = new RDomInvocationStatement(syntaxNode, parent, model);

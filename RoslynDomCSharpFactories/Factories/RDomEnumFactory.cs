@@ -125,7 +125,7 @@ namespace RoslynDom.CSharp
    }
 
    public class RDomEnumTypeMemberFactory
-        : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
+        : RDomBaseItemFactory<RDomEnum, EnumDeclarationSyntax>
    {
       public RDomEnumTypeMemberFactory(RDomCorporation corporation)
           : base(corporation)
@@ -144,13 +144,13 @@ namespace RoslynDom.CSharp
    }
 
    //public class RDomEnumTypeMemberFactory
-   //    : RDomTypeMemberFactory<RDomEnum, EnumDeclarationSyntax>
+   //    : RDomBaseItemFactory<RDomEnum, EnumDeclarationSyntax>
    //{
    //   public RDomEnumTypeMemberFactory(RDomCorporation corporation)
    //      : base(corporation)
    //   { }
 
-   //   protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+   //   protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
    //   {
    //      var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
    //      return ret;
@@ -164,13 +164,13 @@ namespace RoslynDom.CSharp
 
 
    //public class RDomEnumStemMemberFactory
-   //       : RDomStemMemberFactory<RDomEnum, EnumDeclarationSyntax>
+   //       : RDomBaseItemFactory<RDomEnum, EnumDeclarationSyntax>
    //{
    //   public RDomEnumStemMemberFactory(RDomCorporation corporation)
    //      : base(corporation)
    //   { }
 
-   //   protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+   //   protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
    //   {
    //      return RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
    //   }

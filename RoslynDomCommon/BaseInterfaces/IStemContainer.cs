@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace RoslynDom.Common
 {
-   public interface IStemContainer : INestedContainer
+   public interface IStemContainer : INestedContainer, IContainer
    {
       IEnumerable<IUsingDirective> UsingDirectives { get; }
       RDomCollection<IStemMemberCommentWhite> StemMembersAll { get; }

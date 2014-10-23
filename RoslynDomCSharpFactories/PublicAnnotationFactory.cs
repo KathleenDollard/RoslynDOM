@@ -11,7 +11,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class PublicAnnotationFactory
-       : RDomMiscFactory<IPublicAnnotation, SyntaxNode>
+       : RDomBaseItemFactory<IPublicAnnotation, SyntaxNode>
    {
       public PublicAnnotationFactory(RDomCorporation corporation)
           : base(corporation)
@@ -32,7 +32,7 @@ namespace RoslynDom.CSharp
          return true;
       }
 
-      protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          IEnumerable<IMisc> list;
          var syntaxRoot = syntaxNode as CompilationUnitSyntax;

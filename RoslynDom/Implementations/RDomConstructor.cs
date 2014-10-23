@@ -47,6 +47,15 @@ namespace RoslynDom
          _isStatic = oldRDom.IsStatic;
       }
 
+      public bool AddOrMoveMember(IDom item)
+      { return _statements.AddOrMove(item); }
+
+      public bool RemoveMember(IDom item)
+      { return _statements.Remove(item); }
+
+      public bool InsertOrMoveMember(int index, IDom item)
+      { return _statements.InsertOrMove(index, item); }
+
       private void Initialize()
       {
          _parameters = new RDomCollection<IParameter>(this);

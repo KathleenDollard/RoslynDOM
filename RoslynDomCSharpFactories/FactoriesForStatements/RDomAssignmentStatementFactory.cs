@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomAssignmentStatementFactory
-        : RDomStatementFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
+        : RDomBaseItemFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -55,7 +55,7 @@ namespace RoslynDom.CSharp
          return (statement.Expression is BinaryExpressionSyntax);
       }
 
-      protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          // TODO: Why not cast immediately to BinaryExpression?
          var syntax = syntaxNode as ExpressionStatementSyntax;

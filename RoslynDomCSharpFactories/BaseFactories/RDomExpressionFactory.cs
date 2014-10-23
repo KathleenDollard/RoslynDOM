@@ -10,10 +10,10 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-   public class RDomExpressionFactory
-                : RDomExpressionFactory<RDomExpression, ExpressionSyntax>
+   public class RDomBaseItemFactory
+                : RDomBaseItemFactory<RDomExpression, ExpressionSyntax>
    {
-      public RDomExpressionFactory(RDomCorporation corporation)
+      public RDomBaseItemFactory(RDomCorporation corporation)
           : base(corporation)
       { }
 
@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-      protected override IExpression CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as ExpressionSyntax;
 

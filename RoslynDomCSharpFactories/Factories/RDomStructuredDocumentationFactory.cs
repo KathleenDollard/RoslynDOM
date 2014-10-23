@@ -13,7 +13,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class StructuredDocumentationFactory
-               : RDomMiscFactory<IStructuredDocumentation, SyntaxNode>
+               : RDomBaseItemFactory<IStructuredDocumentation, SyntaxNode>
    {
 
       public StructuredDocumentationFactory(RDomCorporation corporation)
@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
          return true;
       }
 
-      protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var newItem = new RDomStructuredDocumentation(syntaxNode, parent, model);
          var parentAsHasSymbol = parent as IRoslynHasSymbol;

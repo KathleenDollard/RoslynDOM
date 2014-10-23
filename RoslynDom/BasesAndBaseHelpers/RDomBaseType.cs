@@ -21,7 +21,7 @@ namespace RoslynDom
 
       protected RDomBaseType(string name, AccessModifier accessModifier,
             MemberKind memberKind,
-            StemMemberKind stemMemberKind) : this(null, null, null, memberKind, stemMemberKind )
+            StemMemberKind stemMemberKind) : this(null, null, null, memberKind, stemMemberKind)
       {
          _name = name;
          _accessModifier = accessModifier;
@@ -68,6 +68,15 @@ namespace RoslynDom
          // TODO: _allImplementedInterfaces = typeSymbol.AllInterfaces
          if (typeSymbol == null) throw new NotImplementedException();
       }
+
+      public bool AddOrMoveMember(IDom item)
+      { return _members.AddOrMove(item); }
+
+      public bool RemoveMember(IDom item)
+      { return _members.Remove(item); }
+
+      public bool InsertOrMoveMember(int index, IDom item)
+      { return _members.InsertOrMove(index, item); }
 
       public override IEnumerable<IDom> Children
       {

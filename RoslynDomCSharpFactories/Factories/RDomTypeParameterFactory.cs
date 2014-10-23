@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomTypeParameterFactory
-          : RDomMiscFactory<RDomTypeParameter, TypeParameterSyntax>
+          : RDomBaseItemFactory<RDomTypeParameter, TypeParameterSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-      protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as TypeParameterSyntax;
          var newItem = new RDomTypeParameter(syntax, parent, model);

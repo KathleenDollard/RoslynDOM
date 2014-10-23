@@ -8,14 +8,14 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomRootFactory
-          : RDomRootContainerFactory<RDomRoot, CompilationUnitSyntax>
+          : RDomBaseItemFactory<RDomRoot, CompilationUnitSyntax>
     {
 
         public RDomRootFactory(RDomCorporation corporation)
          : base(corporation)
         { }
 
-        protected override IRoot CreateItemFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
+        protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent,SemanticModel model)
         {
             var syntax = syntaxNode as CompilationUnitSyntax;
             var newItem = new RDomRoot(syntaxNode, parent,model);

@@ -10,7 +10,7 @@ namespace RoslynDom.CSharp
 {
 
     public class RDomNamespaceStemMemberFactory
-           : RDomStemMemberFactory<RDomNamespace, NamespaceDeclarationSyntax>
+           : RDomBaseItemFactory<RDomNamespace, NamespaceDeclarationSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -34,7 +34,7 @@ namespace RoslynDom.CSharp
                 return _whitespaceLookup;
             }
         }
-        protected override IStemMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as NamespaceDeclarationSyntax;
             // TODO: I think there is a better way to do this, but I can't find it right now

@@ -48,6 +48,15 @@ namespace RoslynDom
          _statements = new RDomCollection<IStatementCommentWhite>(this);
       }
 
+      public bool AddOrMoveMember(IDom item)
+      { return _statements.AddOrMove(item); }
+
+      public bool RemoveMember(IDom item)
+      { return _statements.Remove(item); }
+
+      public bool InsertOrMoveMember(int index, IDom item)
+      { return _statements.InsertOrMove(index, item); }
+
       public override IEnumerable<IDom> Children
       {
          get

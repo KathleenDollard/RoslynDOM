@@ -15,7 +15,7 @@ namespace RoslynDom.CSharp
          : base(corporation)
         { }
 
-         protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+         protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var newItem = base.CreateItemFrom(syntaxNode, parent, model) as RDomDoStatement;
             newItem.TestAtEnd = true;

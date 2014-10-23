@@ -115,55 +115,13 @@ namespace RoslynDom.CSharp
 
       internal IEnumerable<SyntaxNode> GetSyntaxGroup(IDom item)
       {
-         IEnumerable<SyntaxNode> syntaxNodes;
-         if (TryBuildSyntax<IRoot>(item, out syntaxNodes)) { return syntaxNodes; }
-         if (TryBuildSyntax<IStemMemberCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
-         if (TryBuildSyntax<ITypeMemberCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
-         if (TryBuildSyntax<IStatementCommentWhite>(item, out syntaxNodes)) { return syntaxNodes; }
-         if (TryBuildSyntax<IExpression>(item, out syntaxNodes)) { return syntaxNodes; }
-         if (TryBuildSyntax<IMisc>(item, out syntaxNodes)) { return syntaxNodes; }
-         return new List<SyntaxNode>();
+         var nodes = corporation.GetSyntaxNodes(item);
+         return nodes;
       }
-
-      private bool TryBuildSyntax<TKind>(IDom item, out IEnumerable<SyntaxNode> node)
-           where TKind : class, IDom
-      {
-         node = null;
-         var itemAsKind = item as TKind;
-         if (itemAsKind == null) { return false; }
-         node = corporation.GetSyntaxNodes(item);
-         return true;
-      }
-
-      private IEnumerable<Tuple<Type, int>> expectations = new List<Tuple<Type, int>>()
-        {
-                    Tuple.Create(typeof(IMisc),2),
-                    Tuple.Create(typeof(IExpression),1),
-                    Tuple.Create(typeof(IStatementCommentWhite),2),
-                    Tuple.Create(typeof(ITypeMemberCommentWhite),6),
-                    Tuple.Create(typeof(IStemMemberCommentWhite),2),
-                    Tuple.Create(typeof(IRoot),1),
-                    Tuple.Create(typeof(IPublicAnnotation),1),
-                    Tuple.Create(typeof(IAttribute),1),
-                    Tuple.Create(typeof(ICommentWhite),1)
-        };
 
       public bool ContainerCheck()
       {
-         if (!corporation.HasExpectedItems())
-         {
-            Guardian.Assert.BadContainer();
-            return false;
-         }
          // TODO: Create reality check on load
-         //foreach (var tuple in expectations)
-         //{
-         //   if (corporation.CountFactorySet(tuple.Item1) < tuple.Item2)
-         //   {
-         //      Guardian.Assert.BadContainer();
-         //      return false;
-         //   }
-         //}
          return true;
       }
    }

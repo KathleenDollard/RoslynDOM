@@ -11,10 +11,8 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    // Factories are specific to the type, FactoryHelpers are specific to the level (StemMember, TypeMember, Statement, Expression)
-   public abstract class RDomBaseItemFactory<T, TSyntax, TKind> : IRDomFactory
-       where T : class, TKind  // This isn't stupid - TKind is the broader category, T is the specific 
+   public abstract class RDomBaseItemFactory<T, TSyntax> : IRDomFactory
        where TSyntax : SyntaxNode
-       where TKind : class, IDom
    {
       // until move to C# 6 - I want to support name of as soon as possible
       [ExcludeFromCodeCoverage]
@@ -107,7 +105,7 @@ namespace RoslynDom.CSharp
       /// </remarks>
       public IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, bool skipWhitespace)
       {
-         var ret = new List<TKind>();
+         var ret = new List<IDom>();
 
          var newItems = CreateListFromInterim(syntaxNode, parent, model);
          // Whitespace and comments have to appear before new items 
@@ -119,10 +117,10 @@ namespace RoslynDom.CSharp
             if (newItem != null)
             {
                var whiteComment = CreateFromWorker.GetCommentWhite(syntaxNode, newItem, model);
-               ret.AddRange(whiteComment.OfType<TKind>());
+               ret.AddRange(whiteComment.OfType<IDom>());
             }
          }
-         ret.AddRange(newItems.OfType<TKind>());
+         ret.AddRange(newItems.OfType<IDom>());
          return ret;
       }
 
@@ -131,75 +129,16 @@ namespace RoslynDom.CSharp
          return CreateListFrom(syntaxNode, parent, model);
       }
 
-      protected virtual IEnumerable<TKind> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected virtual IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
-         return new TKind[] { CreateItemFrom(syntaxNode, parent, model) };
+         return new IDom[] { CreateItemFrom(syntaxNode, parent, model) };
       }
 
-      protected virtual TKind CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected virtual IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          // This can't be tested, but making it abstract means we have untestable code in seven derived classes. 
-         Guardian.Assert.NeitherCreateFromNorListOverridden<TKind>(this.GetType(), syntaxNode);
+         Guardian.Assert.NeitherCreateFromNorListOverridden(this.GetType(), syntaxNode);
          return null;
       }
    }
-
-   public abstract class RDomRootContainerFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IRoot>
-            where T : class, IRoot
-            where TSyntax : SyntaxNode
-   {
-      public RDomRootContainerFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-   }
-
-   public abstract class RDomStemMemberFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IStemMemberCommentWhite>
-           where T : class, IStemMemberCommentWhite
-           where TSyntax : SyntaxNode
-   {
-      public RDomStemMemberFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-   }
-
-
-   public abstract class RDomTypeMemberFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, ITypeMemberCommentWhite>
-           where T : class, ITypeMemberCommentWhite
-           where TSyntax : SyntaxNode
-   {
-      public RDomTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-   }
-
-
-   public abstract class RDomStatementFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IStatementCommentWhite>
-           where T : class, IStatementCommentWhite
-           where TSyntax : SyntaxNode
-   {
-      public RDomStatementFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-   }
-
-
-   public abstract class RDomExpressionFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IExpression>
-            where T : class, IExpression
-            where TSyntax : SyntaxNode
-   {
-      public RDomExpressionFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-   }
-
-
-   public abstract class RDomMiscFactory<T, TSyntax> : RDomBaseItemFactory<T, TSyntax, IMisc>
-            where T : class, IMisc
-            where TSyntax : SyntaxNode
-   {
-      public RDomMiscFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-   }
-
 }

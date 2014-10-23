@@ -112,7 +112,7 @@ namespace RoslynDom.CSharp
             // Force whitespace
             if (attributeList != null)
             {
-               var attr = Corporation.Create(attributeList, itemAsHasAttributes, model).OfType<IAttribute>() ;
+               var attr = Corporation.Create(attributeList, itemAsHasAttributes, model).OfType<IAttribute>();
                attributes.AddRange(attr);
             }
          }
@@ -246,7 +246,7 @@ namespace RoslynDom.CSharp
                  IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
                  SemanticModel model)
       {
-         var usings = ListUtilities.CreateFromList(usingSyntaxes, x => Corporation.Create(x, newItem, model)).OfType< IStemMemberCommentWhite>();
+         var usings = ListUtilities.CreateFromList(usingSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
          var members = ListUtilities.CreateFromList(memberSyntaxes, x => Corporation.Create(x, newItem, model)).OfType<IStemMemberCommentWhite>();
          newItem.StemMembersAll.AddOrMoveRange(usings);
          newItem.StemMembersAll.AddOrMoveRange(members);
@@ -332,15 +332,7 @@ namespace RoslynDom.CSharp
          return Tuple.Create(value, constantIdentifier, literalKind);
       }
 
-      public IEnumerable<TKind> CreateInvalidMembers<TKind>(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-          where TKind : class
-      {
-         var ret = new RDomInvalidMember(syntaxNode, parent, model) as TKind;
-         Guardian.Assert.IsNotNull(ret, nameof(ret));
-         return new List<TKind>() { };
-      }
-
-      public IEnumerable<IDom> CreateInvalidMembers2(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      public IEnumerable<IDom> CreateInvalidMembers(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var ret = new RDomInvalidMember(syntaxNode, parent, model);
          Guardian.Assert.IsNotNull(ret, nameof(ret));

@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomTryStatementFactory
-         : RDomStatementFactory<RDomTryStatement, TryStatementSyntax>
+         : RDomBaseItemFactory<RDomTryStatement, TryStatementSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -37,7 +37,7 @@ namespace RoslynDom.CSharp
             }
         }
 
-        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var syntax = syntaxNode as TryStatementSyntax;
             var newItem = new RDomTryStatement(syntaxNode, parent, model);

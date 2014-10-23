@@ -26,10 +26,18 @@ namespace RoslynDom.Common
          return _list.GetEnumerator();
       }
 
-      public void AddOrMove(T item)
+      public bool AddOrMove(T item)
       {
          UpdateParent(item);
          _list.Add(item);
+         return true;
+      }
+
+      public bool AddOrMove<TLocal>(TLocal item)
+      {
+         var itemAsKind = item as T;
+         if (itemAsKind == null) return false;
+         return AddOrMove(itemAsKind);
       }
 
       public void AddOrMoveRange(IEnumerable<T> items)
@@ -40,38 +48,81 @@ namespace RoslynDom.Common
          { AddOrMove(item); }
       }
 
-      public void InsertOrMove(int index, T item)
+      public bool InsertOrMove(int index, T item)
       {
          UpdateParent(item);
          if (index >= _list.Count() - 1)
          { _list.Add(item); }
          else
          { _list.Insert(index, item); }
+         return true;
       }
 
-      public void InsertOrMoveAfter(T existing, T itemToInsert)
+      public bool InsertOrMove<TLocal>(int index, TLocal item)
+      {
+         var itemAsKind = item as T;
+         if (itemAsKind == null) return false;
+         return InsertOrMove(index, itemAsKind);
+      }
+
+      public bool InsertOrMoveAfter(T existing, T itemToInsert)
       {
          var pos = _list.IndexOf(existing);
          InsertOrMove(pos + 1, itemToInsert);
+         return true;
       }
 
-      public void InsertOrMoveBefore(T existing, T itemToInsert)
+      public bool InsertOrMoveAfter<TLocal>(TLocal existing, TLocal itemToInsert)
+      {
+         var existingAsKind = existing as T;
+         var itemToInsertAsKind = itemToInsert as T;
+         if (existingAsKind == null || itemToInsertAsKind == null) return false;
+         return InsertOrMoveAfter(existingAsKind, itemToInsertAsKind);
+      }
+
+      public bool InsertOrMoveBefore(T existing, T itemToInsert)
       {
          var pos = _list.IndexOf(existing);
          InsertOrMove(pos, itemToInsert);
+         return true;
       }
 
-      public void Remove(T item)
+      public bool InsertOrMoveBefore<TLocal>(TLocal existing, TLocal itemToInsert)
+      {
+         var existingAsKind = existing as T;
+         var itemToInsertAsKind = itemToInsert as T;
+         if (existingAsKind == null || itemToInsertAsKind == null) return false;
+         return InsertOrMoveBefore(existingAsKind, itemToInsertAsKind);
+      }
+
+      public bool Remove(T item)
       {
          SetParent(item, null);
          _list.Remove(item);
+         return true;
       }
 
-      public void Replace(T oldItem, T newItem)
+      public bool Remove<TLocal>(TLocal item)
+      {
+         var itemAsKind = item as T;
+         if (itemAsKind == null) return false;
+         return Remove( itemAsKind);
+      }
+
+      public bool Replace(T oldItem, T newItem)
       {
          var pos = _list.IndexOf(oldItem);
          Remove(oldItem);
          InsertOrMove(pos, newItem);
+         return true;
+      }
+
+      public bool Replace<TLocal>(TLocal oldItem, TLocal newItem)
+      {
+         var oldItemAsKind = newItem as T;
+         var newItemAsKind = newItem as T;
+         if (oldItemAsKind == null || newItemAsKind == null) return false;
+         return Replace(oldItemAsKind, newItemAsKind);
       }
 
       public void Clear()

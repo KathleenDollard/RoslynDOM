@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomPropertyTypeMemberFactory
-         : RDomTypeMemberFactory<RDomProperty, PropertyDeclarationSyntax>
+         : RDomBaseItemFactory<RDomProperty, PropertyDeclarationSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -36,7 +36,7 @@ namespace RoslynDom.CSharp
             return _whitespaceLookup;
          }
       }
-      protected override ITypeMemberCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as PropertyDeclarationSyntax;
          var newItem = new RDomProperty(syntaxNode, parent, model);

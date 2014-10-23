@@ -10,7 +10,7 @@ namespace RoslynDom.CSharp
 {
 
     public class RDomIfStatementFactory
-         : RDomStatementFactory<RDomIfStatement, IfStatementSyntax>
+         : RDomBaseItemFactory<RDomIfStatement, IfStatementSyntax>
     {
 
         private static WhitespaceKindLookup _whitespaceLookup;
@@ -38,7 +38,7 @@ namespace RoslynDom.CSharp
             }
         }
 
-        protected override IStatementCommentWhite CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+        protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
         {
             var newItem = CreateCollapsing(syntaxNode as IfStatementSyntax, parent, model);
             return newItem;

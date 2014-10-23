@@ -11,7 +11,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-   public class CommentWhiteFactory : RDomMiscFactory<ICommentWhite, SyntaxNode>
+   public class CommentWhiteFactory : RDomBaseItemFactory<ICommentWhite, SyntaxNode>
    {
       // TODO: Consider IOC for trivia manager
       private TriviaManager triviaManager = new TriviaManager();
@@ -32,7 +32,7 @@ namespace RoslynDom.CSharp
       public override Type[] ExplicitNodeTypes
       { get { return new Type[] { typeof(ICommentWhite) }; } }
 
-      protected override IEnumerable<IMisc> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          return InternalCreateFrom(syntaxNode, parent, model);
       }

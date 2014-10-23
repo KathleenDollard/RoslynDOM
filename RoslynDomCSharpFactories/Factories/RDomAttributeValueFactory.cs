@@ -9,14 +9,14 @@ using System;
 namespace RoslynDom.CSharp
 {
    public class RDomAttributeValueMiscFactory
-           : RDomMiscFactory<RDomAttributeValue, AttributeArgumentSyntax>
+           : RDomBaseItemFactory<RDomAttributeValue, AttributeArgumentSyntax>
    {
 
       public RDomAttributeValueMiscFactory(RDomCorporation corporation)
           : base(corporation)
       { }
 
-      protected override IMisc CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as AttributeArgumentSyntax;
          var newItem = new RDomAttributeValue(syntaxNode, parent, model);

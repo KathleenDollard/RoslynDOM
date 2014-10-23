@@ -2,7 +2,7 @@
 
 namespace RoslynDom.Common
 {
-    public interface ITypeMemberContainer : IDom
+    public interface ITypeMemberContainer : IDom, IContainer
    {
       RDomCollection<ITypeMemberCommentWhite> MembersAll { get; }
       IEnumerable<ITypeMember> Members { get; }

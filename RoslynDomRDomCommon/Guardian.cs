@@ -79,7 +79,7 @@ namespace RoslynDom.Common
          { throw new InvalidOperationException("Multiple clone constructors found"); }
       }
 
-      public void NeitherCreateFromNorListOverridden<TKind>(Type type, SyntaxNode item)
+      public void NeitherCreateFromNorListOverridden(Type type, SyntaxNode item)
       { throw new InvalidOperationException(); }
 
       public void UnreachableFactoryDetected(string fullName)
@@ -111,14 +111,6 @@ namespace RoslynDom.Common
           where T : class
       {
          if (value == null) throw new NotImplementedException();
-      }
-
-
-
-      internal void FactorySetExists(FactorySet factorySet, Type kind, string v)
-      {
-         if (factorySet == null)
-         { throw new InvalidOperationException(); }
       }
 
       internal void FactoryNotFound(SyntaxNode node)
