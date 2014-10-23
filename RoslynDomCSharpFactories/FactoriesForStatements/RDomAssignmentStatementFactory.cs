@@ -41,18 +41,11 @@ namespace RoslynDom.CSharp
          {
             return (syntax, parent, model) =>
                         {
-                        var statement = syntax as ExpressionStatementSyntax;
-                        if (statement == null) { return false; }
-                        return (statement.Expression is BinaryExpressionSyntax);
-                     };
+                           var statement = syntax as ExpressionStatementSyntax;
+                           if (statement == null) { return false; }
+                           return (statement.Expression is BinaryExpressionSyntax);
+                        };
          }
-      }
-
-      public override bool CanCreateFrom(SyntaxNode syntaxNode)
-      {
-         var statement = syntaxNode as ExpressionStatementSyntax;
-         if (statement == null) { return false; }
-         return (statement.Expression is BinaryExpressionSyntax);
       }
 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)

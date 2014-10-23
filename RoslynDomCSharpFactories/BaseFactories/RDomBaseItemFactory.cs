@@ -71,19 +71,6 @@ namespace RoslynDom.CSharp
          }
       }
 
-
-
-      public virtual bool CanCreateFrom(SyntaxNode syntaxNode)
-      {
-         return (syntaxNode is TSyntax);
-      }
-
-      public virtual bool CanBuildSyntax(IDom item)
-      {
-         // TODO: use this to call correct IStem or IType version of class, interface, structure and enum
-         return true;
-      }
-
       /// <summary>
       /// This is the key method for creating new RoslynDom elements. You can create new factories
       /// by overriding the CreateListFrom or CreateItemFrom methods depending on whether you are 

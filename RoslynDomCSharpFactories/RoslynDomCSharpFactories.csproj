@@ -72,7 +72,7 @@
     <Compile Include="Factories\RDomTypeParameterFactory.cs" />
     <Compile Include="ICSharpCreateFromWorker.cs" />
     <Compile Include="BuildSyntaxWorker.cs" />
-    <Compile Include="CommentWhiteFactory.cs" />
+    <Compile Include="DetailFactory.cs" />
     <Compile Include="BaseFactories\RDomExpressionFactory.cs" />
     <Compile Include="BuildSyntaxHelpers.cs" />
     <Compile Include="CreateFromWorker.cs" />

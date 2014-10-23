@@ -43,11 +43,6 @@ namespace RoslynDom.CSharp
       public override Type[] SyntaxNodeTypes
       { get { return new Type[] { typeof(AttributeListSyntax), typeof(AttributeSyntax) }; } }
 
-      public override bool CanCreateFrom(SyntaxNode syntaxNode)
-      {
-         return (syntaxNode is AttributeListSyntax || syntaxNode is AttributeSyntax);
-      }
-
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          return InternalCreateFrom(syntaxNode, parent, model);

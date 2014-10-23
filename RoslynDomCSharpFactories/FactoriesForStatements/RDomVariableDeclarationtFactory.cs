@@ -38,30 +38,6 @@ namespace RoslynDom.CSharp
       public override Type[] SyntaxNodeTypes
       { get { return new Type[] { typeof(VariableDeclarationSyntax), typeof(CatchDeclarationSyntax) }; } }
 
-      //public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
-      //{
-      //   get
-      //   {
-      //      // TODO: Pull For out of this becuase because it can just build from the Declaration
-      //      return (syntax, parent, model) =>
-      //      {
-      //         if (syntax is VariableDeclarationSyntax) { return true; }
-      //         if (syntax is ForEachStatementSyntax && parent is RDomForEachStatement) { return true; }
-      //         if (syntax is ForStatementSyntax && parent is RDomForStatement) { return true; }
-      //         if (syntax is CatchDeclarationSyntax && parent is RDomCatchStatement) { return true; }
-      //         return false;
-      //      };
-      //   }
-      //}
-
-      public override bool CanCreateFrom(SyntaxNode syntaxNode)
-      {
-         return syntaxNode is VariableDeclarationSyntax
-             || syntaxNode is CatchDeclarationSyntax
-             || syntaxNode is ForStatementSyntax
-             || syntaxNode is ForEachStatementSyntax;
-      }
-
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var rawVariableDeclaration = syntaxNode as VariableDeclarationSyntax;

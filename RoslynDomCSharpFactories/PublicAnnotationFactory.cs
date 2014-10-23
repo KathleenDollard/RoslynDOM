@@ -26,13 +26,7 @@ namespace RoslynDom.CSharp
       public override Type[] ExplicitNodeTypes
       { get { return new Type[] { typeof(IPublicAnnotation) }; } }
 
-      public override bool CanCreateFrom(SyntaxNode syntaxNode)
-      {
-         // Always tries
-         return true;
-      }
-
-      protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          IEnumerable<IMisc> list;
          var syntaxRoot = syntaxNode as CompilationUnitSyntax;

@@ -34,11 +34,6 @@ namespace RoslynDom.CSharp
       public override Type[] SyntaxNodeTypes
       { get { return new Type[] { typeof(LocalDeclarationStatementSyntax) }; } }
 
-      public override bool CanCreateFrom(SyntaxNode syntaxNode)
-      {
-         return syntaxNode is LocalDeclarationStatementSyntax;
-      }
-
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var list = new List<IStatementAndDetail>();

@@ -23,10 +23,7 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return 0; } }
 
-      public override bool CanCreateFrom(SyntaxNode syntaxNode)
-      { return true; }
-
-      public override Type[] SyntaxNodeTypes
+       public override Type[] SyntaxNodeTypes
       { get { return null; } }
 
       public override Type[] ExplicitNodeTypes

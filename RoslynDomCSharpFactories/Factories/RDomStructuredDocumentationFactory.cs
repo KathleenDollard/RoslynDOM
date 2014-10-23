@@ -29,12 +29,6 @@ namespace RoslynDom.CSharp
       public override Type[] ExplicitNodeTypes
       { get { return new Type[] { typeof(IStructuredDocumentation) }; } }
 
-      public override bool CanCreateFrom(SyntaxNode syntaxNode)
-      {
-         // Always tries
-         return true;
-      }
-
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var newItem = new RDomStructuredDocumentation(syntaxNode, parent, model);

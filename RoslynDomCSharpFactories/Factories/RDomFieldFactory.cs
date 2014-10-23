@@ -41,13 +41,7 @@ namespace RoslynDom.CSharp
       public override Type[] SyntaxNodeTypes
       { get { return new Type[] { typeof(FieldDeclarationSyntax) }; } }
 
-      public override bool CanCreateFrom(SyntaxNode syntaxNode)
-      {
-         // This will conflict with Declaration statement if we don't scope factories. In that case, check parent
-         return syntaxNode is FieldDeclarationSyntax;
-      }
-
-      protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var list = new List<ITypeMember>();
 

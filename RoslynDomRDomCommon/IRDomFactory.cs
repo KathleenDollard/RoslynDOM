@@ -10,6 +10,7 @@ namespace RoslynDom
 {
    public interface IRDomFactory
    {
+      RDomPriority Priority { get; }
       ///// <summary>
       ///// 
       ///// </summary>
@@ -21,11 +22,7 @@ namespace RoslynDom
       Type[] ExplicitNodeTypes { get; }
       Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate { get; }
       Type DomType { get; }
-
-      bool CanCreateFrom(SyntaxNode syntaxNode);
-      bool CanBuildSyntax(IDom item);
       IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, bool skipDetail);
-      RDomPriority Priority { get; }
       IEnumerable<SyntaxNode> BuildSyntax(IDom item);
    }
 
