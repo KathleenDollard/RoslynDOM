@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
       {
          var list = new List<ITypeMember>();
 
-         var publicAnnotations = CreateFromWorker.GetPublicAnnotations(syntaxNode, parent, model);
+         //var publicAnnotations = CreateFromWorker.GetPublicAnnotations(syntaxNode, parent, model);
          var rawEvent = syntaxNode as EventFieldDeclarationSyntax;
          var declarators = rawEvent.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
          foreach (var decl in declarators)
@@ -70,7 +70,7 @@ namespace RoslynDom.CSharp
             newItem.IsStatic = eventSymbol.IsStatic;
             // See note on IsNew on interface before changing
             newItem.IsNew = rawEvent.Modifiers.Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
-            newItem.PublicAnnotations.Add(publicAnnotations);
+           // newItem.PublicAnnotations.Add(publicAnnotations);
 
          }
          return list;

@@ -45,7 +45,7 @@ namespace RoslynDom.CSharp
       {
          var list = new List<ITypeMember>();
 
-         var fieldPublicAnnotations = CreateFromWorker.GetPublicAnnotations(syntaxNode, parent, model);
+         //var fieldPublicAnnotations = CreateFromWorker.GetPublicAnnotations(syntaxNode, parent, model);
          var rawField = syntaxNode as FieldDeclarationSyntax;
          var declarators = rawField.Declaration.Variables.OfType<VariableDeclaratorSyntax>();
          foreach (var decl in declarators)
@@ -78,7 +78,7 @@ namespace RoslynDom.CSharp
             newItem.IsConstant = fieldSymbol.HasConstantValue;
             // See note on IsNew on interface before changing
             newItem.IsNew = rawField.Modifiers.Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
-            newItem.PublicAnnotations.Add(fieldPublicAnnotations);
+            //newItem.PublicAnnotations.Add(fieldPublicAnnotations);
 
          }
          return list;

@@ -170,10 +170,7 @@ namespace RoslynDomTests
          public IDom Parent
          { get { throw new NotImplementedException(); } }
 
-         public PublicAnnotationList PublicAnnotations
-         { get { throw new NotImplementedException(); } }
-
-         public object RawItem
+          public object RawItem
          { get { throw new NotImplementedException(); } }
 
          public Whitespace2Collection Whitespace2Set
@@ -197,9 +194,6 @@ namespace RoslynDomTests
          { throw new NotImplementedException(); }
 
          public bool SameIntent<T>(T other) where T : class
-         { throw new NotImplementedException(); }
-
-         public bool SameIntent<T>(T other, bool skipPublicAnnotations) where T : class
          { throw new NotImplementedException(); }
       }
       #endregion

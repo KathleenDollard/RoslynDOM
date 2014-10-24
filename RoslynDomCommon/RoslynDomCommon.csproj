@@ -39,7 +39,6 @@
     <Compile Include="AttributeCollection.cs" />
     <Compile Include="BaseInterfaces\IClassOrStructure.cs" />
     <Compile Include="BaseInterfaces\IContainer.cs" />
-    <Compile Include="BaseInterfaces\IDirective.cs" />
     <Compile Include="BaseInterfaces\IDetail.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IDefineDirective.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IElseIfDirective.cs" />
@@ -153,7 +152,6 @@
     <Compile Include="ISameIntent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublicAnnotation.cs" />
-    <Compile Include="PublicAnnotationList.cs" />
     <Compile Include="RDomBase.cs" />
     <Compile Include="RDomCollection.cs" />
     <Compile Include="StandardSameIntent.cs" />

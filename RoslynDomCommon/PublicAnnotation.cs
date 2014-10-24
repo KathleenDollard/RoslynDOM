@@ -5,86 +5,93 @@ using System.Linq;
 
 namespace RoslynDom.Common
 {
-    public class PublicAnnotation : RDomBase, IPublicAnnotation
-    {
-        public PublicAnnotation(string name)
-        {
-            this.Name = name;
-        }
- 
-        private List<KeyValuePair<string, object>> items = new List<KeyValuePair<string, object>>();
+   public class PublicAnnotation : RDomBase, IPublicAnnotation
+   {
+      public PublicAnnotation(string name)
+      {
+         this.Name = name;
+      }
 
-        public string Name { get; private set; }
+      private List<KeyValuePair<string, object>> items = new List<KeyValuePair<string, object>>();
 
-        public void AddItem(string key, object item)
-        { items.Add(new KeyValuePair<string, object>(key, item)); }
+      public string Target { get;  set; }
 
-        public object this[string key]
-        {
-            get
-            {
-                var item = items.Where(x => x.Key == key).FirstOrDefault();
-                return item.Value;
-            }
-        }
+      public string Name { get;  set; }
 
-        public IEnumerable<string> Keys
-        {
-            get { return items.Select(x => x.Key); }
-        }
+      public void AddItem(string key, object item)
+      { items.Add(new KeyValuePair<string, object>(key, item)); }
 
-        public T GetValue<T>(string key)
-        { return (T)this[key]; }
+      public object this[string key]
+      {
+         get
+         {
+            var item = items.Where(x => x.Key == key).FirstOrDefault();
+            return item.Value;
+         }
+      }
 
-        public object GetValue(string key)
-        { return this[key]; }
+      public IEnumerable<string> Keys
+      {
+         get { return items.Select(x => x.Key); }
+      }
 
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            value = default(T);
-            if (!HasValue(key)) { return false; }
-            value = GetValue<T>(key);
-            return true;
-        }
+      public T GetValue<T>(string key)
+      { return (T)this[key]; }
 
-        public bool HasValue(string key)
-        {
-            return items.Any(x => x.Key == key);
-        }
+      public object GetValue(string key)
+      { return this[key]; }
 
-        [ExcludeFromCodeCoverage]
-        public override object RequestValue(string propertyName)
-        { return GetValue(propertyName); }
+      public bool TryGetValue<T>(string key, out T value)
+      {
+         value = default(T);
+         if (!HasValue(key)) { return false; }
+         value = GetValue<T>(key);
+         return true;
+      }
 
-        protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
-        {
-            if (skipPublicAnnotations) return true;
-            var otherAnnotation = other as IPublicAnnotation;
-            foreach (var item in items)
-            {
-                var otherValue = otherAnnotation.GetValue(item.Key);
-                if (otherValue == null) return false;
-                var itemHasSameIntent = item.Value as IHasSameIntentMethod;
-                if (itemHasSameIntent != null)
-                { if (!itemHasSameIntent.SameIntent(otherValue)) { return false; } }
-                if (!otherValue.Equals(item.Value)) return false;
-            }
-            return true;
-        }
+      public bool HasValue(string key)
+      {
+         return items.Any(x => x.Key == key);
+      }
 
-        [ExcludeFromCodeCoverage]
-        public IPublicAnnotation Copy()
-        {
-            throw new NotImplementedException();
-        }
+      [ExcludeFromCodeCoverage]
+      public override object RequestValue(string propertyName)
+      { return GetValue(propertyName); }
 
-        [ExcludeFromCodeCoverage]
-        public override object OriginalRawItem
-        { get { return null; } }
+      protected override bool SameIntentInternal<TLocal>(TLocal other)
+      {
+         var otherAnnotation = other as IPublicAnnotation;
+         foreach (var item in items)
+         {
+            var otherValue = otherAnnotation.GetValue(item.Key);
+            if (otherValue == null) return false;
+            var itemHasSameIntent = item.Value as IHasSameIntentMethod;
+            if (itemHasSameIntent != null)
+            { if (!itemHasSameIntent.SameIntent(otherValue)) { return false; } }
+            if (!otherValue.Equals(item.Value)) return false;
+         }
+         return true;
+      }
 
-        [ExcludeFromCodeCoverage]
-        public override object RawItem
-        { get { return null; } }
+      [ExcludeFromCodeCoverage]
+      public IPublicAnnotation Copy()
+      {
+         throw new NotImplementedException();
+      }
 
-    }
+      [ExcludeFromCodeCoverage]
+      public override object OriginalRawItem
+      { get { return null; } }
+
+      [ExcludeFromCodeCoverage]
+      public override object RawItem
+      { get { return null; } }
+
+      public StemMemberKind StemMemberKind
+      { get { return StemMemberKind.PublicAnnotation; } }
+
+      public MemberKind MemberKind
+      { get { return MemberKind.PublicAnnotation; } }
+
+   }
 }

@@ -21,7 +21,8 @@
       Comment,
       Accessor,
       RegionStart,
-      RegionEnd
+      RegionEnd,
+      PublicAnnotation
 
    }
 }

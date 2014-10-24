@@ -25,7 +25,6 @@ namespace RoslynDom.Common
 
       object RequestValue(string propertyName);
 
-      PublicAnnotationList PublicAnnotations { get; }
    }
 
    public interface IDom<T> : IDom

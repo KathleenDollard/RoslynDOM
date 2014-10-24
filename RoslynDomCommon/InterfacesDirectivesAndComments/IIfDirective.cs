@@ -9,8 +9,8 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IIfDirective : IDirective
-    {
+    public interface IIfDirective : IDetail<IIfDirective>
+   {
 
     }
 }

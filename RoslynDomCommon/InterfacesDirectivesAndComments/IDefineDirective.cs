@@ -9,7 +9,7 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IDefineDirective : IDirective
+    public interface IDefineDirective : IDetail<IDefineDirective>
     {
 
     }

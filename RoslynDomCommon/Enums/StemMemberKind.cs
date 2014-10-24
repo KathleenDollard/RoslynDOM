@@ -13,6 +13,8 @@
         Comment,
         Invalid, 
         RegionStart,
-        RegionEnd
+        RegionEnd,
+        PublicAnnotation
+
     }
 }

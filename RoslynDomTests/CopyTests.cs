@@ -400,22 +400,6 @@ namespace RoslynDomTests
          VerifyClone(csharpCode, root => root);
       }
 
-      [TestMethod, TestCategory(CopyCategory)]
-      public void Clone_includes_public_annotations()
-      {
-         var csharpCode = @"
-            //[[ kad_Test3(val1 : ""Fred"", val2 : 42) ]]
-            public class Bar
-            {
-               //[[ kad_Test4() ]]
-               public string Foo{get; set;}
-            }";
-         var newItem = VerifyClone(csharpCode,
-                  root => root.RootClasses.First());
-         var newClass = newItem as IClass;
-         Assert.AreEqual(42, newClass.PublicAnnotations.GetValue("kad_Test3", "val2"));
-      }
-
       #endregion
       private IDom<T> VerifyClone<T>(string csharpCode,
           Func<IRoot, IDom<T>> makeTestItem,

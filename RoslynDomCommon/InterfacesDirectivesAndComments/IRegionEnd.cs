@@ -9,8 +9,8 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IRegionEndDirective : IDirective
-    {
+    public interface IRegionEndDirective : IDetail<IRegionEndDirective>
+   {
 
     }
 }

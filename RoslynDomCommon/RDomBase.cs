@@ -18,9 +18,6 @@ namespace RoslynDom
    /// </remarks>
    public abstract class RDomBase : IDom, INotifyPropertyChanged
    {
-
-      private PublicAnnotationList _publicAnnotations = new PublicAnnotationList();
-
       protected RDomBase()
       { Whitespace2Set = new Whitespace2Collection(); }
 
@@ -34,9 +31,6 @@ namespace RoslynDom
          var thisAsHasName = this as IHasName;
          if (oldAsHasName != null && thisAsHasName != null)
          { thisAsHasName.Name = oldAsHasName.Name; }
-
-         var newPublicAnnotations = oldRDom._publicAnnotations.Copy();
-         _publicAnnotations.Add(newPublicAnnotations);
 
          var thisAsHasStructuredDocs = this as IHasStructuredDocumentation;
          if (thisAsHasStructuredDocs != null)
@@ -119,23 +113,13 @@ namespace RoslynDom
       public bool SameIntent<TLocal>(TLocal other)
              where TLocal : class
       {
-         return SameIntent(other, false);
+          return SameIntentInternal(other);
       }
 
-      public bool SameIntent<TLocal>(TLocal other, bool skipPublicAnnotations)
-       where TLocal : class
-      {
-         return SameIntentInternal(other, skipPublicAnnotations);
-      }
-
-      protected abstract bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
+      protected abstract bool SameIntentInternal<TLocal>(TLocal other)
                        where TLocal : class;
-
-
-      public PublicAnnotationList PublicAnnotations
-      { get { return _publicAnnotations; } }
-
-      public IEnumerable<IDom> Descendants
+      
+       public IEnumerable<IDom> Descendants
       {
          get
          {

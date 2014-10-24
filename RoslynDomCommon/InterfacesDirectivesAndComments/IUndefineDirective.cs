@@ -12,8 +12,8 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IUndefineDirective : IDirective
-    {
+    public interface IUndefineDirective : IDetail<IUndefineDirective>
+   {
    
     }
 }

@@ -13,6 +13,6 @@ namespace RoslynDom.Common
 
     public interface ISameIntent<T> :ISameIntent
     {
-        bool SameIntent(T one, T other, bool skipPublicAnnotations);
+        bool SameIntent(T one, T other);
     }
 }

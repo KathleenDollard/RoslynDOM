@@ -16,7 +16,7 @@ namespace RoslynDom.Common
    /// <summary>
    /// 
    /// </summary>
-   public interface IDetail<T> : IDetail, IDom<T>
+   public interface IDetail<T> : IDetail, IStemMemberAndDetail, ITypeMemberAndDetail, IStatementAndDetail, IDom<T>
          where T : IDetail<T>
    {
    }

@@ -12,28 +12,15 @@ namespace RoslynDom.Common
       public static bool CheckSameIntent<T>(T one, T other)
             where T : class, IDom
       {
-         return CheckSameIntent(one, other, false);
-      }
-
-      public static bool CheckSameIntent<T>(T one, T other, bool skipPublicAnnotations)
-          where T : class, IDom
-      {
-         var checker = new Checker(skipPublicAnnotations);
+         var checker = new Checker();
          return checker.Check(one, other);
       }
 
-      /// <summary>
-      /// Nested class used to avoid passing comparison rules like skipPublicAnnotations around
-      /// </summary>
       private class Checker
       {
-         private bool skipPublicAnnotations;
-
-         internal Checker(bool skipPublicAnnotations)
-         { this.skipPublicAnnotations = skipPublicAnnotations; }
 
          internal bool Check<T>(T one, T other)
-                     where T : class, IDom
+                  where T : class, IDom
          {
             if (one == null && other == null) return true;
             if (one == null && other != null) return false;
@@ -194,7 +181,7 @@ namespace RoslynDom.Common
             if (!Check<T, IReferencedType>(one, other,
                       (x, y) => x.DisplayAlias == y.DisplayAlias
                       && x.IsArray == y.IsArray
-                      && CheckChildrenInOrder(x.TypeArguments, y.TypeArguments )))
+                      && CheckChildrenInOrder(x.TypeArguments, y.TypeArguments)))
                return false;
             if (!Check<T, ITypeParameter>(one, other,
                      (x, y) => x.Variance == y.Variance && x.HasConstructorConstraint == y.HasConstructorConstraint
@@ -299,12 +286,6 @@ namespace RoslynDom.Common
             if (one.GetType() != other.GetType()) return false;
 
             if (!typeof(TCheck).IsAssignableFrom(one.GetType())) return true;
-
-            if (!skipPublicAnnotations)
-            {
-               if (!one.PublicAnnotations.SameIntent(other.PublicAnnotations))
-                  return false;
-            }
 
             var oneAs = one as TCheck;
             var otherAs = other as TCheck;

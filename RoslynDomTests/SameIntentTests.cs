@@ -2491,30 +2491,7 @@ namespace RoslynDomTests
          AssertSameIntent(false, csharpCode1, csharpCode2);
       }
 
-      [TestMethod, TestCategory(SameIntentSpecialCategory)]
-      public void Same_intent_correct_when_called_directly()
-      {
-         var csharpCode = @"
-            //[[ kad_Test3(""Fred"", val3 = 3, val2 = 42) ]]
-            public class MyClass
-            { }
-            //[[ kad_Test3(""Fred"", val2 = 42, val3 = 4) ]]
-            public class MyClass2
-            { }
-            //[[ kad_Test3(""Fred"", val2 = 42) ]]
-            public class MyClass3
-            { }
-            ";
-         var root = RDom.CSharp.Load(csharpCode);
-         var classes = root.RootClasses.ToArray();
-         var annot1 = classes[0].PublicAnnotations.GetPublicAnnotation("kad_Test3");
-         var annot2 = classes[1].PublicAnnotations.GetPublicAnnotation("kad_Test3");
-         Assert.IsFalse(annot1.SameIntent(annot2));
-         Assert.IsFalse(annot1.SameIntent(annot2, false));
-         Assert.IsTrue(annot1.SameIntent(annot2, true));
-      }
-
-      [TestMethod, TestCategory(SameIntentSpecialCategory)]
+       [TestMethod, TestCategory(SameIntentSpecialCategory)]
       public void Same_intent_with_nulls()
       {
          var csharpCode = @"

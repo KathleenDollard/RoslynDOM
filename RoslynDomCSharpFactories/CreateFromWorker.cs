@@ -60,7 +60,7 @@ namespace RoslynDom.CSharp
       public void StandardInitialize<T>(T newItem, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
               where T : class, IDom
       {
-         InitializePublicAnnotations(newItem, syntaxNode, parent, model);
+         //InitializePublicAnnotations(newItem, syntaxNode, parent, model);
          InitializeAttributes(newItem as IHasAttributes, syntaxNode, parent, model);
          InitializeAccessModifiers(newItem as IHasAccessModifier, syntaxNode, parent, model);
          InitializeOOTypeMember(newItem as IOOTypeMember, syntaxNode, parent, model);
@@ -93,11 +93,11 @@ namespace RoslynDom.CSharp
          { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.None; }
       }
 
-      public void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-      {
-         var publicAnnotations = GetPublicAnnotations(syntaxNode, item, model);
-         item.PublicAnnotations.Add(publicAnnotations);
-      }
+      //public void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      //{
+      //   var publicAnnotations = GetPublicAnnotations(syntaxNode, item, model);
+      //   item.PublicAnnotations.Add(publicAnnotations);
+      //}
 
       private void InitializeAttributes(IHasAttributes itemAsHasAttributes,
                   SyntaxNode syntaxNode, IDom parent, SemanticModel model)

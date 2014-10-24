@@ -13,9 +13,9 @@ namespace RoslynDom.CSharp
                   where TSyntax : SyntaxNode
                   where T : class, IDom;
 
-      IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
-          where TSyntax : SyntaxNode
-          where T : class, IDom;
+      //IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      //    where TSyntax : SyntaxNode
+      //    where T : class, IDom;
 
       IEnumerable<IStructuredDocumentation> GetStructuredDocumenation<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
             where TSyntax : SyntaxNode

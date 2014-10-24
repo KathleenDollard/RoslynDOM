@@ -38,12 +38,5 @@ namespace RoslynDom
          get { return _isElastic; }
          set { SetProperty(ref _isElastic, value); }
       }
-
-      //protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations)
-      //{
-      //   var otherAsT = other as IVerticalWhitespace;
-      //   if (otherAsT == null) return false;
-      //   return (Count == otherAsT.Count);
-      //}
    }
 }

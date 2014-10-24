@@ -914,13 +914,13 @@ namespace Test
 {
     class TestClass
     {
-        protected override bool SameIntentInternal<TLocal>(TLocal other, bool skipPublicAnnotations){}
+        protected override bool SameIntentInternal<TLocal>(TLocal other, bool abc){}
     }
 }";
          var root = RDom.CSharp.Load(csharpCode);
          var parameters = root.RootClasses.ElementAt(0).Methods.First().Parameters.ToArray();
          ParameterCheck(parameters[0], 0, "other", "TLocal");
-         ParameterCheck(parameters[1], 1, "skipPublicAnnotations", "Boolean");
+         ParameterCheck(parameters[1], 1, "abc", "Boolean");
          var actual = RDom.CSharp.GetSyntaxNode(root).ToFullString();
          Assert.AreEqual(csharpCode, actual);
       }

@@ -9,7 +9,7 @@ namespace RoslynDom.Common
    /// <summary>
    /// 
    /// </summary>
-   public interface IRegionStart : IDirective, IDom<IRegionStart>
+   public interface IRegionStart : IDetail<IRegionStart>
    {
       IRegionEnd RegionEnd { get; }
    }
@@ -17,7 +17,7 @@ namespace RoslynDom.Common
    /// <summary>
    /// 
    /// </summary>
-   public interface IRegionEnd : IDirective, IDom<IRegionEnd>
+   public interface IRegionEnd : IDetail<IRegionEnd>
    {
       IRegionStart RegionStart { get; }
    }

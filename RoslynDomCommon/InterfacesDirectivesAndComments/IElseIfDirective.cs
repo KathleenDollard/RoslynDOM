@@ -9,7 +9,7 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IElseIfDirective : IDirective
+    public interface IElseIfDirective : IDetail<IElseIfDirective>
     {
 
     }
