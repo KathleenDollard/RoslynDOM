@@ -14,7 +14,7 @@ namespace RoslynDom
    /// Currently no constructor for making regions out of thin air because I haven't worked out
    /// how to match up start and end constructs. Probably a special method is needed
    /// </remarks>
-   public class RDomRegionEnd : RDomBase<IRegionEnd, ISymbol>, IRegionEnd
+   public class RDomRegionEnd : RDomBase<IBlockEndDetail , ISymbol>, IBlockEndDetail
    {
       public RDomRegionEnd(SyntaxNode rawItem, IDom parent, SemanticModel model, SyntaxNode startSyntax)
            : base(rawItem, parent, model)
@@ -28,7 +28,7 @@ namespace RoslynDom
       internal RDomRegionEnd(RDomRegionEnd oldRDom, IDom parent)
            : base(oldRDom)
       {
-         Func<RDomRegionStart, bool> match = x => x.RegionEnd == oldRDom;
+         Func<RDomRegionStart, bool> match = x => x.BlockEnd == oldRDom;
          if (TryFindMatchingRegionStart<IStemContainer>(parent, x => x.StemMembersAll, match)) return;
          if (TryFindMatchingRegionStart<ITypeMemberContainer>(parent, x => x.MembersAll, match)) return;
          if (TryFindMatchingRegionStart<IStatementContainer>(parent, x => x.StatementsAll, match)) return;
@@ -46,8 +46,8 @@ namespace RoslynDom
                         .Where(matchPredicate)
                         .FirstOrDefault();
          if (newStart == null) throw new InvalidOperationException("Matching start region not found");
-         newStart.RegionEnd = this;
-         this.RegionStart = newStart;
+         newStart.BlockEnd = this;
+         this.BlockStart  = newStart;
          return true;
       }
 
@@ -62,7 +62,7 @@ namespace RoslynDom
       /// Does it mean copying everything in the region? Inclusive of the region itself?
       /// That seems useful, but doing it in this method may be surprising. 
       /// </remarks>
-      public override IRegionEnd Copy()
+      public override IBlockEndDetail Copy()
       {
          throw new NotImplementedException("Can't explicitly copy regions");
       }
@@ -73,6 +73,6 @@ namespace RoslynDom
       public MemberKind MemberKind
       { get { return MemberKind.RegionEnd; } }
 
-      public IRegionStart RegionStart { get; private set; }
+      public IBlockStartDetail BlockStart { get; private set; }
    }
 }

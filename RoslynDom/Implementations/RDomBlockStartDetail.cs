@@ -16,7 +16,7 @@ namespace RoslynDom
    /// The RegionEnd property is filled when the RegionEnd is created.
    /// </para>
    /// </remarks>
-   public class RDomRegionStart : RDomBase<IRegionStart, ISymbol>, IRegionStart
+   public class RDomRegionStart : RDomBase<IBlockStartDetail, ISymbol>, IBlockStartDetail
    {
 
       public RDomRegionStart(SyntaxNode rawItem, IDom parent, SemanticModel model, string text)
@@ -31,7 +31,7 @@ namespace RoslynDom
          // Copy must be completed through the region end and only when the parent is also copied.
          // This method leaves things in an unstable state until the RegionEnd runs
          _text = oldRDom.Text;
-         RegionEnd = oldRDom.RegionEnd; // temporary until the new one is created
+         BlockEnd  = oldRDom.BlockEnd; // temporary until the new one is created
       }
 
       /// <summary>
@@ -44,7 +44,7 @@ namespace RoslynDom
       /// Does it mean copying everything in the region? Inclusive of the region itself?
       /// That seems useful, but doing it in this method may be surprising. 
       /// </remarks>
-      public override IRegionStart Copy()
+      public override IBlockStartDetail Copy()
       {
          throw new NotImplementedException("Can't explicitly copy regions");
       }
@@ -63,6 +63,6 @@ namespace RoslynDom
       public MemberKind MemberKind
       { get { return MemberKind.RegionStart; } }
 
-      public IRegionEnd RegionEnd { get; internal set; }
+      public IBlockEndDetail  BlockEnd { get; internal set; }
    }
 }

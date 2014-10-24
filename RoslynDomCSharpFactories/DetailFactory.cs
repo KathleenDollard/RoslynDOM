@@ -11,6 +11,33 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
+   /// <summary>
+   /// Factory for working with SyntaxTrivia on nodes. It should, perhaps, be called TriviaFactory
+   /// </summary>
+   /// <remarks>
+   /// There are two kinds of trivia - attached and member. The concept of trivia in C#/VB is
+   /// quite different than the human understanding. 
+   /// <para/>
+   /// Structured documentation and of end of line comments should both be attached to 
+   /// other IDom elements, but to the full item (the class, not the first keyword for example).
+   /// <para/> 
+   /// Vertical whitespace, comments, and 
+   /// public annotations (comments with structure intended for compilers) and directives
+   /// all float - they are not inherently related to other IDom items. 
+   /// <para/>
+   /// Floating annotations further belong in three groups 
+   /// <list type="">
+   /// <item>vertical whitespace is only a number of lines</item>
+   /// <item>comments and public annotations which provide data at a specific spot</item>
+   /// <item>blocks, like regions, that contain information and a corresponding block of items</item>
+   /// <item>conditions, like #if/#elif that involve multiple blocks</item>
+   /// </list>
+   /// It is fundamenatal to the RoslynDom design that it doesn't matter whether something is defined 
+   /// in the normal C# way or a special way - blocks could be reigons, or they could be defined with 
+   /// special public start/stop annotations
+   /// <para/>
+   /// Horizontal whitespace attaches to elements, so is handled differently
+   /// </remarks>
    public class DetailFactory : RDomBaseItemFactory<IDetail, SyntaxNode>
    {
       // TODO: Consider IOC for trivia manager
@@ -23,7 +50,7 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return 0; } }
 
-       public override Type[] SyntaxNodeTypes
+      public override Type[] SyntaxNodeTypes
       { get { return null; } }
 
       public override Type[] ExplicitNodeTypes
@@ -31,7 +58,7 @@ namespace RoslynDom.CSharp
 
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
-          // The parent of the syntax is the next item. The parent of the region is the thing it's attached to
+         // The parent of the syntax is the next item. The parent of the region is the thing it's attached to
          parent = parent.Parent;
          var ret = new List<IDetail>();
          if (!syntaxNode.HasLeadingTrivia) return ret;
@@ -84,7 +111,7 @@ namespace RoslynDom.CSharp
          return newComment;
       }
 
-      private IRegionStart MakeRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent)
+      private IBlockStartDetail MakeRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent)
       {
          if (!trivia.HasStructure) return null;
          var structure = trivia.GetStructure();
@@ -94,7 +121,7 @@ namespace RoslynDom.CSharp
          return newRegion;
       }
 
-      private IRegionEnd MakeEndRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent)
+      private IBlockEndDetail MakeEndRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent)
       {
          if (!trivia.HasStructure) return null;
          var structure = trivia.GetStructure();

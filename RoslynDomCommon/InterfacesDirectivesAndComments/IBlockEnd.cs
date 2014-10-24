@@ -9,8 +9,8 @@ namespace RoslynDom.Common
     /// <summary>
     /// 
     /// </summary>
-    public interface IElseIfDirective : IDetail<IElseIfDirective>
-    {
-
+    public interface IBlockEndDetail : IDetail<IBlockEndDetail>
+   {
+      IBlockStartDetail BlockStart { get;  }
     }
 }

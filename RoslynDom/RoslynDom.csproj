@@ -80,8 +80,8 @@
     <Compile Include="Implementations\RDomConversionOperator.cs" />
     <Compile Include="Implementations\RDomEvent.cs" />
     <Compile Include="Implementations\RDomOperator.cs" />
-    <Compile Include="Implementations\RDomRegionEnd.cs" />
-    <Compile Include="Implementations\RDomRegionStart.cs" />
+    <Compile Include="Implementations\RDomBlockEndDetail.cs" />
+    <Compile Include="Implementations\RDomBlockStartDetail.cs" />
     <Compile Include="Implementations\RDomVerticalWhitespace.cs" />
     <Compile Include="IRoslynHasSymbol.cs" />
     <Compile Include="RoslynUtilities.cs" />

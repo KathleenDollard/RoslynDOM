@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IRegionEndDirective : IDetail<IRegionEndDirective>
+   /// <summary>
+   /// 
+   /// </summary>
+   public interface IBlockStartDetail : IDetail<IBlockStartDetail>
    {
-
-    }
+      IBlockEndDetail BlockEnd { get; }
+   }
 }
