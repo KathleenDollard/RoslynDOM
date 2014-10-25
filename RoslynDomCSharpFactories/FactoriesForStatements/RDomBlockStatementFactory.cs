@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
 
             foreach (var statementSyntax in syntax.Statements)
             {
-                var statements = Corporation.Create(statementSyntax, newItem, model).OfType<IStatementAndDetail>();
+                var statements = OutputContext.Corporation.Create(statementSyntax, newItem, model).OfType<IStatementAndDetail>();
                 newItem.Statements.AddOrMoveRange(statements);
             }
 
@@ -54,7 +54,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.Block(SyntaxFactory.List(block.Statements));
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext);
 
         }
     }

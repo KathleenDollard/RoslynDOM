@@ -9,6 +9,7 @@ namespace RoslynDom
          _text = text;
          _isMultiline = isMultiline;
       }
+
       internal RDomComment(RDomComment oldRDom)
           : base(oldRDom)
       {

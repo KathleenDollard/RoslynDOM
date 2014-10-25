@@ -59,7 +59,7 @@ namespace RoslynDom.CSharp
 
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext);
         }
     }
 }

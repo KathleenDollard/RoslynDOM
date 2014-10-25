@@ -46,9 +46,9 @@ namespace RoslynDom.CSharp
 
 
       #region Private methods to support public annotations
-      private IEnumerable<PublicAnnotation> GetPublicAnnotations(CompilationUnitSyntax syntaxRoot)
+      private IEnumerable<RDomPublicAnnotation> GetPublicAnnotations(CompilationUnitSyntax syntaxRoot)
       {
-         var ret = new List<PublicAnnotation>();
+         var ret = new List<RDomPublicAnnotation>();
          var nodes = syntaxRoot.ChildNodes();
          foreach (var node in nodes)
          {
@@ -57,15 +57,15 @@ namespace RoslynDom.CSharp
          return ret;
       }
 
-      private IEnumerable<PublicAnnotation> GetPublicAnnotations(SyntaxNode node)
+      private IEnumerable<RDomPublicAnnotation> GetPublicAnnotations(SyntaxNode node)
       {
          return GetPublicAnnotationFromFirstToken(node, false);
       }
 
-      private IEnumerable<PublicAnnotation> GetPublicAnnotationFromFirstToken(
+      private IEnumerable<RDomPublicAnnotation> GetPublicAnnotationFromFirstToken(
                  SyntaxNode node, bool isRoot)
       {
-         var ret = new List<PublicAnnotation>();
+         var ret = new List<RDomPublicAnnotation>();
          var firstToken = node.GetFirstToken();
          if (firstToken != default(SyntaxToken))
          {
@@ -74,10 +74,10 @@ namespace RoslynDom.CSharp
          return ret;
       }
 
-      private IEnumerable<PublicAnnotation> GetPublicAnnotationFromToken(
+      private IEnumerable<RDomPublicAnnotation> GetPublicAnnotationFromToken(
              SyntaxToken token, bool isRoot)
       {
-         var ret = new List<PublicAnnotation>();
+         var ret = new List<RDomPublicAnnotation>();
          var trivias = token.LeadingTrivia
                            .Where(x => x.CSharpKind() == SyntaxKind.SingleLineCommentTrivia);
          foreach (var trivia in trivias)
@@ -92,8 +92,8 @@ namespace RoslynDom.CSharp
             {
                var attribSyntax = GetAnnotationStringAsAttribute(str);
                // Reuse the evaluation work done in attribute to follow same rules
-               var tempAttribute = Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute ;
-               var newPublicAnnotation = new PublicAnnotation(tempAttribute.Name.ToString());
+               var tempAttribute = OutputContext.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute ;
+               var newPublicAnnotation = new RDomPublicAnnotation(tempAttribute.Name.ToString());
                newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
                foreach (var attributeValue in tempAttribute.AttributeValues)
                {

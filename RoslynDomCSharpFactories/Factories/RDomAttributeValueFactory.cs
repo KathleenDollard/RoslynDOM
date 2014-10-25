@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
          }
          node = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(node, item.Whitespace2Set[LanguageElement.AttributeValueValue]);
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
       private void InitializeAttributeValue(IAttributeValue newItem,

@@ -40,8 +40,9 @@ namespace RoslynDom.CSharp
    /// </remarks>
    public class DetailFactory : RDomBaseItemFactory<IDetail, SyntaxNode>
    {
-      // TODO: Consider IOC for trivia manager
+      // TODO: Consider IOC for trivia manager and PublicAnnotationMatch
       private TriviaManager triviaManager = new TriviaManager();
+      private IPublicAnnotationMatcher publicAnnotationMatcher = new DetailFactory.PublicAnnotationMatch();
 
       public DetailFactory(RDomCorporation corporation)
           : base(corporation)
@@ -101,11 +102,14 @@ namespace RoslynDom.CSharp
          return ret;
       }
 
-      private RDomComment MakeComment(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia,
+      private IDetail MakeComment(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia,
               SyntaxTrivia trivia, bool isMultiline)
       {
          var commentText = trivia.ToString();
          var tuple = ExtractComment(trivia.ToString());
+         var commentString = tuple.Item2;
+         var publicAnnotation = publicAnnotationMatcher.GetFromComment(commentString, OutputContext.Corporation );
+         if (publicAnnotation != null) return publicAnnotation;
          var newComment = new RDomComment(tuple.Item2, isMultiline);
          triviaManager.StoreWhitespaceForComment(newComment, precedingTrivia, tuple.Item1, tuple.Item3);
          return newComment;
@@ -157,5 +161,43 @@ namespace RoslynDom.CSharp
          return null;
       }
 
+      private class PublicAnnotationMatch : IPublicAnnotationMatcher
+      {
+         public IPublicAnnotation GetFromComment(string possibleAnnotation, RDomCorporation corporation)
+         {
+            var str = GetMatch(possibleAnnotation);
+            if (string.IsNullOrWhiteSpace(str)) return null;
+            var target = str.SubstringBefore(":");
+            var attribSyntax = GetAnnotationStringAsAttribute(str);
+            // Reuse the evaluation work done in attribute to follow same rules
+            var tempAttribute = corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
+            var newPublicAnnotation = new RDomPublicAnnotation(tempAttribute.Name.ToString());
+            newPublicAnnotation.Target = target;
+            newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
+            foreach (var attributeValue in tempAttribute.AttributeValues)
+            {
+               newPublicAnnotation.AddItem(attributeValue.Name ?? "", attributeValue.Value);
+            }
+            return newPublicAnnotation;
+         }
+
+         private string GetMatch(string comment)
+         {
+            return comment.SubstringAfter("[[").SubstringBefore("]]").Trim();
+         }
+
+         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(System.String,System.String,Microsoft.CodeAnalysis.CSharp.CSharpParseOptions,System.Threading.CancellationToken)")]
+         private static AttributeSyntax GetAnnotationStringAsAttribute(string str)
+         {
+            // Trick Roslyn into thinking it's an attribute
+            str = "[" + str + "] public class {}";
+            var tree = CSharpSyntaxTree.ParseText(str);
+            var attrib = tree.GetRoot().DescendantNodes()
+                        .Where(x => x.CSharpKind() == SyntaxKind.Attribute)
+                        .FirstOrDefault();
+            return attrib as AttributeSyntax;
+         }
+
+      }
    }
 }

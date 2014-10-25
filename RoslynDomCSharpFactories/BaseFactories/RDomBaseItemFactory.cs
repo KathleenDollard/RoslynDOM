@@ -18,15 +18,17 @@ namespace RoslynDom.CSharp
       [ExcludeFromCodeCoverage]
       protected static string nameof<T2>(T2 value) { return ""; }
 
-      public RDomBaseItemFactory(RDomCorporation corporation)
+      protected RDomBaseItemFactory(RDomCorporation corporation)
       {
-         Corporation = corporation;
+         OutputContext = new OutputContext(corporation);
       }
 
       //public abstract string Language { get; }
       public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
 
-      protected RDomCorporation Corporation { get; private set; }
+      public OutputContext OutputContext { get; private set; }
+
+      //protected RDomCorporation Corporation { get; private set; }
 
       public virtual Type[] SyntaxNodeTypes
       { get { return new Type[] { typeof(TSyntax) }; } }
@@ -45,7 +47,7 @@ namespace RoslynDom.CSharp
       {
          get
          {
-            if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)Corporation.Worker.BuildSyntaxWorker; }
+            if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)OutputContext.Corporation.Worker.BuildSyntaxWorker; }
             return _buildSyntaxWorker;
          }
 
@@ -56,7 +58,7 @@ namespace RoslynDom.CSharp
       {
          get
          {
-            if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)Corporation.Worker.CreateFromWorker; }
+            if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)OutputContext.Corporation.Worker.CreateFromWorker; }
             return _createFromWorker;
          }
 

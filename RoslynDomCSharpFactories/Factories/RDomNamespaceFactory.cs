@@ -87,7 +87,7 @@ namespace RoslynDom.CSharp
                         .ToList();
             if (membersSyntax.Count() > 0) { node = node.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(membersSyntax)); }
 
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext);
         }
     }
 

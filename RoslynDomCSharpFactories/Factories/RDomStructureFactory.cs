@@ -9,8 +9,14 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-   internal static class RDomStructureFactoryHelper
+   
+   public class RDomStructureFactory
+     : RDomBaseItemFactory<RDomStructure, StructDeclarationSyntax>
    {
+      public RDomStructureFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
+
       // until move to C# 6 - I want to support name of as soon as possible
       [ExcludeFromCodeCoverage]
       private static string nameof<T>(T value) { return ""; }
@@ -35,36 +41,36 @@ namespace RoslynDom.CSharp
          }
       }
 
-      public static RDomStructure CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
+      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as StructDeclarationSyntax;
          var newItem = new RDomStructure(syntaxNode, parent, model);
-         createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-         createFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
          newItem.Name = newItem.TypedSymbol.Name;
 
-         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
+         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => OutputContext.Corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
 
-         return newItem;
+         return new IDom[] { newItem };
       }
 
-      public static IEnumerable<SyntaxNode> BuildSyntax(RDomStructure item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IStructure;
          Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
 
          // This is identical to Class, but didn't work out reuse here
          var modifiers = item.BuildModfierSyntax();
-         var identifier = SyntaxFactory.Identifier(item.Name);
+         var identifier = SyntaxFactory.Identifier(itemAsT.Name);
 
          var node = SyntaxFactory.StructDeclaration(identifier)
              .WithModifiers(modifiers);
          node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
 
-         var baseList = BuildSyntaxHelpers.GetBaseList(item);
+         var baseList = BuildSyntaxHelpers.GetBaseList(itemAsT);
          if (baseList != null) { node = node.WithBaseList(baseList); }
 
-         var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
+         var attributes =BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
          var membersSyntax = itemAsT.Members
@@ -77,63 +83,7 @@ namespace RoslynDom.CSharp
                     (x, p) => x.WithTypeParameterList(p),
                     (x, c) => x.WithConstraintClauses(c));
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
    }
-
-   public class RDomStructureTypeMemberFactory
-     : RDomBaseItemFactory<RDomStructure, StructDeclarationSyntax>
-   {
-      public RDomStructureTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-
-      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-      {
-         var ret = RDomStructureFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-         return new IDom[] { ret };
-      }
-
-      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-      {
-         return RDomStructureFactoryHelper.BuildSyntax((RDomStructure)item, BuildSyntaxWorker, Corporation);
-      }
-   }
-
-   //public class RDomStructureTypeMemberFactory
-   //  : RDomBaseItemFactory<RDomStructure, StructDeclarationSyntax>
-   //{
-   //   public RDomStructureTypeMemberFactory(RDomCorporation corporation)
-   //      : base(corporation)
-   //   { }
-
-   //   protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-   //   {
-   //      return RDomStructureFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-   //   }
-   //   public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-   //   {
-   //      return RDomStructureFactoryHelper.BuildSyntax((RDomStructure)item, BuildSyntaxWorker, Corporation);
-   //   }
-   //}
-
-   //public class RDomStructureStemMemberFactory
-   //       : RDomBaseItemFactory<RDomStructure, StructDeclarationSyntax>
-   //{
-   //   public RDomStructureStemMemberFactory(RDomCorporation corporation)
-   //      : base(corporation)
-   //   { }
-
-   //   protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-   //   {
-   //      return RDomStructureFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-   //   }
-
-   //   public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-   //   {
-
-   //      return RDomStructureFactoryHelper.BuildSyntax((RDomStructure)item, BuildSyntaxWorker, Corporation);
-   //   }
-   //}
-
 }

@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
          //newItem.AccessModifier = RoslynUtilities.GetAccessibilityFromSymbol(newItem.Symbol);
          //newItem.IsStatic = newItem.Symbol.IsStatic;
 
-         newItem.Parameters.CreateAndAdd(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model).Cast<IParameter>());
+         newItem.Parameters.CreateAndAdd(syntax, x => x.ParameterList.Parameters, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IParameter>());
          //var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
          //                    .OfType<IParameter>();
          //newItem.Parameters.AddOrMoveRange(parameters);
@@ -76,7 +76,7 @@ namespace RoslynDom.CSharp
             foreach (var arg in initializerSyntax.ArgumentList.Arguments)
             {
                var newArg = new RDomArgument(arg, newItem, model);
-               newArg.ValueExpression = Corporation.Create<IExpression>(arg.Expression, newItem, model).FirstOrDefault();
+               newArg.ValueExpression = OutputContext.Corporation.Create<IExpression>(arg.Expression, newItem, model).FirstOrDefault();
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newArg, arg, LanguagePart.Current, LanguageElement.ConstructorInitializerArgument);
                CreateFromWorker.StoreListMemberWhitespace(arg,
                     SyntaxKind.CommaToken, LanguageElement.ConstructorInitializerArgument, newArg);
@@ -126,7 +126,7 @@ namespace RoslynDom.CSharp
             node = node.WithInitializer(initializer);
          }
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
       private ConstructorInitializerSyntax BuildInitializer(IConstructor itemAsT)

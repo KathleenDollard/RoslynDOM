@@ -46,7 +46,7 @@ namespace RoslynDom.CSharp
             newItem.Name = syntax.Identifier.ToString();
             if (syntax.EqualsValue != null)
             {
-                newItem.Expression = Corporation
+                newItem.Expression = OutputContext.Corporation
                     .Create<IExpression>(syntax.EqualsValue.Value, newItem, model)
                     .FirstOrDefault();
             }
@@ -75,7 +75,7 @@ namespace RoslynDom.CSharp
             node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, WhitespaceLookup);
             //node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.EnumValueFirstToken]);
             //node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.EnumValueLastToken]);
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext);
         }
 
         private void MemberWhitespace(RDomEnumMember newItem, EnumMemberDeclarationSyntax syntax)

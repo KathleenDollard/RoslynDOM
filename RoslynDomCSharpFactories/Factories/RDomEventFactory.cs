@@ -60,7 +60,7 @@ namespace RoslynDom.CSharp
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
             }
 
-            var type = Corporation
+            var type = OutputContext.Corporation
                              .Create(rawEvent.Declaration.Type, newItem, model)
                              .FirstOrDefault()
                              as IReferencedType;
@@ -95,7 +95,7 @@ namespace RoslynDom.CSharp
          var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
    }

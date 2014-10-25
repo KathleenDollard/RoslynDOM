@@ -60,7 +60,7 @@ namespace RoslynDom.CSharp
 
          if (!string.IsNullOrWhiteSpace(itemAsT.Alias))
          { node = node.WithAlias(SyntaxFactory.NameEquals(itemAsT.Alias)); }
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
    }
 

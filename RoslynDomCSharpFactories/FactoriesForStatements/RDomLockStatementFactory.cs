@@ -45,7 +45,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, syntax.Statement, LanguagePart.Current, WhitespaceLookup);
 
-            var expr = Corporation.Create<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
+            var expr = OutputContext.Corporation.Create<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
             CreateFromWorker.StoreWhitespace(expr, syntax.Expression, LanguagePart.Current, WhitespaceLookup);
             newItem.Expression = expr;
 
@@ -60,7 +60,7 @@ namespace RoslynDom.CSharp
             var node = SyntaxFactory.LockStatement(expressionSyntax, statement);
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext);
         }
     }
 }

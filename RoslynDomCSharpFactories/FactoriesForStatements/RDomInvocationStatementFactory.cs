@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
                                  LanguageElement.Expression);
 
          var expression = syntax.Expression;
-         newItem.Invocation = Corporation.Create<IExpression>(expression, newItem, model).FirstOrDefault();
+         newItem.Invocation = OutputContext.Corporation.Create<IExpression>(expression, newItem, model).FirstOrDefault();
 
          return newItem;
       }
@@ -53,7 +53,7 @@ namespace RoslynDom.CSharp
 
          node = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(node,
                      itemAsT.Whitespace2Set[LanguageElement.Expression]);
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
 

@@ -44,7 +44,7 @@ namespace RoslynDom.CSharp
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         var type = Corporation
+         var type = OutputContext.Corporation
                           .Create(syntax.Type, newItem, model)
                           .FirstOrDefault()
                           as IReferencedType;
@@ -100,7 +100,7 @@ namespace RoslynDom.CSharp
          node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, WhitespaceLookup);
          node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.ParameterFirstToken]);
          node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.ParameterLastToken]);
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
 
       }
       private void MemberWhitespace(RDomParameter newItem, ParameterSyntax syntax)

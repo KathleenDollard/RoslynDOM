@@ -9,8 +9,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RoslynDom.CSharp
 {
-   internal static class RDomInterfaceFactoryHelper
+    public class RDomInterfaceTypeMemberFactory
+      : RDomBaseItemFactory<RDomInterface, InterfaceDeclarationSyntax>
    {
+      public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
+
       [ExcludeFromCodeCoverage]
       private static string nameof<T>(T value) { return ""; }
 
@@ -37,25 +42,25 @@ namespace RoslynDom.CSharp
          }
       }
 
-      public static RDomInterface CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
+      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as InterfaceDeclarationSyntax;
          var newItem = new RDomInterface(syntaxNode, parent, model);
-         createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-         createFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
-         createFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
+        CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+        CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
+        CreateFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
+         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => OutputContext.Corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
          // this is a hack because the membersare appearing with a scope
          foreach (var member in newItem.MembersAll.OfType<ITypeMember>())
          { member.AccessModifier = AccessModifier.None; }
 
-         return newItem;
+         return new IDom[] { newItem };
       }
 
-      public static IEnumerable<SyntaxNode> BuildSyntax(IDom item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IInterface;
          Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
@@ -69,7 +74,7 @@ namespace RoslynDom.CSharp
          var baseList = BuildSyntaxHelpers.GetBaseList(itemAsT);
          if (baseList != null) { node = node.WithBaseList(baseList); }
 
-         var attributes = buildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
+         var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
          var membersSyntax = itemAsT.Members
@@ -82,82 +87,8 @@ namespace RoslynDom.CSharp
                    (x, p) => x.WithTypeParameterList(p),
                    (x, c) => x.WithConstraintClauses(c));
 
-         //// This works oddly because it uncollapses the list
-         //// This code is largely repeated in class and method factories, but is very hard to refactor because of shallow Roslyn (Microsoft) architecture
-         //var typeParamsAndConstraints = itemAsT.TypeParameters
-         //            .SelectMany(x => RDomCSharp.Factory.BuildSyntaxGroup(x))
-         //            .ToList();
-
-         //var typeParameterSyntaxList = BuildSyntaxHelpers.GetTypeParameterSyntaxList(
-         //            typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
-         //if (typeParameterSyntaxList != null)
-         //{
-         //    node = node.WithTypeParameterList(typeParameterSyntaxList);
-         //    var clauses = BuildSyntaxHelpers.GetTypeParameterConstraintList(
-         //              typeParamsAndConstraints, itemAsT.Whitespace2Set, whitespaceLookup);
-         //    if (clauses.Any())
-         //    { node = node.WithConstraintClauses(clauses); }
-         //}
-
          node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, whitespaceLookup);
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
    }
-
-   public class RDomInterfaceTypeMemberFactory
-      : RDomBaseItemFactory<RDomInterface, InterfaceDeclarationSyntax>
-   {
-      public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-
-      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-      {
-         var ret = RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-         return new IDom[] { ret };
-      }
-
-      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-      {
-         return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item, BuildSyntaxWorker, Corporation);
-      }
-   }
-
-   //public class RDomInterfaceTypeMemberFactory
-   //   : RDomBaseItemFactory<RDomInterface, InterfaceDeclarationSyntax>
-   //{
-   //   public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
-   //      : base(corporation)
-   //   { }
-
-   //   protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-   //   {
-   //      return RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-   //   }
-   //   public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-   //   {
-   //      return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item, BuildSyntaxWorker, Corporation);
-   //   }
-   //}
-
-
-   //public class RDomInterfaceStemMemberFactory
-   //       : RDomBaseItemFactory<RDomInterface, InterfaceDeclarationSyntax>
-   //{
-   //   public RDomInterfaceStemMemberFactory(RDomCorporation corporation)
-   //      : base(corporation)
-   //   { }
-
-   //   protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-   //   {
-   //      return RDomInterfaceFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-   //   }
-   //   public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-   //   {
-   //      return RDomInterfaceFactoryHelper.BuildSyntax((RDomInterface)item, BuildSyntaxWorker, Corporation);
-   //   }
-   //}
-
-
-
 }

@@ -92,7 +92,7 @@ namespace RoslynDom.CSharp
             var itemAsHasCondition = newItem as IHasCondition;
             if (itemAsHasCondition != null)
             {
-                itemAsHasCondition.Condition = Corporation.Create<IExpression>(condition, newItem, model).FirstOrDefault();
+                itemAsHasCondition.Condition = OutputContext.Corporation.Create<IExpression>(condition, newItem, model).FirstOrDefault();
                 CreateFromWorker.StoreWhitespace(itemAsHasCondition, condition, LanguagePart.Current, WhitespaceLookup);
             }
         }
@@ -105,7 +105,7 @@ namespace RoslynDom.CSharp
             if (elseSyntax != null) { node = node.WithElse(elseSyntax); }
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext);
         }
 
         private ElseClauseSyntax BuildElseSyntax(IIfStatement itemAsT)

@@ -90,7 +90,7 @@ namespace RoslynDom.CSharp
             if (decl.Initializer != null)
             {
                var equalsClause = decl.Initializer;
-               newItem.Initializer = Corporation.Create<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
+               newItem.Initializer = OutputContext.Corporation.Create<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
                CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model);
                CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
@@ -105,7 +105,7 @@ namespace RoslynDom.CSharp
          CreateFromWorker.StandardInitialize(newItem, node, parent, model);
          newItem.Name = newItem.TypedSymbol.Name;
          var declaredType = typeSyntax.ToString();
-         var returnType = Corporation
+         var returnType = OutputContext.Corporation
                          .Create(typeSyntax, newItem, model)
                          .FirstOrDefault()
                          as IReferencedType;

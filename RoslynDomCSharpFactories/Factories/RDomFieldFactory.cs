@@ -62,10 +62,10 @@ namespace RoslynDom.CSharp
             {
                CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
-               newItem.Initializer = Corporation.Create<IExpression>(decl.Initializer.Value, newItem, model).FirstOrDefault();
+               newItem.Initializer = OutputContext.Corporation.Create<IExpression>(decl.Initializer.Value, newItem, model).FirstOrDefault();
             }
 
-            var returnType = Corporation
+            var returnType = OutputContext.Corporation
                              .Create(rawField.Declaration.Type, newItem, model)
                              .FirstOrDefault()
                              as IReferencedType;
@@ -120,7 +120,7 @@ namespace RoslynDom.CSharp
          var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
    }

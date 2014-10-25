@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
 
          // VariableDeclarationFactory does most of the work, and at present returns a single
          // DeclarationStatement, and possibly a comment
-         var newItems = Corporation.Create(rawDeclaration.Declaration, parent, model, true);
+         var newItems = OutputContext.Corporation.Create(rawDeclaration.Declaration, parent, model, true);
          foreach (var newItem in newItems.OfType<IDeclarationStatement>())
          {
             CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
@@ -62,7 +62,7 @@ namespace RoslynDom.CSharp
          // This is a weakness in the current factory lookup - we can't just ask for a random factory
          // so to call the normal build syntax through the factory causes infinite recursion. 
          // TODO: Add the ability to request a random factory from the container (via the CSharp uber factory
-         var tempFactory = new RDomVariableDeclarationFactory(Corporation);
+         var tempFactory = new RDomVariableDeclarationFactory(OutputContext.Corporation);
          var nodeDeclarators = tempFactory.BuildSyntax(item);
          var nodeDeclarator = (VariableDeclaratorSyntax)nodeDeclarators.First();
 
@@ -78,7 +78,7 @@ namespace RoslynDom.CSharp
          if (itemAsT.IsConst) { node = node.WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.ConstKeyword))); }
 
          node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
 

@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
          var condition = GetConditionFromSyntax(syntax);
          var statement = GetStatementFromSyntax(syntax);
 
-         var conditionObj = Corporation.Create<IExpression>(condition, newItem, model).FirstOrDefault() ;
+         var conditionObj = OutputContext.Corporation.Create<IExpression>(condition, newItem, model).FirstOrDefault() ;
          newItem.Condition = conditionObj as IExpression;
          CreateFromWorker.InitializeStatements(newItem, statement, newItem, model);
 
@@ -85,12 +85,12 @@ namespace RoslynDom.CSharp
             node = MakeSyntax(itemAsT, condition, statement);
          }
 
-         var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(itemAsT);
+         var leadingTrivia = BuildSyntaxHelpers.LeadingTrivia(itemAsT, OutputContext);
          node = node.WithLeadingTrivia(leadingTrivia);
          node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
          node = AdjustWhitespace(node, itemAsT, WhitespaceLookup);
 
-         return node.PrepareForBuildSyntaxOutput(itemAsT);
+         return node.PrepareForBuildSyntaxOutput(itemAsT, OutputContext);
       }
 
       protected virtual SyntaxNode AdjustWhitespace(SyntaxNode node, T item, WhitespaceKindLookup WhitespaceLookup)

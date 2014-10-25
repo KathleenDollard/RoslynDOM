@@ -63,7 +63,7 @@ namespace RoslynDom.CSharp
          var left = binary.Left as ExpressionSyntax;
          CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, left, LanguagePart.Current,
                  LanguageElement.LeftExpression);
-         newItem.Left = Corporation.Create<IExpression>(left, newItem, model).FirstOrDefault();
+         newItem.Left = OutputContext.Corporation.Create<IExpression>(left, newItem, model).FirstOrDefault();
 
          // Previously tested for identifier here, but can also be SimpleMemberAccess and ElementAccess expressions
          // not currently seeing value in testing for the type. Fix #46
@@ -73,7 +73,7 @@ namespace RoslynDom.CSharp
          CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, expression, LanguagePart.Current,
                  LanguageElement.Expression);
          Guardian.Assert.IsNotNull(expression, nameof(expression));
-         newItem.Expression = Corporation.Create<IExpression>(expression, newItem, model).FirstOrDefault();
+         newItem.Expression = OutputContext.Corporation.Create<IExpression>(expression, newItem, model).FirstOrDefault();
 
          CreateFromWorker.StoreWhitespaceForToken(newItem, binary.OperatorToken,
                      LanguagePart.Current, LanguageElement.AssignmentOperator);
@@ -104,7 +104,7 @@ namespace RoslynDom.CSharp
          var node = SyntaxFactory.ExpressionStatement(assignmentSyntax);
 
          node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
 
       }
 

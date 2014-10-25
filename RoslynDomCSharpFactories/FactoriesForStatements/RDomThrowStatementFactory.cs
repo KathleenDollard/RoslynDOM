@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
 
             if (syntax.Expression != null)
             {
-                var expression = Corporation.Create<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
+                var expression = OutputContext.Corporation.Create<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
                 newItem.ExceptionExpression = expression;
             }
 
@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
             if (exception != null) node = node.WithExpression(exception);
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext);
         }
     }
 }

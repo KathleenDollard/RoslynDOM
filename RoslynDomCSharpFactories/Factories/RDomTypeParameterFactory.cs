@@ -168,7 +168,7 @@ namespace RoslynDom.CSharp
 
       private void StoreTypeConstraint(TypeConstraintSyntax asType, RDomTypeParameter newItem, SemanticModel model)
       {
-         var newConstraintType = Corporation
+         var newConstraintType = OutputContext.Corporation
                  .Create(asType.Type, newItem, model)
                  .FirstOrDefault()
                  as IReferencedType;
@@ -209,7 +209,7 @@ namespace RoslynDom.CSharp
          list.Add(node);
          list.Add(GetConstraintClause(itemAsT.Name, itemAsT));
 
-         return list.PrepareForBuildSyntaxOutput(item);
+         return list.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
       private SyntaxNode GetConstraintClause(string name, ITypeParameter itemAsT)

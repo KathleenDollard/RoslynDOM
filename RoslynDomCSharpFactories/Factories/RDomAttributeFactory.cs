@@ -86,11 +86,11 @@ namespace RoslynDom.CSharp
          var nodeList = SyntaxFactory.AttributeList(
                              SyntaxFactory.SeparatedList(
                                  new AttributeSyntax[] {
-                                        (AttributeSyntax)BuildSyntaxHelpers.PrepareForBuildItemSyntaxOutput(node, item)
+                                        (AttributeSyntax)BuildSyntaxHelpers.PrepareForBuildItemSyntaxOutput(node, item,OutputContext )
                                  }));
          nodeList = BuildSyntaxHelpers.AttachWhitespace(nodeList, item.Whitespace2Set, WhitespaceLookup);
 
-         return nodeList.PrepareForBuildSyntaxOutput(item);
+         return nodeList.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
       #region Private methods to support adding attributes
@@ -107,7 +107,7 @@ namespace RoslynDom.CSharp
 
          if (syntax.ArgumentList != null)
          {
-            newItem.AttributeValues.CreateAndAdd(syntax, x => x.ArgumentList.Arguments, x => Corporation.Create(x, newItem, model).Cast<IAttributeValue>());
+            newItem.AttributeValues.CreateAndAdd(syntax, x => x.ArgumentList.Arguments, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IAttributeValue>());
             //var values = ListUtilities.MakeList(syntax, x => x.ArgumentList.Arguments, x => Corporation.Create(x, newItem, model))
             //      .OfType<IAttributeValue>();
             //  foreach (var value in values)

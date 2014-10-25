@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         var returnType = Corporation
+         var returnType = OutputContext.Corporation
                          .Create(syntax.ReturnType, newItem, model)
                          .FirstOrDefault()
                          as IReferencedType;
@@ -60,7 +60,7 @@ namespace RoslynDom.CSharp
 
          newItem.IsExtensionMethod = newItem.TypedSymbol.IsExtensionMethod;
 
-         newItem.Parameters.CreateAndAdd(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model).Cast<IParameter>());
+         newItem.Parameters.CreateAndAdd(syntax, x => x.ParameterList.Parameters, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IParameter>());
          //var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
          //                    .OfType<IParameter>();
          //newItem.Parameters.AddOrMoveRange(parameters);
@@ -129,7 +129,7 @@ namespace RoslynDom.CSharp
          //    { node = node.WithConstraintClauses(clauses); }
          //}
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
    }

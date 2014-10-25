@@ -149,7 +149,6 @@
     <Compile Include="IRetrieveValue.cs" />
     <Compile Include="ISameIntent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PublicAnnotation.cs" />
     <Compile Include="RDomBase.cs" />
     <Compile Include="RDomCollection.cs" />
     <Compile Include="StandardSameIntent.cs" />

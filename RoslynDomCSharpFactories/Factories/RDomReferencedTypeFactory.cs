@@ -130,7 +130,7 @@ namespace RoslynDom.CSharp
             {
                foreach (var typeArg in typeArgListSyntax.Arguments)
                {
-                  var newArg = Corporation
+                  var newArg = OutputContext.Corporation
                               .Create(typeArg, newItem, model)
                               .FirstOrDefault()
                               as IReferencedType;
@@ -219,7 +219,7 @@ namespace RoslynDom.CSharp
                            .FirstOrDefault());
          node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, whitespaceLookup);
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
       // Not sure if this belongs here or in BuildSyntaxHelpers

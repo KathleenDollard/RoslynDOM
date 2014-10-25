@@ -9,11 +9,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RoslynDom.CSharp
 {
-   internal static class RDomEnumFactoryHelper
+   public class RDomEnumFactory
+        : RDomBaseItemFactory<RDomEnum, EnumDeclarationSyntax>
    {
-      // until move to C# 6 - I want to support name of as soon as possible
-      [ExcludeFromCodeCoverage]
-      private static string nameof<T>(T value) { return ""; }
 
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -35,27 +33,60 @@ namespace RoslynDom.CSharp
          }
       }
 
-      public static RDomEnum CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model,
-          ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
+      public RDomEnumFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
+
+      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as EnumDeclarationSyntax;
          var newItem = new RDomEnum(syntaxNode, parent, model);
-         createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-         createFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
 
-         InitializeBaseList(syntax, newItem, model, createFromWorker, corporation);
+         InitializeBaseList(syntax, newItem, model, CreateFromWorker, OutputContext.Corporation);
          newItem.Name = newItem.TypedSymbol.Name;
 
-         newItem.Members.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<IEnumMember>());
+         newItem.Members.CreateAndAdd(syntax, x => x.Members, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IEnumMember>());
          //var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model))
          //                .OfType<IEnumMember>();
          //newItem.Members.AddOrMoveRange(members);
 
-         return newItem;
+         return new IDom[] { newItem };
+      }
+
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+      {
+         var itemAsT = item as IEnum;
+         Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
+
+         var modifiers = item.BuildModfierSyntax();
+         var identifier = SyntaxFactory.Identifier(itemAsT.Name);
+         var node = SyntaxFactory.EnumDeclaration(identifier)
+             .WithModifiers(modifiers);
+
+         var baseList = GetBaseList(itemAsT);
+         if (baseList != null) { node = node.WithBaseList(baseList); }
+
+         var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
+         if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
+
+         var memberList = itemAsT.Members
+                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
+                     .OfType<EnumMemberDeclarationSyntax>()
+                     .ToList();
+         if (memberList.Any())
+         {
+            var memberListSyntax = SyntaxFactory.SeparatedList(memberList);
+            node = node.WithMembers(memberListSyntax);
+         }
+
+         node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
       private static void InitializeBaseList(EnumDeclarationSyntax syntax, RDomEnum newItem, SemanticModel model,
-          ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
+         ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
       {
          var symbol = newItem.Symbol as INamedTypeSymbol;
          if (symbol != null)
@@ -77,37 +108,6 @@ namespace RoslynDom.CSharp
          }
       }
 
-
-      public static IEnumerable<SyntaxNode> BuildSyntax(RDomEnum item, ICSharpBuildSyntaxWorker buildSyntaxWorker, RDomCorporation corporation)
-      {
-         var itemAsT = item as IEnum;
-         Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
-
-         var modifiers = item.BuildModfierSyntax();
-         var identifier = SyntaxFactory.Identifier(item.Name);
-         var node = SyntaxFactory.EnumDeclaration(identifier)
-             .WithModifiers(modifiers);
-
-         var baseList = GetBaseList(itemAsT);
-         if (baseList != null) { node = node.WithBaseList(baseList); }
-
-         var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
-         if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
-
-         var memberList = itemAsT.Members
-                     .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
-                     .OfType<EnumMemberDeclarationSyntax>()
-                     .ToList();
-         if (memberList.Any())
-         {
-            var memberListSyntax = SyntaxFactory.SeparatedList(memberList);
-            node = node.WithMembers(memberListSyntax);
-         }
-
-         node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
-         return node.PrepareForBuildSyntaxOutput(item);
-      }
-
       public static BaseListSyntax GetBaseList(IEnum item)
       {
          if (item.UnderlyingType != null)
@@ -122,25 +122,6 @@ namespace RoslynDom.CSharp
                 SyntaxFactory.SingletonSeparatedList(underlyingTypeSyntax));
          }
          return null;
-      }
-   }
-
-   public class RDomEnumTypeMemberFactory
-        : RDomBaseItemFactory<RDomEnum, EnumDeclarationSyntax>
-   {
-      public RDomEnumTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-
-      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-      {
-         var ret = RDomEnumFactoryHelper.CreateFrom(syntaxNode, parent, model, CreateFromWorker, Corporation);
-         return new IDom[] { ret };
-      }
-
-      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-      {
-         return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item, BuildSyntaxWorker, Corporation);
       }
    }
 

@@ -46,7 +46,7 @@ namespace RoslynDom.CSharp
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         var type = Corporation
+         var type = OutputContext.Corporation
                          .Create(syntax.Type, newItem, model)
                          .FirstOrDefault()
                          as IReferencedType;
@@ -60,9 +60,9 @@ namespace RoslynDom.CSharp
          var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
          var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
          if (getAccessorSyntax != null)
-         { newItem.GetAccessor = (IAccessor)Corporation.Create(getAccessorSyntax, newItem, model).FirstOrDefault(); }
+         { newItem.GetAccessor = (IAccessor)OutputContext.Corporation.Create(getAccessorSyntax, newItem, model).FirstOrDefault(); }
          if (setAccessorSyntax != null)
-         { newItem.SetAccessor = (IAccessor)Corporation.Create(setAccessorSyntax, newItem, model).FirstOrDefault(); }
+         { newItem.SetAccessor = (IAccessor)OutputContext.Corporation.Create(setAccessorSyntax, newItem, model).FirstOrDefault(); }
 
          return newItem;
       }
@@ -92,7 +92,7 @@ namespace RoslynDom.CSharp
 
          node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
    }
 

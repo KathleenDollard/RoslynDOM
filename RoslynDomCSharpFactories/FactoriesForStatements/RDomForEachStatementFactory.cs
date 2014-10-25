@@ -20,7 +20,7 @@ namespace RoslynDom.CSharp
             var syntax = syntaxNode as ForEachStatementSyntax;
             var newItem = base.CreateItemFrom(syntaxNode, parent, model) as RDomForEachStatement;
             newItem.TestAtEnd = false; // restating the default
-            var newVariable = Corporation.Create<IVariableDeclaration>(syntaxNode, newItem, model).FirstOrDefault();
+            var newVariable = OutputContext.Corporation.Create<IVariableDeclaration>(syntaxNode, newItem, model).FirstOrDefault();
             newItem.Variable = (IVariableDeclaration)newVariable;
             return newItem;
          }

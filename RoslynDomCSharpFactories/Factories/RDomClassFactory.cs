@@ -9,10 +9,14 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-   internal static class RDomClassFactoryHelper
+   public class RDomClassTypeMemberFactory
+    : RDomBaseItemFactory<RDomClass, ClassDeclarationSyntax>
    {
-      // until move to C# 6 - I want to support name of as soon as possible
+      public RDomClassTypeMemberFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
 
+      // until move to C# 6 - I want to support name of as soon as possible
       [ExcludeFromCodeCoverage]
       private static string nameof<T>(T value) { return ""; }
 
@@ -42,46 +46,43 @@ namespace RoslynDom.CSharp
          }
       }
 
-      internal static RDomClass CreateFromInternal(SyntaxNode syntaxNode, IDom parent, SemanticModel model,
-             ICSharpCreateFromWorker createFromWorker, RDomCorporation corporation)
+      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as ClassDeclarationSyntax;
          var newItem = new RDomClass(syntaxNode, parent, model);
-         createFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
-         createFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
-         createFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
+         CreateFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
+         newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => OutputContext.Corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
 
          newItem.IsAbstract = newItem.Symbol.IsAbstract;
          newItem.IsSealed = newItem.Symbol.IsSealed;
          newItem.IsStatic = newItem.Symbol.IsStatic;
 
-         return newItem;
+         return new IDom[] { newItem };
       }
 
-      public static IEnumerable<SyntaxNode> BuildSyntax(RDomClass item,
-                   ICSharpBuildSyntaxWorker buildSyntaxWorker,
-                   RDomCorporation corporation)
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IClass;
          Guardian.Assert.IsNotNull(itemAsT, nameof(itemAsT));
 
          var modifiers = item.BuildModfierSyntax();
-         if (item.IsAbstract) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.AbstractKeyword)); }
-         if (item.IsSealed) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.SealedKeyword)); }
-         var identifier = SyntaxFactory.Identifier(item.Name);
+         if (itemAsT.IsAbstract) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.AbstractKeyword)); }
+         if (itemAsT.IsSealed) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.SealedKeyword)); }
+         var identifier = SyntaxFactory.Identifier(itemAsT.Name);
 
          var node = SyntaxFactory.ClassDeclaration(identifier)
              .WithModifiers(modifiers);
          node = BuildSyntaxHelpers.AttachWhitespace(node, item.Whitespace2Set, whitespaceLookup);
 
-         var baseList = BuildSyntaxHelpers.GetBaseList(item);
+         var baseList = BuildSyntaxHelpers.GetBaseList(itemAsT);
          if (baseList != null) { node = node.WithBaseList(baseList); }
 
-         var attributes = buildSyntaxWorker.BuildAttributeSyntax(item.Attributes);
+         var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
          var membersSyntax = itemAsT.Members
@@ -94,63 +95,7 @@ namespace RoslynDom.CSharp
                     (x, p) => x.WithTypeParameterList(p),
                     (x, c) => x.WithConstraintClauses(c));
 
-         return node.PrepareForBuildSyntaxOutput(item);
-      }
-
-   }
-
-   public class RDomClassTypeMemberFactory
-     : RDomBaseItemFactory<RDomClass, ClassDeclarationSyntax>
-   {
-      public RDomClassTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
-      { }
-
-      protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-      {
-         var ret = RDomClassFactoryHelper.CreateFromInternal(syntaxNode, parent, model, CreateFromWorker, Corporation);
-         return new IDom[] { ret };
-      }
-
-      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-      {
-         return RDomClassFactoryHelper.BuildSyntax((RDomClass)item, BuildSyntaxWorker, Corporation);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
    }
-
-   //public class RDomClassTypeMemberFactory
-   //       : RDomBaseItemFactory<RDomClass, ClassDeclarationSyntax>
-   //{
-   //   public RDomClassTypeMemberFactory(RDomCorporation corporation)
-   //      : base(corporation)
-   //   { }
-
-   //   protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-   //   {
-   //      return RDomClassFactoryHelper.CreateFromInternal(syntaxNode, parent, model, CreateFromWorker, Corporation);
-   //   }
-
-   //   public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-   //   {
-   //      return RDomClassFactoryHelper.BuildSyntax((RDomClass)item, BuildSyntaxWorker, Corporation);
-   //   }
-   //}
-
-   //public class RDomClassStemMemberFactory
-   //       : RDomBaseItemFactory<RDomClass, ClassDeclarationSyntax>
-   //{
-   //   public RDomClassStemMemberFactory(RDomCorporation corporation)
-   //      : base(corporation)
-   //   { }
-
-   //   protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
-   //   {
-   //      return RDomClassFactoryHelper.CreateFromInternal(syntaxNode, parent, model, CreateFromWorker, Corporation);
-   //   }
-   //   public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
-   //   {
-   //      return RDomClassFactoryHelper.BuildSyntax((RDomClass)item, BuildSyntaxWorker, Corporation);
-   //   }
-   //}
-
 }

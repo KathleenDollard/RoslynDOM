@@ -86,7 +86,7 @@ namespace RoslynDom.CSharp
          var attributeList = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
          if (attributeList.Any()) { node = node.WithAttributeLists(attributeList); }
 
-         return node.PrepareForBuildSyntaxOutput(item);
+         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
 
 

@@ -58,11 +58,11 @@ namespace RoslynDom.CSharp
             var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
             if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
-            node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
+            //node = node.WithLeadingTrivia(BuildSyntaxHelpers.LeadingTrivia(item));
 
             node = node.WithBody((BlockSyntax)RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup));
 
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext );
         }
 
     }

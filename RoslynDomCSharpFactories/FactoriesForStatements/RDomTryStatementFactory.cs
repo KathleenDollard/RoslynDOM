@@ -58,7 +58,7 @@ namespace RoslynDom.CSharp
                 CreateFromWorker.StoreWhitespace(newCatch, ctch.Block, LanguagePart.Current, WhitespaceLookup);
                 if (ctch.Declaration != null)
                 {
-                    var type = Corporation
+                    var type = OutputContext.Corporation
                                   .Create(ctch.Declaration.Type, newCatch, model)
                                   .FirstOrDefault()
                                   as IReferencedType;
@@ -66,13 +66,13 @@ namespace RoslynDom.CSharp
                     CreateFromWorker.StoreWhitespace(newCatch, ctch.Declaration, LanguagePart.Current, WhitespaceLookup);
                     if (!string.IsNullOrWhiteSpace(ctch.Declaration.Identifier.ToString()))
                     {
-                        newCatch.Variable = Corporation.Create(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
+                        newCatch.Variable = OutputContext.Corporation.Create(ctch.Declaration, newCatch, model).FirstOrDefault() as IVariableDeclaration;
                         newCatch.Variable.Type = type;
                     }
                 }
                 if (ctch.Filter != null)
                 {
-                    newCatch.Condition = Corporation.Create<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault();
+                    newCatch.Condition = OutputContext.Corporation.Create<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault();
                     CreateFromWorker.StoreWhitespace(newCatch.Condition, ctch.Filter, LanguagePart.Current, WhitespaceLookup);
                 }
                 newItem.CatchesAll.AddOrMove(newCatch);
@@ -103,7 +103,7 @@ namespace RoslynDom.CSharp
                      .WithBlock(block);
 
             node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsT.Whitespace2Set, WhitespaceLookup);
-            return node.PrepareForBuildSyntaxOutput(item);
+            return node.PrepareForBuildSyntaxOutput(item, OutputContext);
         }
 
         private FinallyClauseSyntax BuildFinallySyntax(ITryStatement itemAsT)

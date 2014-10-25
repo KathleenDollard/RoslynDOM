@@ -23,26 +23,26 @@ namespace RoslynDom.CSharp
 
       private const string annotationMarker = "RDomBuildSyntaxMarker";
 
-      public static IEnumerable<SyntaxNode> PrepareForBuildSyntaxOutput(this IEnumerable<SyntaxNode> nodes, IDom item)
+      public static IEnumerable<SyntaxNode> PrepareForBuildSyntaxOutput(this IEnumerable<SyntaxNode> nodes, IDom item, OutputContext context)
       {
          var ret = new List<SyntaxNode>();
          foreach (var node in nodes)
          {
-            ret.Add(PrepareForBuildItemSyntaxOutput(node, item));
+            ret.Add(PrepareForBuildItemSyntaxOutput(node, item, context));
          }
          return ret;
       }
 
-      public static IEnumerable<SyntaxNode> PrepareForBuildSyntaxOutput(this SyntaxNode node, IDom item)
+      public static IEnumerable<SyntaxNode> PrepareForBuildSyntaxOutput(this SyntaxNode node, IDom item, OutputContext context)
       {
-         node = PrepareForBuildItemSyntaxOutput(node, item);
+         node = PrepareForBuildItemSyntaxOutput(node, item, context);
          return new SyntaxNode[] { node };
       }
 
-      public static TNode PrepareForBuildItemSyntaxOutput<TNode>(this TNode node, IDom item)
+      public static TNode PrepareForBuildItemSyntaxOutput<TNode>(this TNode node, IDom item, OutputContext context)
           where TNode : SyntaxNode
       {
-         var moreLeadingTrivia = LeadingTrivia(item);
+         var moreLeadingTrivia = LeadingTrivia(item, context );
          var leadingTriviaList = moreLeadingTrivia.Concat(node.GetLeadingTrivia());
          node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadingTriviaList));
          if (item.NeedsFormatting)
@@ -93,15 +93,15 @@ namespace RoslynDom.CSharp
          return syntax;
       }
 
-      public static SyntaxTriviaList LeadingTrivia(IDom item)
+      public static SyntaxTriviaList LeadingTrivia(IDom item, OutputContext context)
       {
          var leadingTrivia = new List<SyntaxTrivia>();
-         leadingTrivia.AddRange(BuildDetail(item));
+         leadingTrivia.AddRange(BuildDetail(item, context));
          leadingTrivia.AddRange(BuildSyntaxHelpers.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation));
          return SyntaxFactory.TriviaList(leadingTrivia);
       }
 
-      private static IEnumerable<SyntaxTrivia> BuildDetail<T>(T item)
+      private static IEnumerable<SyntaxTrivia> BuildDetail<T>(T item, OutputContext context)
          where T : IDom
       {
          var trivias = new List<SyntaxTrivia>();
@@ -109,10 +109,10 @@ namespace RoslynDom.CSharp
          var parentAsContainer = item.Parent as IContainer;
          if (parentAsContainer == null) return trivias;
          var candidates = parentAsContainer.GetMembers();
-         var commentWhites = candidates
-                             .PreviousSiblingsUntil(item, x => !(x is IComment || x is IVerticalWhitespace))
+         var detail = candidates
+                             .PreviousSiblingsUntil(item, x => !(x is IDetail))
                              .OfType<IDetail>();
-         trivias.AddRange(MakeWhiteCommentTrivia(commentWhites));
+         trivias.AddRange(MakeWhiteCommentTrivia(detail));
          return trivias;
       }
 
