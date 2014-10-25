@@ -60,6 +60,7 @@
     <Compile Include="IContainerCheck.cs" />
     <Compile Include="ITriviaFactory.cs" />
     <Compile Include="IWorker.cs" />
+    <Compile Include="OutputContext.cs" />
     <Compile Include="Provider.cs" />
     <Compile Include="IRDomCanLoad.cs" />
     <Compile Include="IRDomFactory.cs" />

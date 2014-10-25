@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomTryStatementFactory
-         : RDomBaseItemFactory<RDomTryStatement, TryStatementSyntax>
+         : RDomBaseSyntaxNodeFactory<RDomTryStatement, TryStatementSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as TryStatementSyntax;
             var newItem = new RDomTryStatement(syntaxNode, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext );
             CreateFromWorker.InitializeStatements(newItem, syntax.Block, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, syntax.Block, LanguagePart.Current, WhitespaceLookup);
@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
             foreach (var ctch in catchSyntaxList)
             {
                 var newCatch = new RDomCatchStatement(ctch, newItem, model);
-                CreateFromWorker.StandardInitialize(newCatch, ctch, newItem, model);
+                CreateFromWorker.StandardInitialize(newCatch, ctch, newItem, model, OutputContext);
                 CreateFromWorker.InitializeStatements(newCatch, ctch.Block, newCatch, model);
                 CreateFromWorker.StoreWhitespace(newCatch, ctch, LanguagePart.Current, WhitespaceLookup);
                 CreateFromWorker.StoreWhitespace(newCatch, ctch.Block, LanguagePart.Current, WhitespaceLookup);
@@ -80,7 +80,7 @@ namespace RoslynDom.CSharp
             if (syntax.Finally != null)
             {
                 var newFinally = new RDomFinallyStatement(syntax.Finally, newItem, model);
-                CreateFromWorker.StandardInitialize(newFinally, syntax.Finally, parent, model);
+                CreateFromWorker.StandardInitialize(newFinally, syntax.Finally, parent, model, OutputContext);
                 CreateFromWorker.InitializeStatements(newFinally, syntax.Finally.Block, newFinally, model);
                 CreateFromWorker.StoreWhitespace(newFinally, syntax.Finally, LanguagePart.Current, WhitespaceLookup);
                 CreateFromWorker.StoreWhitespace(newFinally, syntax.Finally.Block, LanguagePart.Current, WhitespaceLookup);

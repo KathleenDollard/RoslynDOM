@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomInvocationStatementFactory
-        : RDomBaseItemFactory<RDomInvocationStatement, ExpressionStatementSyntax>
+        : RDomBaseSyntaxNodeFactory<RDomInvocationStatement, ExpressionStatementSyntax>
    {
       public RDomInvocationStatementFactory(RDomCorporation corporation)
        : base(corporation)
@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as ExpressionStatementSyntax;
          var newItem = new RDomInvocationStatement(syntaxNode, parent, model);
-         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
          CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, syntax, LanguagePart.Current,
                                  LanguageElement.Expression);
 

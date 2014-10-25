@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace RoslynDom.CSharp
 {
     public class RDomEnumMemberMiscFactory
-       : RDomBaseItemFactory<RDomEnumMember, EnumMemberDeclarationSyntax>
+       : RDomBaseSyntaxNodeFactory<RDomEnumMember, EnumMemberDeclarationSyntax>
     {
    
         private static WhitespaceKindLookup _whitespaceLookup;
@@ -39,7 +39,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as EnumMemberDeclarationSyntax;
             var newItem = new RDomEnumMember(syntaxNode, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             CreateFromWorker.StoreWhitespace(newItem, syntax,LanguagePart.Current,  WhitespaceLookup);
             MemberWhitespace(newItem, syntax);
 

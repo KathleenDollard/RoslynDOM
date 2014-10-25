@@ -10,7 +10,7 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-   public class RDomAttributeFactory : RDomBaseItemFactory<RDomAttribute, AttributeSyntax>
+   public class RDomAttributeFactory : RDomBaseSyntaxNodeFactory<RDomAttribute, AttributeSyntax>
    {
 
       private static WhitespaceKindLookup _whitespaceLookup;
@@ -97,7 +97,7 @@ namespace RoslynDom.CSharp
       private IAttribute CreateFromItem(AttributeSyntax syntax, IDom parent, SemanticModel model)
       {
          var newItem = new RDomAttribute(syntax, parent, model);
-         CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntax, parent, model, OutputContext);
          CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, syntax.Parent, LanguagePart.Current, WhitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, syntax.ArgumentList, LanguagePart.Current, WhitespaceLookup);

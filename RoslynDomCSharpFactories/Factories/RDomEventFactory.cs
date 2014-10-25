@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomEventTypeMemberFactory
-         : RDomBaseItemFactory<RDomEvent, EventFieldDeclarationSyntax>
+         : RDomBaseSyntaxNodeFactory<RDomEvent, EventFieldDeclarationSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -48,7 +48,7 @@ namespace RoslynDom.CSharp
          {
             var newItem = new RDomEvent(decl, parent, model);
             list.Add(newItem);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, decl, LanguagePart.Current, WhitespaceLookup);
 

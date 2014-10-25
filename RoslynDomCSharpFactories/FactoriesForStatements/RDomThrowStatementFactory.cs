@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomThrowStatementFactory
-                : RDomBaseItemFactory<RDomThrowStatement, ThrowStatementSyntax>
+                : RDomBaseSyntaxNodeFactory<RDomThrowStatement, ThrowStatementSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -36,7 +36,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as ThrowStatementSyntax;
             var newItem = new RDomThrowStatement(syntaxNode, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
             if (syntax.Expression != null)

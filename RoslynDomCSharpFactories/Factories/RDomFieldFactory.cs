@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomFieldTypeMemberFactory
-         : RDomBaseItemFactory<RDomField, VariableDeclaratorSyntax>
+         : RDomBaseSyntaxNodeFactory<RDomField, VariableDeclaratorSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
          {
             var newItem = new RDomField(decl, parent, model);
             list.Add(newItem);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, decl, LanguagePart.Current, WhitespaceLookup);
 

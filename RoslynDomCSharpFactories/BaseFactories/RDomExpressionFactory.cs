@@ -11,7 +11,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomBaseItemFactory
-                : RDomBaseItemFactory<RDomExpression, ExpressionSyntax>
+                : RDomBaseSyntaxNodeFactory<RDomExpression, ExpressionSyntax>
    {
       public RDomBaseItemFactory(RDomCorporation corporation)
           : base(corporation)

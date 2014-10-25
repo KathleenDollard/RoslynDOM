@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomDeclarationStatementFactory
-       : RDomBaseItemFactory<RDomDeclarationStatement, VariableDeclaratorSyntax>
+       : RDomBaseSyntaxNodeFactory<RDomDeclarationStatement, VariableDeclaratorSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 

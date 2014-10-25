@@ -8,7 +8,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomBlockStatementFactory
-            : RDomBaseItemFactory<RDomBlockStatement, BlockSyntax>
+            : RDomBaseSyntaxNodeFactory<RDomBlockStatement, BlockSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as BlockSyntax;
             var newItem = new RDomBlockStatement(syntaxNode, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
             foreach (var statementSyntax in syntax.Statements)

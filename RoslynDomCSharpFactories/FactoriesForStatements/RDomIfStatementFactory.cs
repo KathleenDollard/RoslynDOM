@@ -10,7 +10,7 @@ namespace RoslynDom.CSharp
 {
 
     public class RDomIfStatementFactory
-         : RDomBaseItemFactory<RDomIfStatement, IfStatementSyntax>
+         : RDomBaseSyntaxNodeFactory<RDomIfStatement, IfStatementSyntax>
     {
 
         private static WhitespaceKindLookup _whitespaceLookup;
@@ -85,7 +85,7 @@ namespace RoslynDom.CSharp
                    SyntaxNode syntax, IDom parent, SemanticModel model)
            where T : class, IDom, IStatementBlock
         {
-            CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntax, parent, model, OutputContext);
             CreateFromWorker.InitializeStatements(newItem, statement, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, statement, LanguagePart.Current, WhitespaceLookup);

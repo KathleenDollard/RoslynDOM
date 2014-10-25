@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomVariableDeclarationFactory
-       : RDomBaseItemFactory<RDomVariableDeclaration, VariableDeclaratorSyntax>
+       : RDomBaseSyntaxNodeFactory<RDomVariableDeclaration, VariableDeclaratorSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -91,7 +91,7 @@ namespace RoslynDom.CSharp
             {
                var equalsClause = decl.Initializer;
                newItem.Initializer = OutputContext.Corporation.Create<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
-               CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model);
+               CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model, OutputContext);
                CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
             }
@@ -102,7 +102,7 @@ namespace RoslynDom.CSharp
       public IVariable SetupNewVariable(VariableKind variableKind, RDomBaseVariable newItem, TypeSyntax typeSyntax,
           SyntaxNode node, IDom parent, SemanticModel model)
       {
-         CreateFromWorker.StandardInitialize(newItem, node, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, node, parent, model, OutputContext);
          newItem.Name = newItem.TypedSymbol.Name;
          var declaredType = typeSyntax.ToString();
          var returnType = OutputContext.Corporation

@@ -2,76 +2,27 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
    // Factories are specific to the type, FactoryHelpers are specific to the level (StemMember, TypeMember, Statement, Expression)
-   public abstract class RDomBaseItemFactory<T, TSyntax> : IRDomFactory
+   public abstract class RDomBaseSyntaxNodeFactory<T, TSyntax> : RDomBaseFactory<T>, IRDomFactory
        where TSyntax : SyntaxNode
+       where T : IDom
    {
-      // until move to C# 6 - I want to support name of as soon as possible
-      [ExcludeFromCodeCoverage]
-      protected static string nameof<T2>(T2 value) { return ""; }
-
-      protected RDomBaseItemFactory(RDomCorporation corporation)
-      {
-         OutputContext = new OutputContext(corporation);
-      }
+      protected RDomBaseSyntaxNodeFactory(RDomCorporation corporation) : base(corporation)
+      { }
 
       //public abstract string Language { get; }
       public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
 
-      public OutputContext OutputContext { get; private set; }
-
-      //protected RDomCorporation Corporation { get; private set; }
-
       public virtual Type[] SyntaxNodeTypes
       { get { return new Type[] { typeof(TSyntax) }; } }
 
-      public virtual Type[] ExplicitNodeTypes
-      { get { return null; } }
-
       public virtual Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
       { get { return null; } }
-
-      public virtual Type DomType
-      {  get { return typeof(T); } }
-
-      private ICSharpBuildSyntaxWorker _buildSyntaxWorker;
-      internal ICSharpBuildSyntaxWorker BuildSyntaxWorker
-      {
-         get
-         {
-            if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)OutputContext.Corporation.BuildSyntaxWorker; }
-            return _buildSyntaxWorker;
-         }
-
-      }
-
-      private ICSharpCreateFromWorker _createFromWorker;
-      internal ICSharpCreateFromWorker CreateFromWorker
-      {
-         get
-         {
-            if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)OutputContext.Corporation.CreateFromWorker; }
-            return _createFromWorker;
-         }
-
-      }
-
-      public virtual RDomPriority Priority
-      {
-         get
-         {
-            if (this.GetType().IsConstructedGenericType) { return RDomPriority.Fallback; }
-            return RDomPriority.Normal;
-         }
-      }
 
       /// <summary>
       /// This is the key method for creating new RoslynDom elements. You can create new factories
@@ -105,7 +56,7 @@ namespace RoslynDom.CSharp
             var newItem = newItems.FirstOrDefault();
             if (newItem != null)
             {
-               var whiteComment = CreateFromWorker.GetDetail(syntaxNode, newItem, model);
+               var whiteComment = CreateFromWorker.GetDetail(syntaxNode, newItem, model, OutputContext );
                ret.AddRange(whiteComment.OfType<IDom>());
             }
          }

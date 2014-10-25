@@ -10,7 +10,7 @@ namespace RoslynDom.CSharp
 {
 
     public class RDomNamespaceStemMemberFactory
-           : RDomBaseItemFactory<RDomNamespace, NamespaceDeclarationSyntax>
+           : RDomBaseSyntaxNodeFactory<RDomNamespace, NamespaceDeclarationSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -46,7 +46,7 @@ namespace RoslynDom.CSharp
             foreach (var name in names)
             {
                 var newItem = new RDomNamespace(syntaxNode, parent, model, name, group);
-                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+                CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
                 CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
                 // At this point, item is the last newItem

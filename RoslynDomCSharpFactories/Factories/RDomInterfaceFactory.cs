@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace RoslynDom.CSharp
 {
     public class RDomInterfaceTypeMemberFactory
-      : RDomBaseItemFactory<RDomInterface, InterfaceDeclarationSyntax>
+      : RDomBaseSyntaxNodeFactory<RDomInterface, InterfaceDeclarationSyntax>
    {
       public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
           : base(corporation)
@@ -46,7 +46,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as InterfaceDeclarationSyntax;
          var newItem = new RDomInterface(syntaxNode, parent, model);
-        CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+        CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
         CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
         CreateFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 

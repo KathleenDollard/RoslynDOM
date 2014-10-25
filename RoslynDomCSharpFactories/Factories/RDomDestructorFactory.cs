@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomDestructorTypeMemberFactory
-          : RDomBaseItemFactory<RDomDestructor, DestructorDeclarationSyntax>
+          : RDomBaseSyntaxNodeFactory<RDomDestructor, DestructorDeclarationSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -36,7 +36,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as DestructorDeclarationSyntax;
             var newItem = new RDomDestructor(syntaxNode, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, WhitespaceLookup);
 

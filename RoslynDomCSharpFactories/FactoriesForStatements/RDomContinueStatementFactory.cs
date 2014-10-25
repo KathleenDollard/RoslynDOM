@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomContinueStatementFactory
-                : RDomBaseItemFactory<RDomContinueStatement, ContinueStatementSyntax>
+                : RDomBaseSyntaxNodeFactory<RDomContinueStatement, ContinueStatementSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -35,7 +35,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as ContinueStatementSyntax;
             var newItem = new RDomContinueStatement(syntaxNode, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
             return newItem;

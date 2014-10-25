@@ -9,7 +9,7 @@ using System;
 namespace RoslynDom.CSharp
 {
    public class RDomAttributeValueMiscFactory
-           : RDomBaseItemFactory<RDomAttributeValue, AttributeArgumentSyntax>
+           : RDomBaseSyntaxNodeFactory<RDomAttributeValue, AttributeArgumentSyntax>
    {
 
       public RDomAttributeValueMiscFactory(RDomCorporation corporation)
@@ -21,7 +21,7 @@ namespace RoslynDom.CSharp
          var syntax = syntaxNode as AttributeArgumentSyntax;
          var newItem = new RDomAttributeValue(syntaxNode, parent, model);
          InitializeAttributeValue(newItem, syntax, model);
-         CreateFromWorker.StandardInitialize(newItem, syntax, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntax, parent, model, OutputContext);
          StoreWhitespace(newItem, syntax);
          return newItem;
       }

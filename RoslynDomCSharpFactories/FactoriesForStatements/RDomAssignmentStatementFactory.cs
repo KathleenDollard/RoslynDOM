@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomAssignmentStatementFactory
-        : RDomBaseItemFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
+        : RDomBaseSyntaxNodeFactory<RDomAssignmentStatement, ExpressionStatementSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -53,7 +53,7 @@ namespace RoslynDom.CSharp
          // TODO: Why not cast immediately to BinaryExpression?
          var syntax = syntaxNode as ExpressionStatementSyntax;
          var newItem = new RDomAssignmentStatement(syntaxNode, parent, model);
-         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
          CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, syntax.Expression, LanguagePart.Current, WhitespaceLookup);
 

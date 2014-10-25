@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomUsingDirectiveStemMemberFactory
-           : RDomBaseItemFactory<RDomUsingDirective, UsingDirectiveSyntax>
+           : RDomBaseSyntaxNodeFactory<RDomUsingDirective, UsingDirectiveSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -38,7 +38,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as UsingDirectiveSyntax;
          var newItem = new RDomUsingDirective(syntaxNode, parent, model);
-         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
          CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
 
          newItem.Name = syntax.Name.NameFrom();

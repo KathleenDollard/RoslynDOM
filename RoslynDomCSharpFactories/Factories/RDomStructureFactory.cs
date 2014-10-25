@@ -11,7 +11,7 @@ namespace RoslynDom.CSharp
 {
    
    public class RDomStructureFactory
-     : RDomBaseItemFactory<RDomStructure, StructDeclarationSyntax>
+     : RDomBaseSyntaxNodeFactory<RDomStructure, StructDeclarationSyntax>
    {
       public RDomStructureFactory(RDomCorporation corporation)
           : base(corporation)
@@ -45,7 +45,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as StructDeclarationSyntax;
          var newItem = new RDomStructure(syntaxNode, parent, model);
-         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
          CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
          newItem.Name = newItem.TypedSymbol.Name;
 

@@ -9,7 +9,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomOperatorTypeMemberFactory
-         : RDomBaseItemFactory<RDomOperator, OperatorDeclarationSyntax>
+         : RDomBaseSyntaxNodeFactory<RDomOperator, OperatorDeclarationSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as OperatorDeclarationSyntax;
          var newItem = new RDomOperator(syntaxNode, parent, model);
-         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
          CreateFromWorker.InitializeStatements(newItem, syntax.Body, newItem, model);
          CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, syntax.Body, LanguagePart.Current, WhitespaceLookup);

@@ -13,7 +13,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class StructuredDocumentationFactory
-               : RDomBaseItemFactory<IStructuredDocumentation, SyntaxNode>
+               : RDomBaseSyntaxNodeFactory<IStructuredDocumentation, SyntaxNode>, ITriviaFactory<IStructuredDocumentation>
    {
 
       public StructuredDocumentationFactory(RDomCorporation corporation)
@@ -82,5 +82,82 @@ namespace RoslynDom.CSharp
          return null;
       }
 
+      public IDom CreateFrom(string possibleAnnotation, OutputContext context)
+      {
+         throw new NotImplementedException();
+      }
+
+      public IDom CreateFrom(SyntaxTrivia trivia, OutputContext context)
+      {
+         throw new NotImplementedException();
+      }
+
+      public IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IDom item, OutputContext context)
+      {
+         var ret = new List<SyntaxTrivia>();
+         var itemStructDoc = item as IStructuredDocumentation;
+         if (itemStructDoc == null) return ret;
+         var leadingWs = "";
+         var innerLeadingWs = " ";
+         XDocument xDoc = null;
+               
+         if (itemStructDoc.Document == null)
+         {
+            xDoc = new XDocument();
+         }
+         else
+         {
+            xDoc = XDocument.Parse(itemStructDoc.Document);
+            leadingWs = itemStructDoc.Whitespace2Set[LanguageElement.DocumentationComment].LeadingWhitespace;
+            innerLeadingWs = itemStructDoc.Whitespace2Set[LanguagePart.Inner, LanguageElement.DocumentationComment].LeadingWhitespace;
+         }
+         if (!(string.IsNullOrWhiteSpace(itemStructDoc.Description)))
+         {
+            var description = innerLeadingWs + itemStructDoc.Description + "\r\n";
+            SetDescriptionInXDoc(xDoc, description);
+         }
+         string newDocAsString = PrefixLinesWithDocCommentPrefix(leadingWs, xDoc);
+
+         var triviaList = SyntaxFactory.ParseLeadingTrivia(newDocAsString);
+         if (triviaList.Any())
+         { return triviaList; }
+         return ret;
+      }
+
+      private static void SetDescriptionInXDoc(XDocument xDoc, string description)
+      {
+         var oldParent = xDoc.DescendantNodes().OfType<XElement>().Where(x => x.Name == "member").FirstOrDefault();
+         if (!string.IsNullOrWhiteSpace(description))
+         {
+            var oldSummaryElement = xDoc
+                        .DescendantNodes().OfType<XElement>()
+                        .Where(x => x.Name == "summary")
+                        .FirstOrDefault();
+            if (oldSummaryElement != null)
+            { oldSummaryElement.Value = description; }
+            else
+            {
+               var newSummary = new XElement("summary", description);
+               oldParent.AddFirst(newSummary);
+            }
+         }
+      }
+
+      private static string PrefixLinesWithDocCommentPrefix(string leadingWs, XDocument xDoc)
+      {
+         // No doubt I'll feel dirty in the morning, but the manual alternative is awful
+         var oldDocsAsString = xDoc.ToString();
+         if (string.IsNullOrWhiteSpace(oldDocsAsString)) return "";
+         var lines = oldDocsAsString.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+         var newDocAsString = ""; // these are short, so decided not to use StringBuilder
+         foreach (var line in lines)
+         {
+            var useLine = line.Trim();
+            if (useLine.StartsWith("<member") || useLine.StartsWith("</member")) continue;
+            newDocAsString += leadingWs + "/// " + useLine + "\r\n";
+         }
+
+         return newDocAsString;
+      }
    }
 }

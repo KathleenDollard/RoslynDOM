@@ -8,7 +8,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomRootFactory
-          : RDomBaseItemFactory<RDomRoot, CompilationUnitSyntax>
+          : RDomBaseSyntaxNodeFactory<RDomRoot, CompilationUnitSyntax>
     {
 
         public RDomRootFactory(RDomCorporation corporation)

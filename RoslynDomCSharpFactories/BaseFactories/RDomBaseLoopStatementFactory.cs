@@ -11,7 +11,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public abstract class RDomBaseLoopStatementFactory<T, TSyntax>
-        : RDomBaseItemFactory<T, TSyntax>
+        : RDomBaseSyntaxNodeFactory<T, TSyntax>
        where T : class, IDom, ILoop
        where TSyntax : SyntaxNode
    {
@@ -62,7 +62,7 @@ namespace RoslynDom.CSharp
 
          Guardian.Assert.IsNotNull(condition, nameof(condition));
 
-         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
          CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, statement, LanguagePart.Current, WhitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, condition, LanguagePart.Current, WhitespaceLookup);

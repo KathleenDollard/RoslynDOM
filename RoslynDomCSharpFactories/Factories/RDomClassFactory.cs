@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomClassTypeMemberFactory
-    : RDomBaseItemFactory<RDomClass, ClassDeclarationSyntax>
+    : RDomBaseSyntaxNodeFactory<RDomClass, ClassDeclarationSyntax>
    {
       public RDomClassTypeMemberFactory(RDomCorporation corporation)
           : base(corporation)
@@ -50,7 +50,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as ClassDeclarationSyntax;
          var newItem = new RDomClass(syntaxNode, parent, model);
-         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
          CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 

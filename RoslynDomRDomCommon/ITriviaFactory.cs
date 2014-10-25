@@ -10,22 +10,24 @@ namespace RoslynDom.Common
 {
    public interface ITriviaFactory : IWorker
    {
-        IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IPublicAnnotation publicAnnotation);
+      ///// <summary>
+      ///// Returns the public annotation, or null if there is no match
+      ///// </summary>
+      ///// <param name="comment"></param>
+      ///// <returns></returns>
+      //IDom CreateFrom(string possibleAnnotation, OutputContext context);
+
+      /// <summary>
+      /// Returns the detail, or null if there is no match
+      /// </summary>
+      /// <param name="comment"></param>
+      /// <returns></returns>
+      IDom CreateFrom(SyntaxTrivia trivia, OutputContext context);
+
+      IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IDom item, OutputContext context);
    }
    public interface ITriviaFactory<T> : ITriviaFactory
    {
-      /// <summary>
-      /// Returns the public annotation, or null if there is no match
-      /// </summary>
-      /// <param name="comment"></param>
-      /// <returns></returns>
-      T CreateFrom(string possibleAnnotation, RDomCorporation corporation);
-
-      /// <summary>
-      /// Returns the public annotation, or null if there is no match
-      /// </summary>
-      /// <param name="comment"></param>
-      /// <returns></returns>
-      T CreateFrom(SyntaxTrivia trivia, RDomCorporation corporation);
+ 
    }
 }

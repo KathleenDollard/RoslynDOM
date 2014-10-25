@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
     public class RDomCheckedStatementFactory
-                : RDomBaseItemFactory<RDomCheckedStatement, CheckedStatementSyntax>
+                : RDomBaseSyntaxNodeFactory<RDomCheckedStatement, CheckedStatementSyntax>
     {
         private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -39,7 +39,7 @@ namespace RoslynDom.CSharp
         {
             var syntax = syntaxNode as CheckedStatementSyntax;
             var newItem = new RDomCheckedStatement(syntaxNode, parent, model);
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             CreateFromWorker.InitializeStatements(newItem, syntax.Block, newItem, model);
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, syntax.Block, LanguagePart.Current, WhitespaceLookup);

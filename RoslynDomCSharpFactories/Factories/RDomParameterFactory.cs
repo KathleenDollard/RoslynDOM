@@ -9,7 +9,7 @@ using System;
 namespace RoslynDom.CSharp
 {
    public class RDomParameterMiscFactory
-           : RDomBaseItemFactory<RDomParameter, ParameterSyntax>
+           : RDomBaseSyntaxNodeFactory<RDomParameter, ParameterSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as ParameterSyntax;
          var newItem = new RDomParameter(syntaxNode, parent, model);
-         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
 
          newItem.Name = newItem.TypedSymbol.Name;
 

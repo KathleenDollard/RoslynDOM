@@ -20,11 +20,12 @@ namespace RoslynDom.Common
 
    public interface ICreateFromWorker : ICorporationWorker
    {
-      void StandardInitialize<T>(T item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      void StandardInitialize<T>(T item, SyntaxNode syntaxNode, IDom parent, SemanticModel model, OutputContext context)
           where T : class, IDom;
       // void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model);
       void InitializeStatements(IStatementBlock statementBlock, SyntaxNode syntaxNode, IDom parent, SemanticModel model);
       IEnumerable<IDom> CreateInvalidMembers(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
+      Tuple<string, string, string> ExtractComment(string fullLine);
    }
 
    public interface IBuildSyntaxWorker : ICorporationWorker

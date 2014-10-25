@@ -9,7 +9,7 @@ namespace RoslynDom.CSharp
 {
    internal interface ICSharpCreateFromWorker : ICreateFromWorker
    {
-      IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
                   where TSyntax : SyntaxNode
                   where T : class, IDom;
 
@@ -17,7 +17,7 @@ namespace RoslynDom.CSharp
       //    where TSyntax : SyntaxNode
       //    where T : class, IDom;
 
-      IEnumerable<IStructuredDocumentation> GetStructuredDocumenation<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      IEnumerable<IStructuredDocumentation> GetStructuredDocumenation<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
             where TSyntax : SyntaxNode
             where T : class, IDom;
 

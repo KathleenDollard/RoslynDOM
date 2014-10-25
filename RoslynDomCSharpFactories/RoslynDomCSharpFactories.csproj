@@ -58,8 +58,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseFactories\RDomBaseLoopStatementFactory.cs" />
+    <Compile Include="BaseFactories\RDomBaseFactory.cs" />
+    <Compile Include="BaseFactories\RDomBaseSyntaxNodeFactory.cs" />
+    <Compile Include="BaseFactories\RDomBaseSyntaxTriviaFactory.cs" />
     <Compile Include="Factories\RDomEventFactory.cs" />
-    <Compile Include="GetSyntaxContext.cs" />
     <Compile Include="LoadContext.cs" />
     <Compile Include="TriviaManager.cs" />
     <Compile Include="Trivia\TriviaForClasss.cs" />
@@ -117,7 +119,6 @@
     <Compile Include="PublicAnnotationFactory.cs" />
     <Compile Include="RDomCSharp.cs" />
     <Compile Include="RoslynCSharpUtilities.cs" />
-    <Compile Include="BaseFactories\RDomBaseItemFactory.cs" />
     <Compile Include="ICSharpBuildSyntaxWorker.cs" />
   </ItemGroup>
   <ItemGroup>

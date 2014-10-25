@@ -10,7 +10,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomReferencedTypeMiscFactory
-          : RDomBaseItemFactory<RDomReferencedType, TypeSyntax>
+          : RDomBaseSyntaxNodeFactory<RDomReferencedType, TypeSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
          {
             var newItem = new RDomReferencedType(syntaxNode, parent, model);
 
-            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model);
+            CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
             StoreWhitespace(typeSyntax, newItem);
 
             CreateTypeArgs(syntaxNode, model, newItem);

@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
       public static TNode PrepareForBuildItemSyntaxOutput<TNode>(this TNode node, IDom item, OutputContext context)
           where TNode : SyntaxNode
       {
-         var moreLeadingTrivia = LeadingTrivia(item, context );
+         var moreLeadingTrivia = LeadingTrivia(item, context);
          var leadingTriviaList = moreLeadingTrivia.Concat(node.GetLeadingTrivia());
          node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadingTriviaList));
          if (item.NeedsFormatting)
@@ -96,12 +96,13 @@ namespace RoslynDom.CSharp
       public static SyntaxTriviaList LeadingTrivia(IDom item, OutputContext context)
       {
          var leadingTrivia = new List<SyntaxTrivia>();
-         leadingTrivia.AddRange(BuildDetail(item, context));
-         leadingTrivia.AddRange(BuildSyntaxHelpers.BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation));
+         // These are different because StructuredDocs is attached in RoslynDom
+         leadingTrivia.AddRange(BuildPreviousDetail(item, context));
+         leadingTrivia.AddRange(BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation,context));
          return SyntaxFactory.TriviaList(leadingTrivia);
       }
 
-      private static IEnumerable<SyntaxTrivia> BuildDetail<T>(T item, OutputContext context)
+      private static IEnumerable<SyntaxTrivia> BuildPreviousDetail<T>(T item, OutputContext context)
          where T : IDom
       {
          var trivias = new List<SyntaxTrivia>();
@@ -109,43 +110,32 @@ namespace RoslynDom.CSharp
          var parentAsContainer = item.Parent as IContainer;
          if (parentAsContainer == null) return trivias;
          var candidates = parentAsContainer.GetMembers();
-         var detail = candidates
+         var details = candidates
                              .PreviousSiblingsUntil(item, x => !(x is IDetail))
                              .OfType<IDetail>();
-         trivias.AddRange(MakeDetailTrivia(detail));
+         foreach (var detail in details)
+         {
+            if (detail is IVerticalWhitespace) { trivias.Add(SyntaxFactory.EndOfLine("\r\n")); }
+            else
+            {
+               ITriviaFactory factory = GetFactory<IComment>(context, detail);
+               if (factory == null) factory = GetFactory<IStructuredDocumentation>(context, detail);
+               if (factory == null) factory = GetFactory<IPublicAnnotation>(context, detail);
+               trivias.AddRange(factory.BuildSyntaxTrivia(detail, context));
+            }
+         }
          return trivias;
       }
 
-      private static IEnumerable<SyntaxTrivia> MakeDetailTrivia(IEnumerable<IDetail> details)
+      private static ITriviaFactory<T> GetFactory<T>(OutputContext context, IDetail item)
+      where T : class
       {
-         var ret = new List<SyntaxTrivia>();
-         foreach (var item in details)
+         var itemAsT = item as T;
+         if (itemAsT != null)
          {
-            if (item is IVerticalWhitespace) { ret.Add(SyntaxFactory.EndOfLine("\r\n")); }
-            else
-            {
-               var itemAsComment = item as IComment;
-               Guardian.Assert.IsNotNull(itemAsComment, nameof(itemAsComment));
-               var innerWs = itemAsComment.Whitespace2Set[LanguagePart.Inner, LanguageElement.Comment];
-               var comment = innerWs.LeadingWhitespace + itemAsComment.Text + innerWs.TrailingWhitespace;
-               if (itemAsComment.IsMultiline) { comment = "/*" + comment + "*/"; }
-               else { comment = "//" + comment; }
-               var commentSyntax = SyntaxFactory.Comment(comment);
-
-               // Assume just one whitespace
-               var whitespace = itemAsComment.Whitespace2Set.FirstOrDefault();
-               if (whitespace != null)
-               {
-                  // for now assume only whitespace before and newline after
-                  ret.Add(SyntaxFactory.Whitespace(whitespace.LeadingWhitespace));
-                  ret.Add(commentSyntax);
-               }
-               else
-               { ret.Add(commentSyntax); }
-               ret.Add(SyntaxFactory.EndOfLine("\r\n"));
-            }
+            return context.Corporation.GetTriviaFactory<T>();
          }
-         return ret;
+         return null;
       }
 
       internal static SyntaxToken GetTokenFromKind(LiteralKind kind, object value)
@@ -179,74 +169,17 @@ namespace RoslynDom.CSharp
          throw new NotImplementedException();
       }
 
-      public static IEnumerable<SyntaxTrivia> BuildStructuredDocumentationSyntax(IHasStructuredDocumentation itemHasStructDoc)
+      public static IEnumerable<SyntaxTrivia> BuildStructuredDocumentationSyntax(IHasStructuredDocumentation itemAsT, OutputContext context)
       {
-         var ret = new List<SyntaxTrivia>();
-         if (itemHasStructDoc == null ||
-             ((itemHasStructDoc.StructuredDocumentation == null
-             || itemHasStructDoc.StructuredDocumentation.Document == null)
-             && string.IsNullOrEmpty(itemHasStructDoc.Description)))
-         { return ret; }
-         var itemStructDoc = itemHasStructDoc.StructuredDocumentation;
-         var leadingWs = "";
-         var innerLeadingWs = " ";
-         XDocument xDoc = null;
+         if (itemAsT == null) return new List<SyntaxTrivia>();
+            var factory = context.Corporation.GetTriviaFactory<IStructuredDocumentation>();
+            return factory.BuildSyntaxTrivia(itemAsT.StructuredDocumentation, context);
 
-         if (itemHasStructDoc.StructuredDocumentation == null)
-         {
-            xDoc = new XDocument();
-         }
-         else
-         {
-            xDoc = XDocument.Parse(itemHasStructDoc.StructuredDocumentation.Document);
-            leadingWs = itemStructDoc.Whitespace2Set[LanguageElement.DocumentationComment].LeadingWhitespace;
-            innerLeadingWs = itemStructDoc.Whitespace2Set[LanguagePart.Inner, LanguageElement.DocumentationComment].LeadingWhitespace;
-         }
-         var description = innerLeadingWs + itemHasStructDoc.Description + "\r\n";
 
-         SetDescriptionInXDoc(xDoc, description);
-         string newDocAsString = PrefixLinesWithDocCommentPrefix(leadingWs, xDoc);
 
-         var triviaList = SyntaxFactory.ParseLeadingTrivia(newDocAsString);
-         if (triviaList.Any())
-         { return triviaList; }
-         return ret;
       }
 
-      private static void SetDescriptionInXDoc(XDocument xDoc, string description)
-      {
-         var oldParent = xDoc.DescendantNodes().OfType<XElement>().Where(x => x.Name == "member").FirstOrDefault();
-         if (!string.IsNullOrWhiteSpace(description))
-         {
-            var oldSummaryElement = xDoc
-                        .DescendantNodes().OfType<XElement>()
-                        .Where(x => x.Name == "summary")
-                        .FirstOrDefault();
-            if (oldSummaryElement != null)
-            { oldSummaryElement.Value = description; }
-            else
-            {
-               var newSummary = new XElement("summary", description);
-               oldParent.AddFirst(newSummary);
-            }
-         }
-      }
-
-      private static string PrefixLinesWithDocCommentPrefix(string leadingWs, XDocument xDoc)
-      {
-         // No doubt I'll feel dirty in the morning, but the manual alternative is awful
-         var oldDocsAsString = xDoc.ToString();
-         var lines = oldDocsAsString.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-         var newDocAsString = ""; // these are short, so decided not to use StringBuilder
-         foreach (var line in lines)
-         {
-            var useLine = line.Trim();
-            if (useLine.StartsWith("<member") || useLine.StartsWith("</member")) continue;
-            newDocAsString += leadingWs + "/// " + useLine + "\r\n";
-         }
-
-         return newDocAsString;
-      }
+ 
 
       public static SyntaxTokenList SyntaxTokensForAccessModifier(AccessModifier accessModifier)
       {

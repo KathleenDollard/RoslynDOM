@@ -61,7 +61,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-      public void StandardInitialize<T>(T newItem, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      public void StandardInitialize<T>(T newItem, SyntaxNode syntaxNode, IDom parent, SemanticModel model, OutputContext context)
               where T : class, IDom
       {
          //InitializePublicAnnotations(newItem, syntaxNode, parent, model);
@@ -69,7 +69,7 @@ namespace RoslynDom.CSharp
          InitializeAccessModifiers(newItem as IHasAccessModifier, syntaxNode, parent, model);
          InitializeOOTypeMember(newItem as IOOTypeMember, syntaxNode, parent, model);
          InitializeStatic(newItem as ICanBeStatic, syntaxNode, parent, model);
-         InitializeStructuredDocumentation(newItem as IHasStructuredDocumentation, syntaxNode, parent, model);
+         InitializeStructuredDocumentation(newItem as IHasStructuredDocumentation, syntaxNode, parent, model, context );
          InitializeBaseList(newItem as IHasImplementedInterfaces, syntaxNode, parent, model);
          InitializeTypeParameters(newItem as IHasTypeParameters, syntaxNode, parent, model);
       }
@@ -233,10 +233,10 @@ namespace RoslynDom.CSharp
          item.IsStatic = itemAsDom.Symbol.IsStatic;
       }
 
-      private void InitializeStructuredDocumentation(IHasStructuredDocumentation item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      private void InitializeStructuredDocumentation(IHasStructuredDocumentation item, SyntaxNode syntaxNode, IDom parent, SemanticModel model, OutputContext context)
       {
          if (item == null) return;
-         var structuredDocumentation = GetStructuredDocumenation(syntaxNode, item, model).FirstOrDefault();
+         var structuredDocumentation = GetStructuredDocumenation(syntaxNode, item, model, context).FirstOrDefault();
          if (structuredDocumentation != null)
          {
             item.StructuredDocumentation = structuredDocumentation;
@@ -253,21 +253,106 @@ namespace RoslynDom.CSharp
          newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberAndDetail>());
       }
 
-      public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
           where T : class, IDom
           where TSyntax : SyntaxNode
       {
-         return Corporation.Create<IDetail>(syntaxNode, newItem, model);
+         //return Corporation.Create<IDetail>(syntaxNode, newItem, model);
+
+         var ret = new List<IDetail>();
+         // The parent of the syntax is the next item. The parent of the region is the thing it's attached to
+         var parent = newItem.Parent;
+         if (!syntaxNode.HasLeadingTrivia) return ret;
+         var triviaList = syntaxNode.GetLeadingTrivia();
+         var lastWasComment = false;
+         var precedingTrivia = new List<SyntaxTrivia>();
+         foreach (var trivia in triviaList)
+         {
+            // This is ugly, but we assume comments stand on their own lines. 
+            var skip = (lastWasComment && trivia.CSharpKind() == SyntaxKind.EndOfLineTrivia);
+            lastWasComment = false;
+            if (!skip)
+            {
+               switch (trivia.CSharpKind())
+               {
+                  case SyntaxKind.EndOfLineTrivia:
+                     // TODO: Consider whether leading WS on a vert whitespace matters
+                     ret.Add(new RDomVerticalWhitespace(1, false));
+                     break;
+                  case SyntaxKind.SingleLineCommentTrivia:
+                  case SyntaxKind.MultiLineCommentTrivia:
+                     ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia,  context));
+                     lastWasComment = true;
+                     break;
+                  case SyntaxKind.RegionDirectiveTrivia:
+                     ret.Add(MakeRegion(syntaxNode, precedingTrivia, trivia, parent, context));
+                     break;
+                  case SyntaxKind.EndRegionDirectiveTrivia:
+                     ret.Add(MakeEndRegion(syntaxNode, precedingTrivia, trivia, parent, context));
+                     break;
+               }
+            }
+            precedingTrivia.Add(trivia);
+         }
+         return ret;
       }
 
-      public IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
-         where T : class, IDom
-         where TSyntax : SyntaxNode
+      private IDetail MakeComment(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia,  OutputContext context)
       {
-         return Corporation.Create<IPublicAnnotation>(syntaxNode, newItem, model);
+         var publicAnnotation = context.Corporation.GetTriviaFactory<IPublicAnnotation>().CreateFrom(trivia, context) as IPublicAnnotation;
+         if (publicAnnotation != null) return publicAnnotation;
+         var newComment = context.Corporation.GetTriviaFactory<IComment>().CreateFrom(trivia, context) as IComment;
+         return newComment;
       }
 
-      public IEnumerable<IStructuredDocumentation> GetStructuredDocumenation<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
+      private IBlockStartDetail MakeRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent, OutputContext context)
+      {
+         if (!trivia.HasStructure) return null;
+         var structure = trivia.GetStructure();
+         var regionSyntax = structure as RegionDirectiveTriviaSyntax;
+         var text = regionSyntax.EndOfDirectiveToken.ToFullString().Replace("\r\n", "");
+         var newRegion = new RDomRegionStart(regionSyntax, parent, null, text);
+         return newRegion;
+      }
+
+      private IBlockEndDetail MakeEndRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent, OutputContext context)
+      {
+         if (!trivia.HasStructure) return null;
+         var structure = trivia.GetStructure();
+         var regionSyntax = structure as EndRegionDirectiveTriviaSyntax;
+         var startDirectives = regionSyntax
+                                 .GetRelatedDirectives()
+                                 .Where(x => x is RegionDirectiveTriviaSyntax);
+         if (startDirectives.Count() != 1) { throw new NotImplementedException(); }
+         var startSyntax = startDirectives.Single();
+         var newRegion = new RDomRegionEnd(regionSyntax, parent, null, startSyntax);
+         return newRegion;
+      }
+      
+      public Tuple<string, string, string> ExtractComment(string text)
+      {
+
+         if (text.StartsWith("//")) { text = text.Substring(2); }
+         if (text.StartsWith("/*"))
+         {
+            text = text.Substring(2);
+            if (text.EndsWith("*/"))
+            { text = text.Substring(0, text.Length - 2); }
+         }
+         // TODO: Ensure you test with whitespace only comment of both types
+         var trailing = text.SubstringAfter(text.TrimEnd());
+         var leading = text.SubstringBefore(text.TrimStart());
+         return Tuple.Create(leading, text.Trim(), trailing);
+      }
+
+      // public IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
+      //   where T : class, IDom
+      //   where TSyntax : SyntaxNode
+      //{
+      //   return Corporation.Create<IPublicAnnotation>(syntaxNode, newItem, model);
+      //}
+
+      public IEnumerable<IStructuredDocumentation> GetStructuredDocumenation<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
           where T : class, IDom
           where TSyntax : SyntaxNode
       {

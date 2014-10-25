@@ -11,7 +11,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class PublicAnnotationFactory
-       : RDomBaseItemFactory<IPublicAnnotation, SyntaxNode>, ITriviaFactory<IPublicAnnotation>
+       : RDomBaseSyntaxNodeFactory<IPublicAnnotation, SyntaxNode>, ITriviaFactory<IPublicAnnotation>
    {
       public PublicAnnotationFactory(RDomCorporation corporation)
           : base(corporation)
@@ -45,14 +45,33 @@ namespace RoslynDom.CSharp
          return null;
       }
 
-      public IPublicAnnotation CreateFrom(string possibleAnnotation, RDomCorporation corporation)
+      //public IDom CreateFrom(string possibleAnnotation, OutputContext context)
+      //{
+      //   var str = GetMatch(possibleAnnotation);
+      //   if (string.IsNullOrWhiteSpace(str)) return null;
+      //   var target = str.SubstringBefore(":");
+      //   var attribSyntax = GetAnnotationStringAsAttribute(str);
+      //   // Reuse the evaluation work done in attribute to follow same rules
+      //   var tempAttribute = context.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
+      //   var newPublicAnnotation = new RDomPublicAnnotation(tempAttribute.Name.ToString());
+      //   newPublicAnnotation.Target = target;
+      //   newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
+      //   foreach (var attributeValue in tempAttribute.AttributeValues)
+      //   {
+      //      newPublicAnnotation.AddItem(attributeValue.Name ?? "", attributeValue.Value);
+      //   }
+      //   return newPublicAnnotation;
+      //}
+
+      public IDom CreateFrom(SyntaxTrivia trivia, OutputContext context)
       {
-         var str = GetMatch(possibleAnnotation);
+         var tuple = CreateFromWorker.ExtractComment(trivia.ToFullString());
+         var str = GetMatch(tuple.Item2);
          if (string.IsNullOrWhiteSpace(str)) return null;
          var target = str.SubstringBefore(":");
          var attribSyntax = GetAnnotationStringAsAttribute(str);
          // Reuse the evaluation work done in attribute to follow same rules
-         var tempAttribute = corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
+         var tempAttribute = context.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
          var newPublicAnnotation = new RDomPublicAnnotation(tempAttribute.Name.ToString());
          newPublicAnnotation.Target = target;
          newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
@@ -63,12 +82,7 @@ namespace RoslynDom.CSharp
          return newPublicAnnotation;
       }
 
-      public IPublicAnnotation CreateFrom(SyntaxTrivia trivia, RDomCorporation corporation)
-      {
-         throw new NotImplementedException();
-      }
-
-      public IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IPublicAnnotation publicAnnotation)
+      public IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IDom publicAnnotation, OutputContext context)
       {
          throw new NotImplementedException();
       }

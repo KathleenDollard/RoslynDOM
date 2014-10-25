@@ -5,11 +5,11 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-    internal interface ICSharpBuildSyntaxWorker : IBuildSyntaxWorker
-    {
-        SyntaxList<AttributeListSyntax> BuildAttributeSyntax(AttributeCollection attributes);
-        BlockSyntax GetStatementBlock(IEnumerable<IStatementAndDetail> statements);
+   internal interface ICSharpBuildSyntaxWorker : IBuildSyntaxWorker
+   {
+      SyntaxList<AttributeListSyntax> BuildAttributeSyntax(AttributeCollection attributes);
+      BlockSyntax GetStatementBlock(IEnumerable<IStatementAndDetail> statements);
 
-         TypeSyntax GetVariableTypeSyntax(bool isImplicitlyTypes, IReferencedType type);
-    }
+      TypeSyntax GetVariableTypeSyntax(bool isImplicitlyTypes, IReferencedType type);
+   }
 }
