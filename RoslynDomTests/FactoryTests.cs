@@ -120,7 +120,7 @@ namespace RoslynDomTests
          // Do not access the corporation directly as that's the purpose of the 
          // language specific factory. However, I want to test these two side
          // cases. 
-         var corp = new RDomCorporation();
+         var corp = new RDomCorporation(LanguageNames.CSharp);
          var result1 = corp.GetSyntaxNodes(null);
          Assert.IsFalse(result1.Any());
       }
@@ -135,7 +135,7 @@ namespace RoslynDomTests
          // Do not access the corporation directly as that's the purpose of the 
          // language specific factory. However, I want to test these two side
          // cases. 
-         var corp = new RDomCorporation();
+         var corp = new RDomCorporation(LanguageNames.CSharp);
          var a = new ClassA();
          var result1 = corp.GetSyntaxNodes(a);
       }

@@ -8,9 +8,18 @@ using Microsoft.CodeAnalysis;
 namespace RoslynDom.Common
 {
 
-   public interface ICreateFromWorker
+   public interface IWorker
    {
       RDomPriority Priority { get; }
+   }
+
+   public interface ICorporationWorker : IWorker
+   {
+      RDomCorporation Corporation { get; set; }
+   }
+
+   public interface ICreateFromWorker : ICorporationWorker
+   {
       void StandardInitialize<T>(T item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
           where T : class, IDom;
       // void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model);
@@ -18,8 +27,8 @@ namespace RoslynDom.Common
       IEnumerable<IDom> CreateInvalidMembers(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
    }
 
-   public interface IBuildSyntaxWorker
+   public interface IBuildSyntaxWorker : ICorporationWorker
    {
-      RDomPriority Priority { get; }
+
    }
 }

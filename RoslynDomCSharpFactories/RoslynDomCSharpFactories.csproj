@@ -60,7 +60,6 @@
     <Compile Include="BaseFactories\RDomBaseLoopStatementFactory.cs" />
     <Compile Include="Factories\RDomEventFactory.cs" />
     <Compile Include="GetSyntaxContext.cs" />
-    <Compile Include="IPublicAnnotationMatcher.cs" />
     <Compile Include="LoadContext.cs" />
     <Compile Include="TriviaManager.cs" />
     <Compile Include="Trivia\TriviaForClasss.cs" />

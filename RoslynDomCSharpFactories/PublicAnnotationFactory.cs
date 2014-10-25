@@ -11,7 +11,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class PublicAnnotationFactory
-       : RDomBaseItemFactory<IPublicAnnotation, SyntaxNode>
+       : RDomBaseItemFactory<IPublicAnnotation, SyntaxNode>, ITriviaFactory<IPublicAnnotation>
    {
       public PublicAnnotationFactory(RDomCorporation corporation)
           : base(corporation)
@@ -26,7 +26,7 @@ namespace RoslynDom.CSharp
       public override Type[] ExplicitNodeTypes
       { get { return new Type[] { typeof(IPublicAnnotation) }; } }
 
-       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          IEnumerable<IMisc> list;
          var syntaxRoot = syntaxNode as CompilationUnitSyntax;
@@ -41,11 +41,57 @@ namespace RoslynDom.CSharp
 
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
+         // This would make no sense because public annotations create trivia, not nodes. 
          return null;
       }
 
+      public IPublicAnnotation CreateFrom(string possibleAnnotation, RDomCorporation corporation)
+      {
+         var str = GetMatch(possibleAnnotation);
+         if (string.IsNullOrWhiteSpace(str)) return null;
+         var target = str.SubstringBefore(":");
+         var attribSyntax = GetAnnotationStringAsAttribute(str);
+         // Reuse the evaluation work done in attribute to follow same rules
+         var tempAttribute = corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
+         var newPublicAnnotation = new RDomPublicAnnotation(tempAttribute.Name.ToString());
+         newPublicAnnotation.Target = target;
+         newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
+         foreach (var attributeValue in tempAttribute.AttributeValues)
+         {
+            newPublicAnnotation.AddItem(attributeValue.Name ?? "", attributeValue.Value);
+         }
+         return newPublicAnnotation;
+      }
+
+      public IPublicAnnotation CreateFrom(SyntaxTrivia trivia, RDomCorporation corporation)
+      {
+         throw new NotImplementedException();
+      }
+
+      public IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IPublicAnnotation publicAnnotation)
+      {
+         throw new NotImplementedException();
+      }
 
       #region Private methods to support public annotations
+
+      private string GetMatch(string comment)
+      {
+         return comment.SubstringAfter("[[").SubstringBefore("]]").Trim();
+      }
+
+      [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(System.String,System.String,Microsoft.CodeAnalysis.CSharp.CSharpParseOptions,System.Threading.CancellationToken)")]
+      private static AttributeSyntax GetAnnotationStringAsAttribute(string str)
+      {
+         // Trick Roslyn into thinking it's an attribute
+         str = "[" + str + "] public class {}";
+         var tree = CSharpSyntaxTree.ParseText(str);
+         var attrib = tree.GetRoot().DescendantNodes()
+                     .Where(x => x.CSharpKind() == SyntaxKind.Attribute)
+                     .FirstOrDefault();
+         return attrib as AttributeSyntax;
+      }
+
       private IEnumerable<RDomPublicAnnotation> GetPublicAnnotations(CompilationUnitSyntax syntaxRoot)
       {
          var ret = new List<RDomPublicAnnotation>();
@@ -92,7 +138,7 @@ namespace RoslynDom.CSharp
             {
                var attribSyntax = GetAnnotationStringAsAttribute(str);
                // Reuse the evaluation work done in attribute to follow same rules
-               var tempAttribute = OutputContext.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute ;
+               var tempAttribute = OutputContext.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
                var newPublicAnnotation = new RDomPublicAnnotation(tempAttribute.Name.ToString());
                newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
                foreach (var attributeValue in tempAttribute.AttributeValues)
@@ -103,18 +149,6 @@ namespace RoslynDom.CSharp
             }
          }
          return ret;
-      }
-
-      [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(System.String,System.String,Microsoft.CodeAnalysis.CSharp.CSharpParseOptions,System.Threading.CancellationToken)")]
-      private static AttributeSyntax GetAnnotationStringAsAttribute(string str)
-      {
-         // Trick Roslyn into thinking it's an attribute
-         str = "[" + str + "] public class {}";
-         var tree = CSharpSyntaxTree.ParseText(str);
-         var attrib = tree.GetRoot().DescendantNodes()
-                     .Where(x => x.CSharpKind() == SyntaxKind.Attribute)
-                     .FirstOrDefault();
-         return attrib as AttributeSyntax;
       }
 
       private static string GetPublicAnnotationAsString(SyntaxTrivia trivia)
@@ -136,6 +170,7 @@ namespace RoslynDom.CSharp
          return null;
       }
 
+ 
 
       #endregion
    }

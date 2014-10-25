@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
       {
          get
          {
-            if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)OutputContext.Corporation.Worker.BuildSyntaxWorker; }
+            if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)OutputContext.Corporation.BuildSyntaxWorker; }
             return _buildSyntaxWorker;
          }
 
@@ -58,7 +58,7 @@ namespace RoslynDom.CSharp
       {
          get
          {
-            if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)OutputContext.Corporation.Worker.CreateFromWorker; }
+            if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)OutputContext.Corporation.CreateFromWorker; }
             return _createFromWorker;
          }
 

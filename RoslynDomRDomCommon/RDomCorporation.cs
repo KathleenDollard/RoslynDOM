@@ -14,15 +14,63 @@ namespace RoslynDom
       protected static string nameof<T>(T value) { return ""; }
 
       private Provider provider2;
-      private Provider provider = new Provider();
-      private Worker worker;
+      private List<IWorker> workers = new List<IWorker>();
+      private ICreateFromWorker createFromWorker;
+      private IBuildSyntaxWorker buildSyntaxWorker;
+      // private Worker worker;
 
+      public RDomCorporation(string language)
+      {
+         language = language.Replace("C#", "CSharp");
+         provider2 = new Provider();
+         provider2.ConfigureContainer(this);
+         LoadFactories(language);
+         LoadWorkers(language);
+      }
 
-      public RDomCorporation()
-      { }
+      private void LoadWorkers(string language)
+      {
+         workers = provider2
+                        .GetItems<IWorker>()
+                        .Where(x =>
+                        {
+                           var lang = x.GetType().Namespace.SubstringAfterLast(".");
+                           return lang == null || lang.Equals(language, StringComparison.InvariantCultureIgnoreCase);
+                        })
+                        .ToList();
+         foreach (var worker in workers.OfType<ICorporationWorker>())
+         { worker.Corporation = this; }
+      }
 
-      public Worker Worker
-      { get { return worker; } }
+      public ICreateFromWorker CreateFromWorker
+      {
+         get
+         {
+            if (createFromWorker == null)
+            { createFromWorker = workers.OfType<ICreateFromWorker>().FirstOrDefault(); }
+            return createFromWorker;
+         }
+      }
+
+      public IBuildSyntaxWorker  BuildSyntaxWorker
+      {
+         get
+         {
+            if (buildSyntaxWorker == null)
+            { buildSyntaxWorker = workers.OfType<IBuildSyntaxWorker>().FirstOrDefault(); }
+            return buildSyntaxWorker;
+         }
+      }
+
+      public ITriviaFactory<T> GetTriviaFactory<T>()
+      {
+         return workers.OfType < ITriviaFactory<T>>().SingleOrDefault();
+      }
+
+      public T GetWorker<T>()
+      {
+         return workers.OfType<T>().SingleOrDefault();
+      }
 
       private IDictionary<Type, IRDomFactory> domTypeLookup = new Dictionary<Type, IRDomFactory>();
       private IDictionary<Type, IRDomFactory> explicitNodeLookup = new Dictionary<Type, IRDomFactory>();
@@ -30,18 +78,8 @@ namespace RoslynDom
       private List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>> canCreateList =
                   new List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>>();
 
-      public RDomCorporation(string language)
-      {
-         provider2 = new Provider();
-         provider2.ConfigureContainer(this);
-         LoadFactories(language.Replace("C#", "CSharp"));
-         var createFromWorker = provider2.GetCreateFromWorker();
-         var buildSyntaxWorker = provider2.GetBuildSyntaxWorker();
-         worker = new Worker(createFromWorker, buildSyntaxWorker);
-      }
-
       public bool CheckContainer()
-      { return provider.CheckContainer(); }
+      { return provider2.CheckContainer(); }
 
       /// <summary>
       /// 
@@ -62,7 +100,7 @@ namespace RoslynDom
       {
          // The following condition requires that the last part of the namespace of factories state their language
          var factories = provider2
-                        .GetFactories()
+                        .GetItems<IRDomFactory>()
                         .Where(x => x.GetType().Namespace.SubstringAfterLast(".").Equals(language, StringComparison.InvariantCultureIgnoreCase));
          foreach (var factory in factories)
          {
@@ -113,7 +151,7 @@ namespace RoslynDom
          var factory = GetFactory(type, dictionary, node, parent, model);
          if (factory == null)
          {
-            return Worker.CreateFromWorker.CreateInvalidMembers(node, parent, model);
+            return createFromWorker.CreateInvalidMembers(node, parent, model);
          }
          var items = factory.CreateFrom(node, parent, model, false);
          return items.ToList();

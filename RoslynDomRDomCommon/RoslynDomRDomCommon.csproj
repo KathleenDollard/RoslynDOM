@@ -58,11 +58,12 @@
   <ItemGroup>
     <Compile Include="Guardian.cs" />
     <Compile Include="IContainerCheck.cs" />
+    <Compile Include="ITriviaFactory.cs" />
+    <Compile Include="IWorker.cs" />
     <Compile Include="Provider.cs" />
     <Compile Include="IRDomCanLoad.cs" />
     <Compile Include="IRDomFactory.cs" />
     <Compile Include="IRoslynDom.cs" />
-    <Compile Include="IWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RDomCorporation.cs" />
     <Compile Include="RoslynDomUtilities.cs" />

@@ -12,14 +12,18 @@ namespace RoslynDom.CSharp
 {
     public class BuildSyntaxWorker : ICSharpBuildSyntaxWorker
     {
-        public BuildSyntaxWorker(RDomCorporation corporation)
-        {
-            Corporation = corporation;
-        }
+      private RDomCorporation corporation;
+      public RDomCorporation Corporation
+      {
+         get { return corporation; }
+         set
+         {
+            if (corporation != null) throw new InvalidOperationException("Can't reset corporation");
+            corporation = value;
+         }
+      }
 
-        protected RDomCorporation Corporation { get; private set; }
-
-        public RDomPriority Priority
+      public RDomPriority Priority
         { get { return RDomPriority.Normal; } }
 
         public SyntaxList<AttributeListSyntax> BuildAttributeSyntax(AttributeCollection attributes)

@@ -18,14 +18,18 @@ namespace RoslynDom.CSharp
       [ExcludeFromCodeCoverage]
       private static string nameof<T>(T value) { return ""; }
 
-      public CreateFromWorker(RDomCorporation corporation)
+       private RDomCorporation corporation;
+      public RDomCorporation Corporation
       {
-         Corporation = corporation;
+         get { return corporation; }
+         set
+         {
+            if (corporation != null) throw new InvalidOperationException("Can't reset corporation");
+            corporation = value;
+         }
       }
 
-      protected RDomCorporation Corporation { get; private set; }
-
-      public RDomPriority Priority
+       public RDomPriority Priority
       { get { return RDomPriority.Normal; } }
 
       public void InitializeStatements(IStatementBlock itemAsStatement, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -152,7 +156,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-      private void InitializeBaseList(IHasImplementedInterfaces itemAsT,
+       private void InitializeBaseList(IHasImplementedInterfaces itemAsT,
               SyntaxNode node, IDom parent, SemanticModel model)
       {
          if (itemAsT == null) return;

@@ -112,14 +112,14 @@ namespace RoslynDom.CSharp
          var detail = candidates
                              .PreviousSiblingsUntil(item, x => !(x is IDetail))
                              .OfType<IDetail>();
-         trivias.AddRange(MakeWhiteCommentTrivia(detail));
+         trivias.AddRange(MakeDetailTrivia(detail));
          return trivias;
       }
 
-      private static IEnumerable<SyntaxTrivia> MakeWhiteCommentTrivia(IEnumerable<IDetail> commentWhites)
+      private static IEnumerable<SyntaxTrivia> MakeDetailTrivia(IEnumerable<IDetail> details)
       {
          var ret = new List<SyntaxTrivia>();
-         foreach (var item in commentWhites)
+         foreach (var item in details)
          {
             if (item is IVerticalWhitespace) { ret.Add(SyntaxFactory.EndOfLine("\r\n")); }
             else
