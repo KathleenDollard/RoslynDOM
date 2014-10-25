@@ -12,11 +12,36 @@ namespace RoslynDom.CSharp
        where TSyntax : SyntaxNode
        where T : IDom
    {
-      protected RDomBaseSyntaxNodeFactory(RDomCorporation corporation) : base(corporation)
-      { }
-
-      //public abstract string Language { get; }
       public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
+
+      protected RDomBaseSyntaxNodeFactory(RDomCorporation corporation) 
+      { 
+         OutputContext = new OutputContext(corporation);
+      }
+
+      public OutputContext OutputContext { get; private set; }
+
+      private ICSharpBuildSyntaxWorker _buildSyntaxWorker;
+      internal ICSharpBuildSyntaxWorker BuildSyntaxWorker
+      {
+         get
+         {
+            if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)OutputContext.Corporation.BuildSyntaxWorker; }
+            return _buildSyntaxWorker;
+         }
+
+      }
+
+      private ICSharpCreateFromWorker _createFromWorker;
+      internal ICSharpCreateFromWorker CreateFromWorker
+      {
+         get
+         {
+            if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)OutputContext.Corporation.CreateFromWorker; }
+            return _createFromWorker;
+         }
+
+      }
 
       public virtual Type[] SyntaxNodeTypes
       { get { return new Type[] { typeof(TSyntax) }; } }

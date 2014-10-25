@@ -118,7 +118,7 @@ namespace RoslynDom.CSharp
             if (detail is IVerticalWhitespace) { trivias.Add(SyntaxFactory.EndOfLine("\r\n")); }
             else
             {
-               ITriviaFactory factory = GetFactory<IComment>(context, detail);
+               ITriviaFactory factory = GetFactory<IDetail>(context, detail);
                if (factory == null) factory = GetFactory<IStructuredDocumentation>(context, detail);
                if (factory == null) factory = GetFactory<IPublicAnnotation>(context, detail);
                trivias.AddRange(factory.BuildSyntaxTrivia(detail, context));

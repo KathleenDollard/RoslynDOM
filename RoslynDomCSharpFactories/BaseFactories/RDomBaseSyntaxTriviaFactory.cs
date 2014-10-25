@@ -8,24 +8,19 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    // Factories are specific to the type, FactoryHelpers are specific to the level (StemMember, TypeMember, Statement, Expression)
-   public abstract class RDomBaseSyntaxTriviaFactory<T, TSyntax> : RDomBaseFactory<T>, ITriviaFactory
-       where TSyntax : SyntaxNode
+   public abstract class RDomBaseSyntaxTriviaFactory<T> : RDomBaseFactory<T>, ITriviaFactory<T>
        where T : IDom
    {
-      protected RDomBaseSyntaxTriviaFactory(RDomCorporation corporation) : base(corporation)
-      { }
 
-      public IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IDom item, OutputContext context)
+      public override Type[] ExplicitNodeTypes
+      { get { return new Type[] { typeof(T) }; } }
+
+      public virtual IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IDom item, OutputContext context)
       {
          throw new NotImplementedException();
       }
 
-      public IDom CreateFrom(SyntaxTrivia trivia, OutputContext context)
-      {
-         throw new NotImplementedException();
-      }
-
-      public IDom CreateFrom(string possibleAnnotation, OutputContext context)
+      public virtual IDom CreateFrom(SyntaxTrivia trivia, OutputContext context)
       {
          throw new NotImplementedException();
       }

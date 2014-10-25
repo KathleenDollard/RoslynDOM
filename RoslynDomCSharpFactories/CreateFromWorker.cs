@@ -301,7 +301,7 @@ namespace RoslynDom.CSharp
       {
          var publicAnnotation = context.Corporation.GetTriviaFactory<IPublicAnnotation>().CreateFrom(trivia, context) as IPublicAnnotation;
          if (publicAnnotation != null) return publicAnnotation;
-         var newComment = context.Corporation.GetTriviaFactory<IComment>().CreateFrom(trivia, context) as IComment;
+         var newComment = context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, context) as IComment;
          return newComment;
       }
 

@@ -15,40 +15,11 @@ namespace RoslynDom.CSharp
       [ExcludeFromCodeCoverage]
       protected static string nameof<T2>(T2 value) { return ""; }
 
-      protected RDomBaseFactory(RDomCorporation corporation)
-      {
-         OutputContext = new OutputContext(corporation);
-      }
-
-      public OutputContext OutputContext { get; private set; }
-
-      public virtual Type[] ExplicitNodeTypes
+       public virtual Type[] ExplicitNodeTypes
       { get { return null; } }
 
       public virtual Type DomType
       {  get { return typeof(T); } }
-
-      private ICSharpBuildSyntaxWorker _buildSyntaxWorker;
-      internal ICSharpBuildSyntaxWorker BuildSyntaxWorker
-      {
-         get
-         {
-            if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)OutputContext.Corporation.BuildSyntaxWorker; }
-            return _buildSyntaxWorker;
-         }
-
-      }
-
-      private ICSharpCreateFromWorker _createFromWorker;
-      internal ICSharpCreateFromWorker CreateFromWorker
-      {
-         get
-         {
-            if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)OutputContext.Corporation.CreateFromWorker; }
-            return _createFromWorker;
-         }
-
-      }
 
       public virtual RDomPriority Priority
       {
