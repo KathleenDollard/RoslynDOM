@@ -61,7 +61,7 @@
     <Compile Include="BasesAndBaseHelpers\RDomBaseLoop.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseStemContainer.cs" />
-    <Compile Include="BasesAndBaseHelpers\RDomCommentWhite.cs" />
+    <Compile Include="BasesAndBaseHelpers\RDomDetail.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomExpression.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Implementations\RDomPublicAnnotation.cs" />

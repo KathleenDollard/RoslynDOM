@@ -1,4 +1,3 @@
-using System;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
@@ -7,8 +6,11 @@ namespace RoslynDom
    public abstract class RDomDetail<T> : RDomBase<T>, IDetail<T>
        where T : class, IDetail<T>
    {
-      internal RDomDetail(StemMemberKind stemMemberKind, MemberKind memberKind)
+      private SyntaxTrivia _syntaxTrivia;
+
+      internal RDomDetail(StemMemberKind stemMemberKind, MemberKind memberKind, SyntaxTrivia trivia)
       {
+         _syntaxTrivia = trivia;
          _stemMemberKind = stemMemberKind;
          _memberKind = memberKind;
       }
@@ -43,5 +45,11 @@ namespace RoslynDom
 
       public override ISymbol Symbol
       { get { return null; } }
+
+      public object Trivia
+      { get { return _syntaxTrivia; } }
+
+      public SyntaxTrivia TypedTrivia
+      { get { return _syntaxTrivia; } }
    }
 }

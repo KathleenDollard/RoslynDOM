@@ -277,18 +277,16 @@ namespace RoslynDom.CSharp
                {
                   case SyntaxKind.EndOfLineTrivia:
                      // TODO: Consider whether leading WS on a vert whitespace matters
-                     ret.Add(new RDomVerticalWhitespace(1, false));
+                     ret.Add(new RDomVerticalWhitespace(trivia, 1, false));
                      break;
                   case SyntaxKind.SingleLineCommentTrivia:
                   case SyntaxKind.MultiLineCommentTrivia:
-                     ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia,  context));
+                     ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, parent, context));
                      lastWasComment = true;
                      break;
                   case SyntaxKind.RegionDirectiveTrivia:
-                     ret.Add(MakeRegion(syntaxNode, precedingTrivia, trivia, parent, context));
-                     break;
                   case SyntaxKind.EndRegionDirectiveTrivia:
-                     ret.Add(MakeEndRegion(syntaxNode, precedingTrivia, trivia, parent, context));
+                     ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
                      break;
                }
             }
@@ -297,37 +295,37 @@ namespace RoslynDom.CSharp
          return ret;
       }
 
-      private IDetail MakeComment(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia,  OutputContext context)
+      private IDetail MakeComment(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
-         var publicAnnotation = context.Corporation.GetTriviaFactory<IPublicAnnotation>().CreateFrom(trivia, context) as IPublicAnnotation;
+         var publicAnnotation = context.Corporation.GetTriviaFactory<IPublicAnnotation>().CreateFrom(trivia, parent, context) as IPublicAnnotation;
          if (publicAnnotation != null) return publicAnnotation;
-         var newComment = context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, context) as IComment;
+         var newComment = context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IComment;
          return newComment;
       }
 
-      private IBlockStartDetail MakeRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent, OutputContext context)
-      {
-         if (!trivia.HasStructure) return null;
-         var structure = trivia.GetStructure();
-         var regionSyntax = structure as RegionDirectiveTriviaSyntax;
-         var text = regionSyntax.EndOfDirectiveToken.ToFullString().Replace("\r\n", "");
-         var newRegion = new RDomRegionStart(regionSyntax, parent, null, text);
-         return newRegion;
-      }
+      //private IDetailBlockEnd MakeRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent, OutputContext context)
+      //{
+      //   if (!trivia.HasStructure) return null;
+      //   var structure = trivia.GetStructure();
+      //   var regionSyntax = structure as RegionDirectiveTriviaSyntax;
+      //   var text = regionSyntax.EndOfDirectiveToken.ToFullString().Replace("\r\n", "");
+      //   var newRegion = new RDomDetailBlockStart(regionSyntax, parent, null, text);
+      //   return newRegion;
+      //}
 
-      private IBlockEndDetail MakeEndRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent, OutputContext context)
-      {
-         if (!trivia.HasStructure) return null;
-         var structure = trivia.GetStructure();
-         var regionSyntax = structure as EndRegionDirectiveTriviaSyntax;
-         var startDirectives = regionSyntax
-                                 .GetRelatedDirectives()
-                                 .Where(x => x is RegionDirectiveTriviaSyntax);
-         if (startDirectives.Count() != 1) { throw new NotImplementedException(); }
-         var startSyntax = startDirectives.Single();
-         var newRegion = new RDomRegionEnd(regionSyntax, parent, null, startSyntax);
-         return newRegion;
-      }
+      //private IBlockEndDetail MakeEndRegion(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent, OutputContext context)
+      //{
+      //   if (!trivia.HasStructure) return null;
+      //   var structure = trivia.GetStructure();
+      //   var regionSyntax = structure as EndRegionDirectiveTriviaSyntax;
+      //   var startDirectives = regionSyntax
+      //                           .GetRelatedDirectives()
+      //                           .Where(x => x is RegionDirectiveTriviaSyntax);
+      //   if (startDirectives.Count() != 1) { throw new NotImplementedException(); }
+      //   var startSyntax = startDirectives.Single();
+      //   var newRegion = new RDomRegionEnd(regionSyntax, parent, null, startSyntax);
+      //   return newRegion;
+      //}
       
       public Tuple<string, string, string> ExtractComment(string text)
       {

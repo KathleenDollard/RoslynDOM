@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace RoslynDom.Common
    {
       private List<KeyValuePair<string, object>> _items = new List<KeyValuePair<string, object>>();
 
-      public RDomPublicAnnotation(string name)
-         :base(StemMemberKind.PublicAnnotation, MemberKind.PublicAnnotation )
+      public RDomPublicAnnotation(SyntaxTrivia trivia, string name)
+         :base(StemMemberKind.PublicAnnotation, MemberKind.PublicAnnotation, trivia )
       {
          _name = name;
       }

@@ -16,22 +16,22 @@ namespace RoslynDom
    /// The RegionEnd property is filled when the RegionEnd is created.
    /// </para>
    /// </remarks>
-   public class RDomRegionStart : RDomBase<IBlockStartDetail, ISymbol>, IBlockStartDetail
+   public class RDomDetailBlockStart : RDomDetail<IDetailBlockStart>, IDetailBlockStart
    {
 
-      public RDomRegionStart(SyntaxNode rawItem, IDom parent, SemanticModel model, string text)
-           : base(rawItem, parent, model)
+      public RDomDetailBlockStart( SyntaxTrivia trivia,string text)
+          : base(StemMemberKind.RegionStart, MemberKind.RegionStart,trivia)
       {
          _text = text;
       }
 
-      internal RDomRegionStart(RDomRegionStart oldRDom)
-           : base(oldRDom)
+      internal RDomDetailBlockStart(RDomDetailBlockStart oldRDom)
+          : base(oldRDom)
       {
+         _text = oldRDom.Text;
          // Copy must be completed through the region end and only when the parent is also copied.
          // This method leaves things in an unstable state until the RegionEnd runs
-         _text = oldRDom.Text;
-         BlockEnd  = oldRDom.BlockEnd; // temporary until the new one is created
+         BlockEnd = oldRDom.BlockEnd; // temporary until the new one is created
       }
 
       /// <summary>
@@ -44,25 +44,21 @@ namespace RoslynDom
       /// Does it mean copying everything in the region? Inclusive of the region itself?
       /// That seems useful, but doing it in this method may be surprising. 
       /// </remarks>
-      public override IBlockStartDetail Copy()
+      public override IDetailBlockStart Copy()
       {
          throw new NotImplementedException("Can't explicitly copy regions");
       }
 
+      public IDetailBlockEnd BlockEnd { get; internal set; }
+
+      public string BlockStyleName
+      { get { return "region"; } }
+
       private string _text;
-      [Required]
       public string Text
       {
          get { return _text; }
          set { SetProperty(ref _text, value); }
       }
-
-      public StemMemberKind StemMemberKind
-      { get { return StemMemberKind.RegionStart; } }
-
-      public MemberKind MemberKind
-      { get { return MemberKind.RegionStart; } }
-
-      public IBlockEndDetail  BlockEnd { get; internal set; }
    }
 }

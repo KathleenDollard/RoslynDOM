@@ -14,40 +14,39 @@ namespace RoslynDom
    /// Currently no constructor for making regions out of thin air because I haven't worked out
    /// how to match up start and end constructs. Probably a special method is needed
    /// </remarks>
-   public class RDomRegionEnd : RDomBase<IBlockEndDetail , ISymbol>, IBlockEndDetail
+   public class RDomRegionEnd : RDomDetail<IDetailBlockEnd>, IDetailBlockEnd
    {
-      public RDomRegionEnd(SyntaxNode rawItem, IDom parent, SemanticModel model, SyntaxNode startSyntax)
-           : base(rawItem, parent, model)
+      public RDomRegionEnd(SyntaxTrivia trivia,IDetailBlockStart blockStart)
+           : base(StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia)
       {
-         Func<RDomRegionStart, bool> match = x => x.TypedSyntax == startSyntax ;
-         if (TryFindMatchingRegionStart<IStemContainer>(parent, x => x.StemMembersAll, match)) return;
-         if (TryFindMatchingRegionStart<ITypeMemberContainer>(parent, x => x.MembersAll, match)) return;
-         if (TryFindMatchingRegionStart<IStatementContainer>(parent, x => x.StatementsAll, match)) return;
+         BlockStart = blockStart;
+         var bstart = blockStart as RDomDetailBlockStart;
+         bstart.BlockEnd = this;
       }
 
       internal RDomRegionEnd(RDomRegionEnd oldRDom, IDom parent)
            : base(oldRDom)
       {
-         Func<RDomRegionStart, bool> match = x => x.BlockEnd == oldRDom;
+         Func<RDomDetailBlockStart, bool> match = x => x.BlockEnd == oldRDom;
          if (TryFindMatchingRegionStart<IStemContainer>(parent, x => x.StemMembersAll, match)) return;
          if (TryFindMatchingRegionStart<ITypeMemberContainer>(parent, x => x.MembersAll, match)) return;
          if (TryFindMatchingRegionStart<IStatementContainer>(parent, x => x.StatementsAll, match)) return;
       }
 
       private bool TryFindMatchingRegionStart<T>(IDom parent,
-               Func<T, IEnumerable<IDom>> getMembers, Func<RDomRegionStart, bool> matchPredicate)
+               Func<T, IEnumerable<IDom>> getMembers, Func<RDomDetailBlockStart, bool> matchPredicate)
          where T : class, IDom
       {
          var typedParent = parent as T;
          if (typedParent == null) { return false; }
          var members = getMembers(typedParent);
          var newStart = members
-                        .OfType<RDomRegionStart>()
+                        .OfType<RDomDetailBlockStart>()
                         .Where(matchPredicate)
                         .FirstOrDefault();
          if (newStart == null) throw new InvalidOperationException("Matching start region not found");
          newStart.BlockEnd = this;
-         this.BlockStart  = newStart;
+         BlockStart = newStart;
          return true;
       }
 
@@ -62,17 +61,15 @@ namespace RoslynDom
       /// Does it mean copying everything in the region? Inclusive of the region itself?
       /// That seems useful, but doing it in this method may be surprising. 
       /// </remarks>
-      public override IBlockEndDetail Copy()
+      public override IDetailBlockEnd Copy()
       {
          throw new NotImplementedException("Can't explicitly copy regions");
       }
 
-      public StemMemberKind StemMemberKind
-      { get { return StemMemberKind.RegionEnd; } }
 
-      public MemberKind MemberKind
-      { get { return MemberKind.RegionEnd; } }
+      public IDetailBlockStart BlockStart { get; private set; }
 
-      public IBlockStartDetail BlockStart { get; private set; }
+      public string BlockStyleName
+      { get { return "region"; } }
    }
 }

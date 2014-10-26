@@ -9,8 +9,10 @@ namespace RoslynDom.Common
    /// <summary>
    /// 
    /// </summary>
-   public interface IBlockStartDetail : IDetail<IBlockStartDetail>
+   public interface IDetailBlockStart : IDetail<IDetailBlockStart>
    {
-      IBlockEndDetail BlockEnd { get; }
+      IDetailBlockEnd BlockEnd { get; }
+      string Text { get; set; }
+      string BlockStyleName { get; }
    }
 }

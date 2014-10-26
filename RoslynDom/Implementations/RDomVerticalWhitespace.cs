@@ -10,8 +10,8 @@ namespace RoslynDom
 {
    public class RDomVerticalWhitespace : RDomDetail<IVerticalWhitespace>, IVerticalWhitespace
    {
-      public RDomVerticalWhitespace(int count, bool isElastic = false)
-          : base(StemMemberKind.Whitespace, MemberKind.Whitespace)
+      public RDomVerticalWhitespace(SyntaxTrivia trivia,int count, bool isElastic = false)
+          : base(StemMemberKind.Whitespace, MemberKind.Whitespace, trivia )
       {
          _count = count;
          _isElastic = isElastic;

@@ -20,7 +20,7 @@ namespace RoslynDom.CSharp
          throw new NotImplementedException();
       }
 
-      public virtual IDom CreateFrom(SyntaxTrivia trivia, OutputContext context)
+      public virtual IDom CreateFrom(SyntaxTrivia trivia, IDom parent,  OutputContext context)
       {
          throw new NotImplementedException();
       }

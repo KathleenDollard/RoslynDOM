@@ -1,10 +1,11 @@
+using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 namespace RoslynDom
 {
    public class RDomComment : RDomDetail<IComment>, IComment
    {
-      public RDomComment(string text, bool isMultiline = false)
-          : base(StemMemberKind.Comment, MemberKind.Comment)
+      public RDomComment(SyntaxTrivia trivia, string text, bool isMultiline = false)
+          : base(StemMemberKind.Comment, MemberKind.Comment, trivia)
       {
          _text = text;
          _isMultiline = isMultiline;

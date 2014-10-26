@@ -13,7 +13,7 @@ namespace RoslynDom.CSharp
    public class PublicAnnotationFactory
        : RDomBaseSyntaxTriviaFactory<IPublicAnnotation>
    {
-       public override IDom CreateFrom(SyntaxTrivia trivia, OutputContext context)
+       public override IDom CreateFrom(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
          var tuple = context.Corporation.CreateFromWorker.ExtractComment(trivia.ToFullString());
          var str = GetMatch(tuple.Item2);
@@ -22,7 +22,7 @@ namespace RoslynDom.CSharp
          var attribSyntax = GetAnnotationStringAsAttribute(str);
          // Reuse the evaluation work done in attribute to follow same rules
          var tempAttribute = context.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
-         var newPublicAnnotation = new RDomPublicAnnotation(tempAttribute.Name.ToString());
+         var newPublicAnnotation = new RDomPublicAnnotation(trivia,tempAttribute.Name.ToString());
          newPublicAnnotation.Target = target;
          newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
          foreach (var attributeValue in tempAttribute.AttributeValues)
@@ -103,7 +103,7 @@ namespace RoslynDom.CSharp
                var attribSyntax = GetAnnotationStringAsAttribute(str);
                // Reuse the evaluation work done in attribute to follow same rules
                var tempAttribute = context.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
-               var newPublicAnnotation = new RDomPublicAnnotation(tempAttribute.Name.ToString());
+               var newPublicAnnotation = new RDomPublicAnnotation(trivia, tempAttribute.Name.ToString());
                newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
                foreach (var attributeValue in tempAttribute.AttributeValues)
                {

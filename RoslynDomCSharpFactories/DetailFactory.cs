@@ -44,22 +44,99 @@ namespace RoslynDom.CSharp
       private TriviaManager triviaManager = new TriviaManager();
       //private IPublicAnnotationFactory _publicAnnotationFactory;
 
-         public override IDom CreateFrom(SyntaxTrivia trivia, OutputContext context)
+      public override IDom CreateFrom(SyntaxTrivia trivia, IDom parent, OutputContext context)
+      {
+         if (trivia.CSharpKind() == SyntaxKind.RegionDirectiveTrivia)         { return CreateStartRegion(trivia, parent, context);}
+         else if (trivia.CSharpKind() == SyntaxKind.EndRegionDirectiveTrivia)         { return CreateEndRegion(trivia, parent, context);}
+        return CreateComment(trivia, parent, context); 
+      }
+
+      private static IDom CreateStartRegion(SyntaxTrivia trivia, IDom parent, OutputContext context)
+      {
+         if (!trivia.HasStructure) return null;
+         var structure = trivia.GetStructure();
+         var regionSyntax = structure as RegionDirectiveTriviaSyntax;
+         var text = regionSyntax.EndOfDirectiveToken.ToFullString().Replace("\r\n", "");
+         var newRegion = new RDomDetailBlockStart(trivia, text );
+         return newRegion;
+      }
+
+      private static IDom CreateEndRegion(SyntaxTrivia trivia, IDom parent, OutputContext context)
+      {
+         if (!trivia.HasStructure) return null;
+         var structure = trivia.GetStructure();
+         var regionSyntax = structure as EndRegionDirectiveTriviaSyntax;
+         var startDirectives = regionSyntax
+                                 .GetRelatedDirectives()
+                                 .Where(x => x is RegionDirectiveTriviaSyntax);
+         if (startDirectives.Count() != 1) { throw new NotImplementedException(); }
+         var startSyntax = startDirectives.Single();
+         var container = parent as IContainer;
+         if (container == null) { throw new NotImplementedException(); }
+         var startBlock = container.GetMembers()
+                           .OfType<RDomDetailBlockStart>()
+                           .Where(x => MatchEndRegion(startSyntax, x.TypedTrivia))
+                           .SingleOrDefault();
+         var newRegion = new RDomRegionEnd(trivia, startBlock);
+         return newRegion;
+      }
+
+      private static bool MatchEndRegion(SyntaxNode startSyntax, SyntaxTrivia typedTrivia)
+      {
+         var structure = typedTrivia.GetStructure();
+         if (structure == null) throw new InvalidOperationException();
+         return (structure == startSyntax);
+      }
+
+      private IDom CreateComment(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
          var isMultiline = (trivia.CSharpKind() == SyntaxKind.MultiLineCommentTrivia);
          var precedingTrivia = trivia.Token.LeadingTrivia.PreviousSiblings(trivia);
          var commentText = trivia.ToString();
          var tuple = context.Corporation.CreateFromWorker.ExtractComment(trivia.ToString());
          var commentString = tuple.Item2;
-         var newComment = new RDomComment(tuple.Item2, isMultiline);
+         var newComment = new RDomComment(trivia, tuple.Item2, isMultiline);
          triviaManager.StoreWhitespaceForComment(newComment, precedingTrivia, tuple.Item1, tuple.Item3);
          return newComment;
       }
 
       public override IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IDom item, OutputContext context)
       {
-         var trivias = BuildCommentSyntaxTrivia(item as IComment);
-         return trivias;
+         var itemAsComment = item as IComment;
+         if (itemAsComment != null) return BuildCommentSyntaxTrivia(itemAsComment);
+         var itemAsStartBlock = item as IDetailBlockStart;
+         if (itemAsStartBlock != null) return BuildBlockStartSyntaxTrivia(itemAsStartBlock);
+         var itemAsEndBlock = item as IDetailBlockEnd;
+         if (itemAsEndBlock != null) return BuildBlockEndSyntaxTrivia(itemAsEndBlock);
+         throw new NotImplementedException();
+      }
+
+      private IEnumerable<SyntaxTrivia> BuildBlockEndSyntaxTrivia(IDetailBlockEnd itemAsEndBlock)
+      {
+         if (itemAsEndBlock.BlockStyleName.Equals("region", StringComparison.OrdinalIgnoreCase))
+         {
+            var trivia = SyntaxFactory.Trivia(SyntaxFactory.EndRegionDirectiveTrivia(true));
+            return new SyntaxTrivia[] { trivia };
+         }
+         throw new NotImplementedException();
+      }
+
+      private IEnumerable<SyntaxTrivia> BuildBlockStartSyntaxTrivia(IDetailBlockStart itemAsStartBlock)
+      {
+         if (itemAsStartBlock.BlockStyleName.Equals("region", StringComparison.OrdinalIgnoreCase))
+         {
+
+            var message = SyntaxFactory.PreprocessingMessage(itemAsStartBlock.Text);
+            var token = SyntaxFactory.Token(SyntaxFactory.TriviaList(message),
+                        SyntaxKind.EndOfDirectiveToken,
+                        SyntaxFactory.TriviaList());
+
+            var directive = SyntaxFactory.RegionDirectiveTrivia(true)
+                     .WithEndOfDirectiveToken(token)
+                     .NormalizeWhitespace();
+            return new SyntaxTrivia[] { SyntaxFactory.Trivia(directive) };
+         }
+         throw new NotImplementedException();
       }
 
       private IEnumerable<SyntaxTrivia> BuildCommentSyntaxTrivia(IComment itemAsComment)
@@ -86,7 +163,6 @@ namespace RoslynDom.CSharp
          ret.Add(SyntaxFactory.EndOfLine("\r\n"));
          return ret;
       }
-
 
    }
 }
