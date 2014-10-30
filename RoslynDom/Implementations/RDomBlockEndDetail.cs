@@ -14,60 +14,61 @@ namespace RoslynDom
    /// Currently no constructor for making regions out of thin air because I haven't worked out
    /// how to match up start and end constructs. Probably a special method is needed
    /// </remarks>
-   public class RDomRegionEnd : RDomDetail<IDetailBlockEnd>, IDetailBlockEnd
+   public class RDomDetailBlockEnd : RDomDetail<IDetailBlockEnd>, IDetailBlockEnd
    {
-      public RDomRegionEnd(SyntaxTrivia trivia, IDetailBlockStart blockStart)
+      public RDomDetailBlockEnd(SyntaxTrivia trivia, IDetailBlockStart blockStart)
            : base(StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia)
       {
-         BlockStart = blockStart;
-         var bstart = blockStart as RDomDetailBlockStart;
-         bstart.BlockEnd = this;
+         _groupGuid = blockStart.GroupGuid;
       }
 
-      internal RDomRegionEnd(RDomRegionEnd oldRDom)
+      internal RDomDetailBlockEnd(RDomDetailBlockEnd oldRDom)
            : base(oldRDom)
       {
-         // temporary value until parent is set - yes, this is very ugly. 
-         oldBlockEnd = oldRDom;
+         // Group id is set with the parent because parent is needed to set
+         // The assumption is that copied groups must be immediately placed in a container to find each other. 
+         _oldGroupGuid = oldRDom.GroupGuid;
       }
 
-      private IDetailBlockEnd oldBlockEnd;
       public override IDom Parent
       {
          get { return base.Parent; }
          set
          {
             base.Parent = value;
-            if (oldBlockEnd != null)
+            if (_oldGroupGuid != Guid.Empty)
             {
-               Func<RDomDetailBlockStart, bool> match = x => x.BlockEnd == oldBlockEnd;
-               if (TryFindMatchingRegionStart<IStemContainer>(value, x => x.StemMembersAll, match)) return;
-               if (TryFindMatchingRegionStart<ITypeMemberContainer>(value, x => x.MembersAll, match)) return;
-               if (TryFindMatchingRegionStart<IStatementContainer>(value, x => x.StatementsAll, match)) return;
-               oldBlockEnd = null;
+               var start = FindBlockStart(x => ((RDomDetailBlockStart)x).OldGroupGuid == _oldGroupGuid);
+               _groupGuid = start.GroupGuid;
+               _oldGroupGuid = Guid.Empty;
+               ((RDomDetailBlockStart)start).OldGroupGuid = Guid.Empty;
             }
          }
       }
 
+      private Guid _oldGroupGuid;
+      internal Guid OldGroupGuid { get { return _oldGroupGuid; } }
 
-      private bool TryFindMatchingRegionStart<T>(IDom parent,
-               Func<T, IEnumerable<IDom>> getMembers, Func<RDomDetailBlockStart, bool> matchPredicate)
-         where T : class, IDom
+      private Guid _groupGuid;
+      public Guid GroupGuid { get { return _groupGuid; } }
+
+      public IDetailBlockStart BlockStart
+      { get { return FindBlockStart(x => x.GroupGuid == this.GroupGuid); } }
+
+      private IDetailBlockStart FindBlockStart(Func<IDetailBlockStart, bool> predicate)
       {
-         var typedParent = parent as T;
-         if (typedParent == null) { return false; }
-         var members = getMembers(typedParent);
-         var newStart = members
-                        .OfType<RDomDetailBlockStart>()
-                        .Where(matchPredicate)
-                        .FirstOrDefault();
-         if (newStart == null) throw new InvalidOperationException("Matching start region not found");
-         newStart.BlockEnd = this;
-         BlockStart = newStart;
-         return true;
+         var parentContainers = Ancestors.OfType<IContainer>();
+         foreach (var container in parentContainers)
+         {
+            // TODO: I'm pretty sure you just need predicate, not the extra lambda, but want to complete testing before I check. 
+            var ret = container.GetMembers()
+                      .OfType<IDetailBlockStart>()
+                      .Where(x => predicate(x))
+                      .SingleOrDefault();
+            if (ret != null) { return ret; }
+         }
+         throw new InvalidOperationException("Matching start region not found");
       }
-
-      public IDetailBlockStart BlockStart { get; private set; }
 
       public string BlockStyleName
       { get { return "region"; } }

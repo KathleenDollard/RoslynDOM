@@ -7,15 +7,15 @@ using RoslynDom.Common;
 
 namespace RoslynDomTests
 {
-    [TestClass ]
-    public class BugResponseTests
-    {
-        private const string BugResponseCategory = "BugResponse";
+   [TestClass]
+   public class BugResponseTests
+   {
+      private const string BugResponseCategory = "BugResponse";
 
-        [TestMethod, TestCategory(BugResponseCategory)] // #46
-        public void Can_parse_for_property_bug_46()
-        {
-            var csharpCode = @"
+      [TestMethod, TestCategory(BugResponseCategory)] // #46
+      public void Can_parse_for_property_bug_46()
+      {
+         var csharpCode = @"
                         public class MyClass
                         { 
                             protected int _flotDialogue
@@ -24,16 +24,16 @@ namespace RoslynDomTests
                                 set { MyStaticClass1._flotDialogue = value; }
                             }
                         }";
-            var root = RDom.CSharp.Load(csharpCode);
-            var symbol = ((RDomProperty)root.Classes.First().Properties.First()).TypedSymbol as IPropertySymbol;
-            Assert.IsNotNull(symbol);
-            Assert.AreEqual("_flotDialogue", symbol.Name);
-        }
+         var root = RDom.CSharp.Load(csharpCode);
+         var symbol = ((RDomProperty)root.Classes.First().Properties.First()).TypedSymbol as IPropertySymbol;
+         Assert.IsNotNull(symbol);
+         Assert.AreEqual("_flotDialogue", symbol.Name);
+      }
 
-        [TestMethod, TestCategory(BugResponseCategory )]
-        public void Can_rebuild_method_with_structured_documentation()
-        {
-            var csharpCode =
+      [TestMethod, TestCategory(BugResponseCategory)]
+      public void Can_rebuild_method_with_structured_documentation()
+      {
+         var csharpCode =
 @"   public class Foo
      {
 
@@ -47,10 +47,10 @@ namespace RoslynDomTests
             var x3 = x2;
         }
      }";
-            var root = RDom.CSharp.Load(csharpCode);
-            var output = RDom.CSharp.GetSyntaxNode(root);
-            Assert.AreEqual(csharpCode, output.ToFullString());
-        }
+         var root = RDom.CSharp.Load(csharpCode);
+         var output = RDom.CSharp.GetSyntaxNode(root);
+         Assert.AreEqual(csharpCode, output.ToFullString());
+      }
 
       [TestMethod, TestCategory(BugResponseCategory)]
       public void Can_correctly_match_region_start_end()
@@ -118,5 +118,127 @@ namespace NotifyPropertyChanged
          Assert.AreEqual(2, regions2[3].BlockContents.NoWhitespace().Count());
       }
 
+      [TestMethod, TestCategory(BugResponseCategory)]
+      public void Is_fixed_vertical_whitespace_issue()
+      {
+         var csharpCode = @"
+using System;
+public class ContractNamespaceAttribute : Attribute
+{
+   public ContractNamespaceAttribute(string text)
+   {
+   }
+
+   public Type MyType {get; set;}
+}
+";
+         var root = RDom.CSharp.Load(csharpCode);
+         var output = RDom.CSharp.GetSyntaxNode(root);
+         var actual = output.ToFullString();
+         Assert.AreEqual(csharpCode, actual);
+      }
+
+      [TestMethod, TestCategory(BugResponseCategory)]
+      public void Is_fixed_vertical_whitespace_issue_2()
+      {
+         var csharpCode = @"
+using System;
+
+namespace Test
+{}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var output = RDom.CSharp.GetSyntaxNode(root);
+         var actual = output.ToFullString();
+         Assert.AreEqual(csharpCode, actual);
+      }
+
+      [TestMethod, TestCategory(BugResponseCategory)]
+      public void Is_fixed_duplicate_comment_issue()
+      {
+         var csharpCode = @"
+           public class Bar
+            {
+               public string Foo()
+               {
+
+                  var ret = lastName;
+
+                  // Comment and whitespace
+                  var xx = new String('a', 4);
+               }
+            }";
+         var root = RDom.CSharp.Load(csharpCode);
+         var output = RDom.CSharp.GetSyntaxNode(root);
+         var actual = output.ToFullString();
+         Assert.AreEqual(csharpCode, actual);
+      }
+
+      [TestMethod, TestCategory(BugResponseCategory)]
+      public void Is_fixed_duplicate_comment_issue_2()
+      {
+         var csharpCode = @"
+           public class Bar
+            {
+               public string Foo()
+               {
+
+                  var ret = lastName;
+
+                  // Comment and whitespace
+               }
+            }";
+         var root = RDom.CSharp.Load(csharpCode);
+         var output = RDom.CSharp.GetSyntaxNode(root);
+         var actual = output.ToFullString();
+         Assert.AreEqual(csharpCode, actual);
+      }
+
+      [TestMethod, TestCategory(BugResponseCategory)]
+      public void Is_fixed_region_issue_2()
+      {
+         var csharpCode = @"
+           public class Bar
+            {
+               public string Foo()
+               {
+
+                  var ret2 = lastName;
+                   #region my region
+                  var ret3 = lastName;
+                  #endregion
+                  var ret4 = lastName;
+               }
+            }";
+         var root = RDom.CSharp.Load(csharpCode);
+         var output = RDom.CSharp.GetSyntaxNode(root);
+         var actual = output.ToFullString();
+         Assert.AreEqual(csharpCode, actual);
+      }
+
+
+      [TestMethod, TestCategory(BugResponseCategory)]
+      public void Is_fixed_missing_usings()
+      {
+         var csharpCode = @"
+ namespace ExpansionFirstTemplateTests
+{
+   namespace NotifyPropertyChanged
+   {
+
+      using System.ComponentModel;
+      using System;
+      #region _xf_MakeFileForEach(Over=asdf) 
+
+      namespace _xf_Class_namespaceName
+      {}
+      #endregion
+   }
+}
+";
+         var root = RDom.CSharp.Load(csharpCode);
+         var output = RDom.CSharp.GetSyntaxNode(root);
+         var actual = output.ToFullString();
+         Assert.AreEqual(csharpCode, actual);
+      }
    }
 }

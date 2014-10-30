@@ -24,7 +24,7 @@ namespace RoslynDom
           : base(oldRDom)
       {
          _name = oldRDom.Name;
-         _group = oldRDom.Group;
+         _group = oldRDom.GroupGuid;
       }
 
       private string _name;
@@ -35,7 +35,7 @@ namespace RoslynDom
          set { SetProperty(ref _name, value); }
       }
       private Guid _group;
-      public Guid Group
+      public Guid GroupGuid
       {
          get { return _group; }
          private set { SetProperty(ref _group, value); }

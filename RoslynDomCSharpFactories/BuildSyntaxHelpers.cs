@@ -42,12 +42,20 @@ namespace RoslynDom.CSharp
       public static TNode PrepareForBuildItemSyntaxOutput<TNode>(this TNode node, IDom item, OutputContext context)
           where TNode : SyntaxNode
       {
-         var moreLeadingTrivia = LeadingTrivia(item, context);
-         var leadingTriviaList = moreLeadingTrivia.Concat(node.GetLeadingTrivia());
+         var leadingTriviaList = LeadingTrivia(item, context).Concat(node.GetLeadingTrivia());
          node = node.WithLeadingTrivia(SyntaxFactory.TriviaList(leadingTriviaList));
+         var trailingTriviaList = node.GetTrailingTrivia().Concat(TrailingTrivia(item, context));
+         node = node.WithTrailingTrivia(SyntaxFactory.TriviaList(trailingTriviaList));
+
          if (item.NeedsFormatting)
          { node = (TNode)RDom.CSharp.Format(node); }
          return node;
+      }
+
+      private static SyntaxTriviaList BuildTriviaList(IEnumerable<SyntaxTrivia> newTrivia, SyntaxTriviaList oldTrivia)
+      {
+         var fullTrivia = oldTrivia.Concat(newTrivia);
+         return SyntaxFactory.TriviaList(fullTrivia);
       }
 
       public static SyntaxList<AttributeListSyntax> WrapInAttributeList(IEnumerable<SyntaxNode> attributes)
@@ -93,29 +101,59 @@ namespace RoslynDom.CSharp
          return syntax;
       }
 
-      public static SyntaxTriviaList LeadingTrivia(IDom item, OutputContext context)
+      public static IEnumerable<SyntaxTrivia> LeadingTrivia(IDom item, OutputContext context)
       {
          var leadingTrivia = new List<SyntaxTrivia>();
          // These are different because StructuredDocs is attached in RoslynDom
          leadingTrivia.AddRange(BuildPreviousDetail(item, context));
-         leadingTrivia.AddRange(BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation,context));
-         return SyntaxFactory.TriviaList(leadingTrivia);
+         leadingTrivia.AddRange(BuildStructuredDocumentationSyntax(item as IHasStructuredDocumentation, context));
+         return leadingTrivia;
+      }
+
+      public static IEnumerable<SyntaxTrivia> TrailingTrivia(IDom item, OutputContext context)
+      {
+         if (item == null) { return new List<SyntaxTrivia>(); }
+         var parentAsContainer = item.Parent as IContainer;
+         if (parentAsContainer == null) return new List<SyntaxTrivia>();
+         var parentMembers = parentAsContainer.GetMembers();
+         if (!ShouldOutputTrailing(item, parentMembers)) return new List<SyntaxTrivia>();
+         var details = parentMembers
+                        .FollowingSiblingsUntil(item, x => !(x is IDetail))
+                        .OfType<IDetail>();
+         return BuildDetails(context, details);
+      }
+
+      public static bool ShouldOutputTrailing(IDom item, IEnumerable<IDom> parentMembers)
+      {
+         var lastOrDefault = parentMembers
+                                    .Where(x => !(x is IDetail))
+                                    .LastOrDefault();
+         // TODO: There are no non detail members on the parent. TODO is to test this scenario, which might not even get this far
+         if (lastOrDefault == null) return true;
+         return (item as IDom) == lastOrDefault;
       }
 
       private static IEnumerable<SyntaxTrivia> BuildPreviousDetail<T>(T item, OutputContext context)
          where T : IDom
       {
-         var trivias = new List<SyntaxTrivia>();
-         if (item == null) { return trivias; }
+         if (item == null) { return new List<SyntaxTrivia>(); }
          var parentAsContainer = item.Parent as IContainer;
-         if (parentAsContainer == null) return trivias;
-         var candidates = parentAsContainer.GetMembers();
-         var details = candidates
-                             .PreviousSiblingsUntil(item, x => !(x is IDetail))
-                             .OfType<IDetail>();
+         if (parentAsContainer == null) return new List<SyntaxTrivia>();
+         var parentMembers = parentAsContainer.GetMembers();
+         var details = parentMembers
+                            .PreviousSiblingsUntil(item, x => !(x is IDetail))
+                            .OfType<IDetail>();
+     
+         return BuildDetails(context, details);
+      }
+
+      private static IEnumerable<SyntaxTrivia> BuildDetails(OutputContext context, IEnumerable<IDetail> details)
+      {
+         var trivias = new List<SyntaxTrivia>();
          foreach (var detail in details)
          {
-            if (detail is IVerticalWhitespace) { trivias.Add(SyntaxFactory.EndOfLine("\r\n")); }
+            if (detail is IVerticalWhitespace)
+            { trivias.Add(SyntaxFactory.EndOfLine("\r\n"));            }
             else
             {
                ITriviaFactory factory = GetFactory<IDetail>(context, detail);
@@ -172,14 +210,10 @@ namespace RoslynDom.CSharp
       public static IEnumerable<SyntaxTrivia> BuildStructuredDocumentationSyntax(IHasStructuredDocumentation itemAsT, OutputContext context)
       {
          if (itemAsT == null) return new List<SyntaxTrivia>();
-            var factory = context.Corporation.GetTriviaFactory<IStructuredDocumentation>();
-            return factory.BuildSyntaxTrivia(itemAsT.StructuredDocumentation, context);
-
-
+         var factory = context.Corporation.GetTriviaFactory<IStructuredDocumentation>();
+         return factory.BuildSyntaxTrivia(itemAsT.StructuredDocumentation, context);
 
       }
-
- 
 
       public static SyntaxTokenList SyntaxTokensForAccessModifier(AccessModifier accessModifier)
       {

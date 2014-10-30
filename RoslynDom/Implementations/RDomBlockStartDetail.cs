@@ -20,22 +20,38 @@ namespace RoslynDom
    public class RDomDetailBlockStart : RDomDetail<IDetailBlockStart>, IDetailBlockStart
    {
 
-      public RDomDetailBlockStart( SyntaxTrivia trivia,string text)
-          : base(StemMemberKind.RegionStart, MemberKind.RegionStart,trivia)
+      public RDomDetailBlockStart(SyntaxTrivia trivia, string text)
+          : base(StemMemberKind.RegionStart, MemberKind.RegionStart, trivia)
       {
          _text = text;
+         _groupGuid = Guid.NewGuid();
       }
 
       internal RDomDetailBlockStart(RDomDetailBlockStart oldRDom)
           : base(oldRDom)
       {
          _text = oldRDom.Text;
-         // Copy must be completed through the region end and only when the parent is also copied.
-         // This method leaves things in an unstable state until the RegionEnd runs
-         BlockEnd = oldRDom.BlockEnd; // temporary until the new one is created
+         // Assume we are in the midst of a copy and that both ends will be copied
+         _oldGroupGuid = oldRDom.GroupGuid;
+         _groupGuid = Guid.NewGuid();
       }
 
-      public IDetailBlockEnd BlockEnd { get; internal set; }
+      public IDetailBlockEnd BlockEnd
+      {
+         get
+         {
+            var parentContainers = Ancestors.OfType<IContainer>();
+            foreach (var container in parentContainers)
+            {
+               var ret = container.GetMembers()
+                         .OfType<IDetailBlockEnd>()
+                         .Where(x => x.GroupGuid == this.GroupGuid)
+                         .SingleOrDefault();
+               if (ret != null) { return ret; }
+            }
+            throw new InvalidOperationException("Matching end region not found");
+         }
+      }
 
       public string BlockStyleName
       { get { return "region"; } }
@@ -45,14 +61,30 @@ namespace RoslynDom
          get
          {
             if (BlockEnd.Parent != Parent) return null;
-            var parent = Parent;
-            while (!(parent is IContainer || parent is object))
-            { parent = parent.Parent; }
-            var parentAsContainer = parent as IContainer;
-            var ret = parentAsContainer.GetMembers()
+
+            var parentContainer = Ancestors
+                                    .OfType<IContainer>()
+                                    .FirstOrDefault();
+            if (parentContainer == null) return null;
+
+            var ret = parentContainer.GetMembers()
                         .FollowingSiblings(this);
-             ret = ret.PreviousSiblings(BlockEnd);
+            ret = ret.PreviousSiblings(BlockEnd);
             return ret.ToList();
+         }
+      }
+
+      private Guid _groupGuid;
+      public Guid GroupGuid { get { return _groupGuid; } }
+
+      private Guid _oldGroupGuid;
+      internal Guid OldGroupGuid
+      {
+         get { return _oldGroupGuid; }
+         set
+         {
+            if (value != Guid.Empty) throw new InvalidOperationException("Can only reset old group guid to empty");
+            _oldGroupGuid = value;
          }
       }
 

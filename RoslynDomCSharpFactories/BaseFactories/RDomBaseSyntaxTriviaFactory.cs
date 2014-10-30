@@ -11,6 +11,38 @@ namespace RoslynDom.CSharp
    public abstract class RDomBaseSyntaxTriviaFactory<T> : RDomBaseFactory<T>, ITriviaFactory<T>
        where T : IDom
    {
+      private RDomCorporation corporation;
+      public RDomCorporation Corporation
+      {
+         get { return corporation; }
+         set
+         {
+            if (corporation != null) throw new InvalidOperationException("Can't reset corporation");
+            corporation = value;
+         }
+      }
+
+      private ICSharpBuildSyntaxWorker _buildSyntaxWorker;
+      internal ICSharpBuildSyntaxWorker BuildSyntaxWorker
+      {
+         get
+         {
+            if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)Corporation.BuildSyntaxWorker; }
+            return _buildSyntaxWorker;
+         }
+
+      }
+
+      private ICSharpCreateFromWorker _createFromWorker;
+      internal ICSharpCreateFromWorker CreateFromWorker
+      {
+         get
+         {
+            if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)Corporation.CreateFromWorker; }
+            return _createFromWorker;
+         }
+
+      }
 
       public override Type[] ExplicitNodeTypes
       { get { return new Type[] { typeof(T) }; } }

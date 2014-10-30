@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-   public interface ITriviaFactory : IWorker
+   public interface ITriviaFactory : ICorporationWorker
    {
       /// <summary>
       /// Returns the detail, or null if there is no match

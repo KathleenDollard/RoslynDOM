@@ -22,6 +22,7 @@ namespace RoslynDom.Common
         AttributeName,
         Expression,
         Constraint,
-        Initializer
-    }
+        Initializer,
+      Parent
+   }
 }

@@ -13,7 +13,8 @@ namespace RoslynDom.CSharp
    public class PublicAnnotationFactory
        : RDomBaseSyntaxTriviaFactory<IPublicAnnotation>
    {
-       public override IDom CreateFrom(SyntaxTrivia trivia, IDom parent, OutputContext context)
+   
+      public override IDom CreateFrom(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
          var tuple = context.Corporation.CreateFromWorker.ExtractComment(trivia.ToFullString());
          var str = GetMatch(tuple.Item2);

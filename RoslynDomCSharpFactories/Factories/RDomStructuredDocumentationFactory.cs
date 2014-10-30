@@ -23,11 +23,19 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return 0; } }
 
-       public override Type[] SyntaxNodeTypes
+      public override Type[] SyntaxNodeTypes
       { get { return null; } }
 
       public override Type[] ExplicitNodeTypes
       { get { return new Type[] { typeof(IStructuredDocumentation) }; } }
+
+      public RDomCorporation Corporation
+      {
+         get { return OutputContext.Corporation; }
+         set
+         {            // do nothing, already set in constructor 
+         }
+      }
 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
@@ -100,7 +108,7 @@ namespace RoslynDom.CSharp
          var leadingWs = "";
          var innerLeadingWs = " ";
          XDocument xDoc = null;
-               
+
          if (itemStructDoc.Document == null)
          {
             xDoc = new XDocument();

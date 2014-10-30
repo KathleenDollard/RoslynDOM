@@ -8,6 +8,6 @@ namespace RoslynDom.Common
 {
   public   interface IHasGroup : IDom
     {
-        Guid Group { get;  }
+        Guid GroupGuid { get;  }
     }
 }
