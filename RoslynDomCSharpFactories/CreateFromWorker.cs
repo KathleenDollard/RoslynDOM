@@ -253,17 +253,11 @@ namespace RoslynDom.CSharp
          newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberAndDetail>());
       }
 
-      public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
-          where T : class, IDom
-          where TSyntax : SyntaxNode
+      public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode,SyntaxTriviaList triviaList, T parent, SemanticModel model, OutputContext context)
+         where T : class, IDom
+         where TSyntax : SyntaxNode
       {
-         //return Corporation.Create<IDetail>(syntaxNode, newItem, model);
-
          var ret = new List<IDetail>();
-         // The parent of the syntax is the next item. The parent of the region is the thing it's attached to
-         var parent = newItem.Parent;
-         if (!syntaxNode.HasLeadingTrivia) return ret;
-         var triviaList = syntaxNode.GetLeadingTrivia();
          var lastWasComment = false;
          var precedingTrivia = new List<SyntaxTrivia>();
          foreach (var trivia in triviaList)
@@ -294,6 +288,48 @@ namespace RoslynDom.CSharp
          }
          return ret;
       }
+
+      //public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
+      //    where T : class, IDom
+      //    where TSyntax : SyntaxNode
+      //{
+      //   //return Corporation.Create<IDetail>(syntaxNode, newItem, model);
+
+      //   var ret = new List<IDetail>();
+      //   // The parent of the syntax is the next item. The parent of the region is the thing it's attached to
+      //   var parent = newItem.Parent;
+      //   if (!syntaxNode.HasLeadingTrivia) return ret;
+      //   var triviaList = syntaxNode.GetLeadingTrivia();
+      //   var lastWasComment = false;
+      //   var precedingTrivia = new List<SyntaxTrivia>();
+      //   foreach (var trivia in triviaList)
+      //   {
+      //      // This is ugly, but we assume comments stand on their own lines. 
+      //      var skip = (lastWasComment && trivia.CSharpKind() == SyntaxKind.EndOfLineTrivia);
+      //      lastWasComment = false;
+      //      if (!skip)
+      //      {
+      //         switch (trivia.CSharpKind())
+      //         {
+      //            case SyntaxKind.EndOfLineTrivia:
+      //               // TODO: Consider whether leading WS on a vert whitespace matters
+      //               ret.Add(new RDomVerticalWhitespace(trivia, 1, false));
+      //               break;
+      //            case SyntaxKind.SingleLineCommentTrivia:
+      //            case SyntaxKind.MultiLineCommentTrivia:
+      //               ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, parent, context));
+      //               lastWasComment = true;
+      //               break;
+      //            case SyntaxKind.RegionDirectiveTrivia:
+      //            case SyntaxKind.EndRegionDirectiveTrivia:
+      //               ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
+      //               break;
+      //         }
+      //      }
+      //      precedingTrivia.Add(trivia);
+      //   }
+      //   return ret;
+      //}
 
       private IDetail MakeComment(SyntaxNode syntaxNode, List<SyntaxTrivia> precedingTrivia, SyntaxTrivia trivia, IDom parent, OutputContext context)
       {

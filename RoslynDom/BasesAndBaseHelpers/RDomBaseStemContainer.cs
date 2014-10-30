@@ -25,7 +25,8 @@ namespace RoslynDom
       {
          Initialize();
          var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;
-         _members = oldRDom.StemMembersAll.Copy(this);
+         RDomCollection<IStemMemberAndDetail>.Copy(oldRDom.StemMembersAll, _members);
+         //_members = oldRDom.StemMembersAll.Copy(this);
       }
 
       private void Initialize()

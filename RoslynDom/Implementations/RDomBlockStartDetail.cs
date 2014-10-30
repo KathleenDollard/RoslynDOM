@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -49,9 +50,9 @@ namespace RoslynDom
             { parent = parent.Parent; }
             var parentAsContainer = parent as IContainer;
             var ret = parentAsContainer.GetMembers()
-                        .FollowingSiblings(this)
-                        .PreviousSiblings(BlockEnd);
-            return ret;
+                        .FollowingSiblings(this);
+             ret = ret.PreviousSiblings(BlockEnd);
+            return ret.ToList();
          }
       }
 

@@ -40,6 +40,7 @@
     <Compile Include="BaseInterfaces\IClassOrStructure.cs" />
     <Compile Include="BaseInterfaces\IContainer.cs" />
     <Compile Include="BaseInterfaces\IDetail.cs" />
+    <Compile Include="IDomUtilities.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IElseIfDetail.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IEndIfDetail.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IIfDetail.cs" />

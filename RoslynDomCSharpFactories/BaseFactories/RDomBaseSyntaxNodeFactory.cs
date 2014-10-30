@@ -14,8 +14,8 @@ namespace RoslynDom.CSharp
    {
       public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
 
-      protected RDomBaseSyntaxNodeFactory(RDomCorporation corporation) 
-      { 
+      protected RDomBaseSyntaxNodeFactory(RDomCorporation corporation)
+      {
          OutputContext = new OutputContext(corporation);
       }
 
@@ -73,19 +73,29 @@ namespace RoslynDom.CSharp
          var ret = new List<IDom>();
 
          var newItems = CreateListFromInterim(syntaxNode, parent, model);
-         // Whitespace and comments have to appear before new items 
-         if (typeof(IStatement).IsAssignableFrom(typeof(T))
+         if (!newItems.Any()) return ret;
+
+         var lookForTrivia = typeof(IStatement).IsAssignableFrom(typeof(T))
             || typeof(ITypeMember).IsAssignableFrom(typeof(T))
-            || typeof(IStemMember).IsAssignableFrom(typeof(T)))
+            || typeof(IStemMember).IsAssignableFrom(typeof(T));
+         if (lookForTrivia)
          {
-            var newItem = newItems.FirstOrDefault();
-            if (newItem != null)
+            var leading = CreateFromWorker.GetDetail(syntaxNode, syntaxNode.GetLeadingTrivia(),
+                        newItems.FirstOrDefault().Parent, model, OutputContext);
+            var trailingTrivia = syntaxNode.ChildTokens().Last().LeadingTrivia;
+            var trailing = CreateFromWorker.GetDetail(syntaxNode, trailingTrivia,
+                        newItems.LastOrDefault(), model, OutputContext);
+            ret.AddRange(leading.OfType<IDom>());
+            if (trailing.Any() && newItems.Any())
             {
-               var whiteComment = CreateFromWorker.GetDetail(syntaxNode, newItem, model, OutputContext );
-               ret.AddRange(whiteComment.OfType<IDom>());
+               var newLastAsContainer = newItems.Last() as IContainer;
+               foreach (var newTrailing in trailing)
+               { newLastAsContainer.AddOrMoveMember(newTrailing); }
             }
+            ret.AddRange(newItems.OfType<IDom>());
          }
-         ret.AddRange(newItems.OfType<IDom>());
+         else
+         { ret.AddRange(newItems.OfType<IDom>()); }
          return ret;
       }
 
