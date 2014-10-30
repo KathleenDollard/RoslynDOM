@@ -53,7 +53,7 @@ namespace RoslynDom
       public abstract object OriginalRawItem { get; }
 
       // TODO: Return the parent set to hidden
-      public IDom Parent { get; set; }
+      public virtual IDom Parent { get; set; }
 
       public override string ToString()
       {

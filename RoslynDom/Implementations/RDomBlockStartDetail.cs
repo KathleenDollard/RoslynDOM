@@ -34,25 +34,26 @@ namespace RoslynDom
          BlockEnd = oldRDom.BlockEnd; // temporary until the new one is created
       }
 
-      /// <summary>
-      /// Throws exception on an attempt to copy
-      /// </summary>
-      /// <returns></returns>
-      /// <remarks>
-      /// Sorry for the brutal throwing of an exception, but what does copying a region (other
-      /// than copying it as part of it's parent mean? Copying start without end breaks code.
-      /// Does it mean copying everything in the region? Inclusive of the region itself?
-      /// That seems useful, but doing it in this method may be surprising. 
-      /// </remarks>
-      public override IDetailBlockStart Copy()
-      {
-         throw new NotImplementedException("Can't explicitly copy regions");
-      }
-
       public IDetailBlockEnd BlockEnd { get; internal set; }
 
       public string BlockStyleName
       { get { return "region"; } }
+
+      public IEnumerable<IDom> BlockContents
+      {
+         get
+         {
+            if (BlockEnd.Parent != Parent) return null;
+            var parent = Parent;
+            while (!(parent is IContainer || parent is object))
+            { parent = parent.Parent; }
+            var parentAsContainer = parent as IContainer;
+            var ret = parentAsContainer.GetMembers()
+                        .FollowingSiblings(this)
+                        .PreviousSiblings(BlockEnd);
+            return ret;
+         }
+      }
 
       private string _text;
       public string Text

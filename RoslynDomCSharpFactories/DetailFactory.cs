@@ -46,9 +46,9 @@ namespace RoslynDom.CSharp
 
       public override IDom CreateFrom(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
-         if (trivia.CSharpKind() == SyntaxKind.RegionDirectiveTrivia)         { return CreateStartRegion(trivia, parent, context);}
-         else if (trivia.CSharpKind() == SyntaxKind.EndRegionDirectiveTrivia)         { return CreateEndRegion(trivia, parent, context);}
-        return CreateComment(trivia, parent, context); 
+         if (trivia.CSharpKind() == SyntaxKind.RegionDirectiveTrivia) { return CreateStartRegion(trivia, parent, context); }
+         else if (trivia.CSharpKind() == SyntaxKind.EndRegionDirectiveTrivia) { return CreateEndRegion(trivia, parent, context); }
+         return CreateComment(trivia, parent, context);
       }
 
       private static IDom CreateStartRegion(SyntaxTrivia trivia, IDom parent, OutputContext context)
@@ -57,7 +57,7 @@ namespace RoslynDom.CSharp
          var structure = trivia.GetStructure();
          var regionSyntax = structure as RegionDirectiveTriviaSyntax;
          var text = regionSyntax.EndOfDirectiveToken.ToFullString().Replace("\r\n", "");
-         var newRegion = new RDomDetailBlockStart(trivia, text );
+         var newRegion = new RDomDetailBlockStart(trivia, text);
          return newRegion;
       }
 
@@ -108,6 +108,18 @@ namespace RoslynDom.CSharp
          if (itemAsStartBlock != null) return BuildBlockStartSyntaxTrivia(itemAsStartBlock);
          var itemAsEndBlock = item as IDetailBlockEnd;
          if (itemAsEndBlock != null) return BuildBlockEndSyntaxTrivia(itemAsEndBlock);
+         var itemAsPublicAnnotation = item as IPublicAnnotation;
+         if (itemAsPublicAnnotation != null)
+         {
+            if (context.SkipPublicAnnotationsOnOutput)
+            { return new SyntaxTrivia[] { }; }
+            return BuildPublicAnnotationSyntaxTrivia(itemAsPublicAnnotation);
+         }
+         throw new NotImplementedException();
+      }
+
+      private IEnumerable<SyntaxTrivia> BuildPublicAnnotationSyntaxTrivia(IPublicAnnotation itemAsPublicAnnotation)
+      {
          throw new NotImplementedException();
       }
 

@@ -173,8 +173,14 @@ namespace RoslynDomTests
                 public static Bar()
                 {}
             }";
+         var root = RDom.CSharp.Load(csharpCode);
+         var region = root.Classes.First().MembersAll.OfType<IDetailBlockStart>().First();
+         Assert.IsNotNull(region.BlockEnd);
+         var root2 = root.Copy();
+         var region2 = root2.Classes.First().MembersAll.OfType<IDetailBlockStart>().First();
+         Assert.IsNotNull(region2.BlockEnd);
          VerifyClone(csharpCode,
-             root => root.RootClasses.First().Constructors.First());
+             r => r.RootClasses.First().MembersAll.OfType<IDetailBlockStart>().First());
       }
 
 

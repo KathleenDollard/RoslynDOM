@@ -16,7 +16,7 @@ namespace RoslynDom
    /// </remarks>
    public class RDomRegionEnd : RDomDetail<IDetailBlockEnd>, IDetailBlockEnd
    {
-      public RDomRegionEnd(SyntaxTrivia trivia,IDetailBlockStart blockStart)
+      public RDomRegionEnd(SyntaxTrivia trivia, IDetailBlockStart blockStart)
            : base(StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia)
       {
          BlockStart = blockStart;
@@ -24,14 +24,31 @@ namespace RoslynDom
          bstart.BlockEnd = this;
       }
 
-      internal RDomRegionEnd(RDomRegionEnd oldRDom, IDom parent)
+      internal RDomRegionEnd(RDomRegionEnd oldRDom)
            : base(oldRDom)
       {
-         Func<RDomDetailBlockStart, bool> match = x => x.BlockEnd == oldRDom;
-         if (TryFindMatchingRegionStart<IStemContainer>(parent, x => x.StemMembersAll, match)) return;
-         if (TryFindMatchingRegionStart<ITypeMemberContainer>(parent, x => x.MembersAll, match)) return;
-         if (TryFindMatchingRegionStart<IStatementContainer>(parent, x => x.StatementsAll, match)) return;
+         // temporary value until parent is set - yes, this is very ugly. 
+         oldBlockEnd = oldRDom;
       }
+
+      private IDetailBlockEnd oldBlockEnd;
+      public override IDom Parent
+      {
+         get { return base.Parent; }
+         set
+         {
+            base.Parent = value;
+            if (oldBlockEnd != null)
+            {
+               Func<RDomDetailBlockStart, bool> match = x => x.BlockEnd == oldBlockEnd;
+               if (TryFindMatchingRegionStart<IStemContainer>(value, x => x.StemMembersAll, match)) return;
+               if (TryFindMatchingRegionStart<ITypeMemberContainer>(value, x => x.MembersAll, match)) return;
+               if (TryFindMatchingRegionStart<IStatementContainer>(value, x => x.StatementsAll, match)) return;
+               oldBlockEnd = null;
+            }
+         }
+      }
+
 
       private bool TryFindMatchingRegionStart<T>(IDom parent,
                Func<T, IEnumerable<IDom>> getMembers, Func<RDomDetailBlockStart, bool> matchPredicate)
@@ -49,23 +66,6 @@ namespace RoslynDom
          BlockStart = newStart;
          return true;
       }
-
-
-      /// <summary>
-      /// Throws exception on an attempt to copy
-      /// </summary>
-      /// <returns></returns>
-      /// <remarks>
-      /// Sorry for the brutal throwing of an exception, but what does copying a region (other
-      /// than copying it as part of it's parent mean? Copying start without end breaks code.
-      /// Does it mean copying everything in the region? Inclusive of the region itself?
-      /// That seems useful, but doing it in this method may be surprising. 
-      /// </remarks>
-      public override IDetailBlockEnd Copy()
-      {
-         throw new NotImplementedException("Can't explicitly copy regions");
-      }
-
 
       public IDetailBlockStart BlockStart { get; private set; }
 

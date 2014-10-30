@@ -91,7 +91,7 @@ namespace RoslynDom.CSharp
          //var span = node.FullSpan;
          //node = Formatter.Format(node, span, new CustomWorkspace()) as SyntaxNode;
          var ws = new CustomWorkspace();
-         var options = ws.GetOptions();
+         var options = ws.Options;
         // options = options.WithChangedOption(CSharpFormattingOptions.)
          node = Formatter.Format(node, new CustomWorkspace());
          return node;

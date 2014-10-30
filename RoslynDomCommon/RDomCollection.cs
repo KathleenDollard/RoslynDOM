@@ -133,7 +133,7 @@ namespace RoslynDom.Common
          return Replace(oldItemAsKind, newItemAsKind);
       }
 
-      public RDomCollection<T> Copy(IDom newParent)
+      public  RDomCollection<T> Copy(IDom newParent)
       {
          var newList = new RDomCollection<T>(newParent);
          foreach (var item in _list)
@@ -144,6 +144,17 @@ namespace RoslynDom.Common
             newList.AddOrMove(newItem);
          }
          return newList;
+      }
+
+      public static void Copy(RDomCollection<T> source, RDomCollection<T> target)
+      {
+         foreach (var item in source)
+         {
+            var copyMethod = item.GetType().GetMethod("Copy");
+            if (copyMethod == null) throw new NotImplementedException();
+            var newItem = copyMethod.Invoke(item, null);
+            target.AddOrMove(newItem);
+         }
       }
 
       public void Clear()

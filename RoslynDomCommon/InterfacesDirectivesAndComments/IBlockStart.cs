@@ -14,5 +14,6 @@ namespace RoslynDom.Common
       IDetailBlockEnd BlockEnd { get; }
       string Text { get; set; }
       string BlockStyleName { get; }
+      IEnumerable<IDom> BlockContents { get; }
    }
 }
