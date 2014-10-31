@@ -54,7 +54,7 @@ namespace RoslynDom
          _statements = oldRDom.StatementsAll.Copy(this);
 
          _name = oldRDom.Name;
-         _returnType = oldRDom.ReturnType;
+         _returnType = oldRDom.ReturnType.Copy();
          _accessModifier = oldRDom.AccessModifier;
          _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
          _isAbstract = oldRDom.IsAbstract;

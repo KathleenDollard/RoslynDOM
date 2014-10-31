@@ -37,7 +37,7 @@ namespace RoslynDom
          _name = oldRDom.Name;
          _accessModifier = oldRDom.AccessModifier;
          _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         _underlyingType = oldRDom.UnderlyingType;
+         _underlyingType =  oldRDom.UnderlyingType == null ? null : oldRDom.UnderlyingType.Copy();
       }
 
       private void Initialize()

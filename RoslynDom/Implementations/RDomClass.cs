@@ -10,18 +10,19 @@ namespace RoslynDom
    public class RDomClass : RDomBaseType<IClass>, IClass
    {
       public RDomClass(string name, string baseTypeName = null,AccessModifier accessModifier = AccessModifier.Private, 
-                   bool isAbstract = false, bool isSealed = false, bool isStatic = false)
-          : this(name,new RDomReferencedType(baseTypeName), accessModifier,  isAbstract, isSealed, isStatic)
+                   bool isAbstract = false, bool isSealed = false, bool isStatic = false, bool isPartial = false)
+          : this(name,new RDomReferencedType(baseTypeName), accessModifier,  isAbstract, isSealed, isStatic, isPartial)
       { }
 
       public RDomClass(string name, IReferencedType baseType, AccessModifier accessModifier = AccessModifier.Private,
-                   bool isAbstract = false, bool isSealed = false, bool isStatic = false)
+                   bool isAbstract = false, bool isSealed = false, bool isStatic = false, bool isPartial = false)
       : base(name, accessModifier, MemberKind.Class, StemMemberKind.Class)
       {
          _baseType = baseType;
          _isAbstract = isAbstract;
          _isSealed = isSealed;
          _isStatic = isStatic;
+         _isPartial = isPartial;
       }
 
       public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -35,6 +36,7 @@ namespace RoslynDom
          _isAbstract = oldRDom.IsAbstract;
          _isSealed = oldRDom.IsSealed;
          _isStatic = oldRDom.IsStatic;
+         _isPartial = oldRDom.IsPartial;
       }
 
       public IEnumerable<IField> Fields
@@ -70,23 +72,33 @@ namespace RoslynDom
          get { return _baseType; }
          set { SetProperty(ref _baseType, value); }
       }
+
       private bool _isAbstract;
       public bool IsAbstract
       {
          get { return _isAbstract; }
          set { SetProperty(ref _isAbstract, value); }
       }
+
       private bool _isSealed;
       public bool IsSealed
       {
          get { return _isSealed; }
          set { SetProperty(ref _isSealed, value); }
       }
+
       private bool _isStatic;
       public bool IsStatic
       {
          get { return _isStatic; }
          set { SetProperty(ref _isStatic, value); }
+      }
+
+      private bool _isPartial;
+      public bool IsPartial
+      {
+         get { return _isPartial; }
+         set { SetProperty(ref _isPartial, value); }
       }
 
       public IEnumerable<IConstructor> Constructors

@@ -105,7 +105,7 @@ namespace RoslynDom
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
 
          _name = oldRDom.Name;
-         _type = oldRDom.Type;
+         _type = oldRDom.Type.Copy();
          _accessModifier = oldRDom.AccessModifier;
          _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
          _isAbstract = oldRDom.IsAbstract;
