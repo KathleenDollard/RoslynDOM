@@ -74,7 +74,6 @@ namespace RoslynDom.CSharp
          var modifiers = item.BuildModfierSyntax();
          if (itemAsT.IsAbstract) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.AbstractKeyword)); }
          if (itemAsT.IsSealed) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.SealedKeyword)); }
-         if (itemAsT.IsStatic) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.StaticKeyword )); }
          if (itemAsT.IsPartial) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.PartialKeyword )); }
          var identifier = SyntaxFactory.Identifier(itemAsT.Name);
 
