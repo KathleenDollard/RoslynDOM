@@ -106,7 +106,9 @@ namespace RoslynDom.Common
          {
             // Base
             if (!Check<T, IExpression>(one, other,
-                (x, y) => x.Expression == y.Expression && x.ExpressionType == y.ExpressionType))
+                (x, y) => x.InitialExpressionString == y.InitialExpressionString
+                && x.InitialExpressionLanguage == y.InitialExpressionLanguage
+                && x.ExpressionType == y.ExpressionType))
                return false;
             if (!Check<T, INestedContainer>(one, other,
                 (x, y) => CheckChildrenAnyOrder(x.Types, y.Types)))

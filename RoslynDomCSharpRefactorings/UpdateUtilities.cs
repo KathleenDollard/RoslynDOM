@@ -48,7 +48,7 @@ namespace RoslynDom.CSharp
             IUpdateRefactoring<TChange> updateRefactoring)
          where TChange : IDom
       {
-         var projects = solution.Projects.Where(x => x.Language == "C#");
+         var projects = solution.Projects.Where(x => x.Language == ExpectedLanguages.CSharp);
          var newSolution = solution;
          foreach (var project in projects)
          {

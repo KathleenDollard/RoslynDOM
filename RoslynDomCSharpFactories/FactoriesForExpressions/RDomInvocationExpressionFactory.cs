@@ -25,8 +25,8 @@ namespace RoslynDom.CSharp
          var syntax = syntaxNode as InvocationExpressionSyntax;
 
          var newItem = new RDomInvocationExpression(syntaxNode, parent, model);
-         newItem.Expression = syntax.ToString();
-         newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);
+         newItem.InitialExpressionString = syntax.ToString();
+         newItem.InitialExpressionLanguage = ExpectedLanguages.CSharp;
          newItem.MethodName = GetMethodName(syntax.Expression.ToString());
          newItem.TypeArguments.AddOrMoveRange(GetTypeArguments(syntax.Expression, newItem, model));
          newItem.Arguments.AddOrMoveRange(GetArguments(syntax.ArgumentList,newItem, model));
@@ -90,7 +90,8 @@ namespace RoslynDom.CSharp
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IExpression;
-         var node = SyntaxFactory.ParseExpression(itemAsT.Expression);
+         if (itemAsT.InitialExpressionLanguage  != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }
+         var node = SyntaxFactory.ParseExpression(itemAsT.InitialExpressionString);
          // TODO: return new SyntaxNode[] { node.Format() };
          return new SyntaxNode[] { node };
       }

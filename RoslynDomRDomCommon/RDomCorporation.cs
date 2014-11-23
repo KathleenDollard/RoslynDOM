@@ -21,7 +21,7 @@ namespace RoslynDom
 
       public RDomCorporation(string language)
       {
-         language = language.Replace("C#", "CSharp");
+         language = language.Replace(ExpectedLanguages.CSharp, ExpectedLanguages.CSharpInSymbols );
          provider2 = new Provider();
          provider2.ConfigureContainer(this);
          LoadFactories(language);

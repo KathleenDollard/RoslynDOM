@@ -40,7 +40,8 @@ namespace RoslynDom.CSharp
          var syntax = syntaxNode as ExpressionSyntax;
 
          var newItem = new RDomExpression(syntaxNode, parent, model);
-         newItem.Expression = syntax.ToString();
+         newItem.InitialExpressionString = syntax.ToString();
+         newItem.InitialExpressionLanguage = ExpectedLanguages.CSharp;
          newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);
 
          return newItem;
@@ -61,7 +62,8 @@ namespace RoslynDom.CSharp
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IExpression;
-         var node = SyntaxFactory.ParseExpression(itemAsT.Expression);
+         if (itemAsT.InitialExpressionLanguage != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }
+         var node = SyntaxFactory.ParseExpression(itemAsT.InitialExpressionString);
          // TODO: return new SyntaxNode[] { node.Format() };
          return new SyntaxNode[] { node };
       }

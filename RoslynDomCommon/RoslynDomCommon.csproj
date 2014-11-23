@@ -41,6 +41,7 @@
     <Compile Include="BaseInterfaces\IContainer.cs" />
     <Compile Include="BaseInterfaces\IDetail.cs" />
     <Compile Include="CharacteristicInterfaces\IHasInvocationFeatures.cs" />
+    <Compile Include="ExpectedLanguages.cs" />
     <Compile Include="IDomUtilities.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IElseIfDetail.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IEndIfDetail.cs" />

@@ -6,11 +6,13 @@ namespace RoslynDom
 {
    public class RDomExpression : RDomBase<IExpression, ISymbol>, IExpression
    {
-      public RDomExpression(string expression, ExpressionType expressionType)
+      public RDomExpression(string initialExpressionString, 
+               string initialExpressionLanguage, ExpressionType expressionType)
       : this(null, null, null)
       {
          NeedsFormatting = true;
-         Expression = expression;
+         InitialExpressionString = initialExpressionString;
+         InitialExpressionLanguage = initialExpressionLanguage;
          ExpressionType = expressionType;
       }
 
@@ -23,16 +25,25 @@ namespace RoslynDom
       internal RDomExpression(RDomExpression oldRDom)
           : base(oldRDom)
       {
-         Expression = oldRDom.Expression;
+         InitialExpressionString = oldRDom.InitialExpressionString;
+         InitialExpressionLanguage = oldRDom.InitialExpressionLanguage;
          ExpressionType = oldRDom.ExpressionType;
       }
 
-      private string _expression;
+      private string _intialExpressionString;
       [Required]
-      public string Expression
+      public string InitialExpressionString
       {
-         get { return _expression; }
-         set { SetProperty(ref _expression, value); }
+         get { return _intialExpressionString; }
+         set { SetProperty(ref _intialExpressionString, value); }
+      }
+
+      private string _initialExpressionLanguage;
+      [Required]
+      public string InitialExpressionLanguage
+      {
+         get { return _initialExpressionLanguage; }
+         set { SetProperty(ref _initialExpressionLanguage, value); }
       }
 
       private ExpressionType _expressionType;

@@ -42,9 +42,12 @@ namespace RoslynDomTests
          {
             Assert.AreEqual("Foo", x.MethodName);
             Assert.AreEqual(3, x.Arguments.Count());
-            Assert.AreEqual("a", x.Arguments.ElementAt(0).ValueExpression.Expression);
-            Assert.AreEqual("b", x.Arguments.ElementAt(1).ValueExpression.Expression);
-            Assert.AreEqual("c", x.Arguments.ElementAt(2).ValueExpression.Expression);
+            Assert.AreEqual("a", x.Arguments.ElementAt(0).ValueExpression.InitialExpressionString );
+            Assert.AreEqual("b", x.Arguments.ElementAt(1).ValueExpression.InitialExpressionString);
+            Assert.AreEqual("c", x.Arguments.ElementAt(2).ValueExpression.InitialExpressionString);
+            Assert.AreEqual("C#", x.Arguments.ElementAt(0).ValueExpression.InitialExpressionLanguage);
+            Assert.AreEqual("C#", x.Arguments.ElementAt(1).ValueExpression.InitialExpressionLanguage);
+            Assert.AreEqual("C#", x.Arguments.ElementAt(2).ValueExpression.InitialExpressionLanguage);
          });
 
       }
@@ -84,9 +87,12 @@ namespace RoslynDomTests
          {
             Assert.AreEqual("Foo", x.MethodName);
             Assert.AreEqual(3, x.Arguments.Count());
-            Assert.AreEqual("a",  x.Arguments.ElementAt(0).ValueExpression.Expression);
-            Assert.AreEqual("b",  x.Arguments.ElementAt(1).ValueExpression.Expression);
-            Assert.AreEqual("c",  x.Arguments.ElementAt(2).ValueExpression.Expression);
+            Assert.AreEqual("a", x.Arguments.ElementAt(0).ValueExpression.InitialExpressionString);
+            Assert.AreEqual("b", x.Arguments.ElementAt(1).ValueExpression.InitialExpressionString);
+            Assert.AreEqual("c", x.Arguments.ElementAt(2).ValueExpression.InitialExpressionString);
+            Assert.AreEqual("C#", x.Arguments.ElementAt(0).ValueExpression.InitialExpressionLanguage);
+            Assert.AreEqual("C#", x.Arguments.ElementAt(1).ValueExpression.InitialExpressionLanguage);
+            Assert.AreEqual("C#", x.Arguments.ElementAt(2).ValueExpression.InitialExpressionLanguage);
             Assert.AreEqual(2,    x.TypeArguments.Count());
             Assert.AreEqual("T1", x.TypeArguments.ElementAt(0).Name);
             Assert.AreEqual("T2", x.TypeArguments.ElementAt(1).Name);
