@@ -239,27 +239,29 @@ namespace RoslynDom.CSharp
 
       public static BaseListSyntax GetBaseList(IHasImplementedInterfaces item)
       {
-         var list = new List<TypeSyntax>();
+         var list = new List<BaseTypeSyntax>();
          var asClass = item as IClass;
          if (asClass != null)
          {
             if (asClass.BaseType != null)
             {
                var baseTypeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxNode(asClass.BaseType);
-               list.Add(baseTypeSyntax);
+               var baseSyntax = SyntaxFactory.SimpleBaseType(baseTypeSyntax);
+               list.Add(baseSyntax);
             }
          }
          foreach (var interf in item.ImplementedInterfaces)
          {
             var interfTypeSyntax = (TypeSyntax)RDom.CSharp.GetSyntaxNode(interf);
-            list.Add(interfTypeSyntax);
+            var baseSyntax = SyntaxFactory.SimpleBaseType(interfTypeSyntax);
+            list.Add(baseSyntax);
          }
 
          var colonToken = SyntaxFactory.Token(SyntaxKind.ColonToken);
          colonToken = BuildSyntaxHelpers.AttachWhitespaceToToken(colonToken, item.Whitespace2Set[LanguageElement.BaseListPrefix]);
 
          return list.Any()
-                  ? SyntaxFactory.BaseList(colonToken, SyntaxFactory.SeparatedList(list))
+                  ? SyntaxFactory.BaseList(colonToken, SyntaxFactory.SeparatedList<BaseTypeSyntax>(list))
                   : null;
       }
 

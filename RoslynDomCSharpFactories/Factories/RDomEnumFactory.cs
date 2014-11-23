@@ -119,7 +119,7 @@ namespace RoslynDom.CSharp
             var colonToken = SyntaxFactory.Token(SyntaxKind.ColonToken);
             colonToken = BuildSyntaxHelpers.AttachWhitespaceToToken(colonToken, item.Whitespace2Set[LanguageElement.BaseListPrefix]);
             return SyntaxFactory.BaseList(colonToken,
-                SyntaxFactory.SingletonSeparatedList(underlyingTypeSyntax));
+                SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>( SyntaxFactory.SimpleBaseType(underlyingTypeSyntax)));
          }
          return null;
       }

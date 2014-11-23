@@ -26,7 +26,7 @@ namespace RoslynDom.CSharp
             {
                var statement = syntax as ExpressionStatementSyntax;
                if (statement == null) { return false; }
-               return (!(statement.Expression is BinaryExpressionSyntax));
+               return (statement.Expression is InvocationExpressionSyntax );
             };
          }
       }

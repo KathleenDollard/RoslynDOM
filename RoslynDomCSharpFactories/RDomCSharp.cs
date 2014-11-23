@@ -105,7 +105,7 @@ namespace RoslynDom.CSharp
          var compilation = CSharpCompilation.Create("MyCompilation",
                                         options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
                                         syntaxTrees: new[] { tree },
-                                        references: new[] { new MetadataFileReference(typeof(object).Assembly.Location) });
+                                        references: new[] { MetadataReference.CreateFromAssembly(typeof(object).Assembly) });
          var model = compilation.GetSemanticModel(tree);
          var root = corporation.Create(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault() as IRoot;
          //var root = corporation.CreateFrom<IRoot>(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();

@@ -43,7 +43,7 @@ namespace RoslynDom.CSharp
                         {
                            var statement = syntax as ExpressionStatementSyntax;
                            if (statement == null) { return false; }
-                           return (statement.Expression is BinaryExpressionSyntax);
+                           return (statement.Expression is AssignmentExpressionSyntax);
                         };
          }
       }
@@ -57,7 +57,7 @@ namespace RoslynDom.CSharp
          CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, syntax.Expression, LanguagePart.Current, WhitespaceLookup);
 
-         var binary = syntax.Expression as BinaryExpressionSyntax;
+         var binary = syntax.Expression as AssignmentExpressionSyntax;
          Guardian.Assert.IsNotNull(binary, nameof(binary));
 
          var left = binary.Left as ExpressionSyntax;
@@ -96,10 +96,10 @@ namespace RoslynDom.CSharp
          var opToken = SyntaxFactory.Token(Mappings.SyntaxTokenKindFromAssignmentOperator(itemAsT.Operator));
          opToken = BuildSyntaxHelpers.AttachWhitespaceToToken(opToken, itemAsT.Whitespace2Set[LanguageElement.AssignmentOperator]);
 
-         var assignmentSyntax = SyntaxFactory.BinaryExpression(syntaxKind,
-                         (ExpressionSyntax)leftSyntax,
-                         opToken,
-                         (ExpressionSyntax)expressionSyntax);
+         var assignmentSyntax = SyntaxFactory.AssignmentExpression(syntaxKind,
+                  (ExpressionSyntax)leftSyntax,
+                  opToken,
+                  (ExpressionSyntax)expressionSyntax);
          assignmentSyntax = BuildSyntaxHelpers.AttachWhitespace(assignmentSyntax, itemAsT.Whitespace2Set, WhitespaceLookup);
          var node = SyntaxFactory.ExpressionStatement(assignmentSyntax);
 
