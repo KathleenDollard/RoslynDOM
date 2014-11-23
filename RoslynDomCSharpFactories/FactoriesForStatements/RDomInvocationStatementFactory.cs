@@ -40,8 +40,8 @@ namespace RoslynDom.CSharp
                                  LanguageElement.Expression);
 
          var expression = syntax.Expression;
-         newItem.Invocation = OutputContext.Corporation.Create<IExpression>(expression, newItem, model).FirstOrDefault();
-
+         //newItem.Invocation = (IInvocationExpression)OutputContext.Corporation.Create<IExpression>(expression, newItem, model).FirstOrDefault();
+         newItem.Invocation = OutputContext.Corporation.Create(expression, newItem, model).FirstOrDefault() as IInvocationExpression;
          return newItem;
       }
 

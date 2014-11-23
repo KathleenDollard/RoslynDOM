@@ -57,6 +57,7 @@ namespace RoslynDom
           : base(oldRDom)
       {
          Initialize();
+
          _name = oldRDom.Name;
          _namespace = oldRDom.Namespace;
          _displayAlias = oldRDom.DisplayAlias;

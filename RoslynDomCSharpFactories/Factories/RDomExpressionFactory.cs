@@ -10,10 +10,10 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-   public class RDomBaseItemFactory
+   public class RDomExpressionFactory
                 : RDomBaseSyntaxNodeFactory<RDomExpression, ExpressionSyntax>
    {
-      public RDomBaseItemFactory(RDomCorporation corporation)
+      public RDomExpressionFactory(RDomCorporation corporation)
           : base(corporation)
       { }
 

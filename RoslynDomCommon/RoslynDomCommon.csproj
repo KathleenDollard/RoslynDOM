@@ -40,6 +40,7 @@
     <Compile Include="BaseInterfaces\IClassOrStructure.cs" />
     <Compile Include="BaseInterfaces\IContainer.cs" />
     <Compile Include="BaseInterfaces\IDetail.cs" />
+    <Compile Include="CharacteristicInterfaces\IHasInvocationFeatures.cs" />
     <Compile Include="IDomUtilities.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IElseIfDetail.cs" />
     <Compile Include="InterfacesDirectivesAndComments\IEndIfDetail.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Interfaces\IOperator.cs" />
     <Compile Include="Interfaces\IContructor.cs" />
     <Compile Include="Interfaces\IEvent.cs" />
+    <Compile Include="Interfaces_Expressions\IInvocationExpression.cs" />
     <Compile Include="Interfaces_Statements\IAssignmentStatement.cs" />
     <Compile Include="Interfaces_Statements\IBlockStatement.cs" />
     <Compile Include="Interfaces_Statements\IArgument.cs" />
@@ -170,6 +172,7 @@
       <SubType>Designer</SubType>
     </CodeAnalysisDictionary>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

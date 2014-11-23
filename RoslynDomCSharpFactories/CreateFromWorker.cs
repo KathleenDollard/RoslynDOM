@@ -18,7 +18,7 @@ namespace RoslynDom.CSharp
       [ExcludeFromCodeCoverage]
       private static string nameof<T>(T value) { return ""; }
 
-       private RDomCorporation corporation;
+      private RDomCorporation corporation;
       public RDomCorporation Corporation
       {
          get { return corporation; }
@@ -29,7 +29,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-       public RDomPriority Priority
+      public RDomPriority Priority
       { get { return RDomPriority.Normal; } }
 
       public void InitializeStatements(IStatementBlock itemAsStatement, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -69,7 +69,7 @@ namespace RoslynDom.CSharp
          InitializeAccessModifiers(newItem as IHasAccessModifier, syntaxNode, parent, model);
          InitializeOOTypeMember(newItem as IOOTypeMember, syntaxNode, parent, model);
          InitializeStatic(newItem as ICanBeStatic, syntaxNode, parent, model);
-         InitializeStructuredDocumentation(newItem as IHasStructuredDocumentation, syntaxNode, parent, model, context );
+         InitializeStructuredDocumentation(newItem as IHasStructuredDocumentation, syntaxNode, parent, model, context);
          InitializeBaseList(newItem as IHasImplementedInterfaces, syntaxNode, parent, model);
          InitializeTypeParameters(newItem as IHasTypeParameters, syntaxNode, parent, model);
       }
@@ -156,8 +156,8 @@ namespace RoslynDom.CSharp
          }
       }
 
-       private void InitializeBaseList(IHasImplementedInterfaces itemAsT,
-              SyntaxNode node, IDom parent, SemanticModel model)
+      private void InitializeBaseList(IHasImplementedInterfaces itemAsT,
+             SyntaxNode node, IDom parent, SemanticModel model)
       {
          if (itemAsT == null) return;
 
@@ -253,7 +253,7 @@ namespace RoslynDom.CSharp
          newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberAndDetail>());
       }
 
-      public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode,SyntaxTriviaList triviaList, T parent, SemanticModel model, OutputContext context)
+      public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, SyntaxTriviaList triviaList, T parent, SemanticModel model, OutputContext context)
          where T : class, IDom
          where TSyntax : SyntaxNode
       {
@@ -362,7 +362,7 @@ namespace RoslynDom.CSharp
       //   var newRegion = new RDomRegionEnd(regionSyntax, parent, null, startSyntax);
       //   return newRegion;
       //}
-      
+
       public Tuple<string, string, string> ExtractComment(string text)
       {
 
@@ -400,56 +400,102 @@ namespace RoslynDom.CSharp
          var literalKind = LiteralKind.Unknown;
          object value = null;
          string constantIdentifier = null;
-         var literalExpression = expr as LiteralExpressionSyntax;
-         if (literalExpression != null)
+
+         if (!TryLiteralExpression(expr as LiteralExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+            if (!TryTyepofExpression(expr as TypeOfExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+               if (!TryDefaultExpression(expr as DefaultExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+                  if (!TryMemberExpression(expr as MemberAccessExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+                     //if (!TryIdentifierExpression(expr as IdentifierNameSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+                     { }
+         return Tuple.Create(value, constantIdentifier, literalKind);
+      }
+
+      private bool TryIdentifierExpression(MemberAccessExpressionSyntax identifierExpression,
+                    IDom newItem,
+                    SemanticModel model,
+                    ref object value,
+                    ref LiteralKind literalKind,
+                    ref string constantIdentifier)
+      {
+         if (identifierExpression == null)
+         { return false; }
+         literalKind = LiteralKind.Identifier;
+         constantIdentifier = identifierExpression.ToFullString();
+         value = identifierExpression.ToFullString();
+         return true;
+      }
+
+      private bool TryMemberExpression(MemberAccessExpressionSyntax memberAccessExpression,
+                     IDom newItem,
+                     SemanticModel model,
+                     ref object value,
+                     ref LiteralKind literalKind,
+                     ref string constantIdentifier)
+      {
+         if (memberAccessExpression == null)
+         { return false; }
+         literalKind = LiteralKind.MemberAccess;
+         // If this is legal code, this is a constant or an enum
+         var constant = model.GetConstantValue(memberAccessExpression);
+         if (constant.HasValue)
          {
-            literalKind = Mappings.LiteralKindFromSyntaxKind(literalExpression.Token.CSharpKind());
-            value = literalExpression.Token.Value;
+            constantIdentifier = memberAccessExpression.ToString();
+            value = constant.Value;
          }
          else
          {
-            var typeExpression = expr as TypeOfExpressionSyntax;
-            if (typeExpression != null)
-            {
-               literalKind = LiteralKind.Type;
-               value = Corporation
-                    .Create(typeExpression.Type, newItem, model)
-                    .FirstOrDefault()
-                    as IReferencedType;
-            }
-            else
-            {
-               var defaultAccess = expr as DefaultExpressionSyntax;
-               if (defaultAccess != null)
-               {
-                  literalKind = LiteralKind.Default;
-                  value = Corporation
-                       .Create(defaultAccess.Type, newItem, model)
-                       .FirstOrDefault()
-                       as IReferencedType;
-               }
-               else
-               {
-                  var memberAccess = expr as MemberAccessExpressionSyntax;
-                  {
-                     literalKind = LiteralKind.MemberAccess;
-                     // If this is legal code, this is a constant or an enum
-                     var constant = model.GetConstantValue(memberAccess);
-                     if (constant.HasValue)
-                     {
-                        constantIdentifier = expr.ToString();
-                        value = constant.Value;
-                     }
-                     else
-                     {
-                        constantIdentifier = memberAccess.ToFullString();
-                        value = memberAccess.ToFullString();
-                     }
-                  }
-               }
-            }
+            constantIdentifier = memberAccessExpression.ToFullString();
+            value = memberAccessExpression.ToFullString();
          }
-         return Tuple.Create(value, constantIdentifier, literalKind);
+         return true;
+      }
+
+      private bool TryDefaultExpression(DefaultExpressionSyntax defaultExpression,
+                     IDom newItem,
+                     SemanticModel model,
+                     ref object value,
+                     ref LiteralKind literalKind,
+                     ref string constantIdentifier)
+      {
+         if (defaultExpression == null)
+         { return false; }
+         literalKind = LiteralKind.Default;
+         value = Corporation
+              .Create(defaultExpression.Type, newItem, model)
+              .FirstOrDefault()
+              as IReferencedType;
+         return true;
+      }
+
+      private bool TryTyepofExpression(TypeOfExpressionSyntax typeOfExpression,
+                     IDom newItem,
+                     SemanticModel model,
+                     ref object value,
+                     ref LiteralKind literalKind,
+                     ref string constantIdentifier)
+      {
+         if (typeOfExpression == null)
+         { return false; }
+         literalKind = LiteralKind.Type;
+         value = Corporation
+              .Create(typeOfExpression.Type, newItem, model)
+              .FirstOrDefault()
+              as IReferencedType;
+         return true;
+      }
+
+      private bool TryLiteralExpression(LiteralExpressionSyntax literalExpression,
+                     IDom newItem,
+                     SemanticModel model,
+                     ref object value,
+                     ref LiteralKind literalKind,
+                     ref string constantIdentifier)
+      {
+         if (literalExpression == null)
+         { return false; }
+         literalKind = Mappings.LiteralKindFromSyntaxKind(literalExpression.Token.CSharpKind());
+         value = literalExpression.Token.Value;
+         return true;
       }
 
       public IEnumerable<IDom> CreateInvalidMembers(SyntaxNode syntaxNode, IDom parent, SemanticModel model)

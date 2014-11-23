@@ -82,7 +82,8 @@
     <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseStemContainer.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomDetail.cs" />
-    <Compile Include="BasesAndBaseHelpers\RDomExpression.cs" />
+    <Compile Include="ExpressionImplementations\RDomInvocationExpression.cs" />
+    <Compile Include="ExpressionImplementations\RDomExpression.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Implementations\RDomPublicAnnotation.cs" />
     <Compile Include="Implementations\RDomAttributeValue.cs" />
@@ -162,9 +163,7 @@
       <Name>RoslynDomUtilities</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ExpressionImplementations\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\RoslynDomCommon\CustomDictionary.xml">
       <Link>CustomDictionary.xml</Link>

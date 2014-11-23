@@ -1,0 +1,98 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RoslynDom.Common;
+
+namespace RoslynDom.CSharp
+{
+   public class RDomInvocationExpressionFactory
+                : RDomBaseSyntaxNodeFactory<RDomInvocationExpression, InvocationExpressionSyntax>
+   {
+      public RDomInvocationExpressionFactory(RDomCorporation corporation)
+          : base(corporation)
+      { }
+
+      public override RDomPriority Priority
+      { get { return RDomPriority.Normal + 1; } }
+
+       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      {
+         var syntax = syntaxNode as InvocationExpressionSyntax;
+
+         var newItem = new RDomInvocationExpression(syntaxNode, parent, model);
+         newItem.Expression = syntax.ToString();
+         newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);
+         newItem.MethodName = GetMethodName(syntax.Expression.ToString());
+         newItem.TypeArguments.AddOrMoveRange(GetTypeArguments(syntax.Expression, newItem, model));
+         newItem.Arguments.AddOrMoveRange(GetArguments(syntax.ArgumentList,newItem, model));
+
+         return newItem;
+
+      }
+
+      private IEnumerable<IArgument> GetArguments(ArgumentListSyntax argumentList, IDom newItem, SemanticModel model)
+      {
+         var ret = new List<IArgument>();
+         foreach (var argSyntax in argumentList.Arguments )
+         {
+            // TODO: more work, align with constructor args, and probably create factory
+            var newArg = new RDomArgument(argSyntax, newItem, model);
+            newArg.ValueExpression = OutputContext.Corporation.Create<IExpression>(argSyntax.Expression, newItem, model).FirstOrDefault();
+            if (argSyntax.NameColon != null)
+            {
+               newArg.Name = argSyntax.NameColon.Name.ToString();
+            }
+            newArg.IsRef = argSyntax.RefOrOutKeyword.CSharpKind() == SyntaxKind.RefKeyword;
+            newArg.IsOut = argSyntax.RefOrOutKeyword.CSharpKind() == SyntaxKind.OutKeyword;
+            ret.Add(newArg );
+         }
+         return ret;
+      }
+
+      private IEnumerable<IReferencedType> GetTypeArguments(ExpressionSyntax expression, IDom newItem, SemanticModel model)
+      {
+         var ret = new List<IReferencedType>();
+         var exp = expression as GenericNameSyntax;
+         if (exp == null) return ret;
+         foreach (var tArg in exp.TypeArgumentList.Arguments )
+         {
+            var referenceType = OutputContext.Corporation
+                         .Create(tArg, newItem, model)
+                         .FirstOrDefault()
+                         as IReferencedType;
+            ret.Add(referenceType);
+         }
+         return ret;
+      }
+
+      private string GetMethodName(string expression)
+      {
+         if (expression.Contains("<")) return expression.SubstringBefore("<");
+         return expression;
+      }
+
+      private ExpressionType ExpressionTypeFromSyntax(SyntaxNode syntaxNode)
+      {
+         if (syntaxNode is LiteralExpressionSyntax) { return ExpressionType.Literal; }
+         if (syntaxNode is ObjectCreationExpressionSyntax) { return ExpressionType.ObjectCreation; }
+         if (syntaxNode is InvocationExpressionSyntax) { return ExpressionType.Invocation; }
+         if (syntaxNode is IdentifierNameSyntax) { return ExpressionType.Identifier; }
+         if (syntaxNode is BinaryExpressionSyntax) { return ExpressionType.Complex; }
+         return ExpressionType.Unknown;
+      }
+
+
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+      {
+         var itemAsT = item as IExpression;
+         var node = SyntaxFactory.ParseExpression(itemAsT.Expression);
+         // TODO: return new SyntaxNode[] { node.Format() };
+         return new SyntaxNode[] { node };
+      }
+   }
+}

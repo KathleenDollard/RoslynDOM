@@ -9,6 +9,7 @@
         Type,
         Default,
         MemberAccess,
+        Identifier,
       Null
    }
 }

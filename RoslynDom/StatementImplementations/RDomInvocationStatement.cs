@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using cm = System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace RoslynDom
 {
@@ -15,7 +16,7 @@ namespace RoslynDom
       /// <param name="expression">
       /// Expression to invoke
       /// </param>
-      public RDomInvocationStatement(IExpression expression, bool suppressNewLine = false)
+      public RDomInvocationStatement(IInvocationExpression expression, bool suppressNewLine = false)
        : this(null, null, null)
       {
          _invocation = expression;
@@ -33,18 +34,30 @@ namespace RoslynDom
       internal RDomInvocationStatement(RDomInvocationStatement oldRDom)
          : base(oldRDom)
       {
-         _invocation = oldRDom.Invocation.Copy();
+         _invocation = (IInvocationExpression)oldRDom.Invocation.Copy();
       }
 
       public override IEnumerable<IDom> Children
       { get { return new List<IDom>() { Invocation }; } }
 
       [Required]
-      private IExpression _invocation;
-      public IExpression Invocation
+      private IInvocationExpression _invocation;
+      public IInvocationExpression Invocation
       {
          get { return _invocation; }
          set { SetProperty(ref _invocation, value); }
       }
+
+      public string MethodName
+      {
+         get { return Invocation.MethodName; }
+         set { Invocation.MethodName = value; }
+      }
+
+      public RDomCollection<IReferencedType> TypeArguments
+      { get { return Invocation.TypeArguments; } }
+
+      public RDomCollection<IArgument> Arguments
+      { get { return Invocation.Arguments; } }
    }
 }

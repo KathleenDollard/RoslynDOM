@@ -120,6 +120,7 @@
     <Compile Include="RDomUtilitiesTests.cs" />
     <Compile Include="RoslynDomSelfCheck.cs" />
     <Compile Include="RDomCollectionTests.cs" />
+    <Compile Include="ExpressionTests.cs" />
     <Compile Include="UpdateUtilityTests.cs" />
     <Compile Include="WhitespaceTests.cs" />
   </ItemGroup>
