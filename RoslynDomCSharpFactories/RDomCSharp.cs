@@ -70,13 +70,15 @@ namespace RoslynDom.CSharp
       public string GetSourceCode(IDom item)
       { return GetSyntaxNode(item).ToFullString(); }
 
-      public IExpression ParseExpression(string expressionAsString)
+      public IExpression ParseExpression(string expressionAsString  )
       {
          var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);
          expressionSyntax = RDom.CSharp.Format(expressionSyntax) as ExpressionSyntax;
          var expression = corporation.Create<IExpression>(expressionSyntax, null, null).FirstOrDefault();
          return expression;
       }
+
+      // THis is a temporary comment, delete it. 
 
       public SyntaxTree Format(SyntaxTree tree)
       {
