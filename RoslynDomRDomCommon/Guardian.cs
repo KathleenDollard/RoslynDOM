@@ -122,5 +122,15 @@ namespace RoslynDom.Common
       {
          throw new InvalidOperationException();
       }
+
+      public static void AmbiguousType(string name)
+      {
+         throw new NotImplementedException();
+      }
+
+      public static void TypeNotFound(string name)
+      {
+         throw new NotImplementedException();
+      }
    }
 }

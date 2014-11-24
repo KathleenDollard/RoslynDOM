@@ -169,17 +169,24 @@ namespace RoslynDom.CSharp
          {
             IEnumerable<BaseTypeSyntax> types = baseList.Types.ToList();
             StoreWhitespaceForToken(itemAsT, baseList.ColonToken, LanguagePart.Current, LanguageElement.BaseListPrefix);
-            if (node is ClassDeclarationSyntax && baseType.ToString() == types.First().ToString())
+            if (baseType != null)
             {
-               var itemAsClass = itemAsT as RDomClass;
-               var syntax = types.First();
-               if (itemAsClass == null) throw new InvalidOperationException();
-               var newBaseType = Corporation.Create(syntax, itemAsT, model).Single()
-                                       as IReferencedType;
-               itemAsClass.BaseType = newBaseType;
-               //StoreWhitespace(newBaseType, syntax,
-               //              LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
-               types = types.Skip(1);
+               var baseName = baseType.ToString();
+               baseName = baseName.Contains(".")
+                              ? baseName.SubstringAfterLast(".")
+                              : baseName;
+               if (node is ClassDeclarationSyntax && baseName == types.First().ToString())
+               {
+                  var itemAsClass = itemAsT as RDomClass;
+                  var syntax = types.First();
+                  if (itemAsClass == null) throw new InvalidOperationException();
+                  var newBaseType = Corporation.Create(syntax, itemAsT, model).Single()
+                                          as IReferencedType;
+                  itemAsClass.BaseType = newBaseType;
+                  //StoreWhitespace(newBaseType, syntax,
+                  //              LanguagePart.Current, whitespaceLookupForImplementedInterfaces);
+                  types = types.Skip(1);
+               }
             }
             foreach (var implementedInterfaceSyntax in types)
             {

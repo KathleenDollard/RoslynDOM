@@ -2,6 +2,8 @@ using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using cm = System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 namespace RoslynDom
 {
 
@@ -51,7 +53,14 @@ namespace RoslynDom
       [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
       public RDomReferencedType(SyntaxNode rawItem, IDom parent, SemanticModel model)
             : base(rawItem, parent, model)
-      { Initialize(); }
+      {
+         Initialize();
+         var typeSymbol = Symbol as ITypeSymbol;
+         if (typeSymbol != null)
+         {
+
+         }
+      }
 
       internal RDomReferencedType(RDomReferencedType oldRDom)
           : base(oldRDom)
@@ -123,5 +132,40 @@ namespace RoslynDom
 
       public RDomCollection<IReferencedType> TypeArguments
       { get { return _typeArguments; } }
+
+      private IType _type;
+      private bool _searchFailed;
+      public IType Type
+      {
+         get
+         {
+            // TODO: Reset searchFailed when load is complete or block access until load is complete
+            if (!_searchFailed && _type == null)
+            {
+               var root = this.Ancestors.OfType<IRoot>().Single();
+               var candidates = root.Descendants
+                                 .OfType<IType>()
+                                 .OfType<RoslynRDomBase>()
+                                 .Where(x => x.Symbol == this.Symbol)
+                                 .ToList();
+               var count = candidates.Count();
+               if (count == 1)
+               {
+                  _type = candidates.First() as IType;
+               }
+               else if (count > 1)
+               {
+                  Guardian.AmbiguousType(Name);
+                  _searchFailed = true;
+               }
+               else
+               {
+                  Guardian.TypeNotFound(Name);
+                  _searchFailed = true;
+               }
+            }
+            return _type;
+         }
+      }
    }
 }

@@ -59,6 +59,8 @@ namespace RoslynDomTests
       public void Can_get_method_return_type()
       {
          var csharpCode = @"
+            namespace Namespace1
+            { public class A {} }
             public class Foo
             {
                 public Namespace1.A  Bar() {}
@@ -746,11 +748,36 @@ public class Foo2 : Foo1 {}
          var root = RDom.CSharp.Load(csharpCode);
          var classes = root.Classes.ToArray();
          Assert.IsNull(classes[0].BaseType);
-         Assert.IsNotNull(classes[1].BaseType);
-         Assert.AreEqual("Foo1", classes[1].BaseType.QualifiedName);
+         Assert.IsInstanceOfType(classes[1].BaseType, typeof(IReferencedType));
+         Assert.AreEqual("Foo1", classes[1].BaseType.Type.Name);
+         Assert.IsInstanceOfType(classes[1].BaseType.Type, typeof(IClass));
+         Assert.AreEqual("Foo1", classes[1].BaseType.Name);
 
       }
-      #endregion
+
+      [TestMethod, TestCategory(BaseTypeCategory)]
+      public void Can_get_base_type_members_for_class()
+      {
+         var csharpCode = @"
+public class Foo1  
+{
+   public int Bar = 42;
+   public int Bar2 = 43;
+}
+public class Foo2 : Foo1 {}
+";
+         var root = RDom.CSharp.Load(csharpCode);
+         var classes = root.Classes.ToArray();
+         Assert.IsNull(classes[0].BaseType);
+         Assert.IsNotNull(classes[1].BaseType);
+         Assert.AreEqual("Foo1", classes[1].BaseType.Type.Name);
+         Assert.AreEqual("Foo1", classes[1].BaseType.Name);
+         var classBase = classes[1].BaseType.Type as IClass;
+         Assert.IsNotNull(classBase);
+         Assert.AreEqual(2, classBase.Members.Count());
+         Assert.AreEqual("Bar", classBase.Members.First().Name);
+      }
+      #endregion     #endregion
 
       #region parameter tests
       [TestMethod, TestCategory(ParameterAndMethodCategory)]

@@ -241,5 +241,76 @@ namespace Test
          var actual = output.ToFullString();
          Assert.AreEqual(csharpCode, actual);
       }
+
+      [TestMethod, TestCategory(BugResponseCategory)]
+      public void This_should_not_fail()
+      {
+         var csharpCode = @"using CodeFirstAnalyzer;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+         using Microsoft.CodeAnalysis;
+         using Microsoft.CodeAnalysis.CSharp;
+
+namespace KathleensAnalyzer
+   {
+      public class IfElseBraceDiagnosticCodeFirst : DiagnosticAndCodeFixBase
+      {
+         public IfElseBraceDiagnosticCodeFirst()
+         {
+            base.
+            Id = ""KADGEN1001"";
+            Description = ""Needs braces"";
+            MessageFormat = ""{0} needs braces"";
+            Category = ""Style"";
+            AddAnalyzer<IfStatementSyntax>(
+               condition: x => !x.Statement.IsKind(SyntaxKind.Block),
+               getLocation: x => x.IfKeyword.GetLocation(),
+               messageArgs: ""if statement"");
+            AddCodeFix<IfStatementSyntax>(
+               makeNewNode: x => x.WithStatement(
+                        SyntaxFactory.Block(x.Statement)));
+            AddAnalyzer<ElseClauseSyntax>(
+              condition: x => !x.Statement.IsKind(SyntaxKind.Block)
+                              && !x.Statement.IsKind(SyntaxKind.IfStatement),
+              getLocation: x => x.ElseKeyword.GetLocation(),
+              messageArgs: ""else statement"");
+            AddCodeFix<ElseClauseSyntax>(
+              makeNewNode: GetNewElseNode);
+         }
+
+         private SyntaxNode GetNewElseNode(ElseClauseSyntax elseClause)
+         {
+            return elseClause.WithStatement(SyntaxFactory.Block(elseClause.Statement));
+         }
+
+         // Methods used by the lambdas in the constructor appear here, or 
+         // methods that can be directly used as delegates,
+      }
+
+      [DiagnosticAndCodeFix]
+      public class DiagnosticAndCodeFixBase
+      {
+         public string Id { get; set; }
+         public string Description { get; set; }
+         public string MessageFormat { get; set; }
+         public string Category { get; set; }
+         protected static Diagnostic Report(Location location, params string[] messageArgs) { return null; }
+         protected static Diagnostic Report(SyntaxToken token, params string[] messageArgs) { return null; }
+
+         public void AddAnalyzer<TSyntaxNode>(Func<TSyntaxNode, bool> condition, Func<TSyntaxNode, Location> getLocation,
+             params string[] messageArgs)
+         { }
+         public void AddCodeFix<TSyntaxNode>(Func<TSyntaxNode, SyntaxNode> makeNewNode, bool skipFormatting = false, params string[] messageArgs)
+         { }
+         }
+      }
+";
+         var root = RDom.CSharp.Load(csharpCode);
+         var c1 = root.RootClasses.First();
+         var baseType = c1.BaseType;
+         Assert.AreEqual("DiagnosticAndCodeFixBase", baseType.Type.Name);
+         var output = RDom.CSharp.GetSyntaxNode(root);
+         var actual = output.ToFullString();
+         //Assert.AreEqual(csharpCode, actual);
+      }
    }
 }

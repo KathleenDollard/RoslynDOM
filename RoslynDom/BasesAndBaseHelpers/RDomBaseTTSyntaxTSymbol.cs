@@ -23,6 +23,8 @@ namespace RoslynDom
             _symbol = (TSymbol)model.GetDeclaredSymbol(rawItem);
             if (_symbol == null)
             { _symbol = (TSymbol)model.GetSymbolInfo(rawItem).Symbol; }
+            if (_symbol == null)
+            { _symbol = (TSymbol)model.GetTypeInfo(rawItem).Type; }
          }
       }
 
