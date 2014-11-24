@@ -31,9 +31,21 @@ namespace RoslynDom.CSharp
       public IRoot LoadFromFile(string fileName)
       {
          var code = File.ReadAllText(fileName);
-         SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+         SyntaxTree tree = CSharpSyntaxTree.ParseText(code, path: fileName);
          // TODO: Consider whether to expand the filename to full path
          return LoadFromInternal(tree, fileName);
+      }
+
+      public IRootGroup LoadFromFiles(params string[] fileNames)
+      {
+         var trees = new List<SyntaxTree>();
+         foreach (var fileName in fileNames)
+         {
+            var code = File.ReadAllText(fileName);
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(code, path: fileName);
+            trees.Add(tree);
+         }
+         return LoadGroupFromInternal(trees.ToArray());
       }
 
       public IRoot Load(string code)
@@ -42,6 +54,7 @@ namespace RoslynDom.CSharp
          return LoadFromInternal(tree, null);
       }
 
+ 
       public IRoot Load(Document document)
       {
          Guardian.Assert.IsNotNull(document, nameof(document));
@@ -52,6 +65,18 @@ namespace RoslynDom.CSharp
       public IRoot Load(SyntaxTree tree)
       {
          return LoadFromInternal(tree, tree.FilePath);
+      }
+
+      public IRootGroup LoadGroup(params string[] codeStrings)
+      {
+         var trees = codeStrings
+                        .Select(x => CSharpSyntaxTree.ParseText(x))
+                        .ToArray();
+         return LoadGroupFromInternal(trees);
+      }
+      public IRootGroup LoadGroup(params SyntaxTree[] trees)
+      {
+         return LoadGroupFromInternal(trees);
       }
 
       public SyntaxNode GetSyntaxNode(IDom item)
@@ -70,15 +95,13 @@ namespace RoslynDom.CSharp
       public string GetSourceCode(IDom item)
       { return GetSyntaxNode(item).ToFullString(); }
 
-      public IExpression ParseExpression(string expressionAsString  )
+      public IExpression ParseExpression(string expressionAsString)
       {
          var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);
          expressionSyntax = RDom.CSharp.Format(expressionSyntax) as ExpressionSyntax;
          var expression = corporation.Create<IExpression>(expressionSyntax, null, null).FirstOrDefault();
          return expression;
       }
-
-      // THis is a temporary comment, delete it. 
 
       public SyntaxTree Format(SyntaxTree tree)
       {
@@ -94,12 +117,10 @@ namespace RoslynDom.CSharp
          //node = Formatter.Format(node, span, new CustomWorkspace()) as SyntaxNode;
          var ws = new CustomWorkspace();
          var options = ws.Options;
-        // options = options.WithChangedOption(CSharpFormattingOptions.)
+         // options = options.WithChangedOption(CSharpFormattingOptions.)
          node = Formatter.Format(node, new CustomWorkspace());
          return node;
       }
-
-
 
       private IRoot LoadFromInternal(SyntaxTree tree, string filePath)
       {
@@ -113,6 +134,28 @@ namespace RoslynDom.CSharp
          //var root = corporation.CreateFrom<IRoot>(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault();
          root.FilePath = filePath;
          return root;
+      }
+
+      private IRootGroup LoadGroupFromInternal(params SyntaxTree[] trees)
+      {
+         //corporation.CheckContainer();
+         var compilation = CSharpCompilation.Create("MyCompilation",
+                                        options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                                        syntaxTrees: trees,
+                                        references: new[] { MetadataReference.CreateFromAssembly(typeof(object).Assembly) });
+         var group = corporation.CreateCompilation(compilation, null, null);
+
+         // TODO: Loop through to create trees in the Root factory
+         //foreach (var tree in trees)
+         //{
+         //   var model = compilation.GetSemanticModel(tree);
+         //   var root = corporation.Create(tree.GetCompilationUnitRoot(), null, model).FirstOrDefault() as IRoot;
+         //   group.Roots.AddOrMove(root);
+         //}
+
+         // TODO: Set the filepath from the SyntaxTree FilePath in the root factory
+         //root.FilePath = filePath;
+         return group;
       }
 
       internal IEnumerable<SyntaxNode> GetSyntaxGroup(IDom item)

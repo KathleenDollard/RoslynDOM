@@ -98,6 +98,7 @@
     <Compile Include="Interfaces\IOperator.cs" />
     <Compile Include="Interfaces\IContructor.cs" />
     <Compile Include="Interfaces\IEvent.cs" />
+    <Compile Include="Interfaces\IRootGroup.cs" />
     <Compile Include="Interfaces_Expressions\IInvocationExpression.cs" />
     <Compile Include="Interfaces_Statements\IAssignmentStatement.cs" />
     <Compile Include="Interfaces_Statements\IBlockStatement.cs" />

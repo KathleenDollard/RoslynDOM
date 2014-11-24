@@ -185,7 +185,7 @@ namespace RoslynDom.Common
       /// <returns></returns>
       public bool CreateAndAdd<TInput>(TInput input, Func<TInput, IEnumerable<T>> createDeleg)
       {
-         return AddOrMoveRange(createDeleg(input));
+         return AddOrMoveRange(createDeleg(input).ToList());
       }
 
       /// <summary>

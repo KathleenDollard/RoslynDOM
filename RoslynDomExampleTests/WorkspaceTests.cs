@@ -30,7 +30,6 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Workspace_open_project()
       {
-         Assert.Inconclusive(); // workspace problem
          var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
 
          var ws = MSBuildWorkspace.Create();
@@ -44,7 +43,6 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Workspace_open_document()
       {
-         Assert.Inconclusive(); // workspace problem
          var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
 
          var ws = MSBuildWorkspace.Create();

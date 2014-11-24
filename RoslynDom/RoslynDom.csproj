@@ -102,6 +102,7 @@
     <Compile Include="Implementations\RDomOperator.cs" />
     <Compile Include="Implementations\RDomBlockEndDetail.cs" />
     <Compile Include="Implementations\RDomBlockStartDetail.cs" />
+    <Compile Include="Implementations\RDomRootGroup.cs" />
     <Compile Include="Implementations\RDomVerticalWhitespace.cs" />
     <Compile Include="IRoslynHasSymbol.cs" />
     <Compile Include="RoslynUtilities.cs" />

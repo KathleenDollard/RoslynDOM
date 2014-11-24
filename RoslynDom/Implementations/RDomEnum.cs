@@ -3,6 +3,8 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
+using System;
+
 namespace RoslynDom
 {
    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming",
@@ -44,6 +46,18 @@ namespace RoslynDom
       {
          _members = new RDomCollection<IEnumMember>(this);
       }
+
+      public IEnumerable<IDom> GetMembers()
+      {return Members;      }
+
+      public bool AddOrMoveMember(IDom item)
+      { return Members.AddOrMove(item); }
+
+      public bool RemoveMember(IDom item)
+      { return Members.Remove(item); }
+
+      public bool InsertOrMoveMember(int index, IDom item)
+      { return Members.InsertOrMove(index, item); }
 
       public override IEnumerable<IDom> Children
       {

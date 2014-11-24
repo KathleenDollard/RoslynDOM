@@ -17,7 +17,13 @@ namespace RoslynDom
       private List<IWorker> workers = new List<IWorker>();
       private ICreateFromWorker createFromWorker;
       private IBuildSyntaxWorker buildSyntaxWorker;
-      // private Worker worker;
+      private IRDomCompilationFactory compilationFactory;
+      private IDictionary<Type, IRDomFactory> domTypeLookup = new Dictionary<Type, IRDomFactory>();
+      private IDictionary<Type, IRDomFactory> explicitNodeLookup = new Dictionary<Type, IRDomFactory>();
+      private IDictionary<Type, IRDomFactory> syntaxNodeLookup = new Dictionary<Type, IRDomFactory>();
+      private List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>> canCreateList =
+                  new List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>>();
+
 
       public RDomCorporation(string language)
       {
@@ -40,6 +46,11 @@ namespace RoslynDom
                         .ToList();
          foreach (var worker in workers.OfType<ICorporationWorker>())
          { worker.Corporation = this; }
+
+         compilationFactory = provider2.GetItems<IRDomCompilationFactory>()
+                              .OrderByDescending(x => x.Priority)
+                              .First();
+
       }
 
       public ICreateFromWorker CreateFromWorker
@@ -71,12 +82,6 @@ namespace RoslynDom
       {
          return workers.OfType<T>().SingleOrDefault();
       }
-
-      private IDictionary<Type, IRDomFactory> domTypeLookup = new Dictionary<Type, IRDomFactory>();
-      private IDictionary<Type, IRDomFactory> explicitNodeLookup = new Dictionary<Type, IRDomFactory>();
-      private IDictionary<Type, IRDomFactory> syntaxNodeLookup = new Dictionary<Type, IRDomFactory>();
-      private List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>> canCreateList =
-                  new List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>>();
 
       public bool CheckContainer()
       { return provider2.CheckContainer(); }
@@ -135,6 +140,11 @@ namespace RoslynDom
       public IEnumerable<IDom> Create(SyntaxNode node, IDom parent, SemanticModel model, bool skipDetail = false)
       {
          return FindFactoryAndCreate(node.GetType(), syntaxNodeLookup, node, parent, model);
+      }
+
+      public IRootGroup CreateCompilation(Compilation compilation, IDom parent, SemanticModel model, bool skipDetail = false)
+      {
+         return compilationFactory.CreateFrom(compilation, skipDetail);
       }
 
       public IEnumerable<T> Create<T>(SyntaxNode node, IDom parent, SemanticModel model)

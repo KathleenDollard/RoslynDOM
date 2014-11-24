@@ -25,6 +25,7 @@ namespace RoslynDom
                                  && x.Namespace.StartsWith("RoslynDom"));
          // TODO: *** Load other things, at least SameIntent and IWorker
          LoadIntoContainerWithArgument<IRDomFactory, RDomCorporation>(types, corporation);
+         LoadIntoContainerWithArgument<IRDomCompilationFactory, RDomCorporation>(types, corporation);
          LoadIntoContainer<IContainerCheck>(types);
          LoadIntoContainer<IWorker>(types);
          //LoadIntoContainerWithArgument<ICreateFromWorker, RDomCorporation>(types, corporation);

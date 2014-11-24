@@ -68,10 +68,6 @@
     <Reference Include="ObjectApproval">
       <HintPath>..\packages\ObjectApproval.0.2.1\Lib\NET40\ObjectApproval.dll</HintPath>
     </Reference>
-    <Reference Include="RoslynDomUtilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\RoslynDom\bin\Debug\RoslynDomUtilities.dll</HintPath>
-    </Reference>
     <Reference Include="StatePrinter">
       <HintPath>..\packages\StatePrinter.1.0.4\lib\net35\StatePrinter.dll</HintPath>
     </Reference>
@@ -79,6 +75,21 @@
     <Reference Include="System.Collections.Immutable, Version=1.1.32.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\System.Collections.Immutable.1.1.32-beta\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.AttributedModel">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Convention">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Hosting">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.Runtime">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.TypedParts">
+      <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
     </Reference>
     <Reference Include="System.Reflection.Metadata">
       <HintPath>..\packages\System.Reflection.Metadata.1.0.17-beta\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
@@ -143,6 +154,10 @@
     <ProjectReference Include="..\RoslynDomRDomCommon\RoslynDomRDomCommon.csproj">
       <Project>{1e5b8601-b717-471d-a9ee-0c03d15491a5}</Project>
       <Name>RoslynDomRDomCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynDomUtilities\RoslynDomUtilities.csproj">
+      <Project>{278404a0-aa81-402c-9ff0-b183715e2997}</Project>
+      <Name>RoslynDomUtilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\RoslynDom\RoslynDom.csproj">
       <Project>{cb000d47-6587-4706-9f3b-e474b5a43174}</Project>

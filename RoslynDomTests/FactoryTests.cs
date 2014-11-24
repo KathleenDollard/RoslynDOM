@@ -87,7 +87,7 @@ namespace RoslynDomTests
       [TestMethod, TestCategory(GeneralFactoryCategory)]
       public void Can_get_root_from_string_with_invalid_code()
       {
-         Assert.Inconclusive();
+         Assert.Inconclusive(); // This code can't build a valid IDom structure, not sure how to report
          var csharpCode = @"
                         using System.Diagnostics.Tracing;
                         namespace testing.Namespace1
@@ -139,6 +139,64 @@ namespace RoslynDomTests
          var a = new ClassA();
          var result1 = corp.GetSyntaxNodes(a);
       }
+
+      [TestMethod, TestCategory(GeneralFactoryCategory)]
+      public void Can_get_root_group_from_strings()
+      {
+         var csharpCode1 = @"
+                  using System.Diagnostics.Tracing;
+                  namespace testing.Namespace1
+                  { 
+                  public class A{}
+                  }";
+
+         var csharpCode2 = @"
+                  using System.Diagnostics.Tracing;
+                  namespace testing2.Namespace2
+                  { 
+                  public class B{}
+                  }";
+         var rootGroup = RDom.CSharp.LoadGroup(csharpCode1, csharpCode2);
+         Assert.IsNotNull(rootGroup);
+         var root = rootGroup.Roots.First();
+         Assert.AreEqual(1, root.ChildNamespaces.Count());
+         Assert.AreEqual("testing", root.ChildNamespaces.First().Name);
+         Assert.AreEqual(1, root.RootClasses.Count());
+         Assert.AreEqual("A", root.RootClasses.First().Name);
+         root = rootGroup.Roots.ElementAt (1);
+         Assert.AreEqual(1, root.ChildNamespaces.Count());
+         Assert.AreEqual("testing2", root.ChildNamespaces.First().Name);
+         Assert.AreEqual(1, root.RootClasses.Count());
+         Assert.AreEqual("B", root.RootClasses.First().Name);
+      }
+
+      [TestMethod, TestCategory(GeneralFactoryCategory)]
+      public void Can_get_root_group_from_project_via_solution()
+      {
+         var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
+
+         var ws = MSBuildWorkspace.Create();
+         // For now: wait for the result
+         var solution = ws.OpenSolutionAsync(slnFile).Result;
+         var project = solution.Projects.Where(x => x.Name == "RoslynDom").FirstOrDefault();
+         // I don't want to test much about the project - because things will change
+         Assert.IsNotNull(project);
+         var trees = new List<SyntaxTree>();
+         foreach (var doc in project.Documents )
+         {
+            // TODO: consider how async should fit in - not in the test, it belongs deeper in the system
+            var tree = doc.GetSyntaxTreeAsync().Result;
+            trees.Add(tree);
+         }
+
+         var rootGroup = RDom.CSharp.LoadGroup(trees.ToArray());
+
+         Assert.IsNotNull(rootGroup);
+         var classes = rootGroup.Roots
+                           .SelectMany(x => x.RootClasses);
+         Assert.IsTrue(classes.Count() > 50);
+      }
+
 
       // Class just for test
       private class ClassA : IDom
