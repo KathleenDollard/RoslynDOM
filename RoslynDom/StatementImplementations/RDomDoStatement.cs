@@ -5,7 +5,7 @@ namespace RoslynDom
 {
    public class RDomDoStatement : RDomBaseLoop<IDoStatement>, IDoStatement
     {
-      public RDomDoStatement(IExpression condition,bool testAtEnd = false, bool hasBlock = false)
+      public RDomDoStatement( IExpression condition,bool testAtEnd = false, bool hasBlock = false)
           : base(condition, testAtEnd, hasBlock)
       { Initialize(); }
 

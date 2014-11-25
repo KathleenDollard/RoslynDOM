@@ -8,7 +8,7 @@ namespace RoslynDom
    public class RDomInvalidMember : RDomBase<IInvalidMember, ISymbol>, IInvalidMember
    {
       private AttributeCollection _attributes = new AttributeCollection();
-      public RDomInvalidMember(string name, AccessModifier accessModifier = AccessModifier.Private)
+      public RDomInvalidMember( string name, AccessModifier accessModifier = AccessModifier.Private)
             : this(null, null, null)
       {
          _name = name;

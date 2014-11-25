@@ -37,13 +37,15 @@ public class A {}
 public class B {}
 public class C {}
 public class D {}";
-         var treeRoot = SyntaxFactory.ParseSyntaxTree(CSharpCode).GetCompilationUnitRoot();
-         var root = RDom.CSharp.Load("namespace Fred{}");
+         var syntaxTree = SyntaxFactory.ParseSyntaxTree(CSharpCode);
+         var compilation = CSharpCompilation.Create("temp", new[] { syntaxTree });
+         var model = compilation.GetSemanticModel(syntaxTree);
+         var root = RDom.CSharp.Load("namespace Fred{}"); ;
          var nspace = root.ChildNamespaces.First();
          nspace.StemMembersAll.CreateAndAdd(
-            treeRoot,
+            syntaxTree.GetCompilationUnitRoot(),
             tr => tr.ChildNodes().OfType<ClassDeclarationSyntax>(),
-            s => new RDomClass(s, nspace, null));
+            s => new RDomClass(s, nspace, model));
          Assert.AreEqual(4, nspace.Classes.Count());
       }
 

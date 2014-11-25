@@ -19,12 +19,21 @@ namespace RoslynDom
       private RDomCollection<ITypeParameter> _typeParameters;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      protected RDomBaseType(string name, AccessModifier accessModifier,
+      protected RDomBaseType(string metadataName, AccessModifier accessModifier,
             MemberKind memberKind,
-            StemMemberKind stemMemberKind) : this(null, null, null, memberKind, stemMemberKind)
+            StemMemberKind stemMemberKind)
+         : this(null, null, null, memberKind, stemMemberKind)
       {
-         _name = name;
+         _metadataName = metadataName;
          _accessModifier = accessModifier;
+         if (metadataName.Contains("."))
+         {
+            _name = metadataName.SubstringAfterLast(".");
+         }
+         else
+         {
+            _name = metadataName;
+         }
       }
 
       internal RDomBaseType(
@@ -38,6 +47,9 @@ namespace RoslynDom
          _memberKind = memberKind;
          _stemMemberKind = stemMemberKind;
          Initialize();
+         Name = TypedSymbol.Name;
+         MetadataName = TypedSymbol.ContainingNamespace + "." + TypedSymbol.MetadataName;
+
       }
 
       internal RDomBaseType(T oldIDom)
@@ -46,13 +58,14 @@ namespace RoslynDom
          Initialize();
          var oldRDom = oldIDom as RDomBaseType<T>;
          _name = oldRDom.Name;
+         _metadataName = oldRDom.MetadataName;
          _accessModifier = oldRDom.AccessModifier;
          _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
          _memberKind = oldRDom._memberKind;
          _stemMemberKind = oldRDom._stemMemberKind;
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
-         RDomCollection<ITypeMemberAndDetail>.Copy( oldRDom.MembersAll, _members);
-         _typeParameters  = oldRDom.TypeParameters .Copy(this);
+         RDomCollection<ITypeMemberAndDetail>.Copy(oldRDom.MembersAll, _members);
+         _typeParameters = oldRDom.TypeParameters.Copy(this);
 
          // TODO: _allImplementedInterfaces = oldRDom._allImplementedInterfaces.Select(x => x.Copy());
          _implementedInterfaces.AddOrMoveRange(oldRDom._implementedInterfaces.Select(x => x.Copy()));
@@ -79,7 +92,7 @@ namespace RoslynDom
       { return _members.InsertOrMove(index, item); }
 
       public IEnumerable<IDom> GetMembers()
-      {         return MembersAll.ToList(); }
+      { return MembersAll.ToList(); }
 
       public override IEnumerable<IDom> Children
       {
@@ -97,6 +110,14 @@ namespace RoslynDom
       {
          get { return _name; }
          set { SetProperty(ref _name, value); }
+      }
+
+      private string _metadataName;
+      [Required]
+      public string MetadataName
+      {
+         get { return _metadataName; }
+         set { SetProperty(ref _metadataName, value); }
       }
 
       private AccessModifier _accessModifier;

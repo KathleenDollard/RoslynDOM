@@ -16,8 +16,8 @@ namespace RoslynDom
          _hasBlock = hasBlock;
       }
 
-      public RDomUsingStatement( IVariableDeclaration variable, bool hasBlock)
-      : this(null, null, null)
+      public RDomUsingStatement(IDom parent, IVariableDeclaration variable, bool hasBlock)
+      : this(null, parent, null)
       {
          _variable = variable;
          _hasBlock = hasBlock;

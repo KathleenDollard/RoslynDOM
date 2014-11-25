@@ -47,7 +47,6 @@ namespace RoslynDom.CSharp
          var newItem = new RDomStructure(syntaxNode, parent, model);
          CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
          CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
-         newItem.Name = newItem.TypedSymbol.Name;
 
          newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => OutputContext.Corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
 

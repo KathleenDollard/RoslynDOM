@@ -7,11 +7,22 @@ namespace RoslynDom
 {
    public abstract class RDomBaseVariable : RDomBase<IVariableDeclaration, ISymbol>, IVariableDeclaration
    {
-      protected RDomBaseVariable(string name, IReferencedType type, IExpression initializer, bool isImplicitlyTyped, bool isAliased, VariableKind variableKind)
-          : this(null, null, null)
+      protected RDomBaseVariable( string name, string typeName, IExpression initializer, bool isImplicitlyTyped, bool isAliased, VariableKind variableKind)
+          : this(name, initializer, isImplicitlyTyped, isAliased, variableKind)
+      {
+         _type = new RDomReferencedType(this, typeName, isAliased);
+      }
+
+      protected RDomBaseVariable( string name, IReferencedType type, IExpression initializer, bool isImplicitlyTyped, bool isAliased, VariableKind variableKind)
+          : this( name, initializer, isImplicitlyTyped, isAliased, variableKind )
+      {
+         _type = type;
+      }
+
+      private RDomBaseVariable( string name,  IExpression initializer, bool isImplicitlyTyped, bool isAliased, VariableKind variableKind)
+         : this(null, null, null)
       {
          _name = name;
-         _type = type;
          _initializer = initializer;
          _isImplicitlyTyped = IsImplicitlyTyped;
          _isAliased = isAliased;

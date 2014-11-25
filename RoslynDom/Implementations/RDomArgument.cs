@@ -16,7 +16,7 @@ namespace RoslynDom
    /// </remarks>
    public class RDomArgument : RDomBase<IArgument, ISymbol>, IArgument
    {
-      public RDomArgument(IExpression valueExpression, string name = null,
+      public RDomArgument( IExpression valueExpression, string name = null,
                      bool isRef = false, bool isOut = false)
        : this(null, null, null)
       {

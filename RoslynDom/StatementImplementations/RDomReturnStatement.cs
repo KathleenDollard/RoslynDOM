@@ -14,7 +14,7 @@ namespace RoslynDom
       /// <param name="expression">
       /// Expression to return
       /// </param>
-      public RDomReturnStatement(IExpression expression, bool suppressNewLine = false)
+      public RDomReturnStatement( IExpression expression, bool suppressNewLine = false)
        : this(null, null, null)
       {
          _return = expression;

@@ -37,11 +37,13 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomField(string name, string typeName, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomField( string name, string returnTypeName, AccessModifier declaredAccessModifier = AccessModifier.Private,
                       bool isStatic = false, bool isNew = false, bool isReadOnly = false,
                       bool isVolatile = false, bool isConstant = false)
-       : this(name, new RDomReferencedType(typeName), accessModifier, isStatic, isNew, isReadOnly, isVolatile, isConstant)
-      { }
+       : this(name, declaredAccessModifier, isStatic, isNew, isReadOnly, isVolatile, isConstant)
+      {
+         _returnType = new RDomReferencedType(this, returnTypeName);
+      }
 
       /// <summary>
       /// Constructor to use when creating a RoslynDom from scratch
@@ -60,13 +62,20 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomField(string name, IReferencedType type, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      public RDomField( string name, IReferencedType returnType, AccessModifier declaredAccessModifier = AccessModifier.Private,
                       bool isStatic = false, bool isNew = false, bool isReadOnly = false,
                       bool isVolatile = false, bool isConstant = false)
-       : this(null, null, null)
+       : this(name, declaredAccessModifier, isStatic, isNew, isReadOnly, isVolatile, isConstant)
+      {
+         _returnType = returnType;
+      }
+
+      private RDomField( string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
+                     bool isStatic = false, bool isNew = false, bool isReadOnly = false,
+                     bool isVolatile = false, bool isConstant = false)
+      : this(null, null, null)
       {
          _name = name;
-         _returnType = type;
          _declaredAccessModifier = declaredAccessModifier;
          _isStatic = isStatic;
          _isNew = isNew;

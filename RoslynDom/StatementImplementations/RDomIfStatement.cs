@@ -11,7 +11,7 @@ namespace RoslynDom
    {
       private RDomCollection<IElseBaseStatement> _elses;
 
-      public RDomIfStatement(IExpression  condition)
+      public RDomIfStatement( IExpression  condition)
           : this(null, null, null)
       {
          _condition = condition;

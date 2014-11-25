@@ -12,17 +12,25 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomConversionOperator(string name, string typeName, bool isImplicit)
-            : this(name, new RDomReferencedType(typeName), isImplicit)
-      { }
-      public RDomConversionOperator(string name, IReferencedType type, bool isImplicit)
+      public RDomConversionOperator( string name, string typeName, bool isImplicit)
+            : this( name, isImplicit)
+      {
+         _type = new RDomReferencedType(this, typeName);
+      }
+
+      public RDomConversionOperator( string name, IReferencedType type, bool isImplicit)
+            : this( name, isImplicit)
+      {
+         _type = type;
+      }
+      private RDomConversionOperator( string name,  bool isImplicit)
             : this(null, null, null)
       {
          _name = name;
          _accessModifier = accessModifier;
-         _type = type;
          _isImplicit = isImplicit;
       }
+
       public RDomConversionOperator(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }

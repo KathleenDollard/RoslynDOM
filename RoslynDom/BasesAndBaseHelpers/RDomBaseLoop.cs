@@ -11,7 +11,7 @@ namespace RoslynDom
    {
       private RDomCollection<IStatementAndDetail> _statements;
 
-      protected RDomBaseLoop(IExpression condition, bool testAtEnd, bool hasBlock)
+      protected RDomBaseLoop( IExpression condition, bool testAtEnd, bool hasBlock)
           : this(null, null, null)
       {
          Initialize();

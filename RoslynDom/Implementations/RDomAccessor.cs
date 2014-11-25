@@ -12,8 +12,8 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
       private AccessorType _accessorType;
 
-      public RDomPropertyAccessor(string name, AccessorType accessorType, AccessModifier accessModifier = AccessModifier.Private )
-      : this(null, AccessorType.Unknown , null, null)
+      public RDomPropertyAccessor(IDom parent, string name, AccessorType accessorType, AccessModifier accessModifier = AccessModifier.Private )
+      : this(null, AccessorType.Unknown , parent, null)
       {
          _name = name;
          _accessModifier = accessModifier;

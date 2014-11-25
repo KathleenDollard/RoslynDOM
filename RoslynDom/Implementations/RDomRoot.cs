@@ -7,17 +7,26 @@ namespace RoslynDom
 {
    public class RDomRoot : RDomBaseStemContainer<IRoot, ISymbol>, IRoot
    {
-      public RDomRoot(string name = null, string filePath = null)
-      : this(null, null, null)
-      {
-         _name = name ?? "<root>" ; // Default value not used because change may occur and using code not recompiled
-         _filePath = filePath;
-      }   
+      private Compilation _compilation;
+      private ReferencedTypeCache _referencedTypeCache;
+
+      //public RDomRoot(IDom parent, string name = null, string filePath = null)
+      //: this(null, parent, null)
+      //{
+      //   _filePath = filePath;
+      //}   
       
       // This takes a parent because in the future there will be a rootGroup concept for multiple files
-      public RDomRoot(SyntaxNode rawItem, IDom parent, SemanticModel model)
+      public RDomRoot(IFactoryAccess factoryAccess, SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
-      { }
+      {
+         var rootGroup = Parent as RDomRootGroup;
+         if (rootGroup == null)
+         {
+            _compilation = model.Compilation;
+            _referencedTypeCache = new ReferencedTypeCache(_compilation, factoryAccess);
+         }
+      }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
@@ -28,13 +37,26 @@ namespace RoslynDom
          _filePath = oldRDom.FilePath;
       }
 
+      internal IType FindByMetadataName(string metadataName)
+      {
+         var rootGroup = Parent as RDomRootGroup;
+         if (rootGroup == null)
+         { return _referencedTypeCache.FindByMetadataName(metadataName); }
+         return rootGroup.FindByMetadataName(metadataName);
+      }
+
       private string _name;
       [Required]
       public string Name
       {
-         get { return _name; }
+         get {
+            return string.IsNullOrWhiteSpace(_name) 
+                     ? "<root>" 
+                     :_name ; 
+         }
          set { SetProperty(ref _name, value); }
       }
+
       private string _filePath;
       public string FilePath
       {

@@ -8,9 +8,9 @@ namespace RoslynDom
    public class RDomAttributeValue
        : RDomBase<IAttributeValue, ISymbol>, IAttributeValue
    {
-      public RDomAttributeValue(string name, AttributeValueStyle style = AttributeValueStyle.Positional,
+      public RDomAttributeValue(IDom parent, string name, AttributeValueStyle style = AttributeValueStyle.Positional,
                object value = null, string valueConstantIdentifier = null, LiteralKind valueType = LiteralKind.Unknown)
-      : this(null, null, null)
+      : this(null, parent, null)
       {
          _name = name;
          _style = style;

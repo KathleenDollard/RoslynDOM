@@ -9,34 +9,44 @@ namespace RoslynDom
    {
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomParameter(string name, string typeName,
+      public RDomParameter( string name, string typeName,
                       int ordinal = 0, bool isOut = false, bool isRef = false,
                       bool isParamArray = false)
-          : this(name, new RDomReferencedType(typeName, true), null, 
+          : this(name, name, null, 
                 LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
       { }
 
       public RDomParameter(string name, IReferencedType type,
                       int ordinal = 0, bool isOut = false, bool isRef = false,
                       bool isParamArray = false)
-         : this(name, type, null, LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
+         : this( name, type, null, LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
       { }
 
-      public RDomParameter(string name, string typeName,
+      public RDomParameter( string name, string typeName,
                      object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
                      int ordinal = 0, bool isOut = false, bool isRef = false,
                      bool isParamArray = false)
-         : this(name, new RDomReferencedType(typeName, true), defaultValue, defaultValueType, defaultConstantIdentifier, ordinal, isOut, isRef, isParamArray)
-      { }
+         : this( name, defaultValue, defaultValueType, defaultConstantIdentifier, ordinal, isOut, isRef, isParamArray)
+      {
+         _type = new RDomReferencedType(this, typeName, true);
+      }
 
-      public RDomParameter(string name, IReferencedType type,
+      public RDomParameter( string name, IReferencedType type,
                    object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
                    int ordinal = 0, bool isOut = false, bool isRef = false,
                    bool isParamArray = false)
-         : this(null, null, null)
+         : this( name, defaultValue, defaultValueType, defaultConstantIdentifier, ordinal, isOut, isRef, isParamArray)
+      {
+         _type = type;
+      }
+
+      private RDomParameter( string name, 
+                 object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
+                 int ordinal = 0, bool isOut = false, bool isRef = false,
+                 bool isParamArray = false)
+       : this(null, null, null)
       {
          _name = name;
-         _type = type;
          _ordinal = ordinal;
          _isOut = isOut;
          _isRef = isRef;

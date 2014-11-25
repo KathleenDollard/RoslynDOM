@@ -278,7 +278,7 @@ namespace RoslynDom.CSharp
                {
                   case SyntaxKind.EndOfLineTrivia:
                      // TODO: Consider whether leading WS on a vert whitespace matters
-                     ret.Add(new RDomVerticalWhitespace(trivia, 1, false));
+                     ret.Add(new RDomVerticalWhitespace(parent, trivia, 1, false));
                      break;
                   case SyntaxKind.SingleLineCommentTrivia:
                   case SyntaxKind.MultiLineCommentTrivia:

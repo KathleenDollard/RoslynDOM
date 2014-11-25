@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
       {
          var csharpCompilation = compilation as CSharpCompilation;
          if (csharpCompilation == null) { throw new InvalidOperationException(); }
-         var ret = new RDomRootGroup(compilation);
+         var ret = new RDomRootGroup(compilation, _corporation.FactoryAccess);
          foreach (var tree in compilation.SyntaxTrees)
          {
             var model = compilation.GetSemanticModel(tree);

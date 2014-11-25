@@ -16,7 +16,7 @@ namespace RoslynDom
       /// <param name="expression">
       /// Expression to invoke
       /// </param>
-      public RDomInvocationStatement(IInvocationExpression expression, bool suppressNewLine = false)
+      public RDomInvocationStatement( IInvocationExpression expression, bool suppressNewLine = false)
        : this(null, null, null)
       {
          _invocation = expression;

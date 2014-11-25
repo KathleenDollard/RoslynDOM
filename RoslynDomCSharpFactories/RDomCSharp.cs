@@ -14,16 +14,19 @@ using Microsoft.CodeAnalysis.CSharp.Formatting;
 
 namespace RoslynDom.CSharp
 {
-   public class RDom
+   public class RDom : IFactoryAccess
    {
       [ExcludeFromCodeCoverage]
       // until move to C# 6 - I want to support name of as soon as possible
       protected static string nameof<T>(T value) { return ""; }
 
       private static RDom csharp = new RDom();
-      private RDomCorporation corporation = new RDomCorporation(LanguageNames.CSharp);
+      private RDomCorporation corporation;
 
-      private RDom() { }
+      private RDom()
+      {
+         corporation = new RDomCorporation(LanguageNames.CSharp, this);
+      }
 
       public static RDom CSharp
       { get { return csharp; } }
@@ -45,7 +48,7 @@ namespace RoslynDom.CSharp
             SyntaxTree tree = CSharpSyntaxTree.ParseText(code, path: fileName);
             trees.Add(tree);
          }
-         return LoadGroupFromInternal(trees.ToArray());
+         return LoadGroupFromInternal(null, trees.ToArray());
       }
 
       public IRoot Load(string code)
@@ -54,7 +57,7 @@ namespace RoslynDom.CSharp
          return LoadFromInternal(tree, null);
       }
 
- 
+
       public IRoot Load(Document document)
       {
          Guardian.Assert.IsNotNull(document, nameof(document));
@@ -67,16 +70,22 @@ namespace RoslynDom.CSharp
          return LoadFromInternal(tree, tree.FilePath);
       }
 
-      public IRootGroup LoadGroup(params string[] codeStrings)
+      public IRootGroup LoadGroup(Compilation compilation, params string[] codeStrings)
       {
          var trees = codeStrings
                         .Select(x => CSharpSyntaxTree.ParseText(x))
                         .ToArray();
-         return LoadGroupFromInternal(trees);
+         return LoadGroupFromInternal(compilation, trees);
       }
-      public IRootGroup LoadGroup(params SyntaxTree[] trees)
+      public IRootGroup LoadGroup(Compilation compilation, params SyntaxTree[] trees)
       {
-         return LoadGroupFromInternal(trees);
+         return LoadGroupFromInternal(compilation, trees);
+      }
+
+      public IRootGroup Load(Compilation compilation)
+      {
+         var trees = compilation.SyntaxTrees;
+         return LoadGroup(compilation, trees.ToArray());
       }
 
       public SyntaxNode GetSyntaxNode(IDom item)
@@ -136,13 +145,16 @@ namespace RoslynDom.CSharp
          return root;
       }
 
-      private IRootGroup LoadGroupFromInternal(params SyntaxTree[] trees)
+      private IRootGroup LoadGroupFromInternal(Compilation compilation, params SyntaxTree[] trees)
       {
          //corporation.CheckContainer();
-         var compilation = CSharpCompilation.Create("MyCompilation",
-                                        options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-                                        syntaxTrees: trees,
-                                        references: new[] { MetadataReference.CreateFromAssembly(typeof(object).Assembly) });
+         if (compilation == null)
+         {
+            compilation = CSharpCompilation.Create("MyCompilation",
+                                          options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                                          syntaxTrees: trees,
+                                          references: new[] { MetadataReference.CreateFromAssembly(typeof(object).Assembly) });
+         }
          var group = corporation.CreateCompilation(compilation, null, null);
 
          // TODO: Loop through to create trees in the Root factory

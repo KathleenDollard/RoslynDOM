@@ -13,7 +13,7 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomConstructor(string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      public RDomConstructor( string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
                       bool isStatic = false, ConstructorInitializerType constructorInitializerType = ConstructorInitializerType.None)
        : this(null, null, null)
       {

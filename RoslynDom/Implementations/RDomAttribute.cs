@@ -12,8 +12,8 @@ namespace RoslynDom
    {
       private RDomCollection<IAttributeValue> _attributeValues;
 
-      public RDomAttribute(string name)
-      : this(null, null, null)
+      public RDomAttribute(IDom parent, string name)
+      : this(null, parent, null)
       {
          _name = name;
       }

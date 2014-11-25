@@ -10,8 +10,8 @@ namespace RoslynDom.Common
    {
       private List<KeyValuePair<string, object>> _items = new List<KeyValuePair<string, object>>();
 
-      public RDomPublicAnnotation(SyntaxTrivia trivia, string name)
-         :base(StemMemberKind.PublicAnnotation, MemberKind.PublicAnnotation, trivia )
+      public RDomPublicAnnotation(IDom parent, SyntaxTrivia trivia, string name)
+         :base(parent,StemMemberKind.PublicAnnotation, MemberKind.PublicAnnotation, trivia )
       {
          _name = name;
       }

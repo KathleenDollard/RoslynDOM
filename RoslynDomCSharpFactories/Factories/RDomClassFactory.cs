@@ -54,8 +54,6 @@ namespace RoslynDom.CSharp
          CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
          CreateFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 
-         newItem.Name = newItem.TypedSymbol.Name;
-
          newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => OutputContext.Corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
 
          newItem.IsAbstract = newItem.Symbol.IsAbstract;

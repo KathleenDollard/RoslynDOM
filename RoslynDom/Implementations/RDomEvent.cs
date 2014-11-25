@@ -40,12 +40,14 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomEvent(string name, string typeName, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomEvent( string name, string typeName, AccessModifier accessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
                bool isSealed = false, bool isStatic = false, bool isNew = false)
-       : this(name, new RDomReferencedType(typeName), accessModifier, isAbstract,
+       : this( name, accessModifier, isAbstract,
                 isVirtual, isOverride, isSealed, isStatic, isNew)
-      { }
+      {
+         _type = new RDomReferencedType(this, typeName, true);
+      }
 
       /// <summary>
       /// Constructor to use when creating a RoslynDom from scratch
@@ -76,13 +78,21 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomEvent(string name, IReferencedType type, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomEvent( string name, IReferencedType type, AccessModifier accessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
                bool isSealed = false, bool isStatic = false, bool isNew = false)
-       : this(null, null, null)
+       : this( name,  accessModifier, isAbstract,
+                isVirtual, isOverride, isSealed, isStatic, isNew)
+      {
+         _type = type;
+      }
+
+      private RDomEvent( string name,  AccessModifier accessModifier = AccessModifier.Private,
+              bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
+              bool isSealed = false, bool isStatic = false, bool isNew = false)
+      : this(null, null, null)
       {
          _name = name;
-         _type = type;
          _accessModifier = accessModifier;
          _isAbstract = isAbstract;
          _isVirtual = isVirtual;

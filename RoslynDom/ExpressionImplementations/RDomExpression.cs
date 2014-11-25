@@ -6,9 +6,9 @@ namespace RoslynDom
 {
    public class RDomExpression : RDomBase<IExpression, ISymbol>, IExpression
    {
-      public RDomExpression(string initialExpressionString, 
+      public RDomExpression(IDom parent, string initialExpressionString, 
                string initialExpressionLanguage, ExpressionType expressionType)
-      : this(null, null, null)
+      : this(null, parent, null)
       {
          NeedsFormatting = true;
          InitialExpressionString = initialExpressionString;

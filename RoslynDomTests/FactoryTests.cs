@@ -120,7 +120,7 @@ namespace RoslynDomTests
          // Do not access the corporation directly as that's the purpose of the 
          // language specific factory. However, I want to test these two side
          // cases. 
-         var corp = new RDomCorporation(LanguageNames.CSharp);
+         var corp = new RDomCorporation(LanguageNames.CSharp, RDom.CSharp);
          var result1 = corp.GetSyntaxNodes(null);
          Assert.IsFalse(result1.Any());
       }
@@ -135,7 +135,7 @@ namespace RoslynDomTests
          // Do not access the corporation directly as that's the purpose of the 
          // language specific factory. However, I want to test these two side
          // cases. 
-         var corp = new RDomCorporation(LanguageNames.CSharp);
+         var corp = new RDomCorporation(LanguageNames.CSharp, RDom.CSharp );
          var a = new ClassA();
          var result1 = corp.GetSyntaxNodes(a);
       }
@@ -152,11 +152,12 @@ namespace RoslynDomTests
 
          var csharpCode2 = @"
                   using System.Diagnostics.Tracing;
-                  namespace testing2.Namespace2
+                  namespace testing.Namespace1
                   { 
-                  public class B{}
+                  public class B : A
+                     {}
                   }";
-         var rootGroup = RDom.CSharp.LoadGroup(csharpCode1, csharpCode2);
+         var rootGroup = RDom.CSharp.LoadGroup(null, csharpCode1, csharpCode2);
          Assert.IsNotNull(rootGroup);
          var root = rootGroup.Roots.First();
          Assert.AreEqual(1, root.ChildNamespaces.Count());
@@ -165,9 +166,13 @@ namespace RoslynDomTests
          Assert.AreEqual("A", root.RootClasses.First().Name);
          root = rootGroup.Roots.ElementAt (1);
          Assert.AreEqual(1, root.ChildNamespaces.Count());
-         Assert.AreEqual("testing2", root.ChildNamespaces.First().Name);
+         Assert.AreEqual("testing", root.ChildNamespaces.First().Name);
          Assert.AreEqual(1, root.RootClasses.Count());
-         Assert.AreEqual("B", root.RootClasses.First().Name);
+         var cl = root.RootClasses.First();
+         Assert.AreEqual("B",cl.Name);
+         Assert.AreEqual("A", cl.BaseType.Name);
+         Assert.IsNotNull( cl.BaseType.Type);
+         Assert.AreEqual("A", cl.BaseType.Type.Name);
       }
 
       [TestMethod, TestCategory(GeneralFactoryCategory)]
@@ -180,21 +185,34 @@ namespace RoslynDomTests
          var solution = ws.OpenSolutionAsync(slnFile).Result;
          var project = solution.Projects.Where(x => x.Name == "RoslynDom").FirstOrDefault();
          // I don't want to test much about the project - because things will change
-         Assert.IsNotNull(project);
-         var trees = new List<SyntaxTree>();
-         foreach (var doc in project.Documents )
-         {
-            // TODO: consider how async should fit in - not in the test, it belongs deeper in the system
-            var tree = doc.GetSyntaxTreeAsync().Result;
-            trees.Add(tree);
-         }
+         //Assert.IsNotNull(project);
+         //var trees = new List<SyntaxTree>();
+         //foreach (var doc in project.Documents )
+         //{
+         //   // TODO: consider how async should fit in - not in the test, it belongs deeper in the system
+         //   var tree = doc.GetSyntaxTreeAsync().Result;
+         //   trees.Add(tree);
+         //}
 
-         var rootGroup = RDom.CSharp.LoadGroup(trees.ToArray());
+         var compilation = project.GetCompilationAsync().Result;
+         var globalNamespace = compilation.GlobalNamespace;
+         var reference = compilation.GetTypeByMetadataName("RoslynDom.RDomBase");
+         var method = reference.GetMembers().ElementAt(11);
+         var span = method.DeclaringSyntaxReferences.First().Span;
+         var tree = method.DeclaringSyntaxReferences.First().SyntaxTree;
+         var syntax = method.DeclaringSyntaxReferences.First().GetSyntax();
+
+
+         // var rootGroup = RDom.CSharp.LoadGroup(compilation, trees.ToArray());
+         var rootGroup = RDom.CSharp.Load(compilation);
 
          Assert.IsNotNull(rootGroup);
          var classes = rootGroup.Roots
-                           .SelectMany(x => x.RootClasses);
+                           .SelectMany(x => x.RootClasses)
+                           .ToList() ;
          Assert.IsTrue(classes.Count() > 50);
+         var type = classes.First().BaseType.Type;
+         Assert.IsInstanceOfType(type, typeof(RoslynDom.RDomBase));
       }
 
 

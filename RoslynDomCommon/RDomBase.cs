@@ -113,13 +113,13 @@ namespace RoslynDom
       public bool SameIntent<TLocal>(TLocal other)
              where TLocal : class
       {
-          return SameIntentInternal(other);
+         return SameIntentInternal(other);
       }
 
       protected abstract bool SameIntentInternal<TLocal>(TLocal other)
                        where TLocal : class;
-      
-       public IEnumerable<IDom> Descendants
+
+      public IEnumerable<IDom> Descendants
       {
          get
          {
@@ -163,6 +163,17 @@ namespace RoslynDom
             return list;
          }
       }
+
+      public IEnumerable<IRoot> Roots
+      {
+         get
+         {
+            var rootGroup = this.Ancestors.OfType<IRootGroup>().FirstOrDefault();
+            if (rootGroup != null) { return rootGroup.Roots; }
+            return Ancestors.OfType<IRoot>();
+         }
+      }
+
 
       public Whitespace2Collection Whitespace2Set { get; private set; }
 

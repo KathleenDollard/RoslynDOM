@@ -11,7 +11,7 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomDestructor(string name, AccessModifier accessModifier = AccessModifier.Private)
+      public RDomDestructor( string name, AccessModifier accessModifier = AccessModifier.Private)
       : this(null, null, null)
       {
          _name = name;

@@ -28,7 +28,7 @@ namespace RoslynDomTests
                             { }
                         ";
             var root = RDom.CSharp.Load(csharpCode);
-            Assert.AreEqual("Root", root.Name);
+            Assert.AreEqual("<root>", root.Name);
         }
 
         [TestMethod, TestCategory(SimpleNameCategory)]

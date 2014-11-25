@@ -9,8 +9,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RoslynDom.CSharp
 {
-    public class RDomInterfaceTypeMemberFactory
-      : RDomBaseSyntaxNodeFactory<RDomInterface, InterfaceDeclarationSyntax>
+   public class RDomInterfaceTypeMemberFactory
+     : RDomBaseSyntaxNodeFactory<RDomInterface, InterfaceDeclarationSyntax>
    {
       public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
           : base(corporation)
@@ -46,11 +46,9 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as InterfaceDeclarationSyntax;
          var newItem = new RDomInterface(syntaxNode, parent, model);
-        CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
-        CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
-        CreateFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
-
-         newItem.Name = newItem.TypedSymbol.Name;
+         CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
+         CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, whitespaceLookup);
+         CreateFromWorker.StoreWhitespace(newItem, syntax.TypeParameterList, LanguagePart.Current, whitespaceLookup);
 
          newItem.MembersAll.CreateAndAdd(syntax, x => x.Members, x => OutputContext.Corporation.Create(x, newItem, model).Cast<ITypeMemberAndDetail>());
          // this is a hack because the membersare appearing with a scope

@@ -5,14 +5,14 @@ namespace RoslynDom
 {
    public class RDomVariableDeclaration : RDomBaseVariable
     {
-      public RDomVariableDeclaration(string name, string typeName, IExpression initializer = null,
+      public RDomVariableDeclaration( string name, string typeName, IExpression initializer = null,
                bool isImplicitlyTyped = false, bool isAliased = false, VariableKind variableKind = VariableKind.Local)
-            : this(name, new RDomReferencedType(typeName, true), initializer, isImplicitlyTyped, isAliased, variableKind)
+            : base( name, typeName, initializer, isImplicitlyTyped, isAliased, variableKind)
       { }
 
-      public RDomVariableDeclaration(string name, IReferencedType type, IExpression initializer = null,
+      public RDomVariableDeclaration( string name, IReferencedType type, IExpression initializer = null,
               bool isImplicitlyTyped = false, bool isAliased = false, VariableKind variableKind = VariableKind.Local)
-           : base(name, type, initializer, isImplicitlyTyped, isAliased, variableKind)
+           : base( name, type, initializer, isImplicitlyTyped, isAliased, variableKind)
       {      }
 
       public RDomVariableDeclaration(SyntaxNode rawItem, IDom parent, SemanticModel model)

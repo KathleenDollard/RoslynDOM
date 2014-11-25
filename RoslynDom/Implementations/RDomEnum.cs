@@ -15,21 +15,33 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
       private RDomCollection<IEnumMember> _members;
 
-      public RDomEnum(string name, string underlyingTypeName = null, AccessModifier accessModifier = AccessModifier.Private)
-          : this(name, new RDomReferencedType(underlyingTypeName), accessModifier)
-      { }
+      public RDomEnum( string name, string metadataName, string underlyingTypeName = null, AccessModifier accessModifier = AccessModifier.Private)
+          : this(name, metadataName,accessModifier)
+      {
+         _underlyingType = new RDomReferencedType(this, underlyingTypeName, true);
+      }
 
-      public RDomEnum(string name, IReferencedType underlyingType , AccessModifier accessModifier = AccessModifier.Private)
-          : this(null, null, null)
+      public RDomEnum( string name, string metadataName, IReferencedType underlyingType, AccessModifier accessModifier = AccessModifier.Private)
+          : this( name, metadataName,  accessModifier)
+      {
+         _underlyingType = underlyingType;
+      }
+
+      private RDomEnum( string name, string metadataName, AccessModifier accessModifier = AccessModifier.Private)
+          : this((SyntaxNode)null, null, null)
       {
          _name = name;
+         _metadataName = metadataName;
          _accessModifier = accessModifier;
-         _underlyingType = underlyingType;
       }
 
       public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
           : base(rawItem, parent, model)
-      { Initialize(); }
+      {
+         Initialize();
+         Name = TypedSymbol.Name;
+         MetadataName = TypedSymbol.ContainingNamespace + "." + TypedSymbol.MetadataName;
+      }
 
       internal RDomEnum(RDomEnum oldRDom)
           : base(oldRDom)
@@ -37,9 +49,10 @@ namespace RoslynDom
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          _members = oldRDom.Members.Copy(this);
          _name = oldRDom.Name;
+         _metadataName = oldRDom.MetadataName;
          _accessModifier = oldRDom.AccessModifier;
          _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
-         _underlyingType =  oldRDom.UnderlyingType == null ? null : oldRDom.UnderlyingType.Copy();
+         _underlyingType = oldRDom.UnderlyingType == null ? null : oldRDom.UnderlyingType.Copy();
       }
 
       private void Initialize()
@@ -48,7 +61,7 @@ namespace RoslynDom
       }
 
       public IEnumerable<IDom> GetMembers()
-      {return Members;      }
+      { return Members; }
 
       public bool AddOrMoveMember(IDom item)
       { return Members.AddOrMove(item); }
@@ -78,6 +91,14 @@ namespace RoslynDom
       {
          get { return _name; }
          set { SetProperty(ref _name, value); }
+      }
+
+      private string _metadataName;
+      [Required]
+      public string MetadataName
+      {
+         get { return _metadataName; }
+         set { SetProperty(ref _metadataName, value); }
       }
 
       private AccessModifier _accessModifier;

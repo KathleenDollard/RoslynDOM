@@ -45,7 +45,6 @@ namespace RoslynDom.CSharp
          CreateFromWorker.StoreWhitespace(newItem, syntaxNode, LanguagePart.Current, whitespaceLookup);
 
          InitializeBaseList(syntax, newItem, model, CreateFromWorker, OutputContext.Corporation);
-         newItem.Name = newItem.TypedSymbol.Name;
 
          newItem.Members.CreateAndAdd(syntax, x => x.Members, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IEnumMember>());
          //var members = ListUtilities.MakeList(syntax, x => x.Members, x => corporation.Create(x, newItem, model))

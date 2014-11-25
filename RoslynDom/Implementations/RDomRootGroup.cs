@@ -11,11 +11,13 @@ namespace RoslynDom
    {
       private Compilation _compilation;
       private RDomCollection<IRoot> _roots;
+      private ReferencedTypeCache _referencedTypeCache;
 
-      public RDomRootGroup(Compilation compilation)
+      public RDomRootGroup(Compilation compilation, IFactoryAccess factoryAccess)
       {
          _compilation = compilation;
-         Initialize();
+         _referencedTypeCache = new ReferencedTypeCache(compilation, factoryAccess);
+         _roots = new RDomCollection<IRoot>(this);
       }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
@@ -25,12 +27,12 @@ namespace RoslynDom
          _roots = Roots.Copy(this);
       }
 
-      private void Initialize()
+      internal IType FindByMetadataName(string metadataName)
       {
-         _roots = new RDomCollection<IRoot>(this);
+         return _referencedTypeCache.FindByMetadataName(metadataName); 
       }
 
-      public override IEnumerable<IDom> Children
+        public override IEnumerable<IDom> Children
       {
          get
          {

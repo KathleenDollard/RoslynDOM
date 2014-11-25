@@ -3,12 +3,14 @@ using RoslynDom.Common;
 using cm = System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System;
 
 namespace RoslynDom
 {
 
    public class RDomReferencedType : RDomBase<IReferencedType, ISymbol>, IReferencedType
    {
+
       // ITypeParameter not used because these are arguments, not declarations
       private RDomCollection<IReferencedType> _typeArguments;
 
@@ -33,9 +35,9 @@ namespace RoslynDom
       /// <param name="typeArgs">
       /// Type arguments for the type being created
       /// </param>
-      public RDomReferencedType(string name, bool displayAlias = false, bool isArray = false,
+      public RDomReferencedType(IDom parent, string name, bool displayAlias = false, bool isArray = false,
                                 params IReferencedType[] typeArgs)
-         : this(null, null, null)
+         : this(null, parent, null)
       {
          _name = StringUtilities.NameFromQualifiedName(name);
          _namespace = StringUtilities.NamespaceFromQualifiedName(name);
@@ -58,7 +60,8 @@ namespace RoslynDom
          var typeSymbol = Symbol as ITypeSymbol;
          if (typeSymbol != null)
          {
-
+            // TODO: See if this is a bug in the current preview
+            MetadataName = typeSymbol.ContainingNamespace + "." + typeSymbol.MetadataName;
          }
       }
 
@@ -86,6 +89,14 @@ namespace RoslynDom
       {
          get { return _name; }
          set { SetProperty(ref _name, value); }
+      }
+
+      private string _metadataName;
+      [Required]
+      public string MetadataName
+      {
+         get { return _metadataName; }
+         set { SetProperty(ref _metadataName, value); }
       }
 
       private string _namespace;
@@ -142,30 +153,46 @@ namespace RoslynDom
             // TODO: Reset searchFailed when load is complete or block access until load is complete
             if (!_searchFailed && _type == null)
             {
-               var root = this.Ancestors.OfType<IRoot>().Single();
-               var candidates = root.Descendants
-                                 .OfType<IType>()
-                                 .OfType<RoslynRDomBase>()
-                                 .Where(x => x.Symbol == this.Symbol)
-                                 .ToList();
-               var count = candidates.Count();
-               if (count == 1)
+              _type = GetTypeFromRoslynDom();
+               if (_type == null)
                {
-                  _type = candidates.First() as IType;
-               }
-               else if (count > 1)
-               {
-                  Guardian.AmbiguousType(Name);
-                  _searchFailed = true;
-               }
-               else
-               {
-                  Guardian.TypeNotFound(Name);
-                  _searchFailed = true;
+                  _type = GetTypeFromReferenced();
                }
             }
             return _type;
          }
+      }
+
+      private IType GetTypeFromReferenced()
+      {
+         var root = Ancestors.OfType<RDomRoot>().FirstOrDefault();
+         if (root != null)
+         {
+            return root.FindByMetadataName(MetadataName);
+         }
+         return null;
+      }
+
+      private IType GetTypeFromRoslynDom()
+      {
+         var candidates = Roots
+                           .SelectMany(x => x.Descendants
+                              .OfType<IType>()
+                              .OfType<RoslynRDomBase>()
+                              .Where(y => y.Symbol == Symbol)
+                           )
+                           .ToList();
+         var count = candidates.Count();
+         if (count == 1)
+         {
+            return candidates.First() as IType;
+         }
+         else if (count > 1)
+         {
+            Guardian.AmbiguousType(Name);
+            _searchFailed = true;
+         }
+         return null;
       }
    }
 }

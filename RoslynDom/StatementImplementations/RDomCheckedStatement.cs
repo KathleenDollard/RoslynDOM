@@ -10,7 +10,7 @@ namespace RoslynDom
    {
       private RDomCollection<IStatementAndDetail> _statements;
 
-      public RDomCheckedStatement(bool uncheck, bool hasBlock)
+      public RDomCheckedStatement( bool uncheck, bool hasBlock)
       : this(null, null, null)
       {
          _unchecked = uncheck;

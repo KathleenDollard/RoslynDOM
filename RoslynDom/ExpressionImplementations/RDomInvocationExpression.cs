@@ -11,9 +11,9 @@ namespace RoslynDom
       private RDomCollection<IReferencedType> _typeArguments;
       private RDomCollection<IArgument > _arguments;
 
-      public RDomInvocationExpression(string initialExpressionString,
+      public RDomInvocationExpression(IDom parent, string initialExpressionString,
                string initialExpressionLanguage)
-      : this(null, null, null)
+      : this(null, parent, null)
       {
          NeedsFormatting = true;
          InitialExpressionString = initialExpressionString;

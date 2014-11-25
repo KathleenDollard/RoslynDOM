@@ -23,7 +23,7 @@ namespace RoslynDom.CSharp
          var attribSyntax = GetAnnotationStringAsAttribute(str);
          // Reuse the evaluation work done in attribute to follow same rules
          var tempAttribute = context.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
-         var newPublicAnnotation = new RDomPublicAnnotation(trivia,tempAttribute.Name.ToString());
+         var newPublicAnnotation = new RDomPublicAnnotation(parent, trivia,tempAttribute.Name.ToString());
          newPublicAnnotation.Target = target;
          newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
          foreach (var attributeValue in tempAttribute.AttributeValues)
@@ -57,64 +57,64 @@ namespace RoslynDom.CSharp
          return attrib as AttributeSyntax;
       }
 
-      private IEnumerable<RDomPublicAnnotation> GetPublicAnnotations(CompilationUnitSyntax syntaxRoot, OutputContext context)
-      {
-         var ret = new List<RDomPublicAnnotation>();
-         var nodes = syntaxRoot.ChildNodes();
-         foreach (var node in nodes)
-         {
-            ret.AddRange(GetPublicAnnotationFromFirstToken(node, true, context));
-         }
-         return ret;
-      }
+      //private IEnumerable<RDomPublicAnnotation> GetPublicAnnotations(CompilationUnitSyntax syntaxRoot, OutputContext context)
+      //{
+      //   var ret = new List<RDomPublicAnnotation>();
+      //   var nodes = syntaxRoot.ChildNodes();
+      //   foreach (var node in nodes)
+      //   {
+      //      ret.AddRange(GetPublicAnnotationFromFirstToken(node, true, context));
+      //   }
+      //   return ret;
+      //}
 
-      private IEnumerable<RDomPublicAnnotation> GetPublicAnnotations(SyntaxNode node, OutputContext context)
-      {
-         return GetPublicAnnotationFromFirstToken(node, false, context);
-      }
+      //private IEnumerable<RDomPublicAnnotation> GetPublicAnnotations(SyntaxNode node, OutputContext context)
+      //{
+      //   return GetPublicAnnotationFromFirstToken(node, false, context);
+      //}
 
-      private IEnumerable<RDomPublicAnnotation> GetPublicAnnotationFromFirstToken(
-                 SyntaxNode node, bool isRoot, OutputContext context)
-      {
-         var ret = new List<RDomPublicAnnotation>();
-         var firstToken = node.GetFirstToken();
-         if (firstToken != default(SyntaxToken))
-         {
-            ret.AddRange(GetPublicAnnotationFromToken(firstToken, isRoot, context));
-         }
-         return ret;
-      }
+      //private IEnumerable<RDomPublicAnnotation> GetPublicAnnotationFromFirstToken(
+      //           SyntaxNode node, bool isRoot, OutputContext context)
+      //{
+      //   var ret = new List<RDomPublicAnnotation>();
+      //   var firstToken = node.GetFirstToken();
+      //   if (firstToken != default(SyntaxToken))
+      //   {
+      //      ret.AddRange(GetPublicAnnotationFromToken(firstToken, isRoot, context));
+      //   }
+      //   return ret;
+      //}
 
-      private IEnumerable<RDomPublicAnnotation> GetPublicAnnotationFromToken(
-             SyntaxToken token, bool isRoot, OutputContext context)
-      {
-         var ret = new List<RDomPublicAnnotation>();
-         var trivias = token.LeadingTrivia
-                           .Where(x => x.CSharpKind() == SyntaxKind.SingleLineCommentTrivia);
-         foreach (var trivia in trivias)
-         {
-            var str = GetPublicAnnotationAsString(trivia);
-            var strRoot = GetSpecialRootAnnotation(str);
-            if (isRoot)
-            { str = strRoot; }
-            else
-            { str = string.IsNullOrWhiteSpace(strRoot) ? str : ""; }
-            if (!string.IsNullOrWhiteSpace(str))
-            {
-               var attribSyntax = GetAnnotationStringAsAttribute(str);
-               // Reuse the evaluation work done in attribute to follow same rules
-               var tempAttribute = context.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
-               var newPublicAnnotation = new RDomPublicAnnotation(trivia, tempAttribute.Name.ToString());
-               newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
-               foreach (var attributeValue in tempAttribute.AttributeValues)
-               {
-                  newPublicAnnotation.AddItem(attributeValue.Name ?? "", attributeValue.Value);
-               }
-               ret.Add(newPublicAnnotation);
-            }
-         }
-         return ret;
-      }
+      //private IEnumerable<RDomPublicAnnotation> GetPublicAnnotationFromToken(
+      //       SyntaxToken token, bool isRoot, OutputContext context)
+      //{
+      //   var ret = new List<RDomPublicAnnotation>();
+      //   var trivias = token.LeadingTrivia
+      //                     .Where(x => x.CSharpKind() == SyntaxKind.SingleLineCommentTrivia);
+      //   foreach (var trivia in trivias)
+      //   {
+      //      var str = GetPublicAnnotationAsString(trivia);
+      //      var strRoot = GetSpecialRootAnnotation(str);
+      //      if (isRoot)
+      //      { str = strRoot; }
+      //      else
+      //      { str = string.IsNullOrWhiteSpace(strRoot) ? str : ""; }
+      //      if (!string.IsNullOrWhiteSpace(str))
+      //      {
+      //         var attribSyntax = GetAnnotationStringAsAttribute(str);
+      //         // Reuse the evaluation work done in attribute to follow same rules
+      //         var tempAttribute = context.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
+      //         var newPublicAnnotation = new RDomPublicAnnotation(parent, trivia, tempAttribute.Name.ToString());
+      //         newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
+      //         foreach (var attributeValue in tempAttribute.AttributeValues)
+      //         {
+      //            newPublicAnnotation.AddItem(attributeValue.Name ?? "", attributeValue.Value);
+      //         }
+      //         ret.Add(newPublicAnnotation);
+      //      }
+      //   }
+      //   return ret;
+      //}
 
       private static string GetPublicAnnotationAsString(SyntaxTrivia trivia)
       {

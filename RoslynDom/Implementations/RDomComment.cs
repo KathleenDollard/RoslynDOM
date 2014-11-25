@@ -4,8 +4,8 @@ namespace RoslynDom
 {
    public class RDomComment : RDomDetail<IComment>, IComment
    {
-      public RDomComment(SyntaxTrivia trivia, string text, bool isMultiline = false)
-          : base(StemMemberKind.Comment, MemberKind.Comment, trivia)
+      public RDomComment(IDom parent, SyntaxTrivia trivia, string text, bool isMultiline = false)
+          : base(parent,StemMemberKind.Comment, MemberKind.Comment, trivia)
       {
          _text = text;
          _isMultiline = isMultiline;

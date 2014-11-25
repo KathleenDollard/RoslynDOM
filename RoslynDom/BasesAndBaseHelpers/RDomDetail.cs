@@ -7,12 +7,14 @@ namespace RoslynDom
        where T : class, IDetail<T>
    {
       private SyntaxTrivia _syntaxTrivia;
+      private IDom _parent;
 
-      internal RDomDetail(StemMemberKind stemMemberKind, MemberKind memberKind, SyntaxTrivia trivia)
+      internal RDomDetail(IDom parent, StemMemberKind stemMemberKind, MemberKind memberKind, SyntaxTrivia trivia)
       {
          _syntaxTrivia = trivia;
          _stemMemberKind = stemMemberKind;
          _memberKind = memberKind;
+         _parent = parent;
       }
 
       internal RDomDetail(T oldRDom)

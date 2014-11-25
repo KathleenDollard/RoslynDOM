@@ -23,11 +23,12 @@ namespace RoslynDom
       private IDictionary<Type, IRDomFactory> syntaxNodeLookup = new Dictionary<Type, IRDomFactory>();
       private List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>> canCreateList =
                   new List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>>();
+      private IFactoryAccess factoryAccess;
 
-
-      public RDomCorporation(string language)
+      public RDomCorporation(string language, IFactoryAccess factoryAccess)
       {
          language = language.Replace(ExpectedLanguages.CSharp, ExpectedLanguages.CSharpInSymbols );
+         this.factoryAccess = factoryAccess;
          provider2 = new Provider();
          provider2.ConfigureContainer(this);
          LoadFactories(language);
@@ -47,11 +48,18 @@ namespace RoslynDom
          foreach (var worker in workers.OfType<ICorporationWorker>())
          { worker.Corporation = this; }
 
-         compilationFactory = provider2.GetItems<IRDomCompilationFactory>()
-                              .OrderByDescending(x => x.Priority)
-                              .First();
-
+         compilationFactory = GetCompilationFactory();
       }
+
+      private IRDomCompilationFactory GetCompilationFactory()
+      {
+         return provider2.GetItems<IRDomCompilationFactory>()
+                                      .OrderByDescending(x => x.Priority)
+                                      .First();
+      }
+
+      public IFactoryAccess FactoryAccess
+      { get { return factoryAccess; } }
 
       public ICreateFromWorker CreateFromWorker
       {

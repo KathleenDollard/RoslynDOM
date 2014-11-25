@@ -5,7 +5,7 @@ namespace RoslynDom
 {
    public class RDomUsingDirective : RDomBase<IUsingDirective, ISymbol>, IUsingDirective
    {
-      public RDomUsingDirective(string name, string alias = null)
+      public RDomUsingDirective( string name, string alias = null)
         : base(null, null, null)
       {
          _name = name;

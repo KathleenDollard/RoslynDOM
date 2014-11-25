@@ -20,7 +20,7 @@ namespace RoslynDom
       /// <param name="op">
       /// Assignment operator
       /// </param>
-      public RDomAssignmentStatement(IExpression left, IExpression expression, AssignmentOperator op = AssignmentOperator.Equals)
+      public RDomAssignmentStatement( IExpression left, IExpression expression, AssignmentOperator op = AssignmentOperator.Equals)
        : this(null, null, null)
       {
          _left = left;

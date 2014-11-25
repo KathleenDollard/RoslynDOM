@@ -20,8 +20,8 @@ namespace RoslynDom
    public class RDomDetailBlockStart : RDomDetail<IDetailBlockStart>, IDetailBlockStart
    {
 
-      public RDomDetailBlockStart(SyntaxTrivia trivia, string text)
-          : base(StemMemberKind.RegionStart, MemberKind.RegionStart, trivia)
+      public RDomDetailBlockStart(IDom parent, SyntaxTrivia trivia, string text)
+          : base(parent, StemMemberKind.RegionStart, MemberKind.RegionStart, trivia)
       {
          _text = text;
          _groupGuid = Guid.NewGuid();

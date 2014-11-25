@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Guardian.cs" />
     <Compile Include="IContainerCheck.cs" />
+    <Compile Include="IFactoryAccess.cs" />
     <Compile Include="IRDomCompilationFactory.cs" />
     <Compile Include="ITriviaFactory.cs" />
     <Compile Include="IWorker.cs" />

@@ -17,17 +17,27 @@ namespace RoslynDom
       public RDomProperty(string name, string propertyTypeName, AccessModifier accessModifier = AccessModifier.Private , 
                   bool isAbstract=false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false, 
                   bool isNew = false, bool canGet = false, bool canSet = false)
-         : this(name, new RDomReferencedType(propertyTypeName), accessModifier, isAbstract, isVirtual, isOverride, isSealed, 
+         : this(name, accessModifier, isAbstract, isVirtual, isOverride, isSealed, 
                   isStatic, isNew, canGet, canSet)
-      { }
+      {
+         PropertyType = new RDomReferencedType(this, propertyTypeName);
+      }
 
-      public RDomProperty(string name, IReferencedType propertyType, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomProperty( string name, IReferencedType propertyType, AccessModifier accessModifier = AccessModifier.Private,
                   bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false,
                   bool isNew = false, bool canGet = false, bool canSet = false)
-          : this(null, null, null)
+         : this( name, accessModifier, isAbstract, isVirtual, isOverride, isSealed,
+                  isStatic, isNew, canGet, canSet)
+      {
+         PropertyType = propertyType;
+      }
+
+      private RDomProperty( string name,  AccessModifier accessModifier = AccessModifier.Private,
+                 bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false,
+                 bool isNew = false, bool canGet = false, bool canSet = false)
+         : this(null, null, null)
       {
          Name = name;
-         PropertyType = propertyType;
          AccessModifier = accessModifier;
          IsAbstract = isAbstract;
          IsVirtual = isVirtual;

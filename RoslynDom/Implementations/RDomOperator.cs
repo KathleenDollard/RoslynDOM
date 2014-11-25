@@ -14,14 +14,21 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
 
       public RDomOperator(string name, string typeName, Operator op)
-          : this(name, new RDomReferencedType(typeName, true), op)
-      { }
+          : this( name,  op)
+      {
+         _type = new RDomReferencedType(this, typeName, true);
+      }
 
-      public RDomOperator(string name, IReferencedType type, Operator op)
+      public RDomOperator( string name, IReferencedType type, Operator op)
+          : this( name, op)
+      {
+         _type = type;
+      }
+
+      private RDomOperator( string name,  Operator op)
           : this(null, null, null)
       {
          _name = name;
-         _type = type;
          _operator = op;
       }
 

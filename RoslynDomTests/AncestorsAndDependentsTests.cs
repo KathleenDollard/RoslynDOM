@@ -349,7 +349,7 @@ namespace RoslynDomTests
 
             var root = RDom.CSharp.Load(csharpCode);
             var actual = root.ReportHierarchy();
-            var expected = "RoslynDom.RDomRoot : Root\r\n  RoslynDom.RDomVerticalWhitespace : \r\n  RoslynDom.RDomClass : Bar\r\n    RoslynDom.RDomProperty : FooBar\r\n      RoslynDom.RDomPropertyAccessor : get_FooBar\r\n        RoslynDom.RDomDeclarationStatement : z {UInt16}\r\n          RoslynDom.RDomExpression : 432\r\n        RoslynDom.RDomReturnStatement : \r\n          RoslynDom.RDomExpression : z.ToString()\r\n      RoslynDom.RDomPropertyAccessor : set_FooBar\r\n        RoslynDom.RDomAssignmentStatement : \r\n          RoslynDom.RDomExpression : value\r\n";
+            var expected = "RoslynDom.RDomRoot : <root>\r\n  RoslynDom.RDomVerticalWhitespace : \r\n  RoslynDom.RDomClass : Bar\r\n    RoslynDom.RDomProperty : FooBar\r\n      RoslynDom.RDomPropertyAccessor : get_FooBar\r\n        RoslynDom.RDomDeclarationStatement : z {UInt16}\r\n          RoslynDom.RDomExpression : 432\r\n        RoslynDom.RDomReturnStatement : \r\n          RoslynDom.RDomExpression : z.ToString()\r\n      RoslynDom.RDomPropertyAccessor : set_FooBar\r\n        RoslynDom.RDomAssignmentStatement : \r\n          RoslynDom.RDomExpression : value\r\n";
             Assert.AreEqual(expected, actual);
 
             expected = "RoslynDom.RDomClass : Bar";

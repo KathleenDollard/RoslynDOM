@@ -8,9 +8,9 @@ namespace RoslynDom
    {
       private RDomCollection<IReferencedType> _constraintTypes;
 
-      public RDomTypeParameter(string name, int ordinal = 0, bool hasConstructorConstraint = false, 
+      public RDomTypeParameter( string name, int ordinal = 0, bool hasConstructorConstraint = false, 
                bool hasReferenceTypeConstraint = false, bool hasValueTypeConstraint = false, Variance variance = Variance.None)
-        : this(null, null, null)
+        : this(null, null , null)
       {
          _name = name;
          _ordinal = ordinal;
