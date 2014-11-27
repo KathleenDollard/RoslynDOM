@@ -20,7 +20,6 @@ namespace RoslynDomExampleTests
                 { slnFile = files.First(); }
                 else
                 {
-                    // This is a quick and dirty sample, so use exceptions this way in a real app
                     try
                     { currentDirectory = Path.GetDirectoryName(currentDirectory); }
                     catch

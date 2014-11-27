@@ -12,4 +12,6 @@ namespace RoslynDom.Common
       string InitialExpressionLanguage { get; set; }
       ExpressionType ExpressionType { get; set; }
    }
+
+ 
 }

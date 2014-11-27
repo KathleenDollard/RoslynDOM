@@ -31,6 +31,18 @@ namespace RoslynDom.Common
          return prefix + name;
       }
 
+      public static string PascalCase(string name)
+      {
+         var prefix = "";
+         if (name.StartsWith("_"))
+         {
+            name = name.Substring(1);
+            prefix = "_";
+         }
+         name = name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
+         return prefix + name;
+      }
+
       public static string ReplaceFirst(this string input, string replace, string replaceWith)
       {
          if (string.IsNullOrEmpty(input)) return input;

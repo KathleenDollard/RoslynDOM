@@ -70,22 +70,27 @@ namespace RoslynDom.CSharp
          return LoadFromInternal(tree, tree.FilePath);
       }
 
-      public IRootGroup LoadGroup(Compilation compilation, params string[] codeStrings)
+      public IRootGroup LoadGroup(Project project)
+      {
+         var compilation = project.GetCompilationAsync().Result;
+         return LoadGroupFromInternal(compilation, null);
+      }
+
+      public IRootGroup LoadGroup( params string[] codeStrings)
       {
          var trees = codeStrings
                         .Select(x => CSharpSyntaxTree.ParseText(x))
                         .ToArray();
-         return LoadGroupFromInternal(compilation, trees);
+         return LoadGroupFromInternal(null, trees);
       }
-      public IRootGroup LoadGroup(Compilation compilation, params SyntaxTree[] trees)
+      public IRootGroup LoadGroup( params SyntaxTree[] trees)
       {
-         return LoadGroupFromInternal(compilation, trees);
+         return LoadGroupFromInternal(null, trees);
       }
 
       public IRootGroup Load(Compilation compilation)
       {
-         var trees = compilation.SyntaxTrees;
-         return LoadGroup(compilation, trees.ToArray());
+         return LoadGroupFromInternal(compilation, null);
       }
 
       public SyntaxNode GetSyntaxNode(IDom item)

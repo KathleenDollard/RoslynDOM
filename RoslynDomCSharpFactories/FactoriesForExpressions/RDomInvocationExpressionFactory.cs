@@ -76,18 +76,7 @@ namespace RoslynDom.CSharp
          return expression;
       }
 
-      private ExpressionType ExpressionTypeFromSyntax(SyntaxNode syntaxNode)
-      {
-         if (syntaxNode is LiteralExpressionSyntax) { return ExpressionType.Literal; }
-         if (syntaxNode is ObjectCreationExpressionSyntax) { return ExpressionType.ObjectCreation; }
-         if (syntaxNode is InvocationExpressionSyntax) { return ExpressionType.Invocation; }
-         if (syntaxNode is IdentifierNameSyntax) { return ExpressionType.Identifier; }
-         if (syntaxNode is BinaryExpressionSyntax) { return ExpressionType.Complex; }
-         return ExpressionType.Unknown;
-      }
-
-
-      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+         public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IExpression;
          if (itemAsT.InitialExpressionLanguage  != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }

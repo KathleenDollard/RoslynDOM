@@ -13,6 +13,7 @@ namespace RoslynDom.Common
         ObjectCreation,
         Invocation,
         Identifier,
+        Lambda,
         Complex
     }
 }

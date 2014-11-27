@@ -6,19 +6,16 @@ using System.Collections.Generic;
 
 namespace RoslynDom
 {
-   public class RDomInvocationExpression : RDomBase<IExpression, ISymbol>, IInvocationExpression
+   public class RDomInvocationExpression : RDomBaseExpression, IInvocationExpression
    {
       private RDomCollection<IReferencedType> _typeArguments;
-      private RDomCollection<IArgument > _arguments;
+      private RDomCollection<IArgument> _arguments;
 
       public RDomInvocationExpression(IDom parent, string initialExpressionString,
-               string initialExpressionLanguage)
-      : this(null, parent, null)
+               string initialExpressionLanguage, string methodName)
+      : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Invocation )
       {
-         NeedsFormatting = true;
-         InitialExpressionString = initialExpressionString;
-         InitialExpressionLanguage = initialExpressionLanguage;
-         ExpressionType = ExpressionType.Invocation;
+         _methodName = methodName;
       }
 
       public RDomInvocationExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -30,40 +27,14 @@ namespace RoslynDom
       internal RDomInvocationExpression(RDomInvocationExpression oldRDom)
           : base(oldRDom)
       {
-         Initialize();
-         InitialExpressionString = oldRDom.InitialExpressionString;
-         InitialExpressionLanguage = oldRDom.InitialExpressionLanguage;
-         ExpressionType = oldRDom.ExpressionType;
+         _typeArguments = oldRDom.TypeArguments.Copy(this);
+         _arguments  = oldRDom.Arguments.Copy(this);
       }
 
-     private void Initialize()
+      private void Initialize()
       {
          _typeArguments = new RDomCollection<IReferencedType>(this);
          _arguments = new RDomCollection<IArgument>(this);
-      }
-
-      private string _intialExpressionString;
-      [Required]
-      public string InitialExpressionString
-      {
-         get { return _intialExpressionString; }
-         set { SetProperty(ref _intialExpressionString, value); }
-      }
-
-      private string _initialExpressionLanguage;
-      [Required]
-      public string InitialExpressionLanguage
-      {
-         get { return _initialExpressionLanguage; }
-         set { SetProperty(ref _initialExpressionLanguage, value); }
-      }
-
-      private ExpressionType _expressionType;
-      [Required]
-      public ExpressionType ExpressionType
-      {
-         get { return _expressionType; }
-         set {  } // do nothing
       }
 
       private string _methodName;

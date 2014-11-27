@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-    public interface IClassOrStructure
+    public interface IClassOrStructure : ITypeMemberContainer
     {
         IEnumerable<IField> Fields { get; }
         IEnumerable<IConversionOperator> ConversionOperators { get; }

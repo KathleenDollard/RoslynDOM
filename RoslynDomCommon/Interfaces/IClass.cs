@@ -5,7 +5,6 @@ namespace RoslynDom.Common
    public interface IClass :
        IType<IClass>,
        INestedContainer,
-       ITypeMemberContainer,
        IClassOrStructure,
        IHasTypeParameters,
        IHasImplementedInterfaces,

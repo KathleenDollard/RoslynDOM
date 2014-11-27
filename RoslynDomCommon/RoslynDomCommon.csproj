@@ -99,6 +99,8 @@
     <Compile Include="Interfaces\IContructor.cs" />
     <Compile Include="Interfaces\IEvent.cs" />
     <Compile Include="Interfaces\IRootGroup.cs" />
+    <Compile Include="Interfaces_Expressions\IOtherExpression.cs" />
+    <Compile Include="Interfaces_Expressions\ILambdaExpression.cs" />
     <Compile Include="Interfaces_Expressions\IInvocationExpression.cs" />
     <Compile Include="Interfaces_Statements\IAssignmentStatement.cs" />
     <Compile Include="Interfaces_Statements\IBlockStatement.cs" />
@@ -113,7 +115,7 @@
     <Compile Include="Interfaces_Statements\IUsingStatement.cs" />
     <Compile Include="Interfaces_Statements\IVariableDeclaration.cs" />
     <Compile Include="Interfaces_Statements\IWhileStatement.cs" />
-    <Compile Include="BaseInterfaces\IExpression.cs" />
+    <Compile Include="Interfaces_Expressions\IExpression.cs" />
     <Compile Include="Interfaces_Statements\IForEachStatement.cs" />
     <Compile Include="Interfaces_Statements\IForStatement.cs" />
     <Compile Include="Interfaces_Statements\IInvocationStatement.cs" />

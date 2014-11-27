@@ -11,7 +11,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomExpressionFactory
-                : RDomBaseSyntaxNodeFactory<RDomExpression, ExpressionSyntax>
+                : RDomBaseSyntaxNodeFactory<RDomOtherExpression, ExpressionSyntax>
    {
       public RDomExpressionFactory(RDomCorporation corporation)
           : base(corporation)
@@ -39,7 +39,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as ExpressionSyntax;
 
-         var newItem = new RDomExpression(syntaxNode, parent, model);
+         var newItem = new RDomOtherExpression(syntaxNode, parent, model);
          newItem.InitialExpressionString = syntax.ToString();
          newItem.InitialExpressionLanguage = ExpectedLanguages.CSharp;
          newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);

@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-   public interface  IInvocationExpression : IHasInvocationFeatures,IExpression 
+   public interface  IOtherExpression : IExpression 
    {
-      RDomCollection<IArgument> Arguments { get; }
    }
 }

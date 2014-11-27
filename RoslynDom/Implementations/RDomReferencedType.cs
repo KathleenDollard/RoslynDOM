@@ -61,7 +61,7 @@ namespace RoslynDom
          if (typeSymbol != null)
          {
             // TODO: See if this is a bug in the current preview
-            MetadataName = typeSymbol.ContainingNamespace + "." + typeSymbol.MetadataName;
+            _metadataName = typeSymbol.ContainingNamespace + "." + typeSymbol.MetadataName;
          }
       }
 

@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RoslynDom
 {
-   public class RDomExpression : RDomBase<IExpression, ISymbol>, IExpression
+   public abstract class RDomBaseExpression : RDomBase<IExpression, ISymbol>
    {
-      public RDomExpression(IDom parent, string initialExpressionString, 
+      protected RDomBaseExpression(IDom parent, string initialExpressionString, 
                string initialExpressionLanguage, ExpressionType expressionType)
       : this(null, parent, null)
       {
@@ -16,13 +16,11 @@ namespace RoslynDom
          ExpressionType = expressionType;
       }
 
-      public RDomExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
+      protected RDomBaseExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent, model)
       { }
 
-      [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
-       "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
-      internal RDomExpression(RDomExpression oldRDom)
+      protected RDomBaseExpression(IExpression oldRDom)
           : base(oldRDom)
       {
          InitialExpressionString = oldRDom.InitialExpressionString;

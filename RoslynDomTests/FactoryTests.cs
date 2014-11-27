@@ -70,7 +70,7 @@ namespace RoslynDomTests
       [TestMethod, TestCategory(GeneralFactoryCategory)]
       public void Can_get_root_from_document()
       {
-         var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
+         var slnFile = FileSupport.GetNearestSolution(Environment.CurrentDirectory);
 
          var ws = MSBuildWorkspace.Create();
          // For now: wait for the result
@@ -81,6 +81,20 @@ namespace RoslynDomTests
          var root = RDom.CSharp.Load(document);
          Assert.IsNotNull(root);
          Assert.AreEqual(1, root.ChildNamespaces.Count());
+      }
+
+      [TestMethod, TestCategory(GeneralFactoryCategory)]
+      public void Can_get_root_group_from_project()
+      {
+         var slnFile = FileSupport.GetNearestSolution(Environment.CurrentDirectory);
+
+         var ws = MSBuildWorkspace.Create();
+         // For now: wait for the result
+         var solution = ws.OpenSolutionAsync(slnFile).Result;
+         var project = solution.Projects.Where(x => x.Name == "RoslynDomExampleTests").FirstOrDefault();
+         var rootGroup = RDom.CSharp.LoadGroup(project);
+         Assert.IsNotNull(rootGroup);
+         Assert.AreEqual(1, rootGroup.Roots.First().ChildNamespaces.Count());
       }
 
 
@@ -157,7 +171,7 @@ namespace RoslynDomTests
                   public class B : A
                      {}
                   }";
-         var rootGroup = RDom.CSharp.LoadGroup(null, csharpCode1, csharpCode2);
+         var rootGroup = RDom.CSharp.LoadGroup( csharpCode1, csharpCode2);
          Assert.IsNotNull(rootGroup);
          var root = rootGroup.Roots.First();
          Assert.AreEqual(1, root.ChildNamespaces.Count());
@@ -178,7 +192,7 @@ namespace RoslynDomTests
       [TestMethod, TestCategory(GeneralFactoryCategory)]
       public void Can_get_root_group_from_project_via_solution()
       {
-         var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
+         var slnFile = FileSupport.GetNearestSolution(Environment.CurrentDirectory);
 
          var ws = MSBuildWorkspace.Create();
          // For now: wait for the result
