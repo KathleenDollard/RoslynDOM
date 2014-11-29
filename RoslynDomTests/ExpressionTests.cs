@@ -105,8 +105,8 @@ namespace RoslynDomTests
       #endregion
 
       #region lambda expressions
-      [TestMethod, TestCategory(InvocationExpressionCategory)]
-      public void Lambda_expression_correct_in_statement_with_no_params_and_no_generics()
+      [TestMethod, TestCategory(LambdaExpressionCategory)]
+      public void Lambda_expression_correct_in_statement_with_one_params()
       {
          var csharpCode =
        @"public class Bar
@@ -125,57 +125,76 @@ namespace RoslynDomTests
                           });
       }
 
-      //[TestMethod, TestCategory(InvocationExpressionCategory)]
-      //public void Lambda_expression_correct_in_statement_with_no_params_and_no_generics()
-      //{
-      //   Func<int, int> y = x => x;
-      //   Func<string, string, string> z = (x1, x2) => x1 + x2;
-      //   Func<int, bool> z2 = x =>
-      //   {
-      //      if (x > 2) { return true; }
-      //      return false;
-      //   };
-      //   z2(42);
-      //   z("", "");
-      //   var csharpCode =
-      // @"public class Bar
-      //      {
-      //          public void FooBar()
-      //          {
-      //            Foo();
-      //          }
-      //      }";
-      //   var exp = VerifyInvocationExpressionStatement(csharpCode, x =>
-      //   {
-      //      Assert.AreEqual("Foo", x.MethodName);
-      //   });
-      //}
+      [TestMethod, TestCategory(LambdaExpressionCategory)]
+      public void Lambda_expression_correct_in_statement_with_no_params()
+      {
+         var csharpCode =
+       @"public class Bar
+            {
+                public void FooBar()
+                {
+                   Func<int> y = () => 42;
+                }
+            }";
+         var exp = VerifyLambdaExpressionStatement(csharpCode,
+                     x => {
+                        Assert.AreEqual("y", x.Name);
+                     },
+                     x => {
+                        Assert.AreEqual("() => 42", x.InitialExpressionString);
+                     });
 
-      //[TestMethod, TestCategory(InvocationExpressionCategory)]
-      //public void Lambda_expression_correct_in_statement_with_no_params_and_no_generics()
-      //{
-      //   Func<int, int> y = x => x;
-      //   Func<string, string, string> z = (x1, x2) => x1 + x2;
-      //   Func<int, bool> z2 = x =>
-      //   {
-      //      if (x > 2) { return true; }
-      //      return false;
-      //   };
-      //   z2(42);
-      //   z("", "");
-      //   var csharpCode =
-      // @"public class Bar
-      //      {
-      //          public void FooBar()
-      //          {
-      //            Foo();
-      //          }
-      //      }";
-      //   var exp = VerifyInvocationExpressionStatement(csharpCode, x =>
-      //   {
-      //      Assert.AreEqual("Foo", x.MethodName);
-      //   });
-      //}
+      }
+
+      [TestMethod, TestCategory(LambdaExpressionCategory)]
+      public void Lambda_expression_correct_in_statement_with_two_params()
+      {
+         var csharpCode =
+      @"public class Bar
+            {
+                public void FooBar()
+                {
+                     Func<string, string, string> y = (x1, x2) => x1 + x2;
+                }
+            }";
+         var exp = VerifyLambdaExpressionStatement(csharpCode,
+                     x => {
+                        Assert.AreEqual("y", x.Name);
+                     },
+                     x => {
+                        Assert.AreEqual("(x1, x2) => x1 + x2", x.InitialExpressionString);
+                     });
+      }
+
+      [TestMethod, TestCategory(LambdaExpressionCategory)]
+      public void Lambda_expression_correct_in_statement_with_one_params_multiline()
+      {
+            var csharpCode =
+       @"public class Bar
+            {
+                public void FooBar()
+                {
+                     Func<int, bool> y = x =>
+                     {
+                        if (x > 2) { return true; }
+                        return false;
+                     };
+                }
+            }";
+         var exp = VerifyLambdaExpressionStatement(csharpCode,
+                     x => {
+                        Assert.AreEqual("y", x.Name);
+                     },
+                     x => {
+                        Assert.AreEqual(@"x =>
+                     {
+                        if (x > 2) { return true; }
+                        return false;
+                     }", x.InitialExpressionString);
+                     });
+      }
+
+
       #endregion
 
       private IInvocationExpression VerifyInvocationExpressionStatement(string csharpCode,

@@ -91,6 +91,7 @@ namespace RoslynDom.CSharp
             {
                var equalsClause = decl.Initializer;
                newItem.Initializer = OutputContext.Corporation.CreateSpecial<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
+               //newItem.Initializer = (IExpression)OutputContext.Corporation.Create(equalsClause.Value, newItem, model).FirstOrDefault();
                CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model, OutputContext);
                CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);

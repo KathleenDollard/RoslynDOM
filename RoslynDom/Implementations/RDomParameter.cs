@@ -71,7 +71,7 @@ namespace RoslynDom
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          _name = oldRDom.Name;
-         _type = oldRDom.Type.Copy();
+         if (oldRDom.Type != null) { _type = oldRDom.Type.Copy(); }
          _ordinal = oldRDom.Ordinal;
          _isOut = oldRDom.IsOut;
          _isRef = oldRDom.IsRef;

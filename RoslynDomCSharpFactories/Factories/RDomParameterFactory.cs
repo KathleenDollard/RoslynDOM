@@ -44,11 +44,15 @@ namespace RoslynDom.CSharp
 
          newItem.Name = newItem.TypedSymbol.Name;
 
-         var type = OutputContext.Corporation
-                          .Create(syntax.Type, newItem, model)
-                          .FirstOrDefault()
-                          as IReferencedType;
-         newItem.Type = type;
+         // TODO: Determine if null types for anonymous methods are a fact of life, or a temporary bug
+         if (syntax.Type != null)
+         {
+            var type = OutputContext.Corporation
+                             .Create(syntax.Type, newItem, model)
+                             .FirstOrDefault()
+                             as IReferencedType;
+            newItem.Type = type;
+         }
 
          newItem.IsOut = newItem.TypedSymbol.RefKind == RefKind.Out;
          newItem.IsRef = newItem.TypedSymbol.RefKind == RefKind.Ref;

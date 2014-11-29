@@ -39,7 +39,7 @@ namespace RoslynDom.CSharp
             newItem = CreateItemFromInternal(syntax.Body, syntaxNode,parent, model);
             newItem.Parameters.CreateAndAdd(syntax, x => new[] { x.Parameter }, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IParameter>());
          }
-         newItem.InitialExpressionString = syntax.ToString();
+         newItem.InitialExpressionString = syntaxNode.ToString();
          newItem.InitialExpressionLanguage = ExpectedLanguages.CSharp;
 
          return newItem;

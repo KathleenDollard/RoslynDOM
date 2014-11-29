@@ -11,14 +11,14 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class RDomExpressionFactory
-                : RDomBaseSyntaxNodeFactory<RDomOtherExpression, ExpressionSyntax>
+                : RDomBaseSyntaxNodeFactory<RDomBaseExpression, ExpressionSyntax>
    {
       public RDomExpressionFactory(RDomCorporation corporation)
           : base(corporation)
       { }
 
       public override RDomPriority Priority
-      {         get         {            return RDomPriority.Fallback;         }      }
+      { get { return RDomPriority.Fallback; } }
 
       public override Type[] SpecialExplicitDomTypes
       { get { return new[] { typeof(IExpression) }; } }
@@ -27,27 +27,22 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as ExpressionSyntax;
 
-         var newItem = new RDomOtherExpression(syntaxNode, parent, model);
-         newItem.InitialExpressionString = syntax.ToString();
-         newItem.InitialExpressionLanguage = ExpectedLanguages.CSharp;
-         newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);
-
-         return newItem;
-
+         if (syntaxNode is IdentifierNameSyntax)
+         {
+            // TODO: Work out how to send this via the normal extensible system
+            var newItem = new RDomOtherExpression(syntaxNode, parent, model);
+            newItem.InitialExpressionString = syntax.ToString();
+            newItem.InitialExpressionLanguage = ExpectedLanguages.CSharp;
+            newItem.ExpressionType = ExpressionType.Identifier;
+            return newItem;
+         }
+         else
+         {
+            return OutputContext.Corporation.Create(syntaxNode, parent, model).FirstOrDefault();
+         }
       }
 
-      private ExpressionType ExpressionTypeFromSyntax(SyntaxNode syntaxNode)
-      {
-         if (syntaxNode is LiteralExpressionSyntax) { return ExpressionType.Literal; }
-         if (syntaxNode is ObjectCreationExpressionSyntax) { return ExpressionType.ObjectCreation; }
-         if (syntaxNode is InvocationExpressionSyntax) { return ExpressionType.Invocation; }
-         if (syntaxNode is IdentifierNameSyntax) { return ExpressionType.Identifier; }
-         if (syntaxNode is BinaryExpressionSyntax) { return ExpressionType.Complex; }
-         return ExpressionType.Unknown;
-      }
-
-
-      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IExpression;
          if (itemAsT.InitialExpressionLanguage != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }

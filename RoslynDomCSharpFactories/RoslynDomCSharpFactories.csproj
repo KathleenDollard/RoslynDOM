@@ -81,7 +81,7 @@
     <Compile Include="BaseFactories\RDomBaseFactory.cs" />
     <Compile Include="BaseFactories\RDomBaseSyntaxNodeFactory.cs" />
     <Compile Include="BaseFactories\RDomBaseSyntaxTriviaFactory.cs" />
-    <Compile Include="FactoriesForExpressions\RDomExpressionFactory - Copy.cs" />
+    <Compile Include="FactoriesForExpressions\RDomOtherExpressionFactory.cs" />
     <Compile Include="FactoriesForExpressions\RDomLambdaExpressionFactory.cs" />
     <Compile Include="FactoriesForExpressions\RDomInvocationExpressionFactory.cs" />
     <Compile Include="Factories\RDomEventFactory.cs" />

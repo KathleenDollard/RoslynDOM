@@ -11,20 +11,15 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    // Sample of extending factory
-   public class FooExpressionFactory
+   public class RDomOtherExpressionFactory
                 : RDomBaseSyntaxNodeFactory<RDomOtherExpression, ExpressionSyntax>
    {
-      public FooExpressionFactory(RDomCorporation corporation)
+      public RDomOtherExpressionFactory(RDomCorporation corporation)
           : base(corporation)
       { }
 
       public override RDomPriority Priority
-      {
-         get
-         {
-            return RDomPriority.Top;
-         }
-      }
+      { get { return RDomPriority.Top; } }
 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {

@@ -165,7 +165,7 @@ namespace RoslynDom
          return items.Cast<TSpecial>().ToList();
       }
 
-      private IRDomFactory GetFactory(Type type, IDictionary<Type, IList<IRDomFactory>> dictionary, Func<IRDomFactory, bool> canUseDelegate)
+       private IRDomFactory GetFactory(Type type, IDictionary<Type, IList<IRDomFactory>> dictionary, Func<IRDomFactory, bool> canUseDelegate)
       {
          var factories = GetFactories(type, dictionary).ToArray();
          if (!factories.Any()) { return null; }
