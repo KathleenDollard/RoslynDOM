@@ -118,7 +118,7 @@ namespace RoslynDomTests
             }";
          var exp = VerifyLambdaExpressionStatement(csharpCode, 
                      x =>  {
-                              Assert.AreEqual("y", x.Left.InitialExpressionString);
+                              Assert.AreEqual("y", x.Name);
                            },
                      x => {
                              Assert.AreEqual("x => x", x.InitialExpressionString);
@@ -199,7 +199,7 @@ namespace RoslynDomTests
       }
 
       private ILambdaExpression VerifyLambdaExpressionStatement(string csharpCode,
-               Action<IAssignmentStatement > verifyAssignment,
+               Action<IDeclarationStatement> verifyAssignment,
                Action<ILambdaExpression> verifyLambda)
       {
          var root = RDom.CSharp.Load(csharpCode);
@@ -208,9 +208,9 @@ namespace RoslynDomTests
          var method = root.RootClasses.First().Methods.First();
          var statement = method.Statements.First();
          Assert.IsNotNull(statement, "statement not found");
-         var statementAsT = statement as IAssignmentStatement ;
+         var statementAsT = statement as IDeclarationStatement ;
          Assert.IsNotNull(statementAsT, "statement not correct type");
-         var expressionAsT = statementAsT.Expression as ILambdaExpression;
+         var expressionAsT = statementAsT.Initializer  as ILambdaExpression;
          Assert.IsNotNull(expressionAsT, "expression not correct type");
          verifyAssignment(statementAsT);
          verifyLambda(expressionAsT);

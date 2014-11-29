@@ -45,7 +45,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, syntax.Statement, LanguagePart.Current, WhitespaceLookup);
 
-            var expr = OutputContext.Corporation.Create<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
+            var expr = OutputContext.Corporation.CreateSpecial<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
             CreateFromWorker.StoreWhitespace(expr, syntax.Expression, LanguagePart.Current, WhitespaceLookup);
             newItem.Expression = expr;
 

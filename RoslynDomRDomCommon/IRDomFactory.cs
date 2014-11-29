@@ -18,10 +18,12 @@ namespace RoslynDom
       ///// Use Microsoft.CodeAnalysis.LanguageNames constants for names
       ///// </remarks>
       //string Language { get; }
-      Type[] SyntaxNodeTypes { get; }
-      Type[] ExplicitNodeTypes { get; }
-      Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate { get; }
-      Type DomType { get; }
+      Type[] SupportedSyntaxNodeTypes { get; }
+      Type[] SupportedDomTypes { get; }
+      Type[] SpecialExplicitDomTypes { get; }
+      bool CanCreate(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
+      bool CanGetSyntax(IDom item);
+      bool CanCreateSpecialExplicit<TSpecial>(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
       IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, bool skipDetail);
       IEnumerable<SyntaxNode> BuildSyntax(IDom item);
    }

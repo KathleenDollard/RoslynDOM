@@ -113,7 +113,7 @@ namespace RoslynDom.CSharp
       {
          var expressionSyntax = SyntaxFactory.ParseExpression(expressionAsString);
          expressionSyntax = RDom.CSharp.Format(expressionSyntax) as ExpressionSyntax;
-         var expression = corporation.Create<IExpression>(expressionSyntax, null, null).FirstOrDefault();
+         var expression = corporation.CreateSpecial<IExpression>(expressionSyntax, null, null).FirstOrDefault();
          return expression;
       }
 

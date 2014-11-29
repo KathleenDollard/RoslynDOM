@@ -35,17 +35,11 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return RDomPriority.Normal + 1; } }
 
-      public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
+      public override bool CanCreate(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
-         get
-         {
-            return (syntax, parent, model) =>
-                        {
-                           var statement = syntax as ExpressionStatementSyntax;
-                           if (statement == null) { return false; }
-                           return (statement.Expression is AssignmentExpressionSyntax);
-                        };
-         }
+         var statement = syntaxNode as ExpressionStatementSyntax;
+         if (statement == null) { return false; }
+         return (statement.Expression is AssignmentExpressionSyntax);
       }
 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -63,7 +57,7 @@ namespace RoslynDom.CSharp
          var left = binary.Left as ExpressionSyntax;
          CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, left, LanguagePart.Current,
                  LanguageElement.LeftExpression);
-         newItem.Left = OutputContext.Corporation.Create<IExpression>(left, newItem, model).FirstOrDefault();
+         newItem.Left = OutputContext.Corporation.CreateSpecial<IExpression>(left, newItem, model).FirstOrDefault();
 
          // Previously tested for identifier here, but can also be SimpleMemberAccess and ElementAccess expressions
          // not currently seeing value in testing for the type. Fix #46
@@ -73,7 +67,7 @@ namespace RoslynDom.CSharp
          CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, expression, LanguagePart.Current,
                  LanguageElement.Expression);
          Guardian.Assert.IsNotNull(expression, nameof(expression));
-         newItem.Expression = OutputContext.Corporation.Create<IExpression>(expression, newItem, model).FirstOrDefault();
+         newItem.Expression = OutputContext.Corporation.CreateSpecial<IExpression>(expression, newItem, model).FirstOrDefault();
 
          CreateFromWorker.StoreWhitespaceForToken(newItem, binary.OperatorToken,
                      LanguagePart.Current, LanguageElement.AssignmentOperator);

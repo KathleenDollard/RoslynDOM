@@ -35,6 +35,9 @@ namespace RoslynDom.CSharp
          }
       }
 
+      public override Type[] SpecialExplicitDomTypes
+      { get { return new[] { typeof(IAccessor) }; } }
+
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as AccessorDeclarationSyntax;

@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
          var condition = GetConditionFromSyntax(syntax);
          var statement = GetStatementFromSyntax(syntax);
 
-         var conditionObj = OutputContext.Corporation.Create<IExpression>(condition, newItem, model).FirstOrDefault() ;
+         var conditionObj = OutputContext.Corporation.CreateSpecial<IExpression>(condition, newItem, model).FirstOrDefault() ;
          newItem.Condition = conditionObj as IExpression;
          CreateFromWorker.InitializeStatements(newItem, statement, newItem, model);
 

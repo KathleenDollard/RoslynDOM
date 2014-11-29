@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
 
             if (syntax.Expression != null)
             {
-                newItem.Return = OutputContext.Corporation.Create<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
+                newItem.Return = OutputContext.Corporation.CreateSpecial<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
                 Guardian.Assert.IsNotNull(newItem.Return, nameof(newItem.Return));
             }
 

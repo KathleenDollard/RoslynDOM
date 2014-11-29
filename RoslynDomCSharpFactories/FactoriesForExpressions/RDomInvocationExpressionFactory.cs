@@ -42,7 +42,9 @@ namespace RoslynDom.CSharp
          {
             // TODO: more work, align with constructor args, and probably create factory
             var newArg = new RDomArgument(argSyntax, newItem, model);
-            newArg.ValueExpression = OutputContext.Corporation.Create<IExpression>(argSyntax.Expression, newItem, model).FirstOrDefault();
+            // KAD: Explict node removal
+            //newArg.ValueExpression = OutputContext.Corporation.Create<IExpression>(argSyntax.Expression, newItem, model).FirstOrDefault();
+            newArg.ValueExpression = OutputContext.Corporation.CreateSpecial<IExpression>(argSyntax.Expression, newItem, model).FirstOrDefault();
             if (argSyntax.NameColon != null)
             {
                newArg.Name = argSyntax.NameColon.Name.ToString();

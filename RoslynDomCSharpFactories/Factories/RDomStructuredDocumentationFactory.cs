@@ -13,7 +13,7 @@ using RoslynDom.Common;
 namespace RoslynDom.CSharp
 {
    public class StructuredDocumentationFactory
-               : RDomBaseSyntaxNodeFactory<IStructuredDocumentation, SyntaxNode>, ITriviaFactory<IStructuredDocumentation>
+               : RDomBaseSyntaxNodeFactory<RDomStructuredDocumentation, SyntaxNode>, ITriviaFactory<IStructuredDocumentation>
    {
 
       public StructuredDocumentationFactory(RDomCorporation corporation)
@@ -23,10 +23,7 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return 0; } }
 
-      public override Type[] SyntaxNodeTypes
-      { get { return null; } }
-
-      public override Type[] ExplicitNodeTypes
+       public override Type[] SpecialExplicitDomTypes
       { get { return new Type[] { typeof(IStructuredDocumentation) }; } }
 
       public RDomCorporation Corporation

@@ -43,11 +43,17 @@ namespace RoslynDom.CSharp
 
       }
 
-      public virtual Type[] SyntaxNodeTypes
+      public virtual Type[] SupportedSyntaxNodeTypes
       { get { return new Type[] { typeof(TSyntax) }; } }
 
-      public virtual Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
-      { get { return null; } }
+      public virtual Type[] SpecialExplicitDomTypes
+      { get { return new Type[] {  }; } }
+
+      public virtual bool CanCreate(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      { return true; }
+
+      public virtual bool CanCreateSpecialExplicit<TSpecial>(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      { return true; }
 
       /// <summary>
       /// This is the key method for creating new RoslynDom elements. You can create new factories

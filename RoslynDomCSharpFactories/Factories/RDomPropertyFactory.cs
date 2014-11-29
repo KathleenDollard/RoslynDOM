@@ -60,9 +60,9 @@ namespace RoslynDom.CSharp
          var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
          var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
          if (getAccessorSyntax != null)
-         { newItem.GetAccessor = (IAccessor)OutputContext.Corporation.Create(getAccessorSyntax, newItem, model).FirstOrDefault(); }
+         { newItem.GetAccessor = OutputContext.Corporation.CreateSpecial<IAccessor>(getAccessorSyntax, newItem, model).FirstOrDefault(); }
          if (setAccessorSyntax != null)
-         { newItem.SetAccessor = (IAccessor)OutputContext.Corporation.Create(setAccessorSyntax, newItem, model).FirstOrDefault(); }
+         { newItem.SetAccessor = OutputContext.Corporation.CreateSpecial<IAccessor>(setAccessorSyntax, newItem, model).FirstOrDefault(); }
 
          return newItem;
       }

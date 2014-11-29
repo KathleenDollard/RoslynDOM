@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
 
             if (syntax.Expression != null)
             {
-                var expression = OutputContext.Corporation.Create<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
+                var expression = OutputContext.Corporation.CreateSpecial<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
                 newItem.ExceptionExpression = expression;
             }
 

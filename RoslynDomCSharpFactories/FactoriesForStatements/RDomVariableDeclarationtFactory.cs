@@ -31,12 +31,12 @@ namespace RoslynDom.CSharp
             return _whitespaceLookup;
          }
       }
-
-      public override Type[] ExplicitNodeTypes
-      { get { return new Type[] { typeof(IVariableDeclaration) }; } }
-
-      public override Type[] SyntaxNodeTypes
+     
+       public override Type[] SupportedSyntaxNodeTypes
       { get { return new Type[] { typeof(VariableDeclarationSyntax), typeof(CatchDeclarationSyntax) }; } }
+
+      public override Type[] SpecialExplicitDomTypes
+      { get { return new[] { typeof(IVariableDeclaration ) }; } }
 
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
@@ -90,7 +90,7 @@ namespace RoslynDom.CSharp
             if (decl.Initializer != null)
             {
                var equalsClause = decl.Initializer;
-               newItem.Initializer = OutputContext.Corporation.Create<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
+               newItem.Initializer = OutputContext.Corporation.CreateSpecial<IExpression>(equalsClause.Value, newItem, model).FirstOrDefault();
                CreateFromWorker.StandardInitialize(newItem.Initializer, decl, parent, model, OutputContext);
                CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);

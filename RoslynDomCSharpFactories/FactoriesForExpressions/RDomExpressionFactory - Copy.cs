@@ -10,28 +10,19 @@ using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
-   public class RDomExpressionFactory
+   // Sample of extending factory
+   public class FooExpressionFactory
                 : RDomBaseSyntaxNodeFactory<RDomOtherExpression, ExpressionSyntax>
    {
-      public RDomExpressionFactory(RDomCorporation corporation)
+      public FooExpressionFactory(RDomCorporation corporation)
           : base(corporation)
       { }
 
-      public override Type[] SyntaxNodeTypes
-      { get { return null; } }
-
-      public override Type[] ExplicitNodeTypes
-      { get { return new Type[] { typeof(IExpression) }; } }
-
-      public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
+      public override RDomPriority Priority
       {
          get
          {
-            return (syntax, parent, model) =>
-            {
-               if (syntax is ExpressionSyntax) { return true; }
-               return false;
-            };
+            return RDomPriority.Top;
          }
       }
 

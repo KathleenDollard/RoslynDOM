@@ -46,9 +46,7 @@ namespace RoslynDom.CSharp
          newItem.Name = syntax.Identifier.ToString();
          if (syntax.EqualsValue != null)
          {
-            newItem.Expression = OutputContext.Corporation
-                .Create<IExpression>(syntax.EqualsValue.Value, newItem, model)
-                .FirstOrDefault();
+            newItem.Expression = OutputContext.Corporation.CreateSpecial<IExpression>(syntax.EqualsValue.Value, newItem, model).FirstOrDefault();
          }
          return newItem;
       }

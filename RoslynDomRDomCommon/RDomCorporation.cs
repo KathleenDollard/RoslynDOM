@@ -18,16 +18,16 @@ namespace RoslynDom
       private ICreateFromWorker createFromWorker;
       private IBuildSyntaxWorker buildSyntaxWorker;
       private IRDomCompilationFactory compilationFactory;
-      private IDictionary<Type, IRDomFactory> domTypeLookup = new Dictionary<Type, IRDomFactory>();
-      private IDictionary<Type, IRDomFactory> explicitNodeLookup = new Dictionary<Type, IRDomFactory>();
-      private IDictionary<Type, IRDomFactory> syntaxNodeLookup = new Dictionary<Type, IRDomFactory>();
-      private List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>> canCreateList =
-                  new List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>>();
+      private IDictionary<Type, IList<IRDomFactory>> domTypeLookup = new Dictionary<Type, IList<IRDomFactory>>();
+      private IDictionary<Type, IList<IRDomFactory>> syntaxNodeLookup = new Dictionary<Type, IList<IRDomFactory>>();
+      private IDictionary<Type, IList<IRDomFactory>> specialCreateLookup = new Dictionary<Type, IList<IRDomFactory>>();
+      //private List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>> canCreateList =
+      //            new List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>>();
       private IFactoryAccess factoryAccess;
 
       public RDomCorporation(string language, IFactoryAccess factoryAccess)
       {
-         language = language.Replace(ExpectedLanguages.CSharp, ExpectedLanguages.CSharpInSymbols );
+         language = language.Replace(ExpectedLanguages.CSharp, ExpectedLanguages.CSharpInSymbols);
          this.factoryAccess = factoryAccess;
          provider2 = new Provider();
          provider2.ConfigureContainer(this);
@@ -71,7 +71,7 @@ namespace RoslynDom
          }
       }
 
-      public IBuildSyntaxWorker  BuildSyntaxWorker
+      public IBuildSyntaxWorker BuildSyntaxWorker
       {
          get
          {
@@ -83,7 +83,7 @@ namespace RoslynDom
 
       public ITriviaFactory<T> GetTriviaFactory<T>()
       {
-         return workers.OfType < ITriviaFactory<T>>().SingleOrDefault();
+         return workers.OfType<ITriviaFactory<T>>().SingleOrDefault();
       }
 
       public T GetWorker<T>()
@@ -117,37 +117,90 @@ namespace RoslynDom
                         .Where(x => x.GetType().Namespace.SubstringAfterLast(".").Equals(language, StringComparison.InvariantCultureIgnoreCase));
          foreach (var factory in factories)
          {
-            bool inUse = false;
-            if (domTypeLookup.Keys.Contains(factory.DomType)) Console.WriteLine();
-            domTypeLookup.Add(factory.DomType, factory);
-            if (AddFactoriesToLookup(factory, factory.ExplicitNodeTypes, explicitNodeLookup)) { inUse = true; }
-            if (factory.CanCreateDelegate != null)
-            {
-               canCreateList.Add(Tuple.Create(factory.CanCreateDelegate, factory));
-               inUse = true;
-            }
-            else if (AddFactoriesToLookup(factory, factory.SyntaxNodeTypes, syntaxNodeLookup)) { inUse = true; }
-            if (!inUse)
-            { Guardian.Assert.UnreachableFactoryDetected(factory.GetType().FullName); }
+            AddFactoryToLookup(domTypeLookup, factory, factory.SupportedDomTypes);
+            AddFactoryToLookup(syntaxNodeLookup, factory, factory.SupportedSyntaxNodeTypes);
+            AddFactoryToLookup(specialCreateLookup, factory, factory.SpecialExplicitDomTypes);
          }
       }
 
-      private bool AddFactoriesToLookup(IRDomFactory factory, Type[] types, IDictionary<Type, IRDomFactory> dictionary)
+
+      private void AddFactoryToLookup(IDictionary<Type, IList<IRDomFactory>> dictionary, IRDomFactory factory, Type[] types)
       {
-         if (types == null) { return false; }
          foreach (var type in types)
          {
-            if (dictionary.Keys.Contains(type))
-            { Guardian.Assert.DuplicateFactories(type.Name, factory.GetType().FullName); }
-            else
-            { dictionary.Add(type, factory); }
+            IList<IRDomFactory> list;
+            if (dictionary.TryGetValue(type, out list))
+            {
+               // Insert descending
+               var next = list.FirstOrDefault(x => x.Priority < factory.Priority);
+               if (next == null)
+               { list.Add(factory); }
+               else
+               { list.Insert(list.IndexOf(next), factory); }
+               return;
+            }
+            dictionary.Add(type, new List<IRDomFactory>(new[] { factory }));
          }
-         return true;
       }
 
       public IEnumerable<IDom> Create(SyntaxNode node, IDom parent, SemanticModel model, bool skipDetail = false)
       {
-         return FindFactoryAndCreate(node.GetType(), syntaxNodeLookup, node, parent, model);
+         var factory = GetFactory(node.GetType(), syntaxNodeLookup, x => x.CanCreate(node, parent, model));
+         if (factory == null)
+         {
+            return createFromWorker.CreateInvalidMembers(node, parent, model);
+         }
+         var items = factory.CreateFrom(node, parent, model, skipDetail);
+         return items.ToList();
+      }
+
+      public IEnumerable<TSpecial> CreateSpecial<TSpecial>(SyntaxNode node, IDom parent, SemanticModel model, bool skipDetail = false)
+      {
+         var factory = GetFactory(typeof(TSpecial), specialCreateLookup, x => x.CanCreateSpecialExplicit<TSpecial>(node, parent, model));
+         if (factory == null)
+         {
+            throw new InvalidOperationException();
+         }
+         var items = factory.CreateFrom(node, parent, model, skipDetail);
+         return items.Cast<TSpecial>().ToList();
+      }
+
+      private IRDomFactory GetFactory(Type type, IDictionary<Type, IList<IRDomFactory>> dictionary, Func<IRDomFactory, bool> canUseDelegate)
+      {
+         var factories = GetFactories(type, dictionary).ToArray();
+         if (!factories.Any()) { return null; }
+         // factories are already ordered by priority
+         var count = factories.Count();
+         for (int i = 0; i < count; i++)
+         {
+            var candidate = factories[i];
+            if (canUseDelegate(candidate))
+            {
+               var indexCheck = i + 1;
+               var isOK = true;
+               while (indexCheck < count
+                     && factories[indexCheck].Priority == candidate.Priority)
+               {
+                  if (canUseDelegate(factories[indexCheck]))
+                  {
+                     isOK = false;
+                     throw new InvalidOperationException(); // Change to gaurdian, isOK is for that scenario
+                  }
+               }
+               if (isOK)
+               { return candidate; }
+            }
+         }
+         return null;
+      }
+
+      private IEnumerable<IRDomFactory> GetFactories(Type type, IDictionary<Type, IList<IRDomFactory>> dictionary)
+      {
+         IList<IRDomFactory> factories;
+         if (dictionary.TryGetValue(type, out factories)) { return factories; }
+         var baseType = type.BaseType;
+         if (baseType == null || baseType == typeof(object)) { return new List<IRDomFactory>(); }
+         return GetFactories(baseType, dictionary);
       }
 
       public IRootGroup CreateCompilation(Compilation compilation, IDom parent, SemanticModel model, bool skipDetail = false)
@@ -155,54 +208,51 @@ namespace RoslynDom
          return compilationFactory.CreateFrom(compilation, skipDetail);
       }
 
-      public IEnumerable<T> Create<T>(SyntaxNode node, IDom parent, SemanticModel model)
-         where T : IDom
-      {
-         return FindFactoryAndCreate(typeof(T), explicitNodeLookup, node, parent, model)
-                  .OfType<T>();
-      }
+      //public IEnumerable<T> Create<T>(SyntaxNode node, IDom parent, SemanticModel model)
+      //   where T : IDom
+      //{
+      //   return FindFactoryAndCreate(typeof(T), explicitNodeLookup, node, parent, model)
+      //            .OfType<T>();
+      //}
 
-      private IEnumerable<IDom> FindFactoryAndCreate(Type type,
-               IDictionary<Type, IRDomFactory> dictionary,
-               SyntaxNode node, IDom parent, SemanticModel model)
-      {
-         var factory = GetFactory(type, dictionary, node, parent, model);
-         if (factory == null)
-         {
-            return createFromWorker.CreateInvalidMembers(node, parent, model);
-         }
-         var items = factory.CreateFrom(node, parent, model, false);
-         return items.ToList();
-      }
+      //private IEnumerable<IDom> FindFactoryAndCreate(Type type,
+      //         IDictionary<Type, IRDomFactory> dictionary,
+      //         SyntaxNode node, IDom parent, SemanticModel model)
+      //{
+      //   var factory = GetFactory(type, dictionary, node, parent, model);
+      //   if (factory == null)
+      //   {
+      //      return createFromWorker.CreateInvalidMembers(node, parent, model);
+      //   }
+      //   var items = factory.CreateFrom(node, parent, model, false);
+      //   return items.ToList();
+      //}
 
       public IEnumerable<SyntaxNode> GetSyntaxNodes(IDom item)
       {
          if (item == null) return new List<SyntaxNode>();
-         IRDomFactory factory;
-         if (domTypeLookup.TryGetValue(item.GetType(), out factory))
-         {
-            var ret = factory.BuildSyntax(item);
-            return ret;
-         }
-         return null;
+         var factory = GetFactory(item.GetType(), domTypeLookup, x => x.CanGetSyntax(item));
+         if (factory == null) { return new List<SyntaxNode>(); }
+         var nodes = factory.BuildSyntax(item);
+         return nodes;
       }
 
-      private IRDomFactory GetFactory(Type type, IDictionary<Type, IRDomFactory> dictionary, SyntaxNode node, IDom parent, SemanticModel model)
-      {
-         IRDomFactory factory;
-         if (!(dictionary.TryGetValue(type, out factory)))
-         {
-            foreach (var tuple in canCreateList)
-            {
-               if (tuple.Item1(node, parent, model))
-               { factory = tuple.Item2; }
-            }
-         }
+      //private IRDomFactory GetFactory(Type type, IDictionary<Type, IRDomFactory> dictionary, SyntaxNode node, IDom parent, SemanticModel model)
+      //{
+      //   IRDomFactory factory;
+      //   if (!(dictionary.TryGetValue(type, out factory)))
+      //   {
+      //      foreach (var tuple in canCreateList)
+      //      {
+      //         if (tuple.Item1(node, parent, model))
+      //         { factory = tuple.Item2; }
+      //      }
+      //   }
 
-         if (factory == null)
-         { Guardian.Assert.FactoryNotFound(node); }
+      //   if (factory == null)
+      //   { Guardian.Assert.FactoryNotFound(node); }
 
-         return factory;
-      }
+      //   return factory;
+      //}
    }
 }

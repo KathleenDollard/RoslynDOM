@@ -72,7 +72,7 @@ namespace RoslynDom.CSharp
                 }
                 if (ctch.Filter != null)
                 {
-                    newCatch.Condition = OutputContext.Corporation.Create<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault();
+                    newCatch.Condition = OutputContext.Corporation.CreateSpecial<IExpression>(ctch.Filter.FilterExpression, newCatch, model).FirstOrDefault();
                     CreateFromWorker.StoreWhitespace(newCatch.Condition, ctch.Filter, LanguagePart.Current, WhitespaceLookup);
                 }
                 newItem.CatchesAll.AddOrMove(newCatch);

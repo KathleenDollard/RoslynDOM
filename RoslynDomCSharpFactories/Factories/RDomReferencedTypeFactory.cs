@@ -37,21 +37,10 @@ namespace RoslynDom.CSharp
          }
       }
 
-      public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
-      {
-         get
-         {
-            return (syntax, parent, model) =>
-            {
-               if (syntax is NameSyntax) { return true; }
-               if (syntax is TypeSyntax) { return true; }
-               if (syntax is BaseTypeSyntax) { return true; }
-               return false;
-            };
-         }
-      }
+      public override Type[] SupportedSyntaxNodeTypes
+      { get { return new[] { typeof(NameSyntax), typeof(TypeSyntax), typeof(BaseTypeSyntax) }; } }
 
-      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+     protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var typeParameterSyntax = syntaxNode as TypeParameterSyntax;
          if (typeParameterSyntax != null) throw new NotImplementedException("Should have called TypeParameterFactory");

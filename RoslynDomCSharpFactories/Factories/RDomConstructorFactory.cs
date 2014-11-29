@@ -78,7 +78,7 @@ namespace RoslynDom.CSharp
                var newArg = new RDomArgument(arg, newItem, model);
 
                // TODO: Named paramters and align this with the invocation factory
-               newArg.ValueExpression = OutputContext.Corporation.Create<IExpression>(arg.Expression, newItem, model).FirstOrDefault();
+               newArg.ValueExpression = OutputContext.Corporation.CreateSpecial<IExpression>(arg.Expression, newItem, model).FirstOrDefault();
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newArg, arg, LanguagePart.Current, LanguageElement.ConstructorInitializerArgument);
                CreateFromWorker.StoreListMemberWhitespace(arg,
                     SyntaxKind.CommaToken, LanguageElement.ConstructorInitializerArgument, newArg);

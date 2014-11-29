@@ -44,8 +44,8 @@ namespace RoslynDom.CSharp
 
       }
 
-      public override Type[] ExplicitNodeTypes
-      { get { return new Type[] { typeof(T) }; } }
+      //public override Type[] ExplicitNodeTypes
+      //{ get { return new Type[] { typeof(T) }; } }
 
       public virtual IEnumerable<SyntaxTrivia> BuildSyntaxTrivia(IDom item, OutputContext context)
       {

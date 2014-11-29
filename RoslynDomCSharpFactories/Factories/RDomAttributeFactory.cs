@@ -40,7 +40,7 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return 0; } }
 
-      public override Type[] SyntaxNodeTypes
+      public override Type[] SupportedSyntaxNodeTypes
       { get { return new Type[] { typeof(AttributeListSyntax), typeof(AttributeSyntax) }; } }
 
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)

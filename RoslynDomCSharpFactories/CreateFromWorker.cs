@@ -397,7 +397,7 @@ namespace RoslynDom.CSharp
           where T : class, IDom
           where TSyntax : SyntaxNode
       {
-         return Corporation.Create<IStructuredDocumentation>(syntaxNode, newItem, model);
+         return Corporation.CreateSpecial<IStructuredDocumentation>(syntaxNode, newItem, model);
       }
 
       // TODO: Refactor - D'oh

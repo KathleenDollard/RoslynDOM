@@ -23,15 +23,15 @@ namespace RoslynDom.CSharp
          var newItem = base.CreateItemFrom(syntaxNode, parent, model) as RDomForStatement;
          newItem.TestAtEnd = false;
          var decl = syntax.Declaration.Variables.First();
-         var newVariable = OutputContext.Corporation.Create<IVariableDeclaration>(syntax, newItem, model).FirstOrDefault();
-         newItem.Variable = (IVariableDeclaration)newVariable;
+         var newVariable = OutputContext.Corporation.CreateSpecial< IVariableDeclaration>(syntax, newItem, model).FirstOrDefault();
+         newItem.Variable = newVariable;
          newItem.Whitespace2Set.AddRange(newItem.Variable.Whitespace2Set
                                          .Select(x => new Whitespace2(LanguagePart.Variable, x.LanguageElement,
                                                  x.LeadingWhitespace, x.TrailingWhitespace, x.TrailingComment)));
          SetWhitespaceForSemiColon(syntax, 1, newItem, LanguagePart.Variable);
          SetWhitespaceForSemiColon(syntax, 2, newItem, LanguagePart.Condition);
          var incrementor = syntax.Incrementors.First();
-         newItem.Incrementor = OutputContext.Corporation.Create<IExpression>(incrementor, newItem, model).FirstOrDefault();
+         newItem.Incrementor = OutputContext.Corporation.CreateSpecial<IExpression>(incrementor, newItem, model).FirstOrDefault();
          newItem.Whitespace2Set.Add(new Whitespace2(LanguagePart.Iterator, LanguageElement.Identifier,
                               incrementor.GetLeadingTrivia().ToString(),
                               incrementor.GetTrailingTrivia().ToString(),

@@ -20,14 +20,10 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return RDomPriority.Normal + 1; } }
 
-      public override Type[] SyntaxNodeTypes
-      {
-         get
-         {
-            return new Type[] { typeof(ParenthesizedLambdaExpressionSyntax), typeof(SimpleLambdaExpressionSyntax)};
-         }
-      }
+      public override Type[] SupportedSyntaxNodeTypes
+      { get { return new Type[] { typeof(ParenthesizedLambdaExpressionSyntax), typeof(SimpleLambdaExpressionSyntax) }; } }
 
+ 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var parenthesizedSyntax = syntaxNode as ParenthesizedLambdaExpressionSyntax;

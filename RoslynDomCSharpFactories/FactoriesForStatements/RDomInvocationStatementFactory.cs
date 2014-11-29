@@ -18,18 +18,13 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return RDomPriority.Normal - 1; } }
 
-      public override Func<SyntaxNode, IDom, SemanticModel, bool> CanCreateDelegate
+      public override bool CanCreate(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
-         get
-         {
-            return (syntax, parent, model) =>
-            {
-               var statement = syntax as ExpressionStatementSyntax;
-               if (statement == null) { return false; }
-               return (statement.Expression is InvocationExpressionSyntax );
-            };
-         }
+         var statement = syntaxNode as ExpressionStatementSyntax;
+         if (statement == null) { return false; }
+         return (statement.Expression is InvocationExpressionSyntax);
       }
+
 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {

@@ -92,7 +92,7 @@ namespace RoslynDom.CSharp
             var itemAsHasCondition = newItem as IHasCondition;
             if (itemAsHasCondition != null)
             {
-                itemAsHasCondition.Condition = OutputContext.Corporation.Create<IExpression>(condition, newItem, model).FirstOrDefault();
+                itemAsHasCondition.Condition = OutputContext.Corporation.CreateSpecial<IExpression>(condition, newItem, model).FirstOrDefault();
                 CreateFromWorker.StoreWhitespace(itemAsHasCondition, condition, LanguagePart.Current, WhitespaceLookup);
             }
         }

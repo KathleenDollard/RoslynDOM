@@ -38,7 +38,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-      public override Type[] SyntaxNodeTypes
+      public override Type[] SupportedSyntaxNodeTypes
       { get { return new Type[] { typeof(FieldDeclarationSyntax) }; } }
 
        protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -62,7 +62,7 @@ namespace RoslynDom.CSharp
             {
                CreateFromWorker.StoreWhitespaceForToken(newItem, decl.Initializer.EqualsToken, LanguagePart.Current, LanguageElement.EqualsAssignmentOperator);
                CreateFromWorker.StoreWhitespaceForFirstAndLastToken(newItem, decl.Initializer, LanguagePart.Current, LanguageElement.Expression);
-               newItem.Initializer = OutputContext.Corporation.Create<IExpression>(decl.Initializer.Value, newItem, model).FirstOrDefault();
+               newItem.Initializer = OutputContext.Corporation.CreateSpecial<IExpression>(decl.Initializer.Value, newItem, model).FirstOrDefault();
             }
 
             var returnType = OutputContext.Corporation
