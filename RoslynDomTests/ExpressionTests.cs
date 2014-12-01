@@ -41,6 +41,8 @@ namespace RoslynDomTests
                 {
                   Foo(a, b, c);
                 }
+                public void Foo(int a, string b, int c)
+                {}
             }";
          var exp = VerifyInvocationExpressionStatement(csharpCode, x =>
          {

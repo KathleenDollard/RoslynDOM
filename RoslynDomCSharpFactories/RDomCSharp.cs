@@ -23,7 +23,7 @@ namespace RoslynDom.CSharp
       private static RDom csharp = new RDom();
       private RDomCorporation corporation;
 
-      private RDom()
+      public RDom()
       {
          corporation = new RDomCorporation(LanguageNames.CSharp, this);
       }
@@ -57,8 +57,7 @@ namespace RoslynDom.CSharp
          return LoadFromInternal(tree, null);
       }
 
-
-      public IRoot Load(Document document)
+            public IRoot Load(Document document)
       {
          Guardian.Assert.IsNotNull(document, nameof(document));
          SyntaxTree tree = document.GetSyntaxTreeAsync().Result;

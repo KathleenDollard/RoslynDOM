@@ -20,7 +20,9 @@ namespace RoslynDom
 
       public RDomInvocationExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent, model)
-      { Initialize(); }
+      {
+         Initialize();
+      }
 
        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]

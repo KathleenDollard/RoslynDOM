@@ -58,6 +58,9 @@ namespace RoslynDom
       { get { return TypedSymbol; } }
 
       public virtual TSymbol TypedSymbol
-      { get { return _symbol; } }
+      {
+         get { return _symbol; }
+         set { _symbol = value; }
+      }
    }
 }
