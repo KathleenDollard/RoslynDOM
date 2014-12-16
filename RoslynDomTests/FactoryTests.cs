@@ -149,7 +149,7 @@ namespace RoslynDomTests
          // Do not access the corporation directly as that's the purpose of the 
          // language specific factory. However, I want to test these two side
          // cases. 
-         var corp = new RDomCorporation(LanguageNames.CSharp, RDom.CSharp );
+         var corp = new RDomCorporation(LanguageNames.CSharp, RDom.CSharp);
          var a = new ClassA();
          var result1 = corp.GetSyntaxNodes(a);
       }
@@ -171,21 +171,21 @@ namespace RoslynDomTests
                   public class B : A
                      {}
                   }";
-         var rootGroup = RDom.CSharp.LoadGroup( csharpCode1, csharpCode2);
+         var rootGroup = RDom.CSharp.LoadGroup(csharpCode1, csharpCode2);
          Assert.IsNotNull(rootGroup);
          var root = rootGroup.Roots.First();
          Assert.AreEqual(1, root.ChildNamespaces.Count());
          Assert.AreEqual("testing", root.ChildNamespaces.First().Name);
          Assert.AreEqual(1, root.RootClasses.Count());
          Assert.AreEqual("A", root.RootClasses.First().Name);
-         root = rootGroup.Roots.ElementAt (1);
+         root = rootGroup.Roots.ElementAt(1);
          Assert.AreEqual(1, root.ChildNamespaces.Count());
          Assert.AreEqual("testing", root.ChildNamespaces.First().Name);
          Assert.AreEqual(1, root.RootClasses.Count());
          var cl = root.RootClasses.First();
-         Assert.AreEqual("B",cl.Name);
+         Assert.AreEqual("B", cl.Name);
          Assert.AreEqual("A", cl.BaseType.Name);
-         Assert.IsNotNull( cl.BaseType.Type);
+         Assert.IsNotNull(cl.BaseType.Type);
          Assert.AreEqual("A", cl.BaseType.Type.Name);
       }
 
@@ -223,7 +223,7 @@ namespace RoslynDomTests
          Assert.IsNotNull(rootGroup);
          var classes = rootGroup.Roots
                            .SelectMany(x => x.RootClasses)
-                           .ToList() ;
+                           .ToList();
          Assert.IsTrue(classes.Count() > 50);
          var type = classes.First().BaseType.Type;
          Assert.IsInstanceOfType(type, typeof(RoslynDom.RDomBase));
@@ -260,7 +260,7 @@ namespace RoslynDomTests
          public IDom Parent
          { get { throw new NotImplementedException(); } }
 
-          public object RawItem
+         public object RawItem
          { get { throw new NotImplementedException(); } }
 
          public Whitespace2Collection Whitespace2Set
@@ -283,8 +283,12 @@ namespace RoslynDomTests
          public object RequestValue(string propertyName)
          { throw new NotImplementedException(); }
 
+         public object RequestValue(string propertyName, bool searchUpLogicalTree)
+         { throw new NotImplementedException(); }
+
          public bool SameIntent<T>(T other) where T : class
          { throw new NotImplementedException(); }
+
       }
       #endregion
 

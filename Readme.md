@@ -100,7 +100,7 @@ Groupings are challenging because they affect how you think. There is an issue o
 
 I have not yet incorporated C# 6 syntax - it's not yet final. 
 
-If you find ways your code breaks RoslynDom, please tell me. If you send a sample, it will make the breaking tests and will therefore be a permanent part of testing and never break again. Obviosuly, the smaller the better here. 
+If you find ways your code breaks RoslynDom, please tell me. If you send a sample, it will make the breaking tests and will therefore be a permanent part of testing and never break again. Obviosuly, the smaller the better here. Obviously not secret code. 
 
 Special Thanks!
 ---

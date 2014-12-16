@@ -101,6 +101,18 @@ namespace RoslynDom
 
       public abstract object RequestValue(string propertyName);
 
+      public object RequestValue(string propertyName, bool searchUpLogicalTree)
+      {
+         var ret = RequestValue(propertyName);
+         var parent = this.Parent;
+         while (ret == null && parent != null)
+         {
+            ret = parent.RequestValue(propertyName);
+            parent = parent.Parent;
+         }
+         return ret;
+      }
+
       public virtual bool Matches(IDom other)
       {
          var thisAsHasName = this as IHasName;

@@ -108,6 +108,22 @@ namespace RoslynDom.Common
          }
       }
 
+      /// <summary>
+      /// This method is expected to be used in testing to avoid file header comments breaking diffs
+      /// </summary>
+      /// <param name="input"></param>
+      /// <returns></returns>
+      public static string RemoveFileHeaderComments(string input)
+      {
+         var lines = input.Split(new[] { "\r\n" }, StringSplitOptions.None);
+         var i = 0;
+         while (i < lines.Count())
+         {
+            if (!(lines[i].TrimStart().StartsWith("//") || string.IsNullOrWhiteSpace(lines[i] ))) { break; }
+            i++;
+         }
+         return string.Join("\r\n", lines.Skip(i));
+      }
 
       public static string NormalizeWhitespace(this string input, string replaceWith = " ")
       {

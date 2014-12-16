@@ -24,6 +24,8 @@ namespace RoslynDom.Common
       string ReportHierarchy();
 
       object RequestValue(string propertyName);
+      object RequestValue(string propertyName, bool searchUpLogicalTree);
+
 
    }
 

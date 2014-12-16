@@ -11,6 +11,7 @@ namespace TestRoslyn
       private const string ReplaceWithCateogory = "ReplaceWith";
       private const string NormalizeCateogory = "Normalize";
       private const string StringNamingCategory = "StringUtilitiesNaming";
+      private const string CommentCategory = "Comment";
 
       private string singleIndex = "1234.56";
       private string multipleIndex = "1.234.56.234.56";
@@ -372,6 +373,74 @@ namespace TestRoslyn
          Assert.AreEqual("fooBarLane", StringUtilities.CamelCase("fooBarLane"));
          Assert.AreEqual("_fooBarLane", StringUtilities.CamelCase("_FooBarLane"));
       }
+
+      [TestMethod, TestCategory(StringNamingCategory)]
+      public void PascalCase_tests()
+      {
+         Assert.AreEqual("FooBarLane", StringUtilities.PascalCase("fooBarLane"));
+         Assert.AreEqual("FooBarLane", StringUtilities.PascalCase("FooBarLane"));
+         Assert.AreEqual("_FooBarLane",StringUtilities.PascalCase("_fooBarLane"));
+      }
+
       #endregion
+
+      #region Comment tests
+      [TestMethod, TestCategory(CommentCategory)]
+      public void Comment_tests()
+      {
+         var test1 = @"// This file was generated, if you change it your changes are toast
+         // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
+
+         using System;
+         using System.Collections.Immutable;
+         using System.Linq;
+         using System.Threading;
+         using Microsoft.CodeAnalysis;";
+
+         var test2 = @"// This file was generated, if you change it your changes are toast
+         // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
+         // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
+
+         using System;
+         using System.Collections.Immutable;
+         using System.Linq;
+         using System.Threading;
+         using Microsoft.CodeAnalysis;";
+
+         var test3 = @"// This file was generated, if you change it your changes are toast
+         // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
+         //
+         // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
+
+         using System;
+         using System.Collections.Immutable;
+         using System.Linq;
+         using System.Threading;
+         using Microsoft.CodeAnalysis;";
+
+         var test4 = @"// This file was generated, if you change it your changes are toast
+         // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
+         
+         // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
+
+         using System;
+         using System.Collections.Immutable;
+         using System.Linq;
+         using System.Threading;
+         using Microsoft.CodeAnalysis;";
+
+         var expected = @"         using System;
+         using System.Collections.Immutable;
+         using System.Linq;
+         using System.Threading;
+         using Microsoft.CodeAnalysis;";
+
+         Assert.AreEqual(expected, StringUtilities.RemoveFileHeaderComments(test1));
+         Assert.AreEqual(expected, StringUtilities.RemoveFileHeaderComments(test2));
+         Assert.AreEqual(expected, StringUtilities.RemoveFileHeaderComments(test3));
+         Assert.AreEqual(expected, StringUtilities.RemoveFileHeaderComments(test4));
+      }
+      #endregion
+
    }
 }
