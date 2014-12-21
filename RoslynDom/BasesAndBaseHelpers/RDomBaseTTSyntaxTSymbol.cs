@@ -5,15 +5,23 @@ namespace RoslynDom
 {
    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
    public abstract class RDomBase<T, TSymbol> : RDomBase<T>, IRoslynDom<T, TSymbol>
-         where T : class, IDom<T>
-         where TSymbol : ISymbol
+      where T : class, IDom<T>
+      where TSymbol : ISymbol
    {
       private SyntaxNode _originalRawSyntax;
       private SyntaxNode _rawSyntax;
       private TSymbol _symbol;
 
+      protected RDomBase()
+         : this(null, null, null)
+      { NeedsFormatting  = true; }
+
+      protected RDomBase(IDom parent)
+         : this(null, parent, null)
+      { NeedsFormatting = true; }
+
       protected RDomBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
-           : base()
+         : base()
       {
          _rawSyntax = rawItem;
          _originalRawSyntax = rawItem;
@@ -29,7 +37,7 @@ namespace RoslynDom
       }
 
       protected RDomBase(T oldIDom)
-          : base(oldIDom)
+         : base(oldIDom)
       {
          var oldRDom = oldIDom as RDomBase<T, TSymbol>;
          _rawSyntax = oldRDom._rawSyntax;

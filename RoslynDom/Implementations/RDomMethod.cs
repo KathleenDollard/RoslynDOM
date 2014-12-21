@@ -13,34 +13,35 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomMethod( string name, string returnTypeName, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomMethod( string name, string returnTypeName, AccessModifier declaredAccessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false,
                bool isNew = false, bool isStatic = false,
                bool isExtensionMethod = false)
-          : this(name,  accessModifier, isAbstract, isVirtual,
+          : this(name, declaredAccessModifier, isAbstract, isVirtual,
                      isOverride, isSealed, isNew, isStatic, isExtensionMethod)
       {
          _returnType = new RDomReferencedType(this, returnTypeName);
       }
 
-      public RDomMethod(string name, IReferencedType returnType, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomMethod(string name, IReferencedType returnType, AccessModifier declaredAccessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false,
                bool isNew = false, bool isStatic = false,
                bool isExtensionMethod = false)
-          : this(name,  accessModifier, isAbstract, isVirtual,
+          : this(name, declaredAccessModifier, isAbstract, isVirtual,
                      isOverride, isSealed, isNew, isStatic, isExtensionMethod)
       {
          _returnType = returnType;
       }
 
-      private RDomMethod( string name,  AccessModifier accessModifier = AccessModifier.Private,
+      private RDomMethod( string name,  AccessModifier declaredAccessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false,
                bool isNew = false, bool isStatic = false,
                bool isExtensionMethod = false)
-          : this(null, null, null)
+            : base()
       {
+         Initialize();
          _name = name;
-         _accessModifier = accessModifier;
+         DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
          _isAbstract = isAbstract;
          _isVirtual = isVirtual;
          _isOverride = isOverride;
@@ -136,7 +137,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       private bool _isAbstract;

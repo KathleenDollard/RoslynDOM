@@ -28,7 +28,7 @@ namespace RoslynDom
       /// <param name="typeName">
       /// Type name of the field
       /// </param>
-      /// <param name="accessModifier">
+      /// <param name="declaredAccessModifier">
       /// The accessibilty (scope) modifier. Default is the most restrictive scope, private.
       /// </param>
       /// <param name="isStatic">
@@ -73,10 +73,10 @@ namespace RoslynDom
       private RDomField( string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
                      bool isStatic = false, bool isNew = false, bool isReadOnly = false,
                      bool isVolatile = false, bool isConstant = false)
-      : this(null, null, null)
+            : base()
       {
          _name = name;
-         _declaredAccessModifier = declaredAccessModifier;
+         DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
          _isStatic = isStatic;
          _isNew = isNew;
          _isReadOnly = isReadOnly;
@@ -150,7 +150,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       private bool _isStatic;

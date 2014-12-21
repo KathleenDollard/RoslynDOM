@@ -10,7 +10,7 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
 
       public RDomEnumMember( string name, IExpression expression)
-      : this(null, null, null)
+            : base()
       {
          _name = name;
          _expression = expression;

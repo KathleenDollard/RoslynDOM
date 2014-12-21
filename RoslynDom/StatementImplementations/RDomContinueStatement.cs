@@ -7,9 +7,8 @@ namespace RoslynDom
    public class RDomContinueStatement : RDomBase<IContinueStatement, ISymbol>, IContinueStatement
    {
       public RDomContinueStatement()
-      : this(null, null, null)
-      {
-      }
+            : base()
+      {      }
 
       public RDomContinueStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)

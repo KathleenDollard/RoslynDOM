@@ -19,13 +19,16 @@ namespace RoslynDom
       private RDomCollection<ITypeParameter> _typeParameters;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      protected RDomBaseType(string metadataName, AccessModifier accessModifier,
+      protected RDomBaseType(string metadataName, AccessModifier declaredAccessModifier,
             MemberKind memberKind,
             StemMemberKind stemMemberKind)
-         : this(null, null, null, memberKind, stemMemberKind)
+         : base()
       {
+         Initialize();
+         _memberKind = memberKind;
+         _stemMemberKind = stemMemberKind;
          _metadataName = metadataName;
-         _accessModifier = accessModifier;
+         DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
          if (metadataName.Contains("."))
          {
             _name = metadataName.SubstringAfterLast(".");
@@ -44,11 +47,11 @@ namespace RoslynDom
             StemMemberKind stemMemberKind)
          : base(rawItem, parent, model)
       {
+         Initialize();
          _memberKind = memberKind;
          _stemMemberKind = stemMemberKind;
-         Initialize();
-         Name = TypedSymbol.Name;
-         MetadataName = TypedSymbol.ContainingNamespace + "." + TypedSymbol.MetadataName;
+         _name = TypedSymbol.Name;
+         _metadataName = TypedSymbol.ContainingNamespace + "." + TypedSymbol.MetadataName;
 
       }
 
@@ -131,7 +134,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       public string OuterName

@@ -44,7 +44,7 @@ namespace RoslynDom
                  object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
                  int ordinal = 0, bool isOut = false, bool isRef = false,
                  bool isParamArray = false)
-       : this(null, null, null)
+            : base()
       {
          _name = name;
          _ordinal = ordinal;

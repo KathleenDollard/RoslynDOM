@@ -6,9 +6,8 @@ namespace RoslynDom
    public class RDomElseStatement : RDomStatementBlockBase<IFinalElseStatement>, IFinalElseStatement
    {
       public RDomElseStatement()
-          : this(null, null, null)
-      {
-      }
+            : base()
+      {  }
 
       public RDomElseStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
            : base(rawItem, parent, model)

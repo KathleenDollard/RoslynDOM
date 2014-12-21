@@ -7,7 +7,7 @@ namespace RoslynDom
    public class RDomNamespace : RDomBaseStemContainer<INamespace, INamespaceSymbol>, INamespace
    {
       public RDomNamespace(string name, Guid group = default(Guid))
-        : base(null, null, null)
+        : base()
       {
          _name = name;
          _group = group;

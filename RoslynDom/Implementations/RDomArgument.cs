@@ -16,9 +16,9 @@ namespace RoslynDom
    /// </remarks>
    public class RDomArgument : RDomBase<IArgument, ISymbol>, IArgument
    {
-      public RDomArgument( IExpression valueExpression, string name = null,
+      public RDomArgument(IExpression valueExpression, string name = null,
                      bool isRef = false, bool isOut = false)
-       : this(null, null, null)
+       : base()
       {
          _name = name;
          _valueExpression = valueExpression;
@@ -28,8 +28,7 @@ namespace RoslynDom
 
       public RDomArgument(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
-      {
-      }
+      { }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]

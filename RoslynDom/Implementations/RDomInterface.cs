@@ -6,8 +6,8 @@ namespace RoslynDom
 {
    public class RDomInterface : RDomBaseType<IInterface>, IInterface
    {
-      public RDomInterface(  string metadataName,AccessModifier accessModifier = AccessModifier.Private)
-      : base(metadataName, accessModifier, MemberKind.Interface, StemMemberKind.Interface)
+      public RDomInterface(  string metadataName,AccessModifier declaredAccessModifier = AccessModifier.Private)
+      : base(metadataName, declaredAccessModifier, MemberKind.Interface, StemMemberKind.Interface)
       { }
 
       public RDomInterface(SyntaxNode rawItem, IDom parent, SemanticModel model)

@@ -9,23 +9,23 @@ namespace RoslynDom
    /// <remarks></remarks>
    public class RDomClass : RDomBaseType<IClass>, IClass
    {
-      public RDomClass(  string metadataName, string baseTypeName = null,AccessModifier accessModifier = AccessModifier.Private, 
+      public RDomClass(  string metadataName, string baseTypeName = null,AccessModifier declaredAccessModifier = AccessModifier.Private, 
                    bool isAbstract = false, bool isSealed = false, bool isStatic = false, bool isPartial = false)
-      : this(  metadataName, accessModifier, isAbstract, isSealed, isStatic, isPartial)
+      : this(  metadataName, declaredAccessModifier, isAbstract, isSealed, isStatic, isPartial)
       {
          _baseType = new RDomReferencedType(this, baseTypeName);
       }
 
-      public RDomClass(  string metadataName, IReferencedType baseType, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomClass(  string metadataName, IReferencedType baseType, AccessModifier declaredAccessModifier = AccessModifier.Private,
                    bool isAbstract = false, bool isSealed = false, bool isStatic = false, bool isPartial = false)
-      : this(  metadataName, accessModifier, isAbstract, isSealed, isStatic, isPartial )
+      : this(  metadataName, declaredAccessModifier, isAbstract, isSealed, isStatic, isPartial )
       {
          _baseType = baseType;
       }
 
-      private RDomClass(  string metadataName,  AccessModifier accessModifier = AccessModifier.Private,
+      private RDomClass(  string metadataName,  AccessModifier declaredAccessModifier = AccessModifier.Private,
                     bool isAbstract = false, bool isSealed = false, bool isStatic = false, bool isPartial = false)
-       : base(  metadataName, accessModifier, MemberKind.Class, StemMemberKind.Class)
+       : base(  metadataName, declaredAccessModifier, MemberKind.Class, StemMemberKind.Class)
       {
          _isAbstract = isAbstract;
          _isSealed = isSealed;

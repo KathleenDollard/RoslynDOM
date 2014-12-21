@@ -10,8 +10,9 @@ namespace RoslynDom
       private RDomCollection<ICatchStatement> _catches;
 
       public RDomTryStatement(IFinallyStatement finallyStatement = null)
-          : this(null, null, null)
+            : base()
       {
+         Initialize();
          _finally = finallyStatement;
       }
 

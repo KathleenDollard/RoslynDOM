@@ -8,11 +8,12 @@ namespace RoslynDom
    public class RDomInvalidMember : RDomBase<IInvalidMember, ISymbol>, IInvalidMember
    {
       private AttributeCollection _attributes = new AttributeCollection();
-      public RDomInvalidMember( string name, AccessModifier accessModifier = AccessModifier.Private)
-            : this(null, null, null)
+      public RDomInvalidMember( string name, AccessModifier declaredAccessModifier = AccessModifier.Private)
+            : base()
       {
+         Initialize();
          _name = name;
-         _accessModifier = accessModifier;
+         DeclaredAccessModifier = declaredAccessModifier;
       }
 
       public RDomInvalidMember(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -59,7 +60,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       private IStructuredDocumentation _structuredDocumentation;

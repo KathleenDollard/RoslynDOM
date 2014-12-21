@@ -69,8 +69,29 @@ namespace RoslynDom.CSharp
 
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
-         var itemAsNamespace = item as INamespace;
-         var identifier = SyntaxFactory.IdentifierName(itemAsNamespace.Name);
+         var itemAsT = item as INamespace;
+         var innerItem = itemAsT;
+         var groupGuid = itemAsT.GroupGuid;
+         var name = itemAsT.Name;
+         if (groupGuid != Guid.Empty)
+         {
+            var nestedNamespaces = itemAsT.Descendants
+                                    .OfType<INamespace>()
+                                    .Where(x => x.GroupGuid == groupGuid);
+            foreach (var nested in nestedNamespaces)
+            {
+               name += "." + nested.Name;
+               innerItem = nested;
+            }
+         }
+         var identifier = SyntaxFactory.IdentifierName(name);
+         NamespaceDeclarationSyntax node = BuidSyntax(innerItem, identifier);
+
+         return node.PrepareForBuildSyntaxOutput(innerItem, OutputContext);
+      }
+
+      private NamespaceDeclarationSyntax BuidSyntax(INamespace itemAsNamespace, IdentifierNameSyntax identifier)
+      {
          var node = SyntaxFactory.NamespaceDeclaration(identifier);
          Guardian.Assert.IsNotNull(itemAsNamespace, nameof(itemAsNamespace));
          node = BuildSyntaxHelpers.AttachWhitespace(node, itemAsNamespace.Whitespace2Set, WhitespaceLookup);
@@ -88,7 +109,7 @@ namespace RoslynDom.CSharp
                      .ToList();
          if (membersSyntax.Count() > 0) { node = node.WithMembers(SyntaxFactory.List<MemberDeclarationSyntax>(membersSyntax)); }
 
-         return node.PrepareForBuildSyntaxOutput(item, OutputContext);
+         return node;
       }
    }
 

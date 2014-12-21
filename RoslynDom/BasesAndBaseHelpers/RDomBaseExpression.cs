@@ -8,7 +8,7 @@ namespace RoslynDom
    {
       protected RDomBaseExpression(IDom parent, string initialExpressionString, 
                string initialExpressionLanguage, ExpressionType expressionType)
-      : this(null, parent, null)
+      : base(parent)
       {
          NeedsFormatting = true;
          InitialExpressionString = initialExpressionString;

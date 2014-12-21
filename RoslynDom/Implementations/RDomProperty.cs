@@ -14,39 +14,49 @@ namespace RoslynDom
       // The RDomList is used for accessor to reuse the forced parenting in that class
       private RDomCollection<IAccessor> _accessors;
 
-      public RDomProperty(string name, string propertyTypeName, AccessModifier accessModifier = AccessModifier.Private , 
+      public RDomProperty(string name, string propertyTypeName, AccessModifier declaredAccessModifier = AccessModifier.Private , 
                   bool isAbstract=false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false, 
-                  bool isNew = false, bool canGet = false, bool canSet = false)
-         : this(name, accessModifier, isAbstract, isVirtual, isOverride, isSealed, 
-                  isStatic, isNew, canGet, canSet)
+                  bool isNew = false, bool isWriteOnly = false, bool isReadOnly = false)
+         : this(name, declaredAccessModifier, isAbstract, isVirtual, isOverride, isSealed, 
+                  isStatic, isNew, isWriteOnly, isReadOnly)
       {
          PropertyType = new RDomReferencedType(this, propertyTypeName);
       }
 
-      public RDomProperty( string name, IReferencedType propertyType, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomProperty( string name, IReferencedType propertyType, AccessModifier declaredAccessModifier = AccessModifier.Private,
                   bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false,
-                  bool isNew = false, bool canGet = false, bool canSet = false)
-         : this( name, accessModifier, isAbstract, isVirtual, isOverride, isSealed,
-                  isStatic, isNew, canGet, canSet)
+                  bool isNew = false, bool isWriteOnly = false, bool isReadOnly = false)
+         : this( name, declaredAccessModifier, isAbstract, isVirtual, isOverride, isSealed,
+                  isStatic, isNew, isWriteOnly, isReadOnly)
       {
          PropertyType = propertyType;
       }
 
-      private RDomProperty( string name,  AccessModifier accessModifier = AccessModifier.Private,
+      private RDomProperty( string name,  AccessModifier declaredAccessModifier = AccessModifier.Private,
                  bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false,
-                 bool isNew = false, bool canGet = false, bool canSet = false)
-         : this(null, null, null)
+                 bool isNew = false, bool isWriteOnly = false, bool isReadOnly = false)
+            : base()
       {
+         Initialize();
          Name = name;
-         AccessModifier = accessModifier;
+         DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
          IsAbstract = isAbstract;
          IsVirtual = isVirtual;
          IsOverride = isOverride;
          IsSealed = isSealed;
          IsStatic = isStatic;
          IsNew = isNew;
-         CanGet = canGet;
-         CanSet = canSet;
+         if (!isReadOnly)
+         {
+            var accesor = new RDomPropertyAccessor(this,  AccessorType.Set);
+            SetAccessor = accesor;
+         }
+         if (!isWriteOnly)
+         {
+            var accesor = new RDomPropertyAccessor(this,  AccessorType.Get);
+            GetAccessor = accesor;
+         }
+
       }
 
       public RDomProperty(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -73,8 +83,6 @@ namespace RoslynDom
          _isSealed = oldRDom.IsSealed;
          _isStatic = oldRDom.IsStatic;
          _isNew = oldRDom.IsNew;
-         _canGet = oldRDom.CanGet;
-         _canSet = oldRDom.CanSet;
       }
 
       private void Initialize()
@@ -136,7 +144,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       private bool _isAbstract;
@@ -181,21 +193,14 @@ namespace RoslynDom
          set { SetProperty(ref _isNew, value); }
       }
 
-      // TODO: Check that CanGet/CanSet are updated on the addition of accessor statements, these might need to be calculated
-      private bool _canGet;
-      [System.ComponentModel.DefaultValue(true)]
       public bool CanGet
       {
-         get { return _canGet; }
-         set { SetProperty(ref _canGet, value); }
+         get { return GetAccessor != null; }
       }
 
-      private bool _canSet;
-      [System.ComponentModel.DefaultValue(true)]
       public bool CanSet
       {
-         get { return _canSet; }
-         set { SetProperty(ref _canSet, value); }
+         get { return SetAccessor != null; }
       }
 
       private IStructuredDocumentation _structuredDocumentation;

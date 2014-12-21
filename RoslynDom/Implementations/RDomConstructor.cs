@@ -15,10 +15,11 @@ namespace RoslynDom
 
       public RDomConstructor( string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
                       bool isStatic = false, ConstructorInitializerType constructorInitializerType = ConstructorInitializerType.None)
-       : this(null, null, null)
+       : base()
       {
+         Initialize();
          _name = name;
-         _declaredAccessModifier = declaredAccessModifier;
+         DeclaredAccessModifier = declaredAccessModifier;
          _isStatic = isStatic;
          _constructorInitializerType = constructorInitializerType;
       }
@@ -82,18 +83,25 @@ namespace RoslynDom
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private AccessModifier _accessModifier;
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
+
       private bool _isStatic;
       public bool IsStatic
       {

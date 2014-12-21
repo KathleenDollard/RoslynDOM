@@ -40,10 +40,10 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomEvent( string name, string typeName, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomEvent( string name, string typeName, AccessModifier declaredAccessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
                bool isSealed = false, bool isStatic = false, bool isNew = false)
-       : this( name, accessModifier, isAbstract,
+       : this( name, declaredAccessModifier, isAbstract,
                 isVirtual, isOverride, isSealed, isStatic, isNew)
       {
          _type = new RDomReferencedType(this, typeName, true);
@@ -78,22 +78,22 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomEvent( string name, IReferencedType type, AccessModifier accessModifier = AccessModifier.Private,
+      public RDomEvent( string name, IReferencedType type, AccessModifier declaredAccessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
                bool isSealed = false, bool isStatic = false, bool isNew = false)
-       : this( name,  accessModifier, isAbstract,
+       : this( name, declaredAccessModifier, isAbstract,
                 isVirtual, isOverride, isSealed, isStatic, isNew)
       {
          _type = type;
       }
 
-      private RDomEvent( string name,  AccessModifier accessModifier = AccessModifier.Private,
+      private RDomEvent( string name,  AccessModifier declaredAccessModifier = AccessModifier.Private,
               bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
               bool isSealed = false, bool isStatic = false, bool isNew = false)
-      : this(null, null, null)
+            : base()
       {
          _name = name;
-         _accessModifier = accessModifier;
+         DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
          _isAbstract = isAbstract;
          _isVirtual = isVirtual;
          _isOverride = isOverride;
@@ -164,7 +164,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       private bool _isAbstract;

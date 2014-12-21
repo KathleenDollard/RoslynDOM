@@ -20,7 +20,7 @@ namespace RoslynDom
       }
 
       private RDomBaseVariable( string name,  IExpression initializer, bool isImplicitlyTyped, bool isAliased, VariableKind variableKind)
-         : this(null, null, null)
+         : base()
       {
          _name = name;
          _initializer = initializer;

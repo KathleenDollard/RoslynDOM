@@ -26,8 +26,9 @@ namespace RoslynDom
       }
 
       private RDomOperator( string name,  Operator op)
-          : this(null, null, null)
+            : base()
       {
+         Initialize();
          _name = name;
          _operator = op;
       }
@@ -46,8 +47,8 @@ namespace RoslynDom
          _parameters = oldRDom.Parameters.Copy(this);
          _statements = oldRDom.StatementsAll.Copy(this);
          IsStatic = oldRDom.IsStatic;
-         AccessModifier = oldRDom.AccessModifier;
-         DeclaredAccessModifier = oldRDom.DeclaredAccessModifier;
+         _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
          _name = oldRDom.Name;
          _type = oldRDom.Type.Copy();
          _operator = oldRDom.Operator;
@@ -111,7 +112,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       private Operator _operator;

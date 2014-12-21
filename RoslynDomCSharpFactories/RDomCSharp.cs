@@ -57,7 +57,7 @@ namespace RoslynDom.CSharp
          return LoadFromInternal(tree, null);
       }
 
-            public IRoot Load(Document document)
+      public IRoot Load(Document document)
       {
          Guardian.Assert.IsNotNull(document, nameof(document));
          SyntaxTree tree = document.GetSyntaxTreeAsync().Result;
@@ -75,14 +75,14 @@ namespace RoslynDom.CSharp
          return LoadGroupFromInternal(compilation, null);
       }
 
-      public IRootGroup LoadGroup( params string[] codeStrings)
+      public IRootGroup LoadGroup(params string[] codeStrings)
       {
          var trees = codeStrings
                         .Select(x => CSharpSyntaxTree.ParseText(x))
                         .ToArray();
          return LoadGroupFromInternal(null, trees);
       }
-      public IRootGroup LoadGroup( params SyntaxTree[] trees)
+      public IRootGroup LoadGroup(params SyntaxTree[] trees)
       {
          return LoadGroupFromInternal(null, trees);
       }
@@ -107,6 +107,13 @@ namespace RoslynDom.CSharp
 
       public string GetSourceCode(IDom item)
       { return GetSyntaxNode(item).ToFullString(); }
+
+      public string GetFormattedSourceCode(IDom item)
+      {
+         var node = GetSyntaxNode(item);
+         var ret = Format(node);
+         return ret.ToFullString();
+      }
 
       public IExpression ParseExpression(string expressionAsString)
       {

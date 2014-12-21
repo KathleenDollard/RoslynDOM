@@ -81,7 +81,6 @@ namespace RoslynDom.CSharp
          Guardian.Assert.IsNotNull(itemAsHasSymbol, nameof(itemAsHasSymbol));
 
          var accessibility = itemAsHasSymbol.Symbol.DeclaredAccessibility;
-         itemHasAccessModifier.AccessModifier = Mappings.AccessModifierFromAccessibility(accessibility);
          var tokens = syntaxNode.ChildTokens();
          if (tokens.Any(x => x.CSharpKind() == SyntaxKind.PublicKeyword))
          { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Public; }
@@ -94,7 +93,10 @@ namespace RoslynDom.CSharp
          else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.InternalKeyword))
          { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Internal; }
          else
-         { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.None; }
+         {
+            itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.None;
+            itemHasAccessModifier.AccessModifier = Mappings.AccessModifierFromAccessibility(accessibility);
+         }
       }
 
       //public void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -276,19 +278,19 @@ namespace RoslynDom.CSharp
             {
                switch (trivia.CSharpKind())
                {
-                  case SyntaxKind.EndOfLineTrivia:
-                     // TODO: Consider whether leading WS on a vert whitespace matters
-                     ret.Add(new RDomVerticalWhitespace(parent, trivia, 1, false));
-                     break;
-                  case SyntaxKind.SingleLineCommentTrivia:
-                  case SyntaxKind.MultiLineCommentTrivia:
-                     ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, parent, context));
-                     lastWasComment = true;
-                     break;
-                  case SyntaxKind.RegionDirectiveTrivia:
-                  case SyntaxKind.EndRegionDirectiveTrivia:
-                     ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
-                     break;
+               case SyntaxKind.EndOfLineTrivia:
+                  // TODO: Consider whether leading WS on a vert whitespace matters
+                  ret.Add(new RDomVerticalWhitespace(parent, trivia, 1, false));
+                  break;
+               case SyntaxKind.SingleLineCommentTrivia:
+               case SyntaxKind.MultiLineCommentTrivia:
+                  ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, parent, context));
+                  lastWasComment = true;
+                  break;
+               case SyntaxKind.RegionDirectiveTrivia:
+               case SyntaxKind.EndRegionDirectiveTrivia:
+                  ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
+                  break;
                }
             }
             precedingTrivia.Add(trivia);
@@ -412,8 +414,8 @@ namespace RoslynDom.CSharp
             if (!TryTyepofExpression(expr as TypeOfExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
                if (!TryDefaultExpression(expr as DefaultExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
                   if (!TryMemberExpression(expr as MemberAccessExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
-                     //if (!TryIdentifierExpression(expr as IdentifierNameSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
-                     { }
+                  //if (!TryIdentifierExpression(expr as IdentifierNameSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+                  { }
          return Tuple.Create(value, constantIdentifier, literalKind);
       }
 

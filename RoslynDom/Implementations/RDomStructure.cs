@@ -7,8 +7,8 @@ namespace RoslynDom
 {
    public class RDomStructure : RDomBaseType<IStructure>, IStructure
    {
-      public RDomStructure(  string metadataName, AccessModifier accessModifier = AccessModifier.Private)
-      : base( metadataName, accessModifier, MemberKind.Structure, StemMemberKind.Structure)
+      public RDomStructure(  string metadataName, AccessModifier declaredAccessModifier = AccessModifier.Private)
+      : base( metadataName, declaredAccessModifier, MemberKind.Structure, StemMemberKind.Structure)
       { }
 
       public RDomStructure(SyntaxNode rawItem, IDom parent, SemanticModel model)

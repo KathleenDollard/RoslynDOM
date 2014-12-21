@@ -12,18 +12,25 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
       private AccessorType _accessorType;
 
-      public RDomPropertyAccessor(IDom parent, string name, AccessorType accessorType, AccessModifier accessModifier = AccessModifier.Private )
-      : this(null, AccessorType.Unknown , parent, null)
+      public RDomPropertyAccessor(IDom parent,  AccessorType accessorType, AccessModifier declaredAccessModifier = AccessModifier.Private)
+      : this (parent, null, accessorType, declaredAccessModifier )
+      {}
+
+      public RDomPropertyAccessor(IDom parent, string name, AccessorType accessorType, AccessModifier declaredAccessModifier = AccessModifier.Private )
+      : base(parent)
       {
+         Initialize();
          _name = name;
-         _accessModifier = accessModifier;
+         DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
+         _accessorType = accessorType;
+         NeedsFormatting  = true;
       }
 
       public RDomPropertyAccessor(SyntaxNode rawItem, AccessorType accessorType, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       {
-         _accessorType = accessorType;
          Initialize();
+         _accessorType = accessorType;
       }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
@@ -91,7 +98,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       public RDomCollection<IStatementAndDetail> StatementsAll

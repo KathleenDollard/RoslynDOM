@@ -12,7 +12,7 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
 
       protected RDomBaseLoop( IExpression condition, bool testAtEnd, bool hasBlock)
-          : this(null, null, null)
+          : base()
       {
          Initialize();
          _condition = condition;

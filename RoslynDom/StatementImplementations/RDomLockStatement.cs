@@ -10,8 +10,9 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
 
       public RDomLockStatement(IExpression expression, bool hasBlock)
-      : this(null, null, null)
+            : base()
       {
+         Initialize();
          _expression = expression;
          _hasBlock = hasBlock;
       }

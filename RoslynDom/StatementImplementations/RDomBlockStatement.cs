@@ -10,8 +10,9 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
 
       public RDomBlockStatement()
-      : this(null, null, null)
+            : base()
       {
+         Initialize();
       }
 
       public RDomBlockStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)

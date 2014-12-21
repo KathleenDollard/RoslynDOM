@@ -10,6 +10,10 @@ namespace RoslynDom
    {
       private RDomCollection<IStatementAndDetail> _statements;
 
+      public RDomStatementBlockBase()
+         : base()
+      { Initialize(); }
+
       public RDomStatementBlockBase(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }

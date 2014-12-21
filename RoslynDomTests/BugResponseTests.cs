@@ -312,5 +312,29 @@ namespace KathleensAnalyzer
          var actual = output.ToFullString();
          //Assert.AreEqual(csharpCode, actual);
       }
+
+      [TestMethod]
+      public void Issue_88_generated_class_results_in_uncompilable_code()
+      {
+         var csharpCode = @"using RoslynDom.Common;
+namespace Company.Core
+   {
+      public class className
+      {
+      }
+   }";
+
+         IRoot root = RDom.CSharp.Load(csharpCode);
+         var firstClass = root.RootClasses.First();
+         firstClass.Name = "Product";
+
+         var backerField = new RDomField(name: "mRevisions", returnTypeName: "StringField");
+         firstClass.AddOrMoveMember(backerField);
+         var property = new RDomProperty(name: "Revisions", propertyTypeName: "string", declaredAccessModifier: AccessModifier.Public, isVirtual: true);
+         firstClass.AddOrMoveMember(property);
+
+         var actual = RDom.CSharp.GetSourceCode(root);
+         var formatted = RDom.CSharp.GetFormattedSourceCode(root);
+      }
    }
 }

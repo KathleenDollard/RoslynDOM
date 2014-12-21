@@ -10,17 +10,20 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
 
       public RDomUsingStatement(IExpression expression, bool hasBlock)
-      : this(null, null, null)
+            : base()
       {
+         Initialize();
          _expression = expression;
          _hasBlock = hasBlock;
       }
 
       public RDomUsingStatement(IDom parent, IVariableDeclaration variable, bool hasBlock)
-      : this(null, parent, null)
+      : base(parent)
       {
+         Initialize();
          _variable = variable;
          _hasBlock = hasBlock;
+         NeedsFormatting = true;
       }
 
       public RDomUsingStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)

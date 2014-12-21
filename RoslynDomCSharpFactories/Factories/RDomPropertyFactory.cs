@@ -55,8 +55,6 @@ namespace RoslynDom.CSharp
          var propSymbol = newItem.Symbol as IPropertySymbol;
          Guardian.Assert.IsNotNull(propSymbol, nameof(propSymbol));
 
-         newItem.CanGet = (!propSymbol.IsWriteOnly); // or check whether getAccessor is null
-         newItem.CanSet = (!propSymbol.IsReadOnly); // or check whether setAccessor is null
          var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
          var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
          if (getAccessorSyntax != null)

@@ -37,8 +37,9 @@ namespace RoslynDom
       /// </param>
       public RDomReferencedType(IDom parent, string name, bool displayAlias = false, bool isArray = false,
                                 params IReferencedType[] typeArgs)
-         : this(null, parent, null)
+      : base(parent)
       {
+         Initialize();
          _name = StringUtilities.NameFromQualifiedName(name);
          _namespace = StringUtilities.NamespaceFromQualifiedName(name);
          _displayAlias = displayAlias;

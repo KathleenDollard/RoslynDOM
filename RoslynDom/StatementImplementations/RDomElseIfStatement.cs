@@ -10,7 +10,7 @@ namespace RoslynDom
    {
 
       public RDomElseIfStatement(IExpression condition)
-          : this(null, null, null)
+            : base()
       {
          _condition = condition;
       }

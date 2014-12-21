@@ -15,24 +15,24 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
       private RDomCollection<IEnumMember> _members;
 
-      public RDomEnum( string name, string metadataName, string underlyingTypeName = null, AccessModifier accessModifier = AccessModifier.Private)
-          : this(name, metadataName,accessModifier)
+      public RDomEnum(string name, string metadataName, string underlyingTypeName = null, AccessModifier declaredAccessModifier = AccessModifier.Private)
+          : this(name, metadataName, declaredAccessModifier)
       {
          _underlyingType = new RDomReferencedType(this, underlyingTypeName, true);
       }
 
-      public RDomEnum( string name, string metadataName, IReferencedType underlyingType, AccessModifier accessModifier = AccessModifier.Private)
-          : this( name, metadataName,  accessModifier)
+      public RDomEnum(string name, string metadataName, IReferencedType underlyingType, AccessModifier declaredAccessModifier = AccessModifier.Private)
+          : this(name, metadataName, declaredAccessModifier)
       {
          _underlyingType = underlyingType;
       }
 
-      private RDomEnum( string name, string metadataName, AccessModifier accessModifier = AccessModifier.Private)
+      private RDomEnum(string name, string metadataName, AccessModifier declaredAccessModifier = AccessModifier.Private)
           : this((SyntaxNode)null, null, null)
       {
          _name = name;
          _metadataName = metadataName;
-         _accessModifier = accessModifier;
+         DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
       }
 
       public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -112,7 +112,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       private IReferencedType _underlyingType;

@@ -24,10 +24,10 @@ namespace RoslynDom
          _type = type;
       }
       private RDomConversionOperator( string name,  bool isImplicit)
-            : this(null, null, null)
+            : base()
       {
+         Initialize();
          _name = name;
-         _accessModifier = accessModifier;
          _isImplicit = isImplicit;
       }
 
@@ -101,7 +101,11 @@ namespace RoslynDom
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
-         set { SetProperty(ref _declaredAccessModifier, value); }
+         set
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
       private IReferencedType _type;
       public IReferencedType Type
@@ -144,11 +148,10 @@ namespace RoslynDom
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
       private bool _hasBlock;
-      private readonly AccessModifier accessModifier;
 
       public bool HasBlock
       {
-         get { return true; return _hasBlock; }
+         get {  return true; }
          set { SetProperty(ref _hasBlock, value); }
       }
 

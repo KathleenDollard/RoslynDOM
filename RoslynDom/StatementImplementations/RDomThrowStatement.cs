@@ -6,7 +6,7 @@ namespace RoslynDom
    public class RDomThrowStatement : RDomBase<IThrowStatement, ISymbol>, IThrowStatement
    {
       public RDomThrowStatement(IExpression exceptionExpression = null)
-      : this(null, null, null)
+            : base()
       {
          _exceptionExpression = exceptionExpression;
       }

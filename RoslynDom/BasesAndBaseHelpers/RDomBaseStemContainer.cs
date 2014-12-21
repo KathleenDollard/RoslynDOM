@@ -13,6 +13,10 @@ namespace RoslynDom
    {
       private RDomCollection<IStemMemberAndDetail> _members;
 
+      internal RDomBaseStemContainer()
+         : base()
+      { }
+
       internal RDomBaseStemContainer(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { Initialize(); }

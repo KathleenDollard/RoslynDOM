@@ -11,11 +11,12 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomDestructor( string name, AccessModifier accessModifier = AccessModifier.Private)
-      : this(null, null, null)
+      public RDomDestructor( string name, AccessModifier declaredAccessModifier = AccessModifier.Private)
+            : base()
       {
+         Initialize();
          _name = name;
-         _accessModifier = accessModifier;
+         DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
       }
 
       public RDomDestructor(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -32,6 +33,7 @@ namespace RoslynDom
          _statements = oldRDom.StatementsAll.Copy(this);
          _name = oldRDom.Name;
          _accessModifier = oldRDom.AccessModifier;
+         _declaredAccessModifier = oldRDom.DeclaredAccessModifier;
       }
 
       private void Initialize()
@@ -101,7 +103,10 @@ namespace RoslynDom
          get
          { return AccessModifier; return _declaredAccessModifier; }
          set
-         { SetProperty(ref _declaredAccessModifier, value); }
+         {
+            SetProperty(ref _declaredAccessModifier, value);
+            AccessModifier = value;
+         }
       }
 
       public RDomCollection<IStatementAndDetail> StatementsAll

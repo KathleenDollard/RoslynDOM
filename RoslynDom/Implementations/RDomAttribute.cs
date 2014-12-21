@@ -13,14 +13,22 @@ namespace RoslynDom
       private RDomCollection<IAttributeValue> _attributeValues;
 
       public RDomAttribute(IDom parent, string name)
-      : this(null, parent, null)
+      : base( parent)
       {
+         Initialize();
          _name = name;
       }
 
       public RDomAttribute(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
-      { _attributeValues = new RDomCollection<IAttributeValue>(this); }
+      {
+         Initialize();
+      }
+
+      private void Initialize()
+      {
+         _attributeValues = new RDomCollection<IAttributeValue>(this);
+      }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]

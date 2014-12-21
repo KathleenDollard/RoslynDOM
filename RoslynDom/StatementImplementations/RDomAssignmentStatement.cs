@@ -21,7 +21,7 @@ namespace RoslynDom
       /// Assignment operator
       /// </param>
       public RDomAssignmentStatement( IExpression left, IExpression expression, AssignmentOperator op = AssignmentOperator.Equals)
-       : this(null, null, null)
+            : base()
       {
          _left = left;
          _expression = expression;

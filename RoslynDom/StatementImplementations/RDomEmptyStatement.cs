@@ -7,9 +7,8 @@ namespace RoslynDom
    public class RDomEmptyStatement : RDomBase<IEmptyStatement, ISymbol>, IEmptyStatement
    {
       public RDomEmptyStatement()
-      : this(null, null, null)
-      {
-      }
+            : base()
+      { }
 
       public RDomEmptyStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)

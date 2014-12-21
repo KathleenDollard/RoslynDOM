@@ -10,7 +10,7 @@ namespace RoslynDom
    {
       public RDomAttributeValue(IDom parent, string name, AttributeValueStyle style = AttributeValueStyle.Positional,
                object value = null, string valueConstantIdentifier = null, LiteralKind valueType = LiteralKind.Unknown)
-      : this(null, parent, null)
+      : base(parent)
       {
          _name = name;
          _style = style;

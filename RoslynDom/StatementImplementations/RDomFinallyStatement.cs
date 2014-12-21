@@ -9,9 +9,8 @@ namespace RoslynDom
    {
 
       public RDomFinallyStatement()
-          : this(null, null, null)
-      {
-      }
+            : base()
+      { }
 
       public RDomFinallyStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
