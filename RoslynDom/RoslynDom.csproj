@@ -83,6 +83,7 @@
     <Compile Include="BasesAndBaseHelpers\RDomBaseType.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomBaseStemContainer.cs" />
     <Compile Include="BasesAndBaseHelpers\RDomDetail.cs" />
+    <Compile Include="ExpressionImplementations\RDomLiteralExpression.cs" />
     <Compile Include="ExpressionImplementations\RDomLambdaSingleExpression.cs" />
     <Compile Include="ExpressionImplementations\RDomLambdaMultiLineExpression.cs" />
     <Compile Include="ExpressionImplementations\RDomInvocationExpression.cs" />

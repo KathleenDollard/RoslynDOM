@@ -49,12 +49,12 @@ namespace RoslynDom.Common
          return true;
       }
 
-      public bool AddOrMoveRange<TLocal>(IEnumerable<TLocal> items)
-      {
-         var itemsAsKind = items.OfType<T>();
-         if (items.Count() != items.Count()) return false;
-         return AddOrMoveRange(itemsAsKind);
-      }
+      //public bool AddOrMoveRange<TLocal>(IEnumerable<TLocal> items)
+      //{
+      //   var itemsAsKind = items.OfType<T>();
+      //   if (items.Count() != items.Count()) return false;
+      //   return AddOrMoveRange(itemsAsKind);
+      //}
 
       public bool InsertOrMove(int index, T item)
       {
@@ -80,13 +80,13 @@ namespace RoslynDom.Common
          return true;
       }
 
-      public bool InsertOrMoveAfter<TLocal>(TLocal existing, TLocal itemToInsert)
-      {
-         var existingAsKind = existing as T;
-         var itemToInsertAsKind = itemToInsert as T;
-         if (existingAsKind == null || itemToInsertAsKind == null) return false;
-         return InsertOrMoveAfter(existingAsKind, itemToInsertAsKind);
-      }
+      //public bool InsertOrMoveAfter<TLocal>(TLocal existing, TLocal itemToInsert)
+      //{
+      //   var existingAsKind = existing as T;
+      //   var itemToInsertAsKind = itemToInsert as T;
+      //   if (existingAsKind == null || itemToInsertAsKind == null) return false;
+      //   return InsertOrMoveAfter(existingAsKind, itemToInsertAsKind);
+      //}
 
       public bool InsertOrMoveBefore(T existing, T itemToInsert)
       {
@@ -95,13 +95,13 @@ namespace RoslynDom.Common
          return true;
       }
 
-      public bool InsertOrMoveBefore<TLocal>(TLocal existing, TLocal itemToInsert)
-      {
-         var existingAsKind = existing as T;
-         var itemToInsertAsKind = itemToInsert as T;
-         if (existingAsKind == null || itemToInsertAsKind == null) return false;
-         return InsertOrMoveBefore(existingAsKind, itemToInsertAsKind);
-      }
+      //public bool InsertOrMoveBefore<TLocal>(TLocal existing, TLocal itemToInsert)
+      //{
+      //   var existingAsKind = existing as T;
+      //   var itemToInsertAsKind = itemToInsert as T;
+      //   if (existingAsKind == null || itemToInsertAsKind == null) return false;
+      //   return InsertOrMoveBefore(existingAsKind, itemToInsertAsKind);
+      //}
 
       public bool Remove(T item)
       {
@@ -125,13 +125,13 @@ namespace RoslynDom.Common
          return true;
       }
 
-      public bool Replace<TLocal>(TLocal oldItem, TLocal newItem)
-      {
-         var oldItemAsKind = newItem as T;
-         var newItemAsKind = newItem as T;
-         if (oldItemAsKind == null || newItemAsKind == null) return false;
-         return Replace(oldItemAsKind, newItemAsKind);
-      }
+      //public bool Replace<TLocal>(TLocal oldItem, TLocal newItem)
+      //{
+      //   var oldItemAsKind = newItem as T;
+      //   var newItemAsKind = newItem as T;
+      //   if (oldItemAsKind == null || newItemAsKind == null) return false;
+      //   return Replace(oldItemAsKind, newItemAsKind);
+      //}
 
       public  RDomCollection<T> Copy(IDom newParent)
       {
@@ -238,26 +238,26 @@ namespace RoslynDom.Common
          return CreateAndAdd(getItemsDeleg(input), createDeleg);
       }
 
-      /// <summary>
-      /// Create a set of items from a set retrieved from a set of items and add to collection
-      /// </summary>
-      /// <typeparam name="TInput"></typeparam>
-      /// <typeparam name="TRaw"></typeparam>
-      /// <param name="inputs"></param>
-      /// <param name="getItemsDeleg"></param>
-      /// <param name="createDeleg"></param>
-      /// <returns></returns>
-      public bool CreateAndAdd<TInput, TRaw>(IEnumerable<TInput> inputs,
-                       Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
-                       Func<TRaw, IEnumerable<T>> createDeleg)
-      {
-         var ret = true;
-         foreach (var input in inputs)
-         {
-            if (!CreateAndAdd(input, getItemsDeleg, createDeleg)) ret = false;
-         }
-         return ret;
-      }
+      ///// <summary>
+      ///// Create a set of items from a set retrieved from a set of items and add to collection
+      ///// </summary>
+      ///// <typeparam name="TInput"></typeparam>
+      ///// <typeparam name="TRaw"></typeparam>
+      ///// <param name="inputs"></param>
+      ///// <param name="getItemsDeleg"></param>
+      ///// <param name="createDeleg"></param>
+      ///// <returns></returns>
+      //public bool CreateAndAdd<TInput, TRaw>(IEnumerable<TInput> inputs,
+      //                 Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
+      //                 Func<TRaw, IEnumerable<T>> createDeleg)
+      //{
+      //   var ret = true;
+      //   foreach (var input in inputs)
+      //   {
+      //      if (!CreateAndAdd(input, getItemsDeleg, createDeleg)) ret = false;
+      //   }
+      //   return ret;
+      //}
 
       /// <summary>
       /// Create an item from each of a set retrieved from a single item and add to collection
@@ -275,26 +275,26 @@ namespace RoslynDom.Common
          return CreateAndAdd(getItemsDeleg(input), createDeleg);
       }
 
-      /// <summary>
-      /// Create an item from each of a set retrieved from a set of items and add to collection
-      /// </summary>
-      /// <typeparam name="TInput"></typeparam>
-      /// <typeparam name="TRaw"></typeparam>
-      /// <param name="inputs"></param>
-      /// <param name="getItemsDeleg"></param>
-      /// <param name="createDeleg"></param>
-      /// <returns></returns>
-      public bool CreateAndAdd<TInput, TRaw>(IEnumerable<TInput> inputs,
-                       Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
-                       Func<TRaw, T> createDeleg)
-      {
-         var ret = true;
-         foreach (var input in inputs)
-         {
-            if (!CreateAndAdd(input, getItemsDeleg, createDeleg)) ret = false;
-         }
-         return ret;
-      }
+      ///// <summary>
+      ///// Create an item from each of a set retrieved from a set of items and add to collection
+      ///// </summary>
+      ///// <typeparam name="TInput"></typeparam>
+      ///// <typeparam name="TRaw"></typeparam>
+      ///// <param name="inputs"></param>
+      ///// <param name="getItemsDeleg"></param>
+      ///// <param name="createDeleg"></param>
+      ///// <returns></returns>
+      //public bool CreateAndAdd<TInput, TRaw>(IEnumerable<TInput> inputs,
+      //                 Func<TInput, IEnumerable<TRaw>> getItemsDeleg,
+      //                 Func<TRaw, T> createDeleg)
+      //{
+      //   var ret = true;
+      //   foreach (var input in inputs)
+      //   {
+      //      if (!CreateAndAdd(input, getItemsDeleg, createDeleg)) ret = false;
+      //   }
+      //   return ret;
+      //}
 
       private void UpdateParent(T item)
       {

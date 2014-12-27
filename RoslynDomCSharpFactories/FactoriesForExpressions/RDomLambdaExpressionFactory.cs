@@ -67,7 +67,9 @@ namespace RoslynDom.CSharp
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IExpression;
-         if (itemAsT.InitialExpressionLanguage  != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }
+         if (!string.IsNullOrWhiteSpace(itemAsT.InitialExpressionLanguage)
+               && itemAsT.InitialExpressionLanguage != ExpectedLanguages.CSharp)
+         { throw new InvalidOperationException(); }
          var node = SyntaxFactory.ParseExpression(itemAsT.InitialExpressionString);
          // TODO: return new SyntaxNode[] { node.Format() };
          return new SyntaxNode[] { node };

@@ -13,9 +13,34 @@ namespace RoslynDom.CSharp
    public class RDomInvocationExpressionFactory
                 : RDomBaseSyntaxNodeFactory<RDomInvocationExpression, InvocationExpressionSyntax>
    {
+      private static WhitespaceKindLookup _whitespaceLookup;
+
       public RDomInvocationExpressionFactory(RDomCorporation corporation)
           : base(corporation)
       { }
+
+      private WhitespaceKindLookup WhitespaceLookup
+      {
+         get
+         {
+            if (_whitespaceLookup == null)
+            {
+               _whitespaceLookup = new WhitespaceKindLookup();
+               _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
+               _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
+               _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
+               _whitespaceLookup.Add(LanguageElement.ParameterStartDelimiter, SyntaxKind.OpenParenToken);
+               _whitespaceLookup.Add(LanguageElement.ParameterEndDelimiter, SyntaxKind.CloseParenToken);
+               _whitespaceLookup.Add(LanguageElement.ConstructorInitializerPrefix, SyntaxKind.ColonToken);
+               _whitespaceLookup.Add(LanguageElement.ConstructorBaseInitializer, SyntaxKind.BaseKeyword);
+               _whitespaceLookup.Add(LanguageElement.ConstructorThisInitializer, SyntaxKind.ThisKeyword);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
+            }
+            return _whitespaceLookup;
+         }
+      }
 
       public override RDomPriority Priority
       { get { return RDomPriority.Normal + 1; } }
@@ -29,31 +54,11 @@ namespace RoslynDom.CSharp
          newItem.InitialExpressionLanguage = ExpectedLanguages.CSharp;
          newItem.MethodName = GetMethodName(syntax.Expression.ToString());
          newItem.TypeArguments.AddOrMoveRange(GetTypeArguments(syntax.Expression, newItem, model));
-         newItem.Arguments.AddOrMoveRange(GetArguments(syntax.ArgumentList, newItem, model));
+         newItem.Arguments.CreateAndAdd(syntax, x => x.ArgumentList.Arguments, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IArgument>());
+         CreateFromWorker.StoreWhitespace(newItem, syntax.ArgumentList, LanguagePart.Initializer, WhitespaceLookup);
 
          return newItem;
 
-      }
-
-      private IEnumerable<IArgument> GetArguments(ArgumentListSyntax argumentList, IDom newItem, SemanticModel model)
-      {
-         var ret = new List<IArgument>();
-         foreach (var argSyntax in argumentList.Arguments)
-         {
-            // TODO: more work, align with constructor args, and probably create factory
-            var newArg = new RDomArgument(argSyntax, newItem, model);
-            // KAD: Explict node removal
-            //newArg.ValueExpression = OutputContext.Corporation.Create<IExpression>(argSyntax.Expression, newItem, model).FirstOrDefault();
-            newArg.ValueExpression = OutputContext.Corporation.CreateSpecial<IExpression>(argSyntax.Expression, newItem, model).FirstOrDefault();
-            if (argSyntax.NameColon != null)
-            {
-               newArg.Name = argSyntax.NameColon.Name.ToString();
-            }
-            newArg.IsRef = argSyntax.RefOrOutKeyword.CSharpKind() == SyntaxKind.RefKeyword;
-            newArg.IsOut = argSyntax.RefOrOutKeyword.CSharpKind() == SyntaxKind.OutKeyword;
-            ret.Add(newArg);
-         }
-         return ret;
       }
 
       private IEnumerable<IReferencedType> GetTypeArguments(ExpressionSyntax expression, IDom newItem, SemanticModel model)
@@ -80,11 +85,42 @@ namespace RoslynDom.CSharp
 
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
-         var itemAsT = item as IExpression;
-         if (itemAsT.InitialExpressionLanguage != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }
-         var node = SyntaxFactory.ParseExpression(itemAsT.InitialExpressionString);
-         // TODO: return new SyntaxNode[] { node.Format() };
+         var itemAsT = item as IInvocationExpression;
+         if (!string.IsNullOrWhiteSpace(itemAsT.InitialExpressionLanguage)
+               && itemAsT.InitialExpressionLanguage != ExpectedLanguages.CSharp)
+         { throw new InvalidOperationException(); }
+         SyntaxNode node;
+         if (itemAsT.MethodName != null)
+         {
+            var methodName = SyntaxFactory.ParseExpression(GetMethodName(itemAsT));
+            node = SyntaxFactory.ParseExpression(methodName + "()");
+            var argList = itemAsT.Arguments
+                   .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
+                   .OfType<ArgumentSyntax>()
+                   .ToList();
+            var argListSyntax = SyntaxFactory.ArgumentList(
+                            SyntaxFactory.SeparatedList(argList));
+            argListSyntax = BuildSyntaxHelpers.AttachWhitespace(argListSyntax, itemAsT.Whitespace2Set, WhitespaceLookup, LanguagePart.Initializer);
+            node = (node as InvocationExpressionSyntax).WithArgumentList(argListSyntax);
+         }
+         else
+         { node = SyntaxFactory.ParseExpression(itemAsT.InitialExpressionString); }
          return new SyntaxNode[] { node };
+      }
+
+      private string GetMethodName(IInvocationExpression itemAsT)
+      {
+         var methodName =  itemAsT.MethodName;
+         if (itemAsT.TypeArguments.Any())
+         {
+            var typeArgs = itemAsT.TypeArguments
+                  .SelectMany(x => RDom.CSharp.GetSyntaxGroup(x))
+                  .Select(x => x.ToFullString())
+                  .ToList();
+            var typeArgString = string.Join(", ", typeArgs);
+            methodName +="<" + typeArgString + ">";
+         }
+         return methodName;
       }
    }
 }

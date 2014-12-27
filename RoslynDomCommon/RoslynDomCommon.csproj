@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeCollection.cs" />
+    <Compile Include="BaseInterfaces\IAssignment.cs" />
     <Compile Include="BaseInterfaces\IClassOrStructure.cs" />
     <Compile Include="BaseInterfaces\IContainer.cs" />
     <Compile Include="BaseInterfaces\IDetail.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Interfaces\IContructor.cs" />
     <Compile Include="Interfaces\IEvent.cs" />
     <Compile Include="Interfaces\IRootGroup.cs" />
+    <Compile Include="Interfaces_Expressions\ILiteralExpression.cs" />
     <Compile Include="Interfaces_Expressions\IOtherExpression.cs" />
     <Compile Include="Interfaces_Expressions\ILambdaExpression.cs" />
     <Compile Include="Interfaces_Expressions\IInvocationExpression.cs" />

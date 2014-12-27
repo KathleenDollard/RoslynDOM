@@ -44,13 +44,9 @@ namespace RoslynDom.Common
       /// </returns>
       IEnumerable<INamespace> DescendantNamespaces { get; }
 
-      IUsingDirective AddUsingDirective(IUsingDirective usingDirective);
-      IUsingDirective AddUsingDirective(string usingName);
       IEnumerable<IUsingDirective> AddUsingDirectives(params IUsingDirective[] usingDirective);
       IEnumerable<IUsingDirective> AddUsingDirectives(params string[] usingName);
 
-      INamespace AddNamespace(INamespace nspace);
-      INamespace AddNamespace(string namespaceName);
       IEnumerable<INamespace> AddNamespaces(params INamespace[] namespaces);
       IEnumerable<INamespace> AddNamespaces(params string[] namespaceName);
 

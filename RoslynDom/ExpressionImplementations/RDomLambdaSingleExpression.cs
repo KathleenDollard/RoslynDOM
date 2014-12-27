@@ -10,11 +10,6 @@ namespace RoslynDom
    {
       private RDomCollection<IParameter> _parameters;
 
-      public RDomLambdaSingleExpression(IDom parent, string initialExpressionString,
-               string initialExpressionLanguage)
-      : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Lambda)
-      { }
-
       public RDomLambdaSingleExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent, model)
       { Initialize(); }
@@ -49,8 +44,8 @@ namespace RoslynDom
       }
 
 
-      public RDomCollection<IParameter > Parameters
-      { get { return _parameters ; } }
+      public RDomCollection<IParameter> Parameters
+      { get { return _parameters; } }
 
    }
 }

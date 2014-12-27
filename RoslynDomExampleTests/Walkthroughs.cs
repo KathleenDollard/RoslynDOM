@@ -96,7 +96,8 @@ namespace RoslynDomExampleTests
                          .Where(x => x.IsImplicitlyTyped);
 
          var instantiations = implicitlyTyped
-                     .Where(x => x.Initializer.ExpressionType == ExpressionType.ObjectCreation);
+                     .Where(x => x.Initializer.ExpressionType == ExpressionType.ObjectCreation)
+                     .ToList();
 
          var literals = implicitlyTyped
                      .Where(x => x.Initializer.ExpressionType == ExpressionType.Literal &&

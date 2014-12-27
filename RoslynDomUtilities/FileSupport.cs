@@ -42,7 +42,6 @@ namespace RoslynDom.Common
       {
          var files = GetNearestFilesOfType(path, ".sln");
          var count = files.Count();
-         if (count > 1) throw new InvalidOperationException("Ambiguous solution files discovered");
          return files.FirstOrDefault();
       }
 
@@ -50,19 +49,19 @@ namespace RoslynDom.Common
       {
          var files = GetNearestFilesOfType(path, ".csproj");
          var count = files.Count();
-         if (count > 1) throw new InvalidOperationException("Ambiguous project files discovered");
          return files.FirstOrDefault();
       }
 
-      private static IEnumerable<string> GetNearestFilesOfType(string path, string extension)
+      public static IEnumerable<string> GetNearestFilesOfType(string path, string extension)
       {
-         if (!extension.StartsWith("*")) { extension = "*" + extension; }
-         if (File.Exists(path)) { path = Path.GetDirectoryName(path); }
+         path = Path.GetFullPath(path);
+         if (!extension.StartsWith(".")) { extension = "." + extension; } 
          if (Path.GetExtension(path) == extension) return new[] { path };
+         if (File.Exists(path)) { path = Path.GetDirectoryName(path); }
          string currentDirectory = path;
          while (!string.IsNullOrWhiteSpace(currentDirectory))
          {
-            var files = Directory.GetFiles(currentDirectory, extension);
+            var files = Directory.GetFiles(currentDirectory, "*" + extension);
             if (files.Any()) { return files; }
             currentDirectory = Path.GetDirectoryName(currentDirectory);
          }

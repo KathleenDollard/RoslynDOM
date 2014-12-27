@@ -243,7 +243,7 @@ namespace Test
       }
 
       [TestMethod, TestCategory(BugResponseCategory)]
-      public void This_should_not_fail()
+      public void Load_Code_First_for_analyzer()
       {
          var csharpCode = @"using CodeFirstAnalyzer;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -333,8 +333,10 @@ namespace Company.Core
          var property = new RDomProperty(name: "Revisions", propertyTypeName: "string", declaredAccessModifier: AccessModifier.Public, isVirtual: true);
          firstClass.AddOrMoveMember(property);
 
-         var actual = RDom.CSharp.GetSourceCode(root);
          var formatted = RDom.CSharp.GetFormattedSourceCode(root);
+         var expected = "using RoslynDom.Common;\r\nnamespace Company.Core\r\n{\r\n    public class Product\r\n    {\r\n        private StringField mRevisions;\r\n        public virtual string Revisions { private get; private set; }\r\n    }\r\n}";
+         Assert.AreEqual(expected, formatted);
+
       }
    }
 }

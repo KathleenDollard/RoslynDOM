@@ -69,17 +69,17 @@ namespace RoslynDom
       public void ClearStemMembers()
       { _members.Clear(); }
 
-      public IUsingDirective AddUsingDirective(IUsingDirective usingDirective)
-      {
-         StemMembersAll.AddOrMove(usingDirective);
-         return usingDirective;
-      }
+      //public IUsingDirective AddUsingDirective(IUsingDirective usingDirective)
+      //{
+      //   StemMembersAll.AddOrMove(usingDirective);
+      //   return usingDirective;
+      //}
 
-      public IUsingDirective AddUsingDirective(string usingName)
-      {
-         var usingDirective = new RDomUsingDirective(usingName);
-         return AddUsingDirective(usingDirective);
-      }
+      //public IUsingDirective AddUsingDirective(string usingName)
+      //{
+      //   var usingDirective = new RDomUsingDirective(usingName);
+      //   return AddUsingDirective(usingDirective);
+      //}
 
       public IEnumerable<IUsingDirective> AddUsingDirectives(params IUsingDirective[] usingDirectives)
       {
@@ -93,17 +93,17 @@ namespace RoslynDom
          return AddUsingDirectives(usingDirectives);
       }
 
-      public INamespace AddNamespace(INamespace nspace)
-      {
-         StemMembersAll.AddOrMove(nspace);
-         return nspace;
-      }
+      //public INamespace AddNamespace(INamespace nspace)
+      //{
+      //   StemMembersAll.AddOrMove(nspace);
+      //   return nspace;
+      //}
 
-      public INamespace AddNamespace(string namespaceName)
-      {
-         var nspace = new RDomNamespace(namespaceName);
-         return AddNamespace(nspace);
-      }
+      //public INamespace AddNamespace(string namespaceName)
+      //{
+      //   var nspace = new RDomNamespace(namespaceName);
+      //   return AddNamespace(nspace);
+      //}
 
       public IEnumerable<INamespace> AddNamespaces(params INamespace[] namespaces)
       {

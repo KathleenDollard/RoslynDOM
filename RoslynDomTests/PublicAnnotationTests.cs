@@ -52,8 +52,12 @@ namespace RoslynDomTests
          var root = RDom.CSharp.Load(csharpCode);
          CheckAnnotations1(root);
          var root2 = root.Copy();
+         object test;
+         Assert.IsFalse((root.StemMembersAll.First() as IPublicAnnotation).TryGetValue("val3", out test));
+         Assert.IsNull((root.StemMembersAll.First() as IPublicAnnotation).GetValue("val3"));
          CheckAnnotations1(root2);
       }
+
 
       private void CheckAnnotations1(IRoot root)
       {
@@ -111,8 +115,12 @@ namespace RoslynDomTests
          foreach (var key in annotation.Keys)
          {
             var value = annotation.GetValue(key);
+            object objValue;
+            var found =  annotation.TryGetValue(key, out objValue);
             Assert.AreEqual(values[i].Item1, key);
             Assert.AreEqual(values[i].Item2, value);
+            Assert.IsTrue(found);
+            Assert.AreEqual(value, objValue);
             i++;
          }
       }

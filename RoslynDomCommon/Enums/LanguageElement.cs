@@ -187,5 +187,7 @@ namespace RoslynDom.Common
       FirstToken,
       Event,
       Detail,
+      OutModifier,
+      RefModifier,
    }
 }

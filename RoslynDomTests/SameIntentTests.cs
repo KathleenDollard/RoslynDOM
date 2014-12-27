@@ -701,17 +701,19 @@ namespace RoslynDomTests
          AssertSameIntent(false, csharpCode, csharpCodeChanged);
       }
 
+      [TestMethod, TestCategory(SameIntentConstructorCategory)]
       public void Same_intent_false_with_with_different_constructor_parameter_type()
       {
          var csharpCode = @"
             public class Class1 
             {
-                public Class1(int x) {};
+                public Class1(int x) {}
             }";
          var csharpCodeChanged = csharpCode.Replace("int", "string");
          AssertSameIntent(false, csharpCode, csharpCodeChanged);
       }
 
+      [TestMethod, TestCategory(SameIntentConstructorCategory)]
       public void Same_intent_false_with_with_different_constructor_parameter_count()
       {
          var csharpCode = @"
@@ -746,6 +748,19 @@ namespace RoslynDomTests
                 {}
             }";
          var csharpCodeChanged = csharpCode.Replace("x, y", "x");
+         AssertSameIntent(false, csharpCode, csharpCodeChanged);
+      }
+
+      [TestMethod, TestCategory(SameIntentConstructorCategory)]
+      public void Same_intent_false_with_with_different_constructor_base_argument_modifiers()
+      {
+         var csharpCode = @"
+            public class Class1 
+            {
+                public Class1(int x, int y) : base(x, y)
+                {}
+            }";
+         var csharpCodeChanged = csharpCode.Replace("x, y", "x, out y");
          AssertSameIntent(false, csharpCode, csharpCodeChanged);
       }
 
@@ -1955,6 +1970,26 @@ namespace RoslynDomTests
 
 
       [TestMethod, TestCategory(SameIntentStatementCategory)]
+      public void Same_intent_false_with_changed_for_loop_test_at_end()
+      {
+         var csharpCode = @"
+                public class ClassA 
+                {
+                   public void Foo()
+                   { 
+                        while (true)
+                        {
+                        x = y + 2;
+                        Console.WriteLine();
+                        var x = 42;
+                        } }
+            }";
+         var csharpCodeChanged = csharpCode.ReplaceFirst("while (true)", "do");
+         csharpCodeChanged = csharpCodeChanged.ReplaceFirst("} }", "} while (true); }");
+         AssertSameIntent(false, csharpCode, csharpCodeChanged);
+      }
+
+      [TestMethod, TestCategory(SameIntentStatementCategory)]
       public void Same_intent_false_with_changed_if_statement_statement()
       {
          var csharpCode = @"
@@ -2491,7 +2526,7 @@ namespace RoslynDomTests
          AssertSameIntent(false, csharpCode1, csharpCode2);
       }
 
-       [TestMethod, TestCategory(SameIntentSpecialCategory)]
+      [TestMethod, TestCategory(SameIntentSpecialCategory)]
       public void Same_intent_with_nulls()
       {
          var csharpCode = @"

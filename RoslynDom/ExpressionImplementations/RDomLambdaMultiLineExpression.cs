@@ -12,11 +12,6 @@ namespace RoslynDom
       private RDomCollection<IParameter> _parameters;
       private RDomCollection<IStatementAndDetail> _statements;
 
-      public RDomLambdaMultiLineExpression(IDom parent, string initialExpressionString,
-               string initialExpressionLanguage)
-      : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Lambda)
-      { }
-
       public RDomLambdaMultiLineExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
         : base(rawItem, parent, model)
       { Initialize(); }

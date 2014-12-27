@@ -24,7 +24,7 @@ namespace RoslynDom.Common
          {
             if (one == null && other == null) return true;
             if (one == null && other != null) return false;
-            if (one != null && other == null) return false;
+            if (one != null && other == null) return false; //confused about why this is showing uncovered Same_intent_with_nulls seems to test
 
             if (!CheckSpecial(one, other)) return false;
             if (!CheckCharacteristics(one, other)) return false;

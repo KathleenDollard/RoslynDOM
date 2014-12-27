@@ -81,5 +81,78 @@ namespace TestRoslyn
             Assert.IsTrue(results.StartsWith("using KadMan.Common;"));
         }
 
-    }
+      [TestMethod]
+      public void GetNearestFilesOfType_adds_period_when_needed()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory;
+         var files = FileSupport.GetNearestFilesOfType(path, "dll");
+         Assert.IsTrue(files.Count() > 0);
+      }
+
+      [TestMethod]
+      public void GetNearestSolution_finds_existing_solution()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory;
+         var file = FileSupport.GetNearestSolution(path);
+         Assert.IsTrue(file.EndsWith(@"\RoslynDom.sln"));
+      }
+
+      [TestMethod]
+      public void GetNearestSolution_returns_null_for_no_solution()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory + @"\..\..\..\..\..";
+         var file = FileSupport.GetNearestSolution(path);
+         Assert.IsNull(file);
+      }
+
+      [TestMethod]
+      public void GetNearestSolution_finds_solution_from_filename()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory + @"\UtilitiesTests.dll";
+         var file = FileSupport.GetNearestSolution(path);
+         Assert.IsTrue(file.EndsWith(@"\RoslynDom.sln"));
+      }
+
+      [TestMethod]
+      public void GetNearestSolution_finds_solution_from_solution_path()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory + @"\..\..\..\RoslynDom.sln";
+         var file = FileSupport.GetNearestSolution(path);
+         Assert.IsTrue(file.EndsWith(@"\RoslynDom.sln"));
+      }
+
+      [TestMethod]
+      public void GetNearestCSharpProject_finds_existing_project()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory;
+         var file = FileSupport.GetNearestCSharpProject(path);
+         Assert.IsTrue(file.EndsWith(@"\UtilitiesTests.csproj"));
+      }
+
+      [TestMethod]
+      public void GetNearestCSharpProject_returns_null_for_no_project()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory + @"\..\..\..\..";
+         var file = FileSupport.GetNearestCSharpProject(path);
+         Assert.IsNull(file);
+      }
+
+      [TestMethod]
+      public void GetNearestCSharpProject_finds_project_from_filename()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory + @"\UtilitiesTests.dll";
+         var file = FileSupport.GetNearestCSharpProject(path);
+         Assert.IsTrue(file.EndsWith(@"\UtilitiesTests.csproj"));
+      }
+
+      [TestMethod]
+      public void GetNearestCSharpProject_finds_project_from_project_path()
+      {
+         var path = AppDomain.CurrentDomain.BaseDirectory + @"\..\..\UtilitiesTests.csproj";
+         var file = FileSupport.GetNearestCSharpProject(path);
+         Assert.IsTrue(file.EndsWith(@"\UtilitiesTests.csproj"));
+      }
+
+
+   }
 }

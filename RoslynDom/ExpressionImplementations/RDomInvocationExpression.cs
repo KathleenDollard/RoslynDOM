@@ -11,10 +11,10 @@ namespace RoslynDom
       private RDomCollection<IReferencedType> _typeArguments;
       private RDomCollection<IArgument> _arguments;
 
-      public RDomInvocationExpression(IDom parent, string initialExpressionString,
-               string initialExpressionLanguage, string methodName)
-      : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Invocation )
+      public RDomInvocationExpression(string methodName)
+      : base(null, null, null, ExpressionType.Invocation )
       {
+         Initialize();
          _methodName = methodName;
       }
 
@@ -35,6 +35,7 @@ namespace RoslynDom
 
       private void Initialize()
       {
+         ExpressionType = ExpressionType.Invocation;
          _typeArguments = new RDomCollection<IReferencedType>(this);
          _arguments = new RDomCollection<IArgument>(this);
       }
