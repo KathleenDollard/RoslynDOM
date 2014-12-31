@@ -100,6 +100,74 @@ namespace RoslynDomTests
          Assert.AreEqual(1, regions2[1].BlockContents.NoWhitespace().Count());
       }
 
+      [TestMethod]
+      public void Can_retrieve_regions_with_multiple_nesting()
+      {
+         var csharpCode =
+@"namespace ExpansionFirstTemplatesTests
+{
+   #region [[ _xf_TemplateStart() ]]
+   using System;
+   using System.ComponentModel;
+
+   #region [[ _xf_ForEach(LoopOver=""Meta.Classes"", VarName=""Class"") ]]
+   namespace _xf_Class_dot_Namespace
+   {
+      public sealed partial class _xf_Class_dot_Name
+      { }
+   }
+#endregion
+#endregion
+}
+";
+         var root = RDom.CSharp.Load(csharpCode);
+         var regions = root.Descendants.OfType<IDetailBlockStart>().ToArray();
+         Assert.AreEqual(2, regions.Count());
+         Assert.IsNotNull(regions[0].BlockEnd);
+         Assert.IsNotNull(regions[1].BlockEnd);
+         var root2 = root.Copy();
+         var regions2 = root2.Descendants.OfType<IDetailBlockStart>().ToArray();
+         Assert.AreEqual(2, regions2.Count());
+         Assert.IsNotNull(regions2[0].BlockEnd);
+         Assert.IsNotNull(regions2[1].BlockEnd);
+         Assert.AreEqual(5, regions2[0].BlockContents.NoWhitespace().Count());
+         Assert.AreEqual(1, regions2[1].BlockContents.NoWhitespace().Count());
+      }
+
+      [TestMethod]
+      public void Can_retrieve_regions_with_nested_namespace()
+      {
+         var csharpCode =
+@"namespace ExpansionFirstTemplatesTests.PropertyChanged
+{
+   #region [[ _xf_TemplateStart() ]]
+   using System;
+   using System.ComponentModel;
+
+   #region [[ _xf_ForEach(LoopOver=""Meta.Classes"", VarName=""Class"") ]]
+   namespace _xf_Class_dot_Namespace
+   {
+      public sealed partial class _xf_Class_dot_Name
+      { }
+   }
+#endregion
+#endregion
+}
+";
+         var root = RDom.CSharp.Load(csharpCode);
+         var regions = root.Descendants.OfType<IDetailBlockStart>().ToArray();
+         Assert.AreEqual(2, regions.Count());
+         Assert.IsNotNull(regions[0].BlockEnd);
+         Assert.IsNotNull(regions[1].BlockEnd);
+         var root2 = root.Copy();
+         var regions2 = root2.Descendants.OfType<IDetailBlockStart>().ToArray();
+         Assert.AreEqual(2, regions2.Count());
+         Assert.IsNotNull(regions2[0].BlockEnd);
+         Assert.IsNotNull(regions2[1].BlockEnd);
+         Assert.AreEqual(5, regions2[0].BlockContents.NoWhitespace().Count());
+         Assert.AreEqual(1, regions2[1].BlockContents.NoWhitespace().Count());
+      }
+
       //      [TestMethod]
       //      public void Can_retrieve_nested_region()
       //      {

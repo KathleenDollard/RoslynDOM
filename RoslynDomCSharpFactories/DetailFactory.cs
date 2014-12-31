@@ -72,7 +72,7 @@ namespace RoslynDom.CSharp
          var structure = trivia.GetStructure();
          var regionSyntax = structure as RegionDirectiveTriviaSyntax;
          var text = regionSyntax.EndOfDirectiveToken.ToFullString().Replace("\r\n", "");
-         var newItem = new RDomDetailBlockStart(parent,trivia, text);
+         var newItem = new RDomDetailBlockStart(parent, trivia, text);
          if (trivia.Token.LeadingTrivia.Any())
          { newItem.Whitespace2Set.Add(GetWhitespace(trivia.Token.LeadingTrivia.First())); }
          return newItem;
@@ -98,10 +98,18 @@ namespace RoslynDom.CSharp
          var startSyntax = startDirectives.Single();
          var container = parent as IContainer;
          if (container == null) { throw new NotImplementedException(); }
-         var startBlock = container.GetMembers()
+         var startBlocks = container.GetMembers()
                            .OfType<RDomDetailBlockStart>()
                            .Where(x => MatchEndRegion(startSyntax, x.TypedTrivia))
-                           .SingleOrDefault();
+                           .ToList();
+         var existingEndBlockCount = container.GetMembers()
+                                    .OfType<RDomDetailBlockEnd>()
+                                    .Count();
+         var startBlock = startBlocks
+                           .Reverse<RDomDetailBlockStart>()
+                           .Skip(existingEndBlockCount)
+                           .FirstOrDefault();
+         if (startBlock == null) throw new NotImplementedException();
          var newItem = new RDomDetailBlockEnd(parent, trivia, startBlock);
          if (trivia.Token.LeadingTrivia.Any())
          { newItem.Whitespace2Set.Add(GetWhitespace(trivia.Token.LeadingTrivia.First())); }
@@ -122,7 +130,7 @@ namespace RoslynDom.CSharp
          var commentText = trivia.ToString();
          var tuple = context.Corporation.CreateFromWorker.ExtractComment(trivia.ToString());
          var commentString = tuple.Item2;
-         var newComment = new RDomComment(parent,trivia, tuple.Item2, isMultiline);
+         var newComment = new RDomComment(parent, trivia, tuple.Item2, isMultiline);
          triviaManager.StoreWhitespaceForComment(newComment, precedingTrivia, tuple.Item1, tuple.Item3);
          return newComment;
       }
@@ -182,7 +190,7 @@ namespace RoslynDom.CSharp
                      .NormalizeWhitespace();
             var whitespace = itemAsStartBlock.Whitespace2Set[LanguagePart.Parent, LanguageElement.Detail];
             if (whitespace != null)
-               { ret.AddRange(SyntaxFactory.ParseLeadingTrivia(whitespace.LeadingWhitespace)); }
+            { ret.AddRange(SyntaxFactory.ParseLeadingTrivia(whitespace.LeadingWhitespace)); }
             ret.Add(SyntaxFactory.Trivia(directive));
             //ret.Add(SyntaxFactory.EndOfLine("\r\n"));
             return ret;
