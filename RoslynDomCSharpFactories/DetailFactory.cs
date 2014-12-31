@@ -72,7 +72,7 @@ namespace RoslynDom.CSharp
          var structure = trivia.GetStructure();
          var regionSyntax = structure as RegionDirectiveTriviaSyntax;
          var text = regionSyntax.EndOfDirectiveToken.ToFullString().Replace("\r\n", "");
-         var newItem = new RDomDetailBlockStart(parent, trivia, text);
+         var newItem = new RDomDetailBlockStart(parent, trivia, text, regionSyntax);
          if (trivia.Token.LeadingTrivia.Any())
          { newItem.Whitespace2Set.Add(GetWhitespace(trivia.Token.LeadingTrivia.First())); }
          return newItem;
@@ -96,24 +96,18 @@ namespace RoslynDom.CSharp
                                  .Where(x => x is RegionDirectiveTriviaSyntax);
          if (startDirectives.Count() != 1) { throw new NotImplementedException(); }
          var startSyntax = startDirectives.Single();
-         var container = parent as IContainer;
-         if (container == null) { throw new NotImplementedException(); }
-         var startBlocks = container.GetMembers()
-                           .OfType<RDomDetailBlockStart>()
-                           .Where(x => MatchEndRegion(startSyntax, x.TypedTrivia))
-                           .ToList();
-         var existingEndBlockCount = container.GetMembers()
-                                    .OfType<RDomDetailBlockEnd>()
-                                    .Count();
-         var startBlock = startBlocks
-                           .Reverse<RDomDetailBlockStart>()
-                           .Skip(existingEndBlockCount)
-                           .FirstOrDefault();
-         if (startBlock == null) throw new NotImplementedException();
-         var newItem = new RDomDetailBlockEnd(parent, trivia, startBlock);
+         var startIDom = parent.DescendantsAndSelf
+                         .Where(x => (x.RawItem as SyntaxNode) != null
+                                    && x.RawItem == startSyntax)
+                         .OfType<IDetailBlockStart>()
+                         .First();
+         if (startIDom == null) throw new NotImplementedException();
+         var newItem = new RDomDetailBlockEnd(parent, trivia, startIDom, regionSyntax);
          if (trivia.Token.LeadingTrivia.Any())
          { newItem.Whitespace2Set.Add(GetWhitespace(trivia.Token.LeadingTrivia.First())); }
-         return newItem;
+         var newParent = startIDom.Parent as IContainer;
+         newParent.AddOrMoveMember(newItem);
+         return null;
       }
 
       private static bool MatchEndRegion(SyntaxNode startSyntax, SyntaxTrivia typedTrivia)

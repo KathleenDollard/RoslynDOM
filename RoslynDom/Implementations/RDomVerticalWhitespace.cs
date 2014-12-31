@@ -11,7 +11,7 @@ namespace RoslynDom
    public class RDomVerticalWhitespace : RDomDetail<IVerticalWhitespace>, IVerticalWhitespace
    {
       public RDomVerticalWhitespace(IDom parent, SyntaxTrivia trivia,int count, bool isElastic = false)
-          : base(parent,StemMemberKind.Whitespace, MemberKind.Whitespace, trivia )
+          : base(parent,StemMemberKind.Whitespace, MemberKind.Whitespace, trivia , null)
       {
          _count = count;
          _isElastic = isElastic;

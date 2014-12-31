@@ -11,7 +11,7 @@ namespace RoslynDom.Common
       private List<KeyValuePair<string, object>> _items = new List<KeyValuePair<string, object>>();
 
       public RDomPublicAnnotation(IDom parent, SyntaxTrivia trivia, string name)
-         :base(parent,StemMemberKind.PublicAnnotation, MemberKind.PublicAnnotation, trivia )
+         :base(parent,StemMemberKind.PublicAnnotation, MemberKind.PublicAnnotation, trivia, null)
       {
          _name = name;
       }

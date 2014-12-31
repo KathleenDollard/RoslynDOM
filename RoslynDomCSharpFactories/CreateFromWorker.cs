@@ -262,7 +262,12 @@ namespace RoslynDom.CSharp
          newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberAndDetail>());
       }
 
-      public IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, SyntaxTriviaList triviaList, T parent, SemanticModel model, OutputContext context)
+      public IEnumerable<IDetail> GetDetail<T, TSyntax>(
+                        TSyntax syntaxNode, 
+                        SyntaxTriviaList triviaList, 
+                        T parent, 
+                        SemanticModel model, 
+                        OutputContext context)
          where T : class, IDom
          where TSyntax : SyntaxNode
       {
@@ -288,8 +293,13 @@ namespace RoslynDom.CSharp
                   lastWasComment = true;
                   break;
                case SyntaxKind.RegionDirectiveTrivia:
-               case SyntaxKind.EndRegionDirectiveTrivia:
                   ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
+                  break;
+               case SyntaxKind.EndRegionDirectiveTrivia:
+                  // In certain cases, generally due to grouping, ret is not the correct location for the 
+                  // end element since it must be in the same parent as the start element. Thus the element 
+                  // is added in the DetailFactory, rather than here. 
+                  context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context);
                   break;
                }
             }

@@ -9,8 +9,8 @@ namespace RoslynDom
    // Provides a Roslyn specific non-generic base class
    public abstract class RoslynRDomBase : RDomBase, IRoslynHasSymbol
    {
-      protected RoslynRDomBase()
-        : base()
+      protected RoslynRDomBase(object rawSyntax)
+        : base(rawSyntax)
       { }
 
       protected RoslynRDomBase(IDom oldIDom)
@@ -34,8 +34,8 @@ namespace RoslynDom
          where T : class, IDom<T>
    {
 
-      protected RDomBase()
-        : base()
+      protected RDomBase(object rawSyntax)
+        : base(rawSyntax)
       { }
 
       protected RDomBase(T oldIDom)

@@ -14,6 +14,7 @@ namespace RoslynDom
       private ReferencedTypeCache _referencedTypeCache;
 
       public RDomRootGroup(Compilation compilation, IFactoryAccess factoryAccess)
+         : base(compilation)
       {
          _compilation = compilation;
          _referencedTypeCache = new ReferencedTypeCache(compilation, factoryAccess);
@@ -23,6 +24,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomRootGroup(RDomRootGroup oldRDom)
+         : base(oldRDom.RawItem)
       {
          _roots = Roots.Copy(this);
       }
@@ -44,12 +46,6 @@ namespace RoslynDom
 
       public bool HasSyntaxErrors
       { get { return Roots.Any(x => x.HasSyntaxErrors); } }
-
-      public override object OriginalRawItem
-      { get { return _compilation; } }
-
-      public override object RawItem
-      { get { return OriginalRawItem; } }
 
       public RDomCollection<IRoot> Roots
       { get { return _roots; } }

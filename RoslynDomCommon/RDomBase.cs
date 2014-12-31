@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using RoslynDom.Common;
@@ -18,14 +17,20 @@ namespace RoslynDom
    /// </remarks>
    public abstract class RDomBase : IDom, INotifyPropertyChanged
    {
-      protected RDomBase()
-      { Whitespace2Set = new Whitespace2Collection(); }
+      protected RDomBase(object rawItem)
+      {
+         Initialize();
+         _rawSyntax = rawItem;
+         _originalRawSyntax = rawItem;
+      }
 
       protected RDomBase(IDom oldIDom)
-          : this()
       {
-         if (oldIDom == null) throw new NotImplementedException();
+         Initialize();
          var oldRDom = (RDomBase)oldIDom;
+         _rawSyntax = oldRDom._rawSyntax;
+         _originalRawSyntax = oldRDom._originalRawSyntax;
+         if (oldIDom == null) throw new NotImplementedException();
          Whitespace2Set = oldIDom.Whitespace2Set.Copy();
          var oldAsHasName = oldIDom as IHasName;
          var thisAsHasName = this as IHasName;
@@ -41,6 +46,11 @@ namespace RoslynDom
          }
       }
 
+      private void Initialize()
+      {
+         Whitespace2Set = new Whitespace2Collection();
+      }
+
       /// <summary>
       /// 
       /// </summary>
@@ -48,9 +58,14 @@ namespace RoslynDom
       /// <remarks>
       /// Return type is object, not SyntaxNode to match interface
       /// </remarks>
-      public abstract object RawItem { get; }
+      private object _originalRawSyntax;
+      private object _rawSyntax;
 
-      public abstract object OriginalRawItem { get; }
+      public object RawItem
+      { get { return _rawSyntax; } }
+
+      public object OriginalRawItem
+      { get { return _originalRawSyntax; } }
 
       // TODO: Return the parent set to hidden
       public virtual IDom Parent { get; set; }

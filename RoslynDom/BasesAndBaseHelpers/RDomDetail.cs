@@ -9,7 +9,8 @@ namespace RoslynDom
       private SyntaxTrivia _syntaxTrivia;
       private IDom _parent;
 
-      internal RDomDetail(IDom parent, StemMemberKind stemMemberKind, MemberKind memberKind, SyntaxTrivia trivia)
+      internal RDomDetail(IDom parent, StemMemberKind stemMemberKind, MemberKind memberKind, SyntaxTrivia trivia, SyntaxNode structuredNode)
+            : base(structuredNode)
       {
          _syntaxTrivia = trivia;
          _stemMemberKind = stemMemberKind;
@@ -35,12 +36,6 @@ namespace RoslynDom
       {
          get { return _memberKind; }
       }
-
-      public override object OriginalRawItem
-      { get { return null; } }
-
-      public override object RawItem
-      { get { return null; } }
 
       public override object RequestValue(string propertyName)
       { return null; }

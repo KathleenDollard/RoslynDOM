@@ -16,8 +16,8 @@ namespace RoslynDom
    /// </remarks>
    public class RDomDetailBlockEnd : RDomDetail<IDetailBlockEnd>, IDetailBlockEnd
    {
-      public RDomDetailBlockEnd(IDom parent, SyntaxTrivia trivia, IDetailBlockStart blockStart)
-           : base(parent, StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia)
+      public RDomDetailBlockEnd(IDom parent, SyntaxTrivia trivia, IDetailBlockStart blockStart, SyntaxNode structuredNode)
+           : base(parent, StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia, structuredNode )
       {
          _groupGuid = blockStart.GroupGuid;
       }
