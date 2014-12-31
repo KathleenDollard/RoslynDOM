@@ -86,7 +86,7 @@ namespace RoslynDom.CSharp
          return new Whitespace2(LanguagePart.Parent, LanguageElement.Detail, str, "", "");
       }
 
-      private IDom CreateEndRegion(SyntaxTrivia trivia, IDom parent, OutputContext context)
+      internal IDom CreateEndRegion(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
          if (!trivia.HasStructure) return null;
          var structure = trivia.GetStructure();
