@@ -263,10 +263,10 @@ namespace RoslynDom.CSharp
       }
 
       public IEnumerable<IDetail> GetDetail<T, TSyntax>(
-                        TSyntax syntaxNode, 
-                        SyntaxTriviaList triviaList, 
-                        T parent, 
-                        SemanticModel model, 
+                        TSyntax syntaxNode,
+                        SyntaxTriviaList triviaList,
+                        T parent,
+                        SemanticModel model,
                         OutputContext context)
          where T : class, IDom
          where TSyntax : SyntaxNode
@@ -283,24 +283,24 @@ namespace RoslynDom.CSharp
             {
                switch (trivia.CSharpKind())
                {
-               case SyntaxKind.EndOfLineTrivia:
-                  // TODO: Consider whether leading WS on a vert whitespace matters
-                  ret.Add(new RDomVerticalWhitespace(parent, trivia, 1, false));
-                  break;
-               case SyntaxKind.SingleLineCommentTrivia:
-               case SyntaxKind.MultiLineCommentTrivia:
-                  ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, parent, context));
-                  lastWasComment = true;
-                  break;
-               case SyntaxKind.RegionDirectiveTrivia:
-                  ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
-                  break;
-               case SyntaxKind.EndRegionDirectiveTrivia:
-                  // In certain cases, generally due to grouping, ret is not the correct location for the 
-                  // end element since it must be in the same parent as the start element. Thus the element 
-                  // is added in the DetailFactory, rather than here. 
-                  context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context);
-                  break;
+                  case SyntaxKind.EndOfLineTrivia:
+                     // TODO: Consider whether leading WS on a vert whitespace matters
+                     ret.Add(new RDomVerticalWhitespace(parent, trivia, 1, false));
+                     break;
+                  case SyntaxKind.SingleLineCommentTrivia:
+                  case SyntaxKind.MultiLineCommentTrivia:
+                     ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, parent, context));
+                     lastWasComment = true;
+                     break;
+                  case SyntaxKind.RegionDirectiveTrivia:
+                     ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
+                     break;
+                  case SyntaxKind.EndRegionDirectiveTrivia:
+                     // In certain cases, generally due to grouping, ret is not the correct location for the 
+                     // end element since it must be in the same parent as the start element. Thus the element 
+                     // is added in the DetailFactory, rather than here. 
+                     context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context);
+                     break;
                }
             }
             precedingTrivia.Add(trivia);
@@ -423,10 +423,32 @@ namespace RoslynDom.CSharp
          if (!TryLiteralExpression(expr as LiteralExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
             if (!TryTyepofExpression(expr as TypeOfExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
                if (!TryDefaultExpression(expr as DefaultExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
-                  if (!TryMemberExpression(expr as MemberAccessExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
-                  //if (!TryIdentifierExpression(expr as IdentifierNameSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
-                  { }
+                  if (!TryInterpolatedStringExpression(expr as InterpolatedStringSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+                     if (!TryMemberExpression(expr as MemberAccessExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+                     //if (!TryIdentifierExpression(expr as IdentifierNameSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+                     { }
          return Tuple.Create(value, constantIdentifier, literalKind);
+      }
+
+      private bool TryInterpolatedStringExpression(InterpolatedStringSyntax interpolatedStringSyntax,
+                     IDom newItem,
+                     SemanticModel model,
+                     ref object value,
+                     ref LiteralKind literalKind,
+                     ref string constantIdentifier)
+      {
+         // this is a hack until interpolated strings stabilize
+         if (interpolatedStringSyntax == null)
+         { return false; }
+         var literal = interpolatedStringSyntax.ToFullString();
+         if (literal.StartsWith("\"")) { literal = literal.Substring(1); }
+         if (literal.EndsWith("\"")) { literal = literal.Substring(0, literal.Length - 1); }
+         var literalExpression = SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression,
+                           SyntaxFactory.Token(interpolatedStringSyntax.GetLeadingTrivia(),
+                                                SyntaxKind.StringLiteralToken,
+                                                literal, literal,
+                                                interpolatedStringSyntax.GetTrailingTrivia()));
+         return TryLiteralExpression(literalExpression, newItem, model, ref value, ref literalKind, ref constantIdentifier);
       }
 
       private bool TryIdentifierExpression(MemberAccessExpressionSyntax identifierExpression,

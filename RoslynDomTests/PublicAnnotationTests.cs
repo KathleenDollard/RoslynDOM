@@ -58,6 +58,27 @@ namespace RoslynDomTests
          CheckAnnotations1(root2);
       }
 
+      [TestMethod, TestCategory(PublicAnnotationCategory)]
+      public void Get_public_annotations_with_interpolated_string_args()
+      {
+         var csharpCode = @"//[[ _xf_FilePathHint(""\{ExecutionPath}\..\..\..\DomainOutput\{MetadataFileName}SuperSimple.g.cs"") ]]
+using Foo;
+
+namespace Namespace1
+{         
+   public class MyClass
+   { }
+}
+            ";
+         var root = RDom.CSharp.Load(csharpCode);
+         var annot = (root.StemMembersAll.First() as IPublicAnnotation);
+         Assert.IsNull(annot.GetValue("val3"));
+         Assert.AreEqual("_xf_FilePathHint", annot.Name);
+         var actual = annot.GetValue("");
+         var expected = @"\{ExecutionPath}\..\..\..\DomainOutput\{MetadataFileName}SuperSimple.g.cs";
+         Assert.AreEqual(expected, actual);
+      }
+
 
       private void CheckAnnotations1(IRoot root)
       {
