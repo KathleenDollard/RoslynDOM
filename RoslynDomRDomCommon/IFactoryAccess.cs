@@ -16,6 +16,7 @@ namespace RoslynDom.Common
       SyntaxNode GetSyntaxNode(IDom item);
       SyntaxTree GetSyntaxTree(IRoot root);
       string GetSourceCode(IDom item);
+      string GetFormattedSourceCode(IDom item);
       IExpression ParseExpression(string expressionAsString);
 
    }
