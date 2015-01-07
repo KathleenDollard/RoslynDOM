@@ -1,21 +1,20 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using cm = System.ComponentModel;
 
 namespace RoslynDom
 {
    public class RDomReturnStatement : RDomBase<IReturnStatement, ISymbol>, IReturnStatement
    {
-
       /// <summary>
       /// Constructor to use when creating a RoslynDom from scratch
       /// </summary>
       /// <param name="expression">
       /// Expression to return
       /// </param>
-      public RDomReturnStatement( IExpression expression, bool suppressNewLine = false)
-            : base()
+      public RDomReturnStatement(IExpression expression, bool suppressNewLine = false)
+         : base()
       {
          _return = expression;
          if (!suppressNewLine)
@@ -25,13 +24,13 @@ namespace RoslynDom
 
       [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
       public RDomReturnStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
-            : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       { }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomReturnStatement(RDomReturnStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          if (oldRDom.Return != null)
          { _return = oldRDom.Return.Copy(); }
@@ -53,6 +52,7 @@ namespace RoslynDom
          get { return _return; }
          set { SetProperty(ref _return, value); }
       }
+
       private IExpression _return;
    }
 }

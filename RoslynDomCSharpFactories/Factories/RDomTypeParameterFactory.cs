@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -15,7 +13,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomTypeParameterFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -94,7 +92,7 @@ namespace RoslynDom.CSharp
                      .FirstOrDefault();
          if (constraintClause != null)
          {
-            // The constraint clause must be set first because the constructor constraint may change it. 
+            // The constraint clause must be set first because the constructor constraint may change it.
             CreateFromWorker.StoreWhitespace(newItem, constraintClause, LanguagePart.Constraint, WhitespaceLookup);
             // Class/Struct whitespace managed in above call, type explicitly handled below, constructor not handled by current design
             foreach (var constraint in constraintClause.Constraints)
@@ -118,7 +116,6 @@ namespace RoslynDom.CSharp
                   continue;
                }
             }
-
          }
       }
 
@@ -163,7 +160,6 @@ namespace RoslynDom.CSharp
          //      whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();
          //   }
          //}
-
       }
 
       private void StoreTypeConstraint(TypeConstraintSyntax asType, RDomTypeParameter newItem, SemanticModel model)
@@ -185,17 +181,15 @@ namespace RoslynDom.CSharp
          { newItem.HasValueTypeConstraint = true; }
       }
 
-
-
       /// <summary>
-      /// 
+      ///
       /// </summary>
       /// <param name="item"></param>
       /// <returns></returns>
       /// <remarks>
-      /// In C# syntax, type parameters and constraints are independent, so 
+      /// In C# syntax, type parameters and constraints are independent, so
       /// for convenience (avoiding an extra pattern in the API) both are returned
-      /// by this method. Use OfType<> to separately add them to the parent. 
+      /// by this method. Use OfType<> to separately add them to the parent.
       /// </remarks>
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
@@ -242,5 +236,4 @@ namespace RoslynDom.CSharp
          return syntax;
       }
    }
-
 }

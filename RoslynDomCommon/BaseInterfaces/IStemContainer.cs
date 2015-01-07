@@ -5,7 +5,9 @@ namespace RoslynDom.Common
    public interface IStemContainer : INestedContainer, IContainer
    {
       IEnumerable<IUsingDirective> UsingDirectives { get; }
+
       RDomCollection<IStemMemberAndDetail> StemMembersAll { get; }
+
       IEnumerable<IStemMember> StemMembers { get; }
 
       /// <summary>
@@ -14,7 +16,7 @@ namespace RoslynDom.Common
       ///  Namespace nesting is expanded in RoslynDom
       /// and a grouping marker allows recreation of your layout. This property returns
       /// only the namespaces that actually contain code. In most files, this will be the
-      /// singe namespace that contains code. 
+      /// singe namespace that contains code.
       /// </summary>
       /// <returns>
       /// Non-empty namespaces, regardless of how you layout your code
@@ -36,8 +38,8 @@ namespace RoslynDom.Common
       /// Namespaces that are descendants, regardless of how you layout your code.
       /// <para/>
       /// Namespace nesting is expanded in RoslynDom so each namespace contains exactly one part
-      /// of a complex namespace name N1, N2, N3... In that case, Descendant namespaces would 
-      /// be an IEnumerable of N1, N2, N3. 
+      /// of a complex namespace name N1, N2, N3... In that case, Descendant namespaces would
+      /// be an IEnumerable of N1, N2, N3.
       /// </summary>
       /// <returns>
       /// Namespaces that are descendants, regardless of how you layout your code
@@ -45,13 +47,19 @@ namespace RoslynDom.Common
       IEnumerable<INamespace> DescendantNamespaces { get; }
 
       IUsingDirective AddUsingDirective(IUsingDirective usingDirective);
+
       IUsingDirective AddUsingDirective(string usingName);
+
       IEnumerable<IUsingDirective> AddUsingDirectives(params IUsingDirective[] usingDirective);
+
       IEnumerable<IUsingDirective> AddUsingDirectives(params string[] usingName);
 
       INamespace AddNamespace(INamespace nspace);
+
       INamespace AddNamespace(string namespaceName);
+
       IEnumerable<INamespace> AddNamespaces(params INamespace[] namespaces);
+
       IEnumerable<INamespace> AddNamespaces(params string[] namespaceName);
 
       //IType AddType(IType Type);

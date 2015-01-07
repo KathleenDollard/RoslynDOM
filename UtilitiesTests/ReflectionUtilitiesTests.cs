@@ -1,11 +1,8 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom.Common;
-using System.Linq;
+using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Linq.Expressions;
+using System.Linq;
 
 namespace TestRoslyn
 {
@@ -17,16 +14,27 @@ namespace TestRoslyn
       private class A
       {
          public string Foo { get { return "42"; } }
+
          public string Bar { get; set; }
+
          public string FooBar { set { } }
+
          public string Test<T>()
          { return typeof(T).Name; }
 
-         public string TestFoo() { return ""; }
+         public string TestFoo()
+         {
+            return "";
+         }
 
-         public int TestFoo2(int x) { return x; }
+         public int TestFoo2(int x)
+         {
+            return x;
+         }
 
-         private void TestFoo3() { }
+         private void TestFoo3()
+         {
+         }
       }
 
       private class B<T>
@@ -145,7 +153,7 @@ namespace TestRoslyn
       [TestMethod]
       public void _researchTest()
       {
-          Assert.Inconclusive();
+         Assert.Inconclusive();
          Func<IEnumerable<int>, bool> test = x => x.Max() > 3;
          Action<IEnumerable<int>> test2 = x => Console.WriteLine();
          Assert.AreEqual(2, test.Method.GetParameters().Count());
@@ -156,8 +164,8 @@ namespace TestRoslyn
       [TestMethod]
       public void _researchTest2()
       {
-          Assert.Inconclusive();
-          Func<IEnumerable<int>, bool> test = x => x.Max() > 3;
+         Assert.Inconclusive();
+         Func<IEnumerable<int>, bool> test = x => x.Max() > 3;
          Assert.AreEqual(2, test.Method.GetParameters().Count());
          var ints = new int[] { 5 };
          var y = test(ints);
@@ -165,9 +173,6 @@ namespace TestRoslyn
          object obj = test;
          var d = (Delegate)obj;
          var f = d.Method.Invoke(null, new object[] { ints });
-
-
       }
-
    }
 }

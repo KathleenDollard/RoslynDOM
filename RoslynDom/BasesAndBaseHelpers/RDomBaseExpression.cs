@@ -6,9 +6,9 @@ namespace RoslynDom
 {
    public abstract class RDomBaseExpression : RDomBase<IExpression, ISymbol>
    {
-      protected RDomBaseExpression(IDom parent, string initialExpressionString, 
+      protected RDomBaseExpression(IDom parent, string initialExpressionString,
                string initialExpressionLanguage, ExpressionType expressionType)
-      : base(parent)
+         : base(parent)
       {
          NeedsFormatting = true;
          InitialExpressionString = initialExpressionString;
@@ -17,11 +17,11 @@ namespace RoslynDom
       }
 
       protected RDomBaseExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
-        : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       { }
 
       protected RDomBaseExpression(IExpression oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          InitialExpressionString = oldRDom.InitialExpressionString;
          InitialExpressionLanguage = oldRDom.InitialExpressionLanguage;
@@ -29,6 +29,7 @@ namespace RoslynDom
       }
 
       private string _intialExpressionString;
+
       [Required]
       public string InitialExpressionString
       {
@@ -37,6 +38,7 @@ namespace RoslynDom
       }
 
       private string _initialExpressionLanguage;
+
       [Required]
       public string InitialExpressionLanguage
       {
@@ -45,6 +47,7 @@ namespace RoslynDom
       }
 
       private ExpressionType _expressionType;
+
       [Required]
       public ExpressionType ExpressionType
       {

@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System;
 using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomAttributeValue
@@ -10,7 +10,7 @@ namespace RoslynDom
    {
       public RDomAttributeValue(IDom parent, string name, AttributeValueStyle style = AttributeValueStyle.Positional,
                object value = null, string valueConstantIdentifier = null, LiteralKind valueType = LiteralKind.Unknown)
-      : base(parent)
+         : base(parent)
       {
          _name = name;
          _style = style;
@@ -27,7 +27,7 @@ namespace RoslynDom
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomAttributeValue(
            RDomAttributeValue oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _name = oldRDom.Name;
          _style = oldRDom.Style;
@@ -39,6 +39,7 @@ namespace RoslynDom
       }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -47,6 +48,7 @@ namespace RoslynDom
       }
 
       private AttributeValueStyle _style;
+
       public AttributeValueStyle Style
       {
          get { return _style; }
@@ -54,6 +56,7 @@ namespace RoslynDom
       }
 
       private object _value;
+
       public object Value
       {
          get { return _value; }
@@ -61,6 +64,7 @@ namespace RoslynDom
       }
 
       private string _valueConstantIdentifier;
+
       public string ValueConstantIdentifier
       {
          get { return _valueConstantIdentifier; }
@@ -68,6 +72,7 @@ namespace RoslynDom
       }
 
       private LiteralKind _valueType;
+
       public LiteralKind ValueType
       {
          get { return _valueType; }
@@ -75,6 +80,7 @@ namespace RoslynDom
       }
 
       private Type _type;
+
       public Type Type
       {
          get { return _type; }

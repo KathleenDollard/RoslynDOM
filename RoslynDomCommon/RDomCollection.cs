@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
@@ -16,6 +14,7 @@ namespace RoslynDom.Common
       { Parent = parent; }
 
       public IDom Parent { get; private set; }
+
       public IEnumerator<T> GetEnumerator()
       {
          return _list.GetEnumerator();
@@ -133,7 +132,7 @@ namespace RoslynDom.Common
          return Replace(oldItemAsKind, newItemAsKind);
       }
 
-      public  RDomCollection<T> Copy(IDom newParent)
+      public RDomCollection<T> Copy(IDom newParent)
       {
          var newList = new RDomCollection<T>(newParent);
          foreach (var item in _list)
@@ -299,10 +298,10 @@ namespace RoslynDom.Common
       private void UpdateParent(T item)
       {
          if (item == null) return; // this happens for accessors which use RDomList to manage parent
-                                   // TODO: Remove item from the other list
+         // TODO: Remove item from the other list
          if (item.Parent != null && item.Parent != this.Parent && item.Parent.Parent != this.Parent) { throw new NotImplementedException(); }
 
-         // Since it's important that people don't change the parent except here, I'm using reflection 
+         // Since it's important that people don't change the parent except here, I'm using reflection
          SetParent(item, this.Parent);
       }
 

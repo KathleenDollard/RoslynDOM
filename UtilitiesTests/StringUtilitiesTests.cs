@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom.Common;
+using System;
 
 namespace TestRoslyn
 {
@@ -20,6 +20,7 @@ namespace TestRoslyn
       private string noIndex = "123456";
 
       #region substring before and after
+
       [TestMethod, TestCategory(SubstringBeforeAferCateogory)]
       public void SubstringAfter_finds_part_after_delimiter()
       {
@@ -216,9 +217,10 @@ namespace TestRoslyn
          var x = StringUtilities.SubstringBeforeLast("", null);
       }
 
-      #endregion
+      #endregion substring before and after
 
       #region replace with
+
       [TestMethod, TestCategory(ReplaceWithCateogory)]
       public void ReplaceWith_replaces_first_single_single_char()
       {
@@ -300,10 +302,10 @@ namespace TestRoslyn
          var x = singleIndex.ReplaceFirst(".", null);
       }
 
-
-      #endregion
+      #endregion replace with
 
       #region normalize
+
       private string normalize1 = "a b c";
       private string normalize2 = "a   b        c";
       private string normalize3 = "a\tb     c";
@@ -338,11 +340,11 @@ namespace TestRoslyn
          Assert.AreEqual(expected, normalize7.NormalizeWhitespace(""), "normalize7");
       }
 
-      #endregion
+      #endregion normalize
 
       #region string naming
 
-      [TestMethod, TestCategory(StringNamingCategory )]
+      [TestMethod, TestCategory(StringNamingCategory)]
       public void Namespace_and_namespace_from_qualified_name()
       {
          var qName = "System.String";
@@ -379,12 +381,13 @@ namespace TestRoslyn
       {
          Assert.AreEqual("FooBarLane", StringUtilities.PascalCase("fooBarLane"));
          Assert.AreEqual("FooBarLane", StringUtilities.PascalCase("FooBarLane"));
-         Assert.AreEqual("_FooBarLane",StringUtilities.PascalCase("_fooBarLane"));
+         Assert.AreEqual("_FooBarLane", StringUtilities.PascalCase("_fooBarLane"));
       }
 
-      #endregion
+      #endregion string naming
 
       #region Comment tests
+
       [TestMethod, TestCategory(CommentCategory)]
       public void Comment_tests()
       {
@@ -420,7 +423,7 @@ namespace TestRoslyn
 
          var test4 = @"// This file was generated, if you change it your changes are toast
          // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
-         
+
          // Generation was last done on 12/1/2014 12:00:00 AM using template DiagnosticTemplate
 
          using System;
@@ -440,7 +443,7 @@ namespace TestRoslyn
          Assert.AreEqual(expected, StringUtilities.RemoveFileHeaderComments(test3));
          Assert.AreEqual(expected, StringUtilities.RemoveFileHeaderComments(test4));
       }
-      #endregion
 
+      #endregion Comment tests
    }
 }

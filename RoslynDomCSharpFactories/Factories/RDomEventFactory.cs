@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +13,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomEventTypeMemberFactory(RDomCorporation corporation)
-       : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -70,8 +69,7 @@ namespace RoslynDom.CSharp
             newItem.IsStatic = eventSymbol.IsStatic;
             // See note on IsNew on interface before changing
             newItem.IsNew = rawEvent.Modifiers.Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
-           // newItem.PublicAnnotations.Add(publicAnnotations);
-
+            // newItem.PublicAnnotations.Add(publicAnnotations);
          }
          return list;
       }
@@ -97,8 +95,5 @@ namespace RoslynDom.CSharp
 
          return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
-
    }
-
-
 }

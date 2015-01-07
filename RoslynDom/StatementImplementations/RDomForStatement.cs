@@ -1,13 +1,13 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
 
 namespace RoslynDom
 {
    public class RDomForStatement : RDomBaseLoop<IForStatement>, IForStatement
    {
       public RDomForStatement(IVariableDeclaration variable, IExpression condition, IExpression incrementor, bool hasBlock)
-          : base(condition, false, hasBlock)
+         : base(condition, false, hasBlock)
       {
          _incrementor = incrementor;
          _variable = variable;
@@ -20,7 +20,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
           "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomForStatement(RDomForStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _incrementor = oldRDom.Incrementor.Copy();
          _variable = oldRDom.Variable.Copy();
@@ -38,8 +38,8 @@ namespace RoslynDom
          }
       }
 
-
       private IExpression _incrementor;
+
       public IExpression Incrementor
       {
          get { return _incrementor; }
@@ -51,6 +51,7 @@ namespace RoslynDom
          get { return _variable; }
          set { SetProperty(ref _variable, value); }
       }
+
       private IVariableDeclaration _variable;
    }
 }

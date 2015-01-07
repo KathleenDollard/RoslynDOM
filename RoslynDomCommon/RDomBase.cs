@@ -1,15 +1,13 @@
-﻿using System;
+﻿using RoslynDom.Common;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using RoslynDom.Common;
-using System.Runtime.CompilerServices;
 using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace RoslynDom
 {
-
    /// <summary>
    /// Base class for Roslyn Dom navigation tree
    /// </summary>
@@ -22,7 +20,7 @@ namespace RoslynDom
       { Whitespace2Set = new Whitespace2Collection(); }
 
       protected RDomBase(IDom oldIDom)
-          : this()
+         : this()
       {
          if (oldIDom == null) throw new NotImplementedException();
          var oldRDom = (RDomBase)oldIDom;
@@ -42,7 +40,7 @@ namespace RoslynDom
       }
 
       /// <summary>
-      /// 
+      ///
       /// </summary>
       /// <returns></returns>
       /// <remarks>
@@ -186,7 +184,6 @@ namespace RoslynDom
          }
       }
 
-
       public Whitespace2Collection Whitespace2Set { get; private set; }
 
       public bool NeedsFormatting { get; set; }
@@ -212,6 +209,5 @@ namespace RoslynDom
             }
          }
       }
-
    }
 }

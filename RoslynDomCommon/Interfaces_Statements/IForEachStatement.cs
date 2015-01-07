@@ -1,9 +1,7 @@
-﻿using RoslynDom.Common;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    public interface IForEachStatement : ILoop<IForEachStatement>
-    {
-        IVariableDeclaration Variable { get; set; }
-    }
+   public interface IForEachStatement : ILoop<IForEachStatement>
+   {
+      IVariableDeclaration Variable { get; set; }
+   }
 }

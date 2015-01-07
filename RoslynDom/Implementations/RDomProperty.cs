@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -11,31 +10,32 @@ namespace RoslynDom
    {
       private RDomCollection<IParameter> _parameters;
       private AttributeCollection _attributes = new AttributeCollection();
+
       // The RDomList is used for accessor to reuse the forced parenting in that class
       private RDomCollection<IAccessor> _accessors;
 
-      public RDomProperty(string name, string propertyTypeName, AccessModifier declaredAccessModifier = AccessModifier.Private , 
-                  bool isAbstract=false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false, 
+      public RDomProperty(string name, string propertyTypeName, AccessModifier declaredAccessModifier = AccessModifier.Private,
+                  bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false,
                   bool isNew = false, bool isWriteOnly = false, bool isReadOnly = false)
-         : this(name, declaredAccessModifier, isAbstract, isVirtual, isOverride, isSealed, 
+         : this(name, declaredAccessModifier, isAbstract, isVirtual, isOverride, isSealed,
                   isStatic, isNew, isWriteOnly, isReadOnly)
       {
          PropertyType = new RDomReferencedType(this, propertyTypeName);
       }
 
-      public RDomProperty( string name, IReferencedType propertyType, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      public RDomProperty(string name, IReferencedType propertyType, AccessModifier declaredAccessModifier = AccessModifier.Private,
                   bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false,
                   bool isNew = false, bool isWriteOnly = false, bool isReadOnly = false)
-         : this( name, declaredAccessModifier, isAbstract, isVirtual, isOverride, isSealed,
+         : this(name, declaredAccessModifier, isAbstract, isVirtual, isOverride, isSealed,
                   isStatic, isNew, isWriteOnly, isReadOnly)
       {
          PropertyType = propertyType;
       }
 
-      private RDomProperty( string name,  AccessModifier declaredAccessModifier = AccessModifier.Private,
+      private RDomProperty(string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
                  bool isAbstract = false, bool isVirtual = false, bool isOverride = false, bool isSealed = false, bool isStatic = false,
                  bool isNew = false, bool isWriteOnly = false, bool isReadOnly = false)
-            : base()
+         : base()
       {
          Initialize();
          Name = name;
@@ -48,15 +48,14 @@ namespace RoslynDom
          IsNew = isNew;
          if (!isReadOnly)
          {
-            var accesor = new RDomPropertyAccessor(this,  AccessorType.Set);
+            var accesor = new RDomPropertyAccessor(this, AccessorType.Set);
             SetAccessor = accesor;
          }
          if (!isWriteOnly)
          {
-            var accesor = new RDomPropertyAccessor(this,  AccessorType.Get);
+            var accesor = new RDomPropertyAccessor(this, AccessorType.Get);
             GetAccessor = accesor;
          }
-
       }
 
       public RDomProperty(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -66,7 +65,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
       "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomProperty(RDomProperty oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          _parameters = oldRDom.Parameters.Copy(this);
@@ -118,6 +117,7 @@ namespace RoslynDom
       }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -126,6 +126,7 @@ namespace RoslynDom
       }
 
       private IReferencedType _propertyType;
+
       [Required]
       public IReferencedType PropertyType
       {
@@ -134,6 +135,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
@@ -141,6 +143,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
@@ -152,6 +155,7 @@ namespace RoslynDom
       }
 
       private bool _isAbstract;
+
       public bool IsAbstract
       {
          get { return _isAbstract; }
@@ -159,6 +163,7 @@ namespace RoslynDom
       }
 
       private bool _isVirtual;
+
       public bool IsVirtual
       {
          get { return _isVirtual; }
@@ -166,6 +171,7 @@ namespace RoslynDom
       }
 
       private bool _isOverride;
+
       public bool IsOverride
       {
          get { return _isOverride; }
@@ -173,6 +179,7 @@ namespace RoslynDom
       }
 
       private bool _isSealed;
+
       public bool IsSealed
       {
          get { return _isSealed; }
@@ -180,6 +187,7 @@ namespace RoslynDom
       }
 
       private bool _isStatic;
+
       public bool IsStatic
       {
          get { return _isStatic; }
@@ -187,6 +195,7 @@ namespace RoslynDom
       }
 
       private bool _isNew;
+
       public bool IsNew
       {
          get { return _isNew; }
@@ -204,6 +213,7 @@ namespace RoslynDom
       }
 
       private IStructuredDocumentation _structuredDocumentation;
+
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
@@ -211,6 +221,7 @@ namespace RoslynDom
       }
 
       private string _description;
+
       public string Description
       {
          get { return _description; }

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IDetailBlockEnd : IDetail<IDetailBlockEnd>, IHasGroup
+   /// <summary>
+   ///
+   /// </summary>
+   public interface IDetailBlockEnd : IDetail<IDetailBlockEnd>, IHasGroup
    {
-      IDetailBlockStart BlockStart { get;  }
+      IDetailBlockStart BlockStart { get; }
+
       string BlockStyleName { get; }
    }
 }

@@ -1,6 +1,7 @@
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    // Doesn't currently follow pattern, ie. a syntax is not passed
@@ -8,9 +9,9 @@ namespace RoslynDom
    {
       private RDomCollection<IReferencedType> _constraintTypes;
 
-      public RDomTypeParameter( string name, int ordinal = 0, bool hasConstructorConstraint = false, 
+      public RDomTypeParameter(string name, int ordinal = 0, bool hasConstructorConstraint = false,
                bool hasReferenceTypeConstraint = false, bool hasValueTypeConstraint = false, Variance variance = Variance.None)
-        : this(null, null , null)
+         : this(null, null, null)
       {
          _name = name;
          _ordinal = ordinal;
@@ -21,11 +22,11 @@ namespace RoslynDom
       }
 
       public RDomTypeParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
-        : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       { Initialize(); }
 
       internal RDomTypeParameter(RDomTypeParameter oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          _constraintTypes = new RDomCollection<IReferencedType>(this);
@@ -47,6 +48,7 @@ namespace RoslynDom
       { get { return _constraintTypes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -55,6 +57,7 @@ namespace RoslynDom
       }
 
       private int _ordinal;
+
       public int Ordinal
       {
          get { return _ordinal; }
@@ -62,6 +65,7 @@ namespace RoslynDom
       }
 
       private bool _hasConstructorConstraint;
+
       public bool HasConstructorConstraint
       {
          get { return _hasConstructorConstraint; }
@@ -69,6 +73,7 @@ namespace RoslynDom
       }
 
       private bool _hasReferenceTypeConstraint;
+
       public bool HasReferenceTypeConstraint
       {
          get { return _hasReferenceTypeConstraint; }
@@ -76,6 +81,7 @@ namespace RoslynDom
       }
 
       private bool _hasValueTypeConstraint;
+
       public bool HasValueTypeConstraint
       {
          get { return _hasValueTypeConstraint; }
@@ -83,6 +89,7 @@ namespace RoslynDom
       }
 
       private Variance _variance;
+
       public Variance Variance
       {
          get { return _variance; }

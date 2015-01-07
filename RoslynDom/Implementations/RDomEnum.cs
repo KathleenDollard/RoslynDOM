@@ -1,9 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -16,19 +15,19 @@ namespace RoslynDom
       private RDomCollection<IEnumMember> _members;
 
       public RDomEnum(string name, string metadataName, string underlyingTypeName = null, AccessModifier declaredAccessModifier = AccessModifier.Private)
-          : this(name, metadataName, declaredAccessModifier)
+         : this(name, metadataName, declaredAccessModifier)
       {
          _underlyingType = new RDomReferencedType(this, underlyingTypeName, true);
       }
 
       public RDomEnum(string name, string metadataName, IReferencedType underlyingType, AccessModifier declaredAccessModifier = AccessModifier.Private)
-          : this(name, metadataName, declaredAccessModifier)
+         : this(name, metadataName, declaredAccessModifier)
       {
          _underlyingType = underlyingType;
       }
 
       private RDomEnum(string name, string metadataName, AccessModifier declaredAccessModifier = AccessModifier.Private)
-          : this((SyntaxNode)null, null, null)
+         : this((SyntaxNode)null, null, null)
       {
          _name = name;
          _metadataName = metadataName;
@@ -36,7 +35,7 @@ namespace RoslynDom
       }
 
       public RDomEnum(SyntaxNode rawItem, IDom parent, SemanticModel model)
-          : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       {
          Initialize();
          Name = TypedSymbol.Name;
@@ -44,7 +43,7 @@ namespace RoslynDom
       }
 
       internal RDomEnum(RDomEnum oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          _members = oldRDom.Members.Copy(this);
@@ -86,6 +85,7 @@ namespace RoslynDom
       { get { return _attributes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -94,6 +94,7 @@ namespace RoslynDom
       }
 
       private string _metadataName;
+
       [Required]
       public string MetadataName
       {
@@ -102,6 +103,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
@@ -109,6 +111,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
@@ -120,6 +123,7 @@ namespace RoslynDom
       }
 
       private IReferencedType _underlyingType;
+
       public IReferencedType UnderlyingType
       {
          get { return _underlyingType; }
@@ -127,6 +131,7 @@ namespace RoslynDom
       }
 
       private IStructuredDocumentation _structuredDocumentation;
+
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
@@ -134,6 +139,7 @@ namespace RoslynDom
       }
 
       private string _description;
+
       public string Description
       {
          get { return _description; }

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoslynDom.Common;
-using Microsoft.CodeAnalysis;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -118,9 +116,6 @@ namespace RoslynDom.CSharp
              Tuple.Create( SyntaxKind.LessThanEqualsToken            , Operator.LessThanEquals)
         };
 
-
-
-
       public static Operator OperatorFromCSharpKind(SyntaxKind kind)
       {
          foreach (var tuple in operatorMap)
@@ -139,7 +134,6 @@ namespace RoslynDom.CSharp
          throw new InvalidOperationException();
       }
 
-
       private static List<Tuple<Accessibility, AccessModifier>> accessModifierMap = new List<Tuple<Accessibility, AccessModifier>>()
         {
              Tuple.Create(Accessibility.Private             , AccessModifier.Private),
@@ -153,6 +147,7 @@ namespace RoslynDom.CSharp
              Tuple.Create(Accessibility.ProtectedOrFriend   , AccessModifier.ProtectedOrFriend),
              Tuple.Create(Accessibility.Public              , AccessModifier.Public )
         };
+
       public static Accessibility AccessibilityFromAccessModifier(AccessModifier accessModifier)
       {
          foreach (var tuple in accessModifierMap)
@@ -212,7 +207,6 @@ namespace RoslynDom.CSharp
          throw new InvalidOperationException();
       }
 
-
       private static List<Tuple<SyntaxKind, Variance>> GenericVarianceMap = new List<Tuple<SyntaxKind, Variance>>()
         {
             Tuple.Create( SyntaxKind.InKeyword,     Variance.In),
@@ -230,7 +224,6 @@ namespace RoslynDom.CSharp
 
       public static SyntaxKind VarianceKindFromVariance(Variance variance)
       {
-
          foreach (var tuple in GenericVarianceMap)
          {
             if (tuple.Item2 == variance)

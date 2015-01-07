@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
-
    /// <summary></summary>
    /// <returns></returns>
    /// <remarks>
@@ -18,7 +16,7 @@ namespace RoslynDom
    {
       public RDomArgument(IExpression valueExpression, string name = null,
                      bool isRef = false, bool isOut = false)
-       : base()
+         : base()
       {
          _name = name;
          _valueExpression = valueExpression;
@@ -33,7 +31,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomArgument(RDomArgument oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _name = oldRDom.Name;
          _isRef = oldRDom.IsRef;
@@ -42,6 +40,7 @@ namespace RoslynDom
       }
 
       private string _name;
+
       public string Name
       {
          get { return _name; }
@@ -49,6 +48,7 @@ namespace RoslynDom
       }
 
       private IExpression _valueExpression;
+
       [Required]
       public IExpression ValueExpression
       {
@@ -57,6 +57,7 @@ namespace RoslynDom
       }
 
       private bool _isRef;
+
       public bool IsRef
       {
          get { return _isRef; }
@@ -64,6 +65,7 @@ namespace RoslynDom
       }
 
       private bool _isOut;
+
       public bool IsOut
       {
          get { return _isOut; }

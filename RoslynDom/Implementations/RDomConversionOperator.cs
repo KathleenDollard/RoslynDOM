@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.Linq;
-using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomConversionOperator : RDomBase<IConversionOperator, IMethodSymbol>, IConversionOperator
@@ -12,19 +12,20 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomConversionOperator( string name, string typeName, bool isImplicit)
-            : this( name, isImplicit)
+      public RDomConversionOperator(string name, string typeName, bool isImplicit)
+         : this(name, isImplicit)
       {
          _type = new RDomReferencedType(this, typeName);
       }
 
-      public RDomConversionOperator( string name, IReferencedType type, bool isImplicit)
-            : this( name, isImplicit)
+      public RDomConversionOperator(string name, IReferencedType type, bool isImplicit)
+         : this(name, isImplicit)
       {
          _type = type;
       }
-      private RDomConversionOperator( string name,  bool isImplicit)
-            : base()
+
+      private RDomConversionOperator(string name, bool isImplicit)
+         : base()
       {
          Initialize();
          _name = name;
@@ -38,7 +39,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
      "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomConversionOperator(RDomConversionOperator oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          _name = oldRDom.Name;
@@ -85,19 +86,24 @@ namespace RoslynDom
       { get { return _attributes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
          set { SetProperty(ref _accessModifier, value); }
       }
+
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
@@ -107,31 +113,41 @@ namespace RoslynDom
             AccessModifier = value;
          }
       }
+
       private IReferencedType _type;
+
       public IReferencedType Type
       {
          get { return _type; }
          set { SetProperty(ref _type, value); }
       }
+
       private bool _isImplicit;
+
       public bool IsImplicit
       {
          get { return _isImplicit; }
          set { SetProperty(ref _isImplicit, value); }
       }
+
       private bool _isStatic;
+
       public bool IsStatic
       {
          get { return _isStatic; }
          set { SetProperty(ref _isStatic, value); }
       }
+
       private IStructuredDocumentation _structuredDocumentation;
+
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
          set { SetProperty(ref _structuredDocumentation, value); }
       }
+
       private string _description;
+
       public string Description
       {
          get { return _description; }
@@ -151,7 +167,7 @@ namespace RoslynDom
 
       public bool HasBlock
       {
-         get {  return true; }
+         get { return true; }
          set { SetProperty(ref _hasBlock, value); }
       }
 

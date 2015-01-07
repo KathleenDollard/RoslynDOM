@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +14,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomFieldTypeMemberFactory(RDomCorporation corporation)
-       : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -41,7 +41,7 @@ namespace RoslynDom.CSharp
       public override Type[] SupportedSyntaxNodeTypes
       { get { return new Type[] { typeof(FieldDeclarationSyntax) }; } }
 
-       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var list = new List<ITypeMember>();
 
@@ -79,7 +79,6 @@ namespace RoslynDom.CSharp
             // See note on IsNew on interface before changing
             newItem.IsNew = rawField.Modifiers.Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
             //newItem.PublicAnnotations.Add(fieldPublicAnnotations);
-
          }
          return list;
       }
@@ -122,7 +121,5 @@ namespace RoslynDom.CSharp
 
          return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
-
    }
-
 }

@@ -1,7 +1,4 @@
-﻿using RoslynDom.Common;
-using System.Collections.Generic;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
    public interface IInvocationStatement : IHasInvocationFeatures, IStatement, IDom<IInvocationStatement>
    {

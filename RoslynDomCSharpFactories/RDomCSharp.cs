@@ -1,16 +1,12 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
+using RoslynDom.Common;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using RoslynDom.Common;
-using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Options;
-using Microsoft.CodeAnalysis.CSharp.Formatting;
 
 namespace RoslynDom.CSharp
 {
@@ -82,6 +78,7 @@ namespace RoslynDom.CSharp
                         .ToArray();
          return LoadGroupFromInternal(null, trees);
       }
+
       public IRootGroup LoadGroup(params SyntaxTree[] trees)
       {
          return LoadGroupFromInternal(null, trees);

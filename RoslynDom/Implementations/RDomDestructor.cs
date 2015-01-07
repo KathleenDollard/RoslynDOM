@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.Linq;
-using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomDestructor : RDomBase<IDestructor, IMethodSymbol>, IDestructor
@@ -11,8 +11,8 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomDestructor( string name, AccessModifier declaredAccessModifier = AccessModifier.Private)
-            : base()
+      public RDomDestructor(string name, AccessModifier declaredAccessModifier = AccessModifier.Private)
+         : base()
       {
          Initialize();
          _name = name;
@@ -26,7 +26,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomDestructor(RDomDestructor oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
@@ -67,6 +67,7 @@ namespace RoslynDom
       { get { return _attributes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -75,6 +76,7 @@ namespace RoslynDom
       }
 
       private IStructuredDocumentation _structuredDocumentation;
+
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
@@ -82,6 +84,7 @@ namespace RoslynDom
       }
 
       private string _description;
+
       public string Description
       {
          get { return _description; }
@@ -89,6 +92,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get
@@ -98,6 +102,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get
@@ -116,6 +121,7 @@ namespace RoslynDom
       { get { return _statements.OfType<IStatement>().ToList(); } }
 
       private bool _hasBlock;
+
       public bool HasBlock
       {
          get { return true; return _hasBlock; }

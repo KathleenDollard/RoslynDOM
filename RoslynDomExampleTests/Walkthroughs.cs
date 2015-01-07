@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom.Common;
 using RoslynDom.CSharp;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace RoslynDomExampleTests
 {
@@ -75,7 +74,6 @@ namespace RoslynDomExampleTests
 
          Assert.AreEqual("get_FooBar", uintCode[2].containerName);
          Assert.AreEqual("z", uintCode[2].variableName);
-
       }
 
       [TestMethod]
@@ -156,7 +154,6 @@ namespace RoslynDomExampleTests
          Assert.AreEqual(expected, output.ToFullString());
       }
 
-
       private string ReportCodeLines(IEnumerable<IDom> items)
       {
          var sb = new StringBuilder();
@@ -195,7 +192,6 @@ namespace RoslynDomExampleTests
 
       private string GetOldCode(IDom item)
       {
-
          var node = item.RawItem as SyntaxNode;
          if (node == null)
          { return "<no syntax node>"; }

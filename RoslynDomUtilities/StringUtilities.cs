@@ -99,6 +99,7 @@ namespace RoslynDom.Common
       }
 
       private static Regex _allWhitespace;
+
       private static Regex allWhitespace
       {
          get
@@ -119,7 +120,7 @@ namespace RoslynDom.Common
          var i = 0;
          while (i < lines.Count())
          {
-            if (!(lines[i].TrimStart().StartsWith("//") || string.IsNullOrWhiteSpace(lines[i] ))) { break; }
+            if (!(lines[i].TrimStart().StartsWith("//") || string.IsNullOrWhiteSpace(lines[i]))) { break; }
             i++;
          }
          return string.Join("\r\n", lines.Skip(i));

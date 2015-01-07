@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
 
 namespace RoslynDom.CSharp
 {
@@ -15,7 +12,7 @@ namespace RoslynDom.CSharp
                 : RDomBaseSyntaxNodeFactory<RDomOtherExpression, ExpressionSyntax>
    {
       public RDomOtherExpressionFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       public override RDomPriority Priority
@@ -31,7 +28,6 @@ namespace RoslynDom.CSharp
          newItem.ExpressionType = ExpressionTypeFromSyntax(syntaxNode);
 
          return newItem;
-
       }
 
       private ExpressionType ExpressionTypeFromSyntax(SyntaxNode syntaxNode)
@@ -43,7 +39,6 @@ namespace RoslynDom.CSharp
          if (syntaxNode is BinaryExpressionSyntax) { return ExpressionType.Complex; }
          return ExpressionType.Unknown;
       }
-
 
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {

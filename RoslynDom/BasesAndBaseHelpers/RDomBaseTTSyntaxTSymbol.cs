@@ -14,7 +14,7 @@ namespace RoslynDom
 
       protected RDomBase()
          : this(null, null, null)
-      { NeedsFormatting  = true; }
+      { NeedsFormatting = true; }
 
       protected RDomBase(IDom parent)
          : this(null, parent, null)
@@ -44,7 +44,7 @@ namespace RoslynDom
          _originalRawSyntax = oldRDom._originalRawSyntax;
          _symbol = oldRDom._symbol;
 
-         // TODO: SameIntent tests broke when I removed this, although it appears to be done in the base. 
+         // TODO: SameIntent tests broke when I removed this, although it appears to be done in the base.
          var thisAsHasName = this as IHasName;
          if (thisAsHasName != null)
          { thisAsHasName.Name = ((IHasName)oldRDom).Name; }

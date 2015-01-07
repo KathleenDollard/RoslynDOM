@@ -1,8 +1,6 @@
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
-using System;
-using System.Collections.Generic;
 
 namespace RoslynDom
 {
@@ -13,24 +11,24 @@ namespace RoslynDom
 
       public RDomInvocationExpression(IDom parent, string initialExpressionString,
                string initialExpressionLanguage, string methodName)
-      : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Invocation )
+         : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Invocation)
       {
          _methodName = methodName;
       }
 
       public RDomInvocationExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
-        : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       {
          Initialize();
       }
 
-       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
-       "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
+      [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+      "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomInvocationExpression(RDomInvocationExpression oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _typeArguments = oldRDom.TypeArguments.Copy(this);
-         _arguments  = oldRDom.Arguments.Copy(this);
+         _arguments = oldRDom.Arguments.Copy(this);
       }
 
       private void Initialize()
@@ -40,6 +38,7 @@ namespace RoslynDom
       }
 
       private string _methodName;
+
       [Required]
       public string MethodName
       {
@@ -52,6 +51,5 @@ namespace RoslynDom
 
       public RDomCollection<IArgument> Arguments
       { get { return _arguments; } }
-
    }
 }

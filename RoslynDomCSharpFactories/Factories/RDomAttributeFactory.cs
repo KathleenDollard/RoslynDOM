@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
    public class RDomAttributeFactory : RDomBaseSyntaxNodeFactory<RDomAttribute, AttributeSyntax>
    {
-
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomAttributeFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -94,6 +91,7 @@ namespace RoslynDom.CSharp
       }
 
       #region Private methods to support adding attributes
+
       private IAttribute CreateFromItem(AttributeSyntax syntax, IDom parent, SemanticModel model)
       {
          var newItem = new RDomAttribute(syntax, parent, model);
@@ -127,7 +125,7 @@ namespace RoslynDom.CSharp
          }
          return list;
       }
-
    }
-   #endregion
+
+      #endregion Private methods to support adding attributes
 }

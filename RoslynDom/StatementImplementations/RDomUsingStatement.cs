@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -10,7 +10,7 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
 
       public RDomUsingStatement(IExpression expression, bool hasBlock)
-            : base()
+         : base()
       {
          Initialize();
          _expression = expression;
@@ -18,7 +18,7 @@ namespace RoslynDom
       }
 
       public RDomUsingStatement(IDom parent, IVariableDeclaration variable, bool hasBlock)
-      : base(parent)
+         : base(parent)
       {
          Initialize();
          _variable = variable;
@@ -33,7 +33,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomUsingStatement(RDomUsingStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          _statements = oldRDom.StatementsAll.Copy(this);
@@ -58,6 +58,7 @@ namespace RoslynDom
       }
 
       private IExpression _expression;
+
       public IExpression Expression
       {
          get { return _expression; }
@@ -65,6 +66,7 @@ namespace RoslynDom
       }
 
       private IVariableDeclaration _variable;
+
       public IVariableDeclaration Variable
       {
          get { return _variable; }
@@ -72,6 +74,7 @@ namespace RoslynDom
       }
 
       private bool _hasBlock;
+
       public bool HasBlock
       {
          get { return _hasBlock; }

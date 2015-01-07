@@ -1,13 +1,9 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 
 namespace RoslynDom.Common
 {
-
    public interface IWorker
    {
       RDomPriority Priority { get; }
@@ -22,14 +18,16 @@ namespace RoslynDom.Common
    {
       void StandardInitialize<T>(T item, SyntaxNode syntaxNode, IDom parent, SemanticModel model, OutputContext context)
           where T : class, IDom;
+
       // void InitializePublicAnnotations(IDom item, SyntaxNode syntaxNode, IDom parent, SemanticModel model);
       void InitializeStatements(IStatementBlock statementBlock, SyntaxNode syntaxNode, IDom parent, SemanticModel model);
+
       IEnumerable<IDom> CreateInvalidMembers(SyntaxNode syntaxNode, IDom parent, SemanticModel model);
+
       Tuple<string, string, string> ExtractComment(string fullLine);
    }
 
    public interface IBuildSyntaxWorker : ICorporationWorker
    {
-
    }
 }

@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
-using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -29,10 +27,10 @@ namespace RoslynDom
 
       internal IType FindByMetadataName(string metadataName)
       {
-         return _referencedTypeCache.FindByMetadataName(metadataName); 
+         return _referencedTypeCache.FindByMetadataName(metadataName);
       }
 
-        public override IEnumerable<IDom> Children
+      public override IEnumerable<IDom> Children
       {
          get
          {

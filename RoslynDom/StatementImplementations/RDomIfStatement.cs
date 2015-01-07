@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -11,8 +11,8 @@ namespace RoslynDom
    {
       private RDomCollection<IElseBaseStatement> _elses;
 
-      public RDomIfStatement( IExpression  condition)
-            : base()
+      public RDomIfStatement(IExpression condition)
+         : base()
       {
          Initialize();
          _condition = condition;
@@ -25,7 +25,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomIfStatement(RDomIfStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _elses = oldRDom.Elses.Copy(this);
          _condition = oldRDom.Condition.Copy();
@@ -49,6 +49,7 @@ namespace RoslynDom
       }
 
       private IExpression _condition;
+
       public IExpression Condition
       {
          get { return _condition; }

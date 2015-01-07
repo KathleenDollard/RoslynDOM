@@ -1,8 +1,8 @@
+using Microsoft.CodeAnalysis;
+using RoslynDom.Common;
 using System;
 using System.Linq;
 using System.Reflection;
-using Microsoft.CodeAnalysis;
-using RoslynDom.Common;
 
 namespace RoslynDom
 {
@@ -10,11 +10,11 @@ namespace RoslynDom
    public abstract class RoslynRDomBase : RDomBase, IRoslynHasSymbol
    {
       protected RoslynRDomBase()
-        : base()
+         : base()
       { }
 
       protected RoslynRDomBase(IDom oldIDom)
-       : base(oldIDom)
+         : base(oldIDom)
       { }
 
       public abstract ISymbol Symbol { get; }
@@ -33,13 +33,12 @@ namespace RoslynDom
    public abstract class RDomBase<T> : RoslynRDomBase, IDom<T>
          where T : class, IDom<T>
    {
-
       protected RDomBase()
-        : base()
+         : base()
       { }
 
       protected RDomBase(T oldIDom)
-       : base(oldIDom)
+         : base(oldIDom)
       { }
 
       public virtual T Copy()
@@ -70,7 +69,7 @@ namespace RoslynDom
       /// Do NOT override if the problem can be solved in the RoslynDom.Common implementations (SameIntent_xxx)
       /// </summary>
       /// <param name="other"></param>
-      /// 
+      ///
       /// <returns></returns>
       protected virtual bool CheckSameIntent(T other)
       {

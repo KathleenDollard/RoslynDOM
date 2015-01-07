@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +14,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomMethodTypeMemberFactory(RDomCorporation corporation)
-       : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -95,7 +95,7 @@ namespace RoslynDom.CSharp
             // I'm cheating a bit here. Since the This keyword is an indicator of extension state on the method
             // I'm hardcoding a single space. I don't see the complexity of dealing with this as worth it unless
             // there's gnashing of teeth over this single space. The use of "this" on the parameter is not universal
-            // and VB marks the method. 
+            // and VB marks the method.
             var thisModifier = SyntaxFactory.Token(SyntaxKind.ThisKeyword)
                                     .WithTrailingTrivia(SyntaxFactory.ParseTrailingTrivia(" "));
             var paramModifiers = firstParam.Modifiers.Insert(0, thisModifier);
@@ -131,8 +131,5 @@ namespace RoslynDom.CSharp
 
          return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
-
    }
-
-
 }

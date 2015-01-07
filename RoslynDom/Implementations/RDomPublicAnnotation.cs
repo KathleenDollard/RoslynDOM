@@ -1,7 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RoslynDom.Common
@@ -11,24 +9,25 @@ namespace RoslynDom.Common
       private List<KeyValuePair<string, object>> _items = new List<KeyValuePair<string, object>>();
 
       public RDomPublicAnnotation(IDom parent, SyntaxTrivia trivia, string name)
-         :base(parent,StemMemberKind.PublicAnnotation, MemberKind.PublicAnnotation, trivia )
+         : base(parent, StemMemberKind.PublicAnnotation, MemberKind.PublicAnnotation, trivia)
       {
          _name = name;
       }
 
       internal RDomPublicAnnotation(RDomPublicAnnotation oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _name = oldRDom.Name;
          _target = oldRDom.Target;
-         foreach (var key in oldRDom.Keys )
+         foreach (var key in oldRDom.Keys)
          {
-            // The following line only works for types that don't need to be cloned, I think that is all we can hold in a public annotation right now. 
+            // The following line only works for types that don't need to be cloned, I think that is all we can hold in a public annotation right now.
             AddItem(key, oldRDom.GetValue(key));
          }
       }
 
       private string _target;
+
       public string Target
       {
          get { return _target; }
@@ -36,6 +35,7 @@ namespace RoslynDom.Common
       }
 
       private string _name;
+
       public string Name
       {
          get { return _name; }
@@ -45,7 +45,7 @@ namespace RoslynDom.Common
       public void AddItem(string key, object item)
       { _items.Add(new KeyValuePair<string, object>(key, item)); }
 
-          public IEnumerable<string> Keys
+      public IEnumerable<string> Keys
       {
          get { return _items.Select(x => x.Key); }
       }
@@ -105,6 +105,5 @@ namespace RoslynDom.Common
       //[ExcludeFromCodeCoverage]
       //public override object RawItem
       //{ get { return null; } }
-
-    }
+   }
 }

@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
    public class PublicAnnotationFactory
        : RDomBaseSyntaxTriviaFactory<IPublicAnnotation>
    {
-   
       public override IDom CreateFrom(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
          var tuple = context.Corporation.CreateFromWorker.ExtractComment(trivia.ToFullString());
@@ -23,7 +20,7 @@ namespace RoslynDom.CSharp
          var attribSyntax = GetAnnotationStringAsAttribute(str);
          // Reuse the evaluation work done in attribute to follow same rules
          var tempAttribute = context.Corporation.Create(attribSyntax, null, null).FirstOrDefault() as IAttribute;
-         var newPublicAnnotation = new RDomPublicAnnotation(parent, trivia,tempAttribute.Name.ToString());
+         var newPublicAnnotation = new RDomPublicAnnotation(parent, trivia, tempAttribute.Name.ToString());
          newPublicAnnotation.Target = target;
          newPublicAnnotation.Whitespace2Set.AddRange(tempAttribute.Whitespace2Set);
          foreach (var attributeValue in tempAttribute.AttributeValues)
@@ -135,8 +132,6 @@ namespace RoslynDom.CSharp
          return null;
       }
 
- 
-
-      #endregion
+      #endregion Private methods to support public annotations
    }
 }

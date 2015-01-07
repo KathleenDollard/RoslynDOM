@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -12,7 +11,7 @@ namespace RoslynDom.CSharp
         : RDomBaseSyntaxNodeFactory<RDomInvocationStatement, ExpressionStatementSyntax>
    {
       public RDomInvocationStatementFactory(RDomCorporation corporation)
-       : base(corporation)
+         : base(corporation)
       { }
 
       public override RDomPriority Priority
@@ -24,7 +23,6 @@ namespace RoslynDom.CSharp
          if (statement == null) { return false; }
          return (statement.Expression is InvocationExpressionSyntax);
       }
-
 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
@@ -50,7 +48,5 @@ namespace RoslynDom.CSharp
                      itemAsT.Whitespace2Set[LanguageElement.Expression]);
          return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
-
-
    }
 }

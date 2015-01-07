@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +12,7 @@ namespace RoslynDom.CSharp
                 : RDomBaseSyntaxNodeFactory<RDomInvocationExpression, InvocationExpressionSyntax>
    {
       public RDomInvocationExpressionFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       public override RDomPriority Priority
@@ -32,7 +30,6 @@ namespace RoslynDom.CSharp
          newItem.Arguments.AddOrMoveRange(GetArguments(syntax.ArgumentList, newItem, model));
 
          return newItem;
-
       }
 
       private IEnumerable<IArgument> GetArguments(ArgumentListSyntax argumentList, IDom newItem, SemanticModel model)

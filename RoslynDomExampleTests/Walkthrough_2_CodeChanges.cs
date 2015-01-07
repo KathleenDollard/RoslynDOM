@@ -4,10 +4,7 @@ using RoslynDom.Common;
 using RoslynDom.CSharp;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoslynDomExampleTests
 {
@@ -183,6 +180,5 @@ namespace RoslynDomExampleTests
          if (propertyType.Name == "INamedTypeSymbol") return false;     // force an error
          return false;                                                  // force an error
       }
-
    }
 }

@@ -1,50 +1,50 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomParameter : RDomBase<IParameter, IParameterSymbol>, IParameter
    {
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomParameter( string name, string typeName,
+      public RDomParameter(string name, string typeName,
                       int ordinal = 0, bool isOut = false, bool isRef = false,
                       bool isParamArray = false)
-          : this(name, name, null, 
-                LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
+         : this(name, name, null,
+               LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
       { }
 
       public RDomParameter(string name, IReferencedType type,
                       int ordinal = 0, bool isOut = false, bool isRef = false,
                       bool isParamArray = false)
-         : this( name, type, null, LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
+         : this(name, type, null, LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
       { }
 
-      public RDomParameter( string name, string typeName,
+      public RDomParameter(string name, string typeName,
                      object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
                      int ordinal = 0, bool isOut = false, bool isRef = false,
                      bool isParamArray = false)
-         : this( name, defaultValue, defaultValueType, defaultConstantIdentifier, ordinal, isOut, isRef, isParamArray)
+         : this(name, defaultValue, defaultValueType, defaultConstantIdentifier, ordinal, isOut, isRef, isParamArray)
       {
          _type = new RDomReferencedType(this, typeName, true);
       }
 
-      public RDomParameter( string name, IReferencedType type,
+      public RDomParameter(string name, IReferencedType type,
                    object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
                    int ordinal = 0, bool isOut = false, bool isRef = false,
                    bool isParamArray = false)
-         : this( name, defaultValue, defaultValueType, defaultConstantIdentifier, ordinal, isOut, isRef, isParamArray)
+         : this(name, defaultValue, defaultValueType, defaultConstantIdentifier, ordinal, isOut, isRef, isParamArray)
       {
          _type = type;
       }
 
-      private RDomParameter( string name, 
+      private RDomParameter(string name,
                  object defaultValue, LiteralKind defaultValueType, string defaultConstantIdentifier,
                  int ordinal = 0, bool isOut = false, bool isRef = false,
                  bool isParamArray = false)
-            : base()
+         : base()
       {
          _name = name;
          _ordinal = ordinal;
@@ -61,13 +61,13 @@ namespace RoslynDom
       }
 
       public RDomParameter(SyntaxNode rawItem, IDom parent, SemanticModel model)
-             : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       { }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomParameter(RDomParameter oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          _name = oldRDom.Name;
@@ -93,6 +93,7 @@ namespace RoslynDom
       }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -101,6 +102,7 @@ namespace RoslynDom
       }
 
       private IReferencedType _type;
+
       [Required]
       public IReferencedType Type
       {
@@ -109,6 +111,7 @@ namespace RoslynDom
       }
 
       private int _ordinal;
+
       public int Ordinal
       {
          get { return _ordinal; }
@@ -116,6 +119,7 @@ namespace RoslynDom
       }
 
       private bool _isOut;
+
       public bool IsOut
       {
          get { return _isOut; }
@@ -123,6 +127,7 @@ namespace RoslynDom
       }
 
       private bool _isRef;
+
       public bool IsRef
       {
          get { return _isRef; }
@@ -130,6 +135,7 @@ namespace RoslynDom
       }
 
       private bool _isParamArray;
+
       public bool IsParamArray
       {
          get { return _isParamArray; }
@@ -137,6 +143,7 @@ namespace RoslynDom
       }
 
       private bool _isOptional;
+
       public bool IsOptional
       {
          get { return _isOptional; }
@@ -144,6 +151,7 @@ namespace RoslynDom
       }
 
       private object _defaultValue;
+
       public object DefaultValue
       {
          get { return _defaultValue; }
@@ -151,6 +159,7 @@ namespace RoslynDom
       }
 
       private LiteralKind _defaultValueType;
+
       public LiteralKind DefaultValueType
       {
          get { return _defaultValueType; }
@@ -158,6 +167,7 @@ namespace RoslynDom
       }
 
       private string _defaultConstantIdentifier;
+
       public string DefaultConstantIdentifier
       {
          get { return _defaultConstantIdentifier; }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +14,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomConstructorTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -60,7 +60,6 @@ namespace RoslynDom.CSharp
          //var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))
          //                    .OfType<IParameter>();
          //newItem.Parameters.AddOrMoveRange(parameters);
-
 
          if (syntax.Initializer == null)
          { newItem.ConstructorInitializerType = ConstructorInitializerType.None; }
@@ -169,7 +168,7 @@ namespace RoslynDom.CSharp
          var expressionSyntax = (ExpressionSyntax)RDom.CSharp.GetSyntaxNode(arg.ValueExpression);
          expressionSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirstAndLast(expressionSyntax, arg.Whitespace2Set[LanguageElement.Expression]);
          var argSyntax = SyntaxFactory.Argument(expressionSyntax);
-         argSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirst(argSyntax, arg.Whitespace2Set[LanguageElement.ConstructorInitializerArgument ]);
+         argSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirst(argSyntax, arg.Whitespace2Set[LanguageElement.ConstructorInitializerArgument]);
          return argSyntax;
          //argSyntax = BuildSyntaxHelpers.AttachWhitespace(argSyntax, arg.Whitespace2Set, WhitespaceLookup);
          //argSyntax = BuildSyntaxHelpers.AttachWhitespaceToFirst(argSyntax, arg.Whitespace2Set[LanguageElement.ConstructorInitializerArgument]);

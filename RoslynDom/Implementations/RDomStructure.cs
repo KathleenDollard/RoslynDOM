@@ -1,23 +1,23 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomStructure : RDomBaseType<IStructure>, IStructure
    {
-      public RDomStructure(  string metadataName, AccessModifier declaredAccessModifier = AccessModifier.Private)
-      : base( metadataName, declaredAccessModifier, MemberKind.Structure, StemMemberKind.Structure)
+      public RDomStructure(string metadataName, AccessModifier declaredAccessModifier = AccessModifier.Private)
+         : base(metadataName, declaredAccessModifier, MemberKind.Structure, StemMemberKind.Structure)
       { }
 
       public RDomStructure(SyntaxNode rawItem, IDom parent, SemanticModel model)
-        : base(rawItem, parent, model, MemberKind.Structure, StemMemberKind.Structure)
+         : base(rawItem, parent, model, MemberKind.Structure, StemMemberKind.Structure)
       { }
 
       internal RDomStructure(RDomStructure oldRDom)
-          : base(oldRDom)
-      {}
+         : base(oldRDom)
+      { }
 
       public IEnumerable<IClass> Classes
       { get { return Members.OfType<IClass>().ToList(); } }

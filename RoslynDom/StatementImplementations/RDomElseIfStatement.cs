@@ -1,16 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomElseIfStatement : RDomStatementBlockBase<IElseIfStatement>, IElseIfStatement
    {
-
       public RDomElseIfStatement(IExpression condition)
-            : base()
+         : base()
       {
          _condition = condition;
       }
@@ -22,7 +20,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomElseIfStatement(RDomElseIfStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _condition = oldRDom.Condition.Copy();
       }
@@ -43,6 +41,7 @@ namespace RoslynDom
          get { return _condition; }
          set { SetProperty(ref _condition, value); }
       }
+
       private IExpression _condition;
    }
 }

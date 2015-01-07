@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RoslynDom.Common;
 
 namespace UtilitiesTests
 {
@@ -15,20 +12,25 @@ namespace UtilitiesTests
       private class TestClassA<T>
       {
          public IEnumerable<T> List;
+
          public TestClassA(IEnumerable<T> list)
          {
             List = list;
          }
       }
+
       private class TestClassB<T>
       {
          public T Item;
+
          public TestClassB(T item)
          {
             Item = item;
          }
       }
+
       #region make list
+
       //[TestMethod, TestCategory(MakeListCategory)]
       //public void Can_create_list_of_item_ref_types()
       //{
@@ -209,15 +211,18 @@ namespace UtilitiesTests
 
       //   Assert.AreEqual(0, members.Count());
       //}
-      #endregion
+
+      #endregion make list
 
       #region create from
+
       //[TestMethod, TestCategory(MakeListCategory)]
       //[ExpectedException(typeof(InvalidOperationException))]
       //public void CreateFrom_throws_on_null_raw_items()
       //{
       //   ListUtilities.CreateFromList<string, string>(null, null);
       //}
-      #endregion
+
+      #endregion create from
    }
 }

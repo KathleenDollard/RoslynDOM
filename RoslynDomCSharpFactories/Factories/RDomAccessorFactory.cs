@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +14,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomPropertyAccessorMiscFactory(RDomCorporation corporation)
-       : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -55,7 +55,6 @@ namespace RoslynDom.CSharp
          newItem.Name = newItemName;
 
          return newItem;
-
       }
 
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
@@ -91,8 +90,5 @@ namespace RoslynDom.CSharp
 
          return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
-
-
    }
-
 }

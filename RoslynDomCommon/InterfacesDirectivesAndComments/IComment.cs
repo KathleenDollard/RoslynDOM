@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IComment : IDetail<IComment>
-    {
-        string Text { get; set; }
-        bool IsMultiline { get; set; }
-    }
+   /// <summary>
+   ///
+   /// </summary>
+   public interface IComment : IDetail<IComment>
+   {
+      string Text { get; set; }
+
+      bool IsMultiline { get; set; }
+   }
 }

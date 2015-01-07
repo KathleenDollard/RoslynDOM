@@ -1,17 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomCheckedStatement : RDomBase<ICheckedStatement, ISymbol>, ICheckedStatement
    {
       private RDomCollection<IStatementAndDetail> _statements;
 
-      public RDomCheckedStatement( bool uncheck, bool hasBlock)
-            : base()
+      public RDomCheckedStatement(bool uncheck, bool hasBlock)
+         : base()
       {
          Initialize();
          _unchecked = uncheck;
@@ -25,7 +24,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
           "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomCheckedStatement(RDomCheckedStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          _statements = oldRDom.StatementsAll.Copy(this);
@@ -49,12 +48,15 @@ namespace RoslynDom
       }
 
       private bool _unchecked;
+
       public bool Unchecked
       {
          get { return _unchecked; }
          set { SetProperty(ref _unchecked, value); }
       }
+
       private bool _hasBlock;
+
       public bool HasBlock
       {
          get { return _hasBlock; }

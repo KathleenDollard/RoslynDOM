@@ -1,15 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom
 {
    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
    public abstract class RDomBaseStemContainer<T, TSymbol> : RDomBase<T, TSymbol>, IStemContainer
-       where T : class, IDom<T>
-       where TSymbol : ISymbol
+      where T : class, IDom<T>
+      where TSymbol : ISymbol
    {
       private RDomCollection<IStemMemberAndDetail> _members;
 
@@ -25,7 +24,7 @@ namespace RoslynDom
           "CA1502:AvoidExcessiveComplexity",
           Justification = "This method is very complex, but is a core method, is short, and follows a pattern, so complexity is OK")]
       internal RDomBaseStemContainer(T oldIDom)
-           : base(oldIDom)
+         : base(oldIDom)
       {
          Initialize();
          var oldRDom = oldIDom as RDomBaseStemContainer<T, TSymbol>;

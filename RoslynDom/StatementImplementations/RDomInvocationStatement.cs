@@ -1,23 +1,21 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm = System.ComponentModel;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System;
+using cm = System.ComponentModel;
 
 namespace RoslynDom
 {
    public class RDomInvocationStatement : RDomBase<IInvocationStatement, ISymbol>, IInvocationStatement
    {
-
       /// <summary>
       /// Constructor to use when creating a RoslynDom from scratch
       /// </summary>
       /// <param name="expression">
       /// Expression to invoke
       /// </param>
-      public RDomInvocationStatement( IInvocationExpression expression, bool suppressNewLine = false)
-            : base()
+      public RDomInvocationStatement(IInvocationExpression expression, bool suppressNewLine = false)
+         : base()
       {
          _invocation = expression;
          if (!suppressNewLine)
@@ -26,7 +24,7 @@ namespace RoslynDom
 
       [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
       public RDomInvocationStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
-           : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       { }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
@@ -42,6 +40,7 @@ namespace RoslynDom
 
       [Required]
       private IInvocationExpression _invocation;
+
       public IInvocationExpression Invocation
       {
          get { return _invocation; }

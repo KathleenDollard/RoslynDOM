@@ -1,10 +1,10 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.Linq;
-using System;
-using cm=System.ComponentModel;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using cm = System.ComponentModel;
+
 namespace RoslynDom
 {
    public class RDomEvent : RDomBase<IEvent, IEventSymbol>, IEvent
@@ -40,11 +40,11 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomEvent( string name, string typeName, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      public RDomEvent(string name, string typeName, AccessModifier declaredAccessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
                bool isSealed = false, bool isStatic = false, bool isNew = false)
-       : this( name, declaredAccessModifier, isAbstract,
-                isVirtual, isOverride, isSealed, isStatic, isNew)
+         : this(name, declaredAccessModifier, isAbstract,
+                  isVirtual, isOverride, isSealed, isStatic, isNew)
       {
          _type = new RDomReferencedType(this, typeName, true);
       }
@@ -78,19 +78,19 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomEvent( string name, IReferencedType type, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      public RDomEvent(string name, IReferencedType type, AccessModifier declaredAccessModifier = AccessModifier.Private,
                bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
                bool isSealed = false, bool isStatic = false, bool isNew = false)
-       : this( name, declaredAccessModifier, isAbstract,
-                isVirtual, isOverride, isSealed, isStatic, isNew)
+         : this(name, declaredAccessModifier, isAbstract,
+                  isVirtual, isOverride, isSealed, isStatic, isNew)
       {
          _type = type;
       }
 
-      private RDomEvent( string name,  AccessModifier declaredAccessModifier = AccessModifier.Private,
+      private RDomEvent(string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
               bool isAbstract = false, bool isVirtual = false, bool isOverride = false,
               bool isSealed = false, bool isStatic = false, bool isNew = false)
-            : base()
+         : base()
       {
          _name = name;
          DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
@@ -110,7 +110,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
      "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomEvent(RDomEvent oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
 
@@ -139,13 +139,16 @@ namespace RoslynDom
       { get { return _attributes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IReferencedType _type;
+
       [Required]
       public IReferencedType Type
       {
@@ -154,6 +157,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
@@ -161,6 +165,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
@@ -172,6 +177,7 @@ namespace RoslynDom
       }
 
       private bool _isAbstract;
+
       public bool IsAbstract
       {
          get { return _isAbstract; }
@@ -179,6 +185,7 @@ namespace RoslynDom
       }
 
       private bool _isVirtual;
+
       public bool IsVirtual
       {
          get { return _isVirtual; }
@@ -186,6 +193,7 @@ namespace RoslynDom
       }
 
       private bool _isOverride;
+
       public bool IsOverride
       {
          get { return _isOverride; }
@@ -193,6 +201,7 @@ namespace RoslynDom
       }
 
       private bool _isSealed;
+
       public bool IsSealed
       {
          get { return _isSealed; }
@@ -200,6 +209,7 @@ namespace RoslynDom
       }
 
       private bool _isNew;
+
       public bool IsNew
       {
          get { return _isNew; }
@@ -207,6 +217,7 @@ namespace RoslynDom
       }
 
       private bool _isStatic;
+
       public bool IsStatic
       {
          get { return _isStatic; }
@@ -214,6 +225,7 @@ namespace RoslynDom
       }
 
       private IStructuredDocumentation _structuredDocumentation;
+
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
@@ -221,6 +233,7 @@ namespace RoslynDom
       }
 
       private string _description;
+
       public string Description
       {
          get { return _description; }

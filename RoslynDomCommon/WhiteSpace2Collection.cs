@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
@@ -32,6 +31,7 @@ namespace RoslynDom.Common
       { return list.GetEnumerator(); }
 
       public string ForceLeading { get; set; }
+
       public string ForceTrailing { get; set; }
 
       public void Add(Whitespace2 item)
@@ -56,7 +56,6 @@ namespace RoslynDom.Common
          set
          { this[LanguagePart.Current, languageElement] = value; }
       }
-
 
       public Whitespace2 this[LanguagePart languagePart, LanguageElement languageElement]
       {
@@ -135,9 +134,13 @@ namespace RoslynDom.Common
       { return new Whitespace2(this); }
 
       public LanguagePart LanguagePart { get; private set; }
+
       public LanguageElement LanguageElement { get; private set; }
+
       public string LeadingWhitespace { get; set; }
+
       public string TrailingWhitespace { get; set; }
+
       public string TrailingComment { get; set; }
 
       public override string ToString()

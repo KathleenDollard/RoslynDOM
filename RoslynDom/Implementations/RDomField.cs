@@ -1,12 +1,11 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using cm = System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
-
    /// <summary></summary>
    /// <returns></returns>
    /// <remarks>
@@ -37,10 +36,10 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomField( string name, string returnTypeName, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      public RDomField(string name, string returnTypeName, AccessModifier declaredAccessModifier = AccessModifier.Private,
                       bool isStatic = false, bool isNew = false, bool isReadOnly = false,
                       bool isVolatile = false, bool isConstant = false)
-       : this(name, declaredAccessModifier, isStatic, isNew, isReadOnly, isVolatile, isConstant)
+         : this(name, declaredAccessModifier, isStatic, isNew, isReadOnly, isVolatile, isConstant)
       {
          _returnType = new RDomReferencedType(this, returnTypeName);
       }
@@ -62,18 +61,18 @@ namespace RoslynDom
       /// <param name="isNew">
       /// Pass true for an new class
       /// </param>
-      public RDomField( string name, IReferencedType returnType, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      public RDomField(string name, IReferencedType returnType, AccessModifier declaredAccessModifier = AccessModifier.Private,
                       bool isStatic = false, bool isNew = false, bool isReadOnly = false,
                       bool isVolatile = false, bool isConstant = false)
-       : this(name, declaredAccessModifier, isStatic, isNew, isReadOnly, isVolatile, isConstant)
+         : this(name, declaredAccessModifier, isStatic, isNew, isReadOnly, isVolatile, isConstant)
       {
          _returnType = returnType;
       }
 
-      private RDomField( string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      private RDomField(string name, AccessModifier declaredAccessModifier = AccessModifier.Private,
                      bool isStatic = false, bool isNew = false, bool isReadOnly = false,
                      bool isVolatile = false, bool isConstant = false)
-            : base()
+         : base()
       {
          _name = name;
          DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
@@ -98,13 +97,13 @@ namespace RoslynDom
 
       [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
       public RDomField(SyntaxNode rawItem, IDom parent, SemanticModel model)
-           : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       { }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
          "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomField(RDomField oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          _name = oldRDom.Name;
@@ -125,13 +124,16 @@ namespace RoslynDom
       { get { return _attributes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
          get { return _name; }
          set { SetProperty(ref _name, value); }
       }
+
       private IReferencedType _returnType;
+
       [Required]
       public IReferencedType ReturnType
       {
@@ -140,6 +142,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
@@ -147,6 +150,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
@@ -158,6 +162,7 @@ namespace RoslynDom
       }
 
       private bool _isStatic;
+
       public bool IsStatic
       {
          get { return _isStatic; }
@@ -165,6 +170,7 @@ namespace RoslynDom
       }
 
       private bool _isNew;
+
       public bool IsNew
       {
          get { return _isNew; }
@@ -172,6 +178,7 @@ namespace RoslynDom
       }
 
       private bool _isReadOnly;
+
       public bool IsReadOnly
       {
          get { return _isReadOnly; }
@@ -179,6 +186,7 @@ namespace RoslynDom
       }
 
       private bool _isVolatile;
+
       public bool IsVolatile
       {
          get { return _isVolatile; }
@@ -186,6 +194,7 @@ namespace RoslynDom
       }
 
       private bool _isConstant;
+
       public bool IsConstant
       {
          get { return _isConstant; }
@@ -193,6 +202,7 @@ namespace RoslynDom
       }
 
       private IExpression _initializer;
+
       public IExpression Initializer
       {
          get { return _initializer; }
@@ -200,6 +210,7 @@ namespace RoslynDom
       }
 
       private IStructuredDocumentation _structuredDocumentation;
+
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
@@ -207,6 +218,7 @@ namespace RoslynDom
       }
 
       private string _description;
+
       public string Description
       {
          get { return _description; }

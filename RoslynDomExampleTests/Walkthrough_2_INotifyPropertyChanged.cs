@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RoslynDom.Common;
-using RoslynDom.CSharp;
-using RoslynDom;
-using Microsoft.CodeAnalysis.Formatting;
-
-namespace RoslynDomExampleTests
+﻿namespace RoslynDomExampleTests
 {
    //[TestClass]
    //public class Walkthroughs_2_INotifyPropertyChanged
@@ -47,7 +34,6 @@ namespace RoslynDomExampleTests
    //      }
    //      return didAnythingChange;
    //   }
-
 
    //   private IEnumerable<Tuple<string, string>> GetFilePairs(string pattern,
    //            string inputDirectory, string outputDirectory, params string[] subDirectories)
@@ -248,7 +234,6 @@ namespace RoslynDomExampleTests
    //   //   if (propertyType.Name == "INamedTypeSymbol") return false;     // force an error
    //   //   return false;                                                  // force an error
    //   //}
-
 
    //   //#endregion
 

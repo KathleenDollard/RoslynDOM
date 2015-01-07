@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    public interface IHasAttributes : IDom
-    {
-        AttributeCollection Attributes { get; }
-    }
+   public interface IHasAttributes : IDom
+   {
+      AttributeCollection Attributes { get; }
+   }
 }

@@ -1,14 +1,12 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
 using System;
 using System.Linq;
 
 namespace RoslynDom
 {
    /// <summary>
-   /// 
+   ///
    /// </summary>
    /// <remarks>
    /// Currently no constructor for making regions out of thin air because I haven't worked out
@@ -17,16 +15,16 @@ namespace RoslynDom
    public class RDomDetailBlockEnd : RDomDetail<IDetailBlockEnd>, IDetailBlockEnd
    {
       public RDomDetailBlockEnd(IDom parent, SyntaxTrivia trivia, IDetailBlockStart blockStart)
-           : base(parent, StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia)
+         : base(parent, StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia)
       {
          _groupGuid = blockStart.GroupGuid;
       }
 
       internal RDomDetailBlockEnd(RDomDetailBlockEnd oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          // Group id is set with the parent because parent is needed to set
-         // The assumption is that copied groups must be immediately placed in a container to find each other. 
+         // The assumption is that copied groups must be immediately placed in a container to find each other.
          _oldGroupGuid = oldRDom.GroupGuid;
       }
 
@@ -47,9 +45,11 @@ namespace RoslynDom
       }
 
       private Guid _oldGroupGuid;
+
       internal Guid OldGroupGuid { get { return _oldGroupGuid; } }
 
       private Guid _groupGuid;
+
       public Guid GroupGuid { get { return _groupGuid; } }
 
       public IDetailBlockStart BlockStart
@@ -60,7 +60,7 @@ namespace RoslynDom
          var parentContainers = Ancestors.OfType<IContainer>();
          foreach (var container in parentContainers)
          {
-            // TODO: I'm pretty sure you just need predicate, not the extra lambda, but want to complete testing before I check. 
+            // TODO: I'm pretty sure you just need predicate, not the extra lambda, but want to complete testing before I check.
             var ret = container.GetMembers()
                       .OfType<IDetailBlockStart>()
                       .Where(x => predicate(x))

@@ -1,16 +1,13 @@
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using cm = System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System;
+using cm = System.ComponentModel;
 
 namespace RoslynDom
 {
-
    public class RDomReferencedType : RDomBase<IReferencedType, ISymbol>, IReferencedType
    {
-
       // ITypeParameter not used because these are arguments, not declarations
       private RDomCollection<IReferencedType> _typeArguments;
 
@@ -37,7 +34,7 @@ namespace RoslynDom
       /// </param>
       public RDomReferencedType(IDom parent, string name, bool displayAlias = false, bool isArray = false,
                                 params IReferencedType[] typeArgs)
-      : base(parent)
+         : base(parent)
       {
          Initialize();
          _name = StringUtilities.NameFromQualifiedName(name);
@@ -55,7 +52,7 @@ namespace RoslynDom
       /// <param name="model">The semantic model for the syntax node to avoid re-creation</param>
       [cm.EditorBrowsable(cm.EditorBrowsableState.Never)]
       public RDomReferencedType(SyntaxNode rawItem, IDom parent, SemanticModel model)
-            : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       {
          Initialize();
          var typeSymbol = Symbol as ITypeSymbol;
@@ -67,7 +64,7 @@ namespace RoslynDom
       }
 
       internal RDomReferencedType(RDomReferencedType oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
 
@@ -85,6 +82,7 @@ namespace RoslynDom
       }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -93,6 +91,7 @@ namespace RoslynDom
       }
 
       private string _metadataName;
+
       [Required]
       public string MetadataName
       {
@@ -101,6 +100,7 @@ namespace RoslynDom
       }
 
       private string _namespace;
+
       public string Namespace
       {
          get { return _namespace; }
@@ -108,6 +108,7 @@ namespace RoslynDom
       }
 
       private bool _displayAlias;
+
       public bool DisplayAlias
       {
          get { return _displayAlias; }
@@ -115,6 +116,7 @@ namespace RoslynDom
       }
 
       private bool _isArray;
+
       public bool IsArray
       {
          get { return _isArray; }
@@ -122,6 +124,7 @@ namespace RoslynDom
       }
 
       private INamedTypeSymbol _containingType;
+
       public INamedTypeSymbol ContainingType
       {
          get { return _containingType; }
@@ -147,6 +150,7 @@ namespace RoslynDom
 
       private IType _type;
       private bool _searchFailed;
+
       public IType Type
       {
          get
@@ -154,7 +158,7 @@ namespace RoslynDom
             // TODO: Reset searchFailed when load is complete or block access until load is complete
             if (!_searchFailed && _type == null)
             {
-              _type = GetTypeFromRoslynDom();
+               _type = GetTypeFromRoslynDom();
                if (_type == null)
                {
                   _type = GetTypeFromReferenced();

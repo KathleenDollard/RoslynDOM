@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    public interface IContainerCheck
-    {
-        bool ContainerCheck();
-    }
+   public interface IContainerCheck
+   {
+      bool ContainerCheck();
+   }
 }

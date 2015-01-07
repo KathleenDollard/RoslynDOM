@@ -1,9 +1,7 @@
 ﻿namespace RoslynDom.Common
 {
-    public interface ITypeMemberAndDetail : IDom
-    {
-        MemberKind MemberKind { get; }
-    }
-
-
+   public interface ITypeMemberAndDetail : IDom
+   {
+      MemberKind MemberKind { get; }
+   }
 }

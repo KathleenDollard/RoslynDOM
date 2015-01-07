@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
 
 namespace RoslynDom.CSharp
 {
@@ -12,6 +10,7 @@ namespace RoslynDom.CSharp
        where T : IDom
    {
       private RDomCorporation corporation;
+
       public RDomCorporation Corporation
       {
          get { return corporation; }
@@ -23,6 +22,7 @@ namespace RoslynDom.CSharp
       }
 
       private ICSharpBuildSyntaxWorker _buildSyntaxWorker;
+
       internal ICSharpBuildSyntaxWorker BuildSyntaxWorker
       {
          get
@@ -30,10 +30,10 @@ namespace RoslynDom.CSharp
             if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)Corporation.BuildSyntaxWorker; }
             return _buildSyntaxWorker;
          }
-
       }
 
       private ICSharpCreateFromWorker _createFromWorker;
+
       internal ICSharpCreateFromWorker CreateFromWorker
       {
          get
@@ -41,7 +41,6 @@ namespace RoslynDom.CSharp
             if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)Corporation.CreateFromWorker; }
             return _createFromWorker;
          }
-
       }
 
       //public override Type[] ExplicitNodeTypes
@@ -52,7 +51,7 @@ namespace RoslynDom.CSharp
          throw new NotImplementedException();
       }
 
-      public virtual IDom CreateFrom(SyntaxTrivia trivia, IDom parent,  OutputContext context)
+      public virtual IDom CreateFrom(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
          throw new NotImplementedException();
       }

@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
-   
    public class RDomStructureFactory
      : RDomBaseSyntaxNodeFactory<RDomStructure, StructDeclarationSyntax>
    {
       public RDomStructureFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       // until move to C# 6 - I want to support name of as soon as possible
@@ -69,7 +67,7 @@ namespace RoslynDom.CSharp
          var baseList = BuildSyntaxHelpers.GetBaseList(itemAsT);
          if (baseList != null) { node = node.WithBaseList(baseList); }
 
-         var attributes =BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
+         var attributes = BuildSyntaxWorker.BuildAttributeSyntax(itemAsT.Attributes);
          if (attributes.Any()) { node = node.WithAttributeLists(BuildSyntaxHelpers.WrapInAttributeList(attributes)); }
 
          var membersSyntax = itemAsT.Members

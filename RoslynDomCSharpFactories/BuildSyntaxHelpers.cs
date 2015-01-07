@@ -1,15 +1,13 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+//using Microsoft.CodeAnalysis.Formatting;
+using RoslynDom.Common;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-//using Microsoft.CodeAnalysis.Formatting;
-using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
@@ -143,7 +141,7 @@ namespace RoslynDom.CSharp
          var details = parentMembers
                             .PreviousSiblingsUntil(item, x => !(x is IDetail))
                             .OfType<IDetail>();
-     
+
          return BuildDetails(context, details);
       }
 
@@ -153,7 +151,7 @@ namespace RoslynDom.CSharp
          foreach (var detail in details)
          {
             if (detail is IVerticalWhitespace)
-            { trivias.Add(SyntaxFactory.EndOfLine("\r\n"));            }
+            { trivias.Add(SyntaxFactory.EndOfLine("\r\n")); }
             else
             {
                ITriviaFactory factory = GetFactory<IDetail>(context, detail);
@@ -184,6 +182,7 @@ namespace RoslynDom.CSharp
             case LiteralKind.String:
             case LiteralKind.Unknown:
                return SyntaxFactory.Literal(value.ToString());
+
             case LiteralKind.Numeric:
                if (GeneralUtilities.IsInteger(value))
                { return SyntaxFactory.Literal(Convert.ToInt32(value)); }
@@ -212,7 +211,6 @@ namespace RoslynDom.CSharp
          if (itemAsT == null) return new List<SyntaxTrivia>();
          var factory = context.Corporation.GetTriviaFactory<IStructuredDocumentation>();
          return factory.BuildSyntaxTrivia(itemAsT.StructuredDocumentation, context);
-
       }
 
       public static SyntaxTokenList SyntaxTokensForAccessModifier(AccessModifier accessModifier)
@@ -222,16 +220,22 @@ namespace RoslynDom.CSharp
          {
             case AccessModifier.None:
                return tokenList;
+
             case AccessModifier.Private:
                return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PrivateKeyword));
+
             case AccessModifier.ProtectedOrInternal:
                return tokenList.AddRange(new SyntaxToken[] { SyntaxFactory.Token(SyntaxKind.ProtectedKeyword), SyntaxFactory.Token(SyntaxKind.InternalKeyword) });
+
             case AccessModifier.Protected:
                return tokenList.Add(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword));
+
             case AccessModifier.Internal:
                return tokenList.Add(SyntaxFactory.Token(SyntaxKind.InternalKeyword));
+
             case AccessModifier.Public:
                return tokenList.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+
             default:
                throw new InvalidOperationException();
          }
@@ -405,6 +409,7 @@ namespace RoslynDom.CSharp
       {
          return triviaManager.AttachWhitespaceToFirstAndLast(syntaxNode, whitespace2);
       }
+
       internal static SyntaxToken AttachWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
       {
          return triviaManager.AttachWhitespaceToToken(token, whitespace2);

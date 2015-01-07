@@ -1,8 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomRoot : RDomBaseStemContainer<IRoot, ISymbol>, IRoot
@@ -14,8 +15,8 @@ namespace RoslynDom
       //: this(null, parent, null)
       //{
       //   _filePath = filePath;
-      //}   
-      
+      //}
+
       // This takes a parent because in the future there will be a rootGroup concept for multiple files
       public RDomRoot(IFactoryAccess factoryAccess, SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
@@ -46,18 +47,21 @@ namespace RoslynDom
       }
 
       private string _name;
+
       [Required]
       public string Name
       {
-         get {
-            return string.IsNullOrWhiteSpace(_name) 
-                     ? "<root>" 
-                     :_name ; 
+         get
+         {
+            return string.IsNullOrWhiteSpace(_name)
+                     ? "<root>"
+                     : _name;
          }
          set { SetProperty(ref _name, value); }
       }
 
       private string _filePath;
+
       public string FilePath
       {
          get { return _filePath; }

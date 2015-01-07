@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +12,7 @@ namespace RoslynDom.CSharp
       private TriviaManager triviaManager = new TriviaManager();
 
       public RDomForStatementFactory(RDomCorporation corporation)
-       : base(corporation)
+         : base(corporation)
       { }
 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -23,7 +21,7 @@ namespace RoslynDom.CSharp
          var newItem = base.CreateItemFrom(syntaxNode, parent, model) as RDomForStatement;
          newItem.TestAtEnd = false;
          var decl = syntax.Declaration.Variables.First();
-         var newVariable = OutputContext.Corporation.CreateSpecial< IVariableDeclaration>(syntax, newItem, model).FirstOrDefault();
+         var newVariable = OutputContext.Corporation.CreateSpecial<IVariableDeclaration>(syntax, newItem, model).FirstOrDefault();
          newItem.Variable = newVariable;
          newItem.Whitespace2Set.AddRange(newItem.Variable.Whitespace2Set
                                          .Select(x => new Whitespace2(LanguagePart.Variable, x.LanguageElement,
@@ -37,7 +35,6 @@ namespace RoslynDom.CSharp
                               incrementor.GetTrailingTrivia().ToString(),
                               ""));
          return newItem;
-
       }
 
       private void SetWhitespaceForSemiColon(ForStatementSyntax syntax, int semiColonNumber,

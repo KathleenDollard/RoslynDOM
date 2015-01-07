@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -18,7 +17,7 @@ namespace RoslynDom.CSharp
       //{ get { return base.SyntaxNodeTypes.Union(new[] { typeof(BaseTypeSyntax) }).ToArray(); } }
 
       public RDomReferencedTypeMiscFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       private static WhitespaceKindLookup whitespaceLookup
@@ -40,7 +39,7 @@ namespace RoslynDom.CSharp
       public override Type[] SupportedSyntaxNodeTypes
       { get { return new[] { typeof(NameSyntax), typeof(TypeSyntax), typeof(BaseTypeSyntax) }; } }
 
-     protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
+      protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var typeParameterSyntax = syntaxNode as TypeParameterSyntax;
          if (typeParameterSyntax != null) throw new NotImplementedException("Should have called TypeParameterFactory");
@@ -102,7 +101,7 @@ namespace RoslynDom.CSharp
                         LanguagePart.Current, LanguageElement.TypeParameterEndDelimiter);
          }
 
-         //// This is ugly, but there are so many uses for this class I had 
+         //// This is ugly, but there are so many uses for this class I had
          //// trouble with the generalized StoreWhitespace doubling some
          //// whitespace.
          //var openTypeParam = typeSyntax.ChildTokens()
@@ -237,7 +236,6 @@ namespace RoslynDom.CSharp
                //             (tArg == type.TypeArguments.Last()
                //               ? ""
                //               : ", ");
-
             }
             typeName += ">";
          }
@@ -272,25 +270,25 @@ namespace RoslynDom.CSharp
       {
          switch (typeName)
          {
-         case "Void":
-         case "System.Void": { return "void"; }
-         case "System.Object": { return "object"; }
-         case "System.String": { return "string"; }
-         case "System.Boolean": { return "bool"; }
-         case "System.Decimal": { return "decimal"; }
-         case "System.SByte": { return "sbyte"; }
-         case "System.Byte": { return "byte"; }
-         case "System.Int16": { return "short"; }
-         case "System.UInt16": { return "ushort"; }
-         case "System.Int32": { return "int"; }
-         case "System.UInt32": { return "uint"; }
-         case "System.Int64": { return "long"; }
-         case "System.UInt64": { return "ulong"; }
-         case "System.Char": { return "char"; }
-         case "System.Single": { return "float"; }
-         case "System.Double": { return "double"; }
-         default:
-            return null;
+            case "Void":
+            case "System.Void": { return "void"; }
+            case "System.Object": { return "object"; }
+            case "System.String": { return "string"; }
+            case "System.Boolean": { return "bool"; }
+            case "System.Decimal": { return "decimal"; }
+            case "System.SByte": { return "sbyte"; }
+            case "System.Byte": { return "byte"; }
+            case "System.Int16": { return "short"; }
+            case "System.UInt16": { return "ushort"; }
+            case "System.Int32": { return "int"; }
+            case "System.UInt32": { return "uint"; }
+            case "System.Int64": { return "long"; }
+            case "System.UInt64": { return "ulong"; }
+            case "System.Char": { return "char"; }
+            case "System.Single": { return "float"; }
+            case "System.Double": { return "double"; }
+            default:
+               return null;
          }
       }
 

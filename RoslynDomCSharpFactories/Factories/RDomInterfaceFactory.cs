@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
-using System.Linq;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -13,7 +12,7 @@ namespace RoslynDom.CSharp
      : RDomBaseSyntaxNodeFactory<RDomInterface, InterfaceDeclarationSyntax>
    {
       public RDomInterfaceTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       [ExcludeFromCodeCoverage]

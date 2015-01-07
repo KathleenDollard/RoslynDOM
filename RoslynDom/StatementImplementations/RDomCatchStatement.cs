@@ -1,16 +1,16 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom
 {
    public class RDomCatchStatement : RDomStatementBlockBase<ICatchStatement>, ICatchStatement
    {
       // TODO: Fix ambiguous overloads
-      public RDomCatchStatement( string exceptionTypeName = null, IVariableDeclaration variable = null,
+      public RDomCatchStatement(string exceptionTypeName = null, IVariableDeclaration variable = null,
                     IExpression condition = null)
-            : this(                            variable,condition )
+         : this(variable, condition)
       {
          if (!string.IsNullOrWhiteSpace(exceptionTypeName))
          {
@@ -18,14 +18,14 @@ namespace RoslynDom
          }
       }
 
-      public RDomCatchStatement( IReferencedType exceptionType = null, IVariableDeclaration variable = null,  
-                  IExpression  condition = null)
-            : this(variable, condition)
+      public RDomCatchStatement(IReferencedType exceptionType = null, IVariableDeclaration variable = null,
+                  IExpression condition = null)
+         : this(variable, condition)
       {
          _exceptionType = exceptionType;
       }
 
-      private RDomCatchStatement(  IVariableDeclaration variable = null,
+      private RDomCatchStatement(IVariableDeclaration variable = null,
                  IExpression condition = null)
          : this((SyntaxNode)null, null, null)
       {
@@ -40,7 +40,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomCatchStatement(RDomCatchStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          if (oldRDom.Condition != null)
          { _condition = oldRDom.Condition.Copy(); }
@@ -67,6 +67,7 @@ namespace RoslynDom
       }
 
       private IExpression _condition;
+
       public IExpression Condition
       {
          get { return _condition; }
@@ -74,6 +75,7 @@ namespace RoslynDom
       }
 
       private IVariableDeclaration _variable;
+
       public IVariableDeclaration Variable
       {
          get { return _variable; }
@@ -81,6 +83,7 @@ namespace RoslynDom
       }
 
       private IReferencedType _exceptionType;
+
       public IReferencedType ExceptionType
       {
          get { return _exceptionType; }

@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 
 namespace RoslynDom.Common
 {
@@ -13,7 +11,9 @@ namespace RoslynDom.Common
    {
       private static Guardian _inform;
 
-      private Guardian() { }
+      private Guardian()
+      {
+      }
 
       public static Guardian Assert
       {
@@ -24,7 +24,6 @@ namespace RoslynDom.Common
             return _inform;
          }
       }
-
 
       public void IsTrue(bool test,
           [CallerMemberName] string callerName = "",
@@ -89,14 +88,11 @@ namespace RoslynDom.Common
 
       internal void DuplicateFactories(string syntaxNodeName, string ignoredFactoryName)
       {
-         Console.WriteLine(string.Format("Duplicate factories {0} : {1}", syntaxNodeName, ignoredFactoryName ));
+         Console.WriteLine(string.Format("Duplicate factories {0} : {1}", syntaxNodeName, ignoredFactoryName));
       }
 
-
-
-
       /// <summary>
-      /// Call to inform of an unexpected null. 
+      /// Call to inform of an unexpected null.
       /// </summary>
       /// <param name="value">Value to check for null</param>
       /// <param name="name">Name of value where practical, generally retrieved via new nameof operator which has a noop implementation in most locations</param>

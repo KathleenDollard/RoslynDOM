@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -10,7 +10,7 @@ namespace RoslynDom
       private RDomCollection<ICatchStatement> _catches;
 
       public RDomTryStatement(IFinallyStatement finallyStatement = null)
-            : base()
+         : base()
       {
          Initialize();
          _finally = finallyStatement;
@@ -23,7 +23,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomTryStatement(RDomTryStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _catches = oldRDom.CatchesAll.Copy(this);
          _finally = oldRDom.Finally.Copy();
@@ -53,6 +53,7 @@ namespace RoslynDom
       { get { return _catches; } }
 
       private IFinallyStatement _finally;
+
       public IFinallyStatement Finally
       {
          get { return _finally; }

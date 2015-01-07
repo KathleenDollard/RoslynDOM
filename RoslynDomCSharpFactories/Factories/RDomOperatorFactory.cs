@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +13,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomOperatorTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -25,19 +24,20 @@ namespace RoslynDom.CSharp
             {
                _whitespaceLookup = new WhitespaceKindLookup();
                _whitespaceLookup.Add(LanguageElement.Identifier, SyntaxKind.IdentifierToken);
-               _whitespaceLookup.Add(LanguageElement.OperatorKeyword, SyntaxKind.OperatorKeyword );
+               _whitespaceLookup.Add(LanguageElement.OperatorKeyword, SyntaxKind.OperatorKeyword);
                _whitespaceLookup.Add(LanguageElement.StatementBlockStartDelimiter, SyntaxKind.OpenBraceToken);
                _whitespaceLookup.Add(LanguageElement.StatementBlockEndDelimiter, SyntaxKind.CloseBraceToken);
                _whitespaceLookup.Add(LanguageElement.ParameterStartDelimiter, SyntaxKind.OpenParenToken);
                _whitespaceLookup.Add(LanguageElement.ParameterEndDelimiter, SyntaxKind.CloseParenToken);
                _whitespaceLookup.AddRange(WhitespaceKindLookup.AccessModifiers);
                _whitespaceLookup.AddRange(WhitespaceKindLookup.StaticModifiers);
-               _whitespaceLookup.AddRange(WhitespaceKindLookup.OverloadableOperators );
+               _whitespaceLookup.AddRange(WhitespaceKindLookup.OverloadableOperators);
                _whitespaceLookup.AddRange(WhitespaceKindLookup.Eol);
             }
             return _whitespaceLookup;
          }
       }
+
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as OperatorDeclarationSyntax;
@@ -96,8 +96,5 @@ namespace RoslynDom.CSharp
 
          return node.PrepareForBuildSyntaxOutput(item, OutputContext);
       }
-
    }
-
-
 }

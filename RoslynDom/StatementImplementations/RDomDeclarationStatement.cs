@@ -5,21 +5,20 @@ namespace RoslynDom
 {
    public class RDomDeclarationStatement : RDomBaseVariable, IDeclarationStatement
    {
-      public RDomDeclarationStatement( string name, string typeName, IExpression initializer = null,
+      public RDomDeclarationStatement(string name, string typeName, IExpression initializer = null,
                bool isImplicitlyTyped = false, bool isAliased = false, bool isConst = false, VariableKind variableKind = VariableKind.Local)
-            : base(name, typeName, initializer, isImplicitlyTyped, isAliased,  variableKind)
+         : base(name, typeName, initializer, isImplicitlyTyped, isAliased, variableKind)
       {
          _isConst = IsConst;
       }
 
-      public RDomDeclarationStatement( string name, IReferencedType type, IExpression initializer = null,
+      public RDomDeclarationStatement(string name, IReferencedType type, IExpression initializer = null,
               bool isImplicitlyTyped = false, bool isAliased = false, bool isConst = false, VariableKind variableKind = VariableKind.Local)
-           : base(name, type, initializer, isImplicitlyTyped, isAliased, variableKind)
+         : base(name, type, initializer, isImplicitlyTyped, isAliased, variableKind)
       {
          _isConst = IsConst;
       }
 
-    
       public RDomDeclarationStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
          : base(rawItem, parent, model)
       { }
@@ -27,12 +26,13 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomDeclarationStatement(RDomDeclarationStatement oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          _isConst = oldRDom.IsConst;
       }
 
       private bool _isConst;
+
       public bool IsConst
       {
          get { return _isConst; }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RoslynDom.Common;
 
 namespace RoslynDom.Common
 {
@@ -18,7 +15,6 @@ namespace RoslynDom.Common
 
       private class Checker
       {
-
          internal bool Check<T>(T one, T other)
                   where T : class, IDom
          {
@@ -273,13 +269,12 @@ namespace RoslynDom.Common
                 && Check(x.Initializer, y.Initializer)))
                return false;
             return true;
-
          }
 
          private bool Check<T, TCheck>(T one, T other,
              Func<TCheck, TCheck, bool> check)
-             where TCheck : class, IDom
-             where T : class, IDom
+            where TCheck : class, IDom
+            where T : class, IDom
          {
             if (one == null && other == null) return true;
             if (one == null && other != null) return false;
@@ -303,6 +298,7 @@ namespace RoslynDom.Common
 
             return one.Equals(other);
          }
+
          private bool CheckChildrenInOrder<T>(IEnumerable<T> oneList, IEnumerable<T> otherList)
                      where T : class, IDom
          {
@@ -312,7 +308,6 @@ namespace RoslynDom.Common
             for (int i = 0; i < oneArray.Length; i++)
             {
                if (!Check(oneArray[i], otherArray[i])) return false;
-
             }
             return true;
          }
@@ -333,7 +328,6 @@ namespace RoslynDom.Common
             }
             return true;
          }
-
       }
    }
 }

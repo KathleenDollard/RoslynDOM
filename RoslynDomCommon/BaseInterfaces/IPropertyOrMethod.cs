@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
    public interface IPropertyOrMethod :
        IHasReturnType,

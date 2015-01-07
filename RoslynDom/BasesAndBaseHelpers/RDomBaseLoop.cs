@@ -1,8 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 namespace RoslynDom
 {
    public abstract class RDomBaseLoop<T>
@@ -11,8 +12,8 @@ namespace RoslynDom
    {
       private RDomCollection<IStatementAndDetail> _statements;
 
-      protected RDomBaseLoop( IExpression condition, bool testAtEnd, bool hasBlock)
-          : base()
+      protected RDomBaseLoop(IExpression condition, bool testAtEnd, bool hasBlock)
+         : base()
       {
          Initialize();
          _condition = condition;
@@ -27,7 +28,7 @@ namespace RoslynDom
       }
 
       internal RDomBaseLoop(T oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          _statements = oldRDom.StatementsAll.Copy(this);
@@ -53,6 +54,7 @@ namespace RoslynDom
       }
 
       private IExpression _condition;
+
       [Required]
       public IExpression Condition
       {
@@ -61,6 +63,7 @@ namespace RoslynDom
       }
 
       private bool _testAtEnd;
+
       public bool TestAtEnd
       {
          get { return _testAtEnd; }
@@ -68,6 +71,7 @@ namespace RoslynDom
       }
 
       private bool _hasBlock;
+
       public bool HasBlock
       {
          get { return _hasBlock; }

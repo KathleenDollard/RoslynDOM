@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-   public interface  IOtherExpression : IExpression 
+   public interface IOtherExpression : IExpression
    {
    }
 }

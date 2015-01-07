@@ -1,28 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
    public abstract class RDomBaseLoopStatementFactory<T, TSyntax>
         : RDomBaseSyntaxNodeFactory<T, TSyntax>
-       where T : class, IDom, ILoop
-       where TSyntax : SyntaxNode
+      where T : class, IDom, ILoop
+      where TSyntax : SyntaxNode
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomBaseLoopStatementFactory(RDomCorporation corporation)
-       : base(corporation)
+         : base(corporation)
       { }
+
       protected abstract TSyntax MakeSyntax(T itemAsT, ExpressionSyntax condition, StatementSyntax statementBlock);
+
       protected abstract T MakeNewItem(TSyntax syntaxNode, IDom parent, SemanticModel model);
+
       protected abstract ExpressionSyntax GetConditionFromSyntax(TSyntax syntaxNode);
+
       protected abstract StatementSyntax GetStatementFromSyntax(TSyntax syntax);
 
       protected WhitespaceKindLookup WhitespaceLookup
@@ -56,7 +57,7 @@ namespace RoslynDom.CSharp
          var condition = GetConditionFromSyntax(syntax);
          var statement = GetStatementFromSyntax(syntax);
 
-         var conditionObj = OutputContext.Corporation.CreateSpecial<IExpression>(condition, newItem, model).FirstOrDefault() ;
+         var conditionObj = OutputContext.Corporation.CreateSpecial<IExpression>(condition, newItem, model).FirstOrDefault();
          newItem.Condition = conditionObj as IExpression;
          CreateFromWorker.InitializeStatements(newItem, statement, newItem, model);
 
@@ -70,14 +71,13 @@ namespace RoslynDom.CSharp
          return newItem;
       }
 
-
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as T;
          SyntaxNode node;
          if (itemAsT.Condition == null)
          // TODO: Isn't condition null in a ForEach?
-         { node = SyntaxFactory.EmptyStatement(); }// This shold not happen 
+         { node = SyntaxFactory.EmptyStatement(); }// This shold not happen
          else
          {
             var statement = RoslynCSharpUtilities.BuildStatement(itemAsT.Statements, itemAsT, WhitespaceLookup);
@@ -97,6 +97,5 @@ namespace RoslynDom.CSharp
       {
          return node;
       }
-
    }
 }

@@ -1,7 +1,7 @@
 ﻿namespace RoslynDom.Common
 {
    public interface IHasName : IDom
-    {
-        string Name { get; set; }
-    }
+   {
+      string Name { get; set; }
+   }
 }

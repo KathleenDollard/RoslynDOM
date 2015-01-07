@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
    // Factories are specific to the type, FactoryHelpers are specific to the level (StemMember, TypeMember, Statement, Expression)
    public abstract class RDomBaseSyntaxNodeFactory<T, TSyntax> : RDomBaseFactory<T>, IRDomFactory
-       where TSyntax : SyntaxNode
-       where T : IDom
+      where TSyntax : SyntaxNode
+      where T : IDom
    {
       public abstract IEnumerable<SyntaxNode> BuildSyntax(IDom item);
 
@@ -22,6 +21,7 @@ namespace RoslynDom.CSharp
       public OutputContext OutputContext { get; private set; }
 
       private ICSharpBuildSyntaxWorker _buildSyntaxWorker;
+
       internal ICSharpBuildSyntaxWorker BuildSyntaxWorker
       {
          get
@@ -29,10 +29,10 @@ namespace RoslynDom.CSharp
             if (_buildSyntaxWorker == null) { _buildSyntaxWorker = (ICSharpBuildSyntaxWorker)OutputContext.Corporation.BuildSyntaxWorker; }
             return _buildSyntaxWorker;
          }
-
       }
 
       private ICSharpCreateFromWorker _createFromWorker;
+
       internal ICSharpCreateFromWorker CreateFromWorker
       {
          get
@@ -40,14 +40,13 @@ namespace RoslynDom.CSharp
             if (_createFromWorker == null) { _createFromWorker = (ICSharpCreateFromWorker)OutputContext.Corporation.CreateFromWorker; }
             return _createFromWorker;
          }
-
       }
 
       public virtual Type[] SupportedSyntaxNodeTypes
       { get { return new Type[] { typeof(TSyntax) }; } }
 
       public virtual Type[] SpecialExplicitDomTypes
-      { get { return new Type[] {  }; } }
+      { get { return new Type[] { }; } }
 
       public virtual bool CanCreate(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       { return true; }
@@ -57,21 +56,21 @@ namespace RoslynDom.CSharp
 
       /// <summary>
       /// This is the key method for creating new RoslynDom elements. You can create new factories
-      /// by overriding the CreateListFrom or CreateItemFrom methods depending on whether you are 
-      /// creating a list or single element respectively 
+      /// by overriding the CreateListFrom or CreateItemFrom methods depending on whether you are
+      /// creating a list or single element respectively
       /// </summary>
       /// <param name="syntaxNode"></param>
       /// <param name="parent"></param>
       /// <param name="model"></param>
       /// <returns></returns>
       /// <remarks>
-      /// Lists are created when multiple items are declared on a line. This allows simple access to 
-      /// variables and fields in the predominate case with only one variable per line. Currently this is not 
+      /// Lists are created when multiple items are declared on a line. This allows simple access to
+      /// variables and fields in the predominate case with only one variable per line. Currently this is not
       /// recreated on output but the design intent was to have variable groups with arbitrarily defined
       /// IDs and probably a position in the list. These two properties would be added to Field and Declaration
       /// RDom items, and possibly interfaces. This would be sufficient for recreation of lists
       /// <para/>
-      /// Use CanCreate and Priority to control how your factory is selected. Highest priority wins and 
+      /// Use CanCreate and Priority to control how your factory is selected. Highest priority wins and
       /// you can add to the enum values (as in Normal + 1)
       /// </remarks>
       public IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, bool skipWhitespace)
@@ -117,7 +116,7 @@ namespace RoslynDom.CSharp
 
       protected virtual IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
-         // This can't be tested, but making it abstract means we have untestable code in seven derived classes. 
+         // This can't be tested, but making it abstract means we have untestable code in seven derived classes.
          Guardian.Assert.NeitherCreateFromNorListOverridden(this.GetType(), syntaxNode);
          return null;
       }

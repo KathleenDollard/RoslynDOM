@@ -1,9 +1,6 @@
-﻿using RoslynDom.Common;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    public interface IEmptyStatement : IStatement, IDom<IEmptyStatement>
-    {
-
-    }
+   public interface IEmptyStatement : IStatement, IDom<IEmptyStatement>
+   {
+   }
 }

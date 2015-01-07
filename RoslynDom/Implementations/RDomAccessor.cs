@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.Linq;
-using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomPropertyAccessor : RDomBase<IAccessor, ISymbol>, IAccessor
@@ -12,18 +12,18 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
       private AccessorType _accessorType;
 
-      public RDomPropertyAccessor(IDom parent,  AccessorType accessorType, AccessModifier declaredAccessModifier = AccessModifier.Private)
-      : this (parent, null, accessorType, declaredAccessModifier )
-      {}
+      public RDomPropertyAccessor(IDom parent, AccessorType accessorType, AccessModifier declaredAccessModifier = AccessModifier.Private)
+         : this(parent, null, accessorType, declaredAccessModifier)
+      { }
 
-      public RDomPropertyAccessor(IDom parent, string name, AccessorType accessorType, AccessModifier declaredAccessModifier = AccessModifier.Private )
-      : base(parent)
+      public RDomPropertyAccessor(IDom parent, string name, AccessorType accessorType, AccessModifier declaredAccessModifier = AccessModifier.Private)
+         : base(parent)
       {
          Initialize();
          _name = name;
          DeclaredAccessModifier = declaredAccessModifier; // Must use the setter here!
          _accessorType = accessorType;
-         NeedsFormatting  = true;
+         NeedsFormatting = true;
       }
 
       public RDomPropertyAccessor(SyntaxNode rawItem, AccessorType accessorType, IDom parent, SemanticModel model)
@@ -36,7 +36,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomPropertyAccessor(RDomPropertyAccessor oldRDom)
-              : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
@@ -80,6 +80,7 @@ namespace RoslynDom
       { get { return _attributes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -88,6 +89,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
@@ -95,6 +97,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
@@ -115,6 +118,7 @@ namespace RoslynDom
       { get { return _accessorType; } }
 
       private bool _hasBlock;
+
       public bool HasBlock
       {
          get { return true; return _hasBlock; }

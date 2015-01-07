@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using System.Linq;
-using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomBlockStatement : RDomBase<IBlockStatement, ISymbol>, IBlockStatement
@@ -10,7 +10,7 @@ namespace RoslynDom
       private RDomCollection<IStatementAndDetail> _statements;
 
       public RDomBlockStatement()
-            : base()
+         : base()
       {
          Initialize();
       }
@@ -22,7 +22,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomBlockStatement(RDomBlockStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _statements = oldRDom.Statements.Copy(this);
       }

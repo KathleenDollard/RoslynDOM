@@ -1,14 +1,13 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RoslynDom
 {
    /// <summary>
-   /// 
+   ///
    /// </summary>
    /// <remarks>
    /// Currently no constructor for making regions out of thin air because I haven't worked out
@@ -19,16 +18,15 @@ namespace RoslynDom
    /// </remarks>
    public class RDomDetailBlockStart : RDomDetail<IDetailBlockStart>, IDetailBlockStart
    {
-
       public RDomDetailBlockStart(IDom parent, SyntaxTrivia trivia, string text)
-          : base(parent, StemMemberKind.RegionStart, MemberKind.RegionStart, trivia)
+         : base(parent, StemMemberKind.RegionStart, MemberKind.RegionStart, trivia)
       {
          _text = text;
          _groupGuid = Guid.NewGuid();
       }
 
       internal RDomDetailBlockStart(RDomDetailBlockStart oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _text = oldRDom.Text;
          // Assume we are in the midst of a copy and that both ends will be copied
@@ -75,9 +73,11 @@ namespace RoslynDom
       }
 
       private Guid _groupGuid;
+
       public Guid GroupGuid { get { return _groupGuid; } }
 
       private Guid _oldGroupGuid;
+
       internal Guid OldGroupGuid
       {
          get { return _oldGroupGuid; }
@@ -89,6 +89,7 @@ namespace RoslynDom
       }
 
       private string _text;
+
       public string Text
       {
          get { return _text; }

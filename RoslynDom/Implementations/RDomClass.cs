@@ -1,31 +1,31 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace RoslynDom
 {
    /// <summary></summary>
    /// <remarks></remarks>
    public class RDomClass : RDomBaseType<IClass>, IClass
    {
-      public RDomClass(  string metadataName, string baseTypeName = null,AccessModifier declaredAccessModifier = AccessModifier.Private, 
+      public RDomClass(string metadataName, string baseTypeName = null, AccessModifier declaredAccessModifier = AccessModifier.Private,
                    bool isAbstract = false, bool isSealed = false, bool isStatic = false, bool isPartial = false)
-      : this(  metadataName, declaredAccessModifier, isAbstract, isSealed, isStatic, isPartial)
+         : this(metadataName, declaredAccessModifier, isAbstract, isSealed, isStatic, isPartial)
       {
          _baseType = new RDomReferencedType(this, baseTypeName);
       }
 
-      public RDomClass(  string metadataName, IReferencedType baseType, AccessModifier declaredAccessModifier = AccessModifier.Private,
+      public RDomClass(string metadataName, IReferencedType baseType, AccessModifier declaredAccessModifier = AccessModifier.Private,
                    bool isAbstract = false, bool isSealed = false, bool isStatic = false, bool isPartial = false)
-      : this(  metadataName, declaredAccessModifier, isAbstract, isSealed, isStatic, isPartial )
+         : this(metadataName, declaredAccessModifier, isAbstract, isSealed, isStatic, isPartial)
       {
          _baseType = baseType;
       }
 
-      private RDomClass(  string metadataName,  AccessModifier declaredAccessModifier = AccessModifier.Private,
+      private RDomClass(string metadataName, AccessModifier declaredAccessModifier = AccessModifier.Private,
                     bool isAbstract = false, bool isSealed = false, bool isStatic = false, bool isPartial = false)
-       : base(  metadataName, declaredAccessModifier, MemberKind.Class, StemMemberKind.Class)
+         : base(metadataName, declaredAccessModifier, MemberKind.Class, StemMemberKind.Class)
       {
          _isAbstract = isAbstract;
          _isSealed = isSealed;
@@ -34,7 +34,7 @@ namespace RoslynDom
       }
 
       public RDomClass(SyntaxNode rawItem, IDom parent, SemanticModel model)
-        : base(rawItem, parent, model, MemberKind.Class, StemMemberKind.Class)
+         : base(rawItem, parent, model, MemberKind.Class, StemMemberKind.Class)
       { }
 
       internal RDomClass(RDomClass oldRDom)
@@ -75,6 +75,7 @@ namespace RoslynDom
       { get { return Members.OfType<IEnum>().ToList(); } }
 
       private IReferencedType _baseType;
+
       public IReferencedType BaseType
       {
          get { return _baseType; }
@@ -82,6 +83,7 @@ namespace RoslynDom
       }
 
       private bool _isAbstract;
+
       public bool IsAbstract
       {
          get { return _isAbstract; }
@@ -89,6 +91,7 @@ namespace RoslynDom
       }
 
       private bool _isSealed;
+
       public bool IsSealed
       {
          get { return _isSealed; }
@@ -96,6 +99,7 @@ namespace RoslynDom
       }
 
       private bool _isStatic;
+
       public bool IsStatic
       {
          get { return _isStatic; }
@@ -103,6 +107,7 @@ namespace RoslynDom
       }
 
       private bool _isPartial;
+
       public bool IsPartial
       {
          get { return _isPartial; }

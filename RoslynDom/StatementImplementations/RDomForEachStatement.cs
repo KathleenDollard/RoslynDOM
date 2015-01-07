@@ -1,14 +1,13 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+
 namespace RoslynDom
 {
    public class RDomForEachStatement : RDomBaseLoop<IForEachStatement>, IForEachStatement
    {
-      public RDomForEachStatement( IVariableDeclaration variable, IExpression condition, bool hasBlock = false)
-          : base( condition, false, hasBlock)
+      public RDomForEachStatement(IVariableDeclaration variable, IExpression condition, bool hasBlock = false)
+         : base(condition, false, hasBlock)
       {
          Initialize();
          _variable = variable;
@@ -21,7 +20,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomForEachStatement(RDomForEachStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       { Variable = oldRDom.Variable; }
 
       public override IEnumerable<IDom> Children
@@ -36,6 +35,7 @@ namespace RoslynDom
       }
 
       private IVariableDeclaration _variable;
+
       public IVariableDeclaration Variable
       {
          get { return _variable; }

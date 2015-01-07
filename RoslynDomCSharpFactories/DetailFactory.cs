@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -16,24 +13,24 @@ namespace RoslynDom.CSharp
    /// </summary>
    /// <remarks>
    /// There are two kinds of trivia - attached and member. The concept of trivia in C#/VB is
-   /// quite different than the human understanding. 
+   /// quite different than the human understanding.
    /// <para/>
-   /// Structured documentation and of end of line comments should both be attached to 
+   /// Structured documentation and of end of line comments should both be attached to
    /// other IDom elements, but to the full item (the class, not the first keyword for example).
-   /// <para/> 
-   /// Vertical whitespace, comments, and 
-   /// public annotations (comments with structure intended for compilers) and directives
-   /// all float - they are not inherently related to other IDom items. 
    /// <para/>
-   /// Floating annotations further belong in three groups 
+   /// Vertical whitespace, comments, and
+   /// public annotations (comments with structure intended for compilers) and directives
+   /// all float - they are not inherently related to other IDom items.
+   /// <para/>
+   /// Floating annotations further belong in three groups
    /// <list type="">
    /// <item>vertical whitespace is only a number of lines</item>
    /// <item>comments and public annotations which provide data at a specific spot</item>
    /// <item>blocks, like regions, that contain information and a corresponding block of items</item>
    /// <item>conditions, like #if/#elif that involve multiple blocks</item>
    /// </list>
-   /// It is fundamenatal to the RoslynDom design that it doesn't matter whether something is defined 
-   /// in the normal C# way or a special way - blocks could be reigons, or they could be defined with 
+   /// It is fundamenatal to the RoslynDom design that it doesn't matter whether something is defined
+   /// in the normal C# way or a special way - blocks could be reigons, or they could be defined with
    /// special public start/stop annotations
    /// <para/>
    /// Horizontal whitespace attaches to elements, so is handled differently
@@ -42,6 +39,7 @@ namespace RoslynDom.CSharp
    {
       // TODO: Consider IOC for trivia manager and PublicAnnotationMatch
       private TriviaManager triviaManager = new TriviaManager();
+
       //private IPublicAnnotationFactory _publicAnnotationFactory;
 
       private static WhitespaceKindLookup _whitespaceLookup;
@@ -72,7 +70,7 @@ namespace RoslynDom.CSharp
          var structure = trivia.GetStructure();
          var regionSyntax = structure as RegionDirectiveTriviaSyntax;
          var text = regionSyntax.EndOfDirectiveToken.ToFullString().Replace("\r\n", "");
-         var newItem = new RDomDetailBlockStart(parent,trivia, text);
+         var newItem = new RDomDetailBlockStart(parent, trivia, text);
          if (trivia.Token.LeadingTrivia.Any())
          { newItem.Whitespace2Set.Add(GetWhitespace(trivia.Token.LeadingTrivia.First())); }
          return newItem;
@@ -122,7 +120,7 @@ namespace RoslynDom.CSharp
          var commentText = trivia.ToString();
          var tuple = context.Corporation.CreateFromWorker.ExtractComment(trivia.ToString());
          var commentString = tuple.Item2;
-         var newComment = new RDomComment(parent,trivia, tuple.Item2, isMultiline);
+         var newComment = new RDomComment(parent, trivia, tuple.Item2, isMultiline);
          triviaManager.StoreWhitespaceForComment(newComment, precedingTrivia, tuple.Item1, tuple.Item3);
          return newComment;
       }
@@ -182,7 +180,7 @@ namespace RoslynDom.CSharp
                      .NormalizeWhitespace();
             var whitespace = itemAsStartBlock.Whitespace2Set[LanguagePart.Parent, LanguageElement.Detail];
             if (whitespace != null)
-               { ret.AddRange(SyntaxFactory.ParseLeadingTrivia(whitespace.LeadingWhitespace)); }
+            { ret.AddRange(SyntaxFactory.ParseLeadingTrivia(whitespace.LeadingWhitespace)); }
             ret.Add(SyntaxFactory.Trivia(directive));
             //ret.Add(SyntaxFactory.EndOfLine("\r\n"));
             return ret;
@@ -214,6 +212,5 @@ namespace RoslynDom.CSharp
          ret.Add(SyntaxFactory.EndOfLine("\r\n"));
          return ret;
       }
-
    }
 }

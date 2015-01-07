@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    public interface IRootGroup : IDom<IRootGroup>
-    {
-        RDomCollection <IRoot> Roots { get; }
-        bool HasSyntaxErrors { get; }
-    }
+   public interface IRootGroup : IDom<IRootGroup>
+   {
+      RDomCollection<IRoot> Roots { get; }
+
+      bool HasSyntaxErrors { get; }
+   }
 }

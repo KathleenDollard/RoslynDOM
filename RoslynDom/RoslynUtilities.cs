@@ -1,11 +1,10 @@
-﻿using System;
-using RoslynDom.Common;
+﻿using RoslynDom.Common;
+using System;
 
 namespace RoslynDom
 {
    public static class RoslynUtilities
    {
-
       public static string GetOuterName(IDom item)
       {
          var name = "";
@@ -17,7 +16,7 @@ namespace RoslynDom
          do
          {
             // null is legal here because objects may be unattached
-            if (parent == null || parent is IRoot) 
+            if (parent == null || parent is IRoot)
             {
                // at top of what we care about
                break;
@@ -45,7 +44,7 @@ namespace RoslynDom
          do
          {
             // null is legal here because objects may be unattached
-            if (parent == null || parent is IRoot) 
+            if (parent == null || parent is IRoot)
             {
                // at top of what we care about
                break;
@@ -61,7 +60,5 @@ namespace RoslynDom
          } while (parent != null);
          return name;
       }
-
- 
    }
 }

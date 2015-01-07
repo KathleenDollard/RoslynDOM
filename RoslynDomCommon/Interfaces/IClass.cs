@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace RoslynDom.Common
 {
    public interface IClass :
@@ -11,12 +9,13 @@ namespace RoslynDom.Common
        ICanBeStatic
    {
       bool IsAbstract { get; set; }
+
       bool IsSealed { get; set; }
+
       bool IsPartial { get; set; }
 
       IReferencedType BaseType { get; set; }
 
       IDestructor Destructor { get; }
-
    }
 }

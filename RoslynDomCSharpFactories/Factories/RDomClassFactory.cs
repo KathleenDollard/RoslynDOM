@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -13,7 +12,7 @@ namespace RoslynDom.CSharp
     : RDomBaseSyntaxNodeFactory<RDomClass, ClassDeclarationSyntax>
    {
       public RDomClassTypeMemberFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       // until move to C# 6 - I want to support name of as soon as possible
@@ -59,7 +58,7 @@ namespace RoslynDom.CSharp
          newItem.IsAbstract = newItem.Symbol.IsAbstract;
          newItem.IsSealed = newItem.Symbol.IsSealed;
          newItem.IsStatic = newItem.Symbol.IsStatic;
-         newItem.IsPartial = syntax.Modifiers.Contains(SyntaxFactory.Token(SyntaxKind.PartialKeyword ));
+         newItem.IsPartial = syntax.Modifiers.Contains(SyntaxFactory.Token(SyntaxKind.PartialKeyword));
 
          return new IDom[] { newItem };
       }
@@ -72,7 +71,7 @@ namespace RoslynDom.CSharp
          var modifiers = item.BuildModfierSyntax();
          if (itemAsT.IsAbstract) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.AbstractKeyword)); }
          if (itemAsT.IsSealed) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.SealedKeyword)); }
-         if (itemAsT.IsPartial) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.PartialKeyword )); }
+         if (itemAsT.IsPartial) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.PartialKeyword)); }
          var identifier = SyntaxFactory.Identifier(itemAsT.Name);
 
          var node = SyntaxFactory.ClassDeclaration(identifier)

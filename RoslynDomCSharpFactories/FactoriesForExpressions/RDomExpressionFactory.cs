@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +12,7 @@ namespace RoslynDom.CSharp
                 : RDomBaseSyntaxNodeFactory<RDomBaseExpression, ExpressionSyntax>
    {
       public RDomExpressionFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       public override RDomPriority Priority
@@ -42,7 +40,7 @@ namespace RoslynDom.CSharp
          }
       }
 
-       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
+      public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IExpression;
          if (itemAsT.InitialExpressionLanguage != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }

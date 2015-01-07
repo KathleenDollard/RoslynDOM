@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
-
    public class RDomNamespaceStemMemberFactory
           : RDomBaseSyntaxNodeFactory<RDomNamespace, NamespaceDeclarationSyntax>
    {
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomNamespaceStemMemberFactory(RDomCorporation corporation)
-       : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -34,6 +33,7 @@ namespace RoslynDom.CSharp
             return _whitespaceLookup;
          }
       }
+
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
          var syntax = syntaxNode as NamespaceDeclarationSyntax;
@@ -56,14 +56,14 @@ namespace RoslynDom.CSharp
             if (name != names.Last()) { parent = item; }
          }
 
-         // Qualified name unbundles namespaces, and if it's defined together, we want it together here. 
+         // Qualified name unbundles namespaces, and if it's defined together, we want it together here.
          // Thus, this replaces hte base Initialize name with the correct one
          if (item.Name.StartsWith("@")) { item.Name = item.Name.Substring(1); }
          CreateFromWorker.LoadStemMembers(item, syntax.Members, syntax.Usings, model);
 
-         // This will return the outer namespace, which in the form N is the only one. 
+         // This will return the outer namespace, which in the form N is the only one.
          // In the form N1.N2.. there is a nested level for each part (N1, N2).
-         // The inner holds the children, the outer is returned.  
+         // The inner holds the children, the outer is returned.
          return outerNamespace;
       }
 
@@ -112,6 +112,4 @@ namespace RoslynDom.CSharp
          return node;
       }
    }
-
-
 }

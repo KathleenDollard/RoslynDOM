@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public interface IElseIfDetail : IDetail<IElseIfDetail>
-    {
-
-    }
+   /// <summary>
+   ///
+   /// </summary>
+   public interface IElseIfDetail : IDetail<IElseIfDetail>
+   {
+   }
 }

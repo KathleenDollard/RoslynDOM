@@ -1,19 +1,16 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoslynDom.Common;
-using RoslynDom.CSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace RoslynDom.CSharp
 {
    public static class UpdateUtilities
    {
-
       public static bool DoUpdateOnWorkspace<TChange>(Workspace workspace,
                  Func<IRoot, IEnumerable<TChange>> getItems,
                  IUpdateRefactoring<TChange> updateRefactoring)
@@ -71,7 +68,7 @@ namespace RoslynDom.CSharp
          foreach (var document in documents)
          {
             var id = document.Id;
-            var newSyntaxTree = DoUpdateOnDocument(document,  getItems, updateRefactoring);
+            var newSyntaxTree = DoUpdateOnDocument(document, getItems, updateRefactoring);
             if (newSyntaxTree != null)
             {
                didChange = true;
@@ -81,7 +78,7 @@ namespace RoslynDom.CSharp
          return newSolution;
       }
 
-      public static SyntaxTree DoUpdateOnDocument<TChange>(Document document, 
+      public static SyntaxTree DoUpdateOnDocument<TChange>(Document document,
               Func<IRoot, IEnumerable<TChange>> getItems,
               IUpdateRefactoring<TChange> updateRefactoring)
            where TChange : IDom
@@ -123,13 +120,11 @@ namespace RoslynDom.CSharp
          return didAnythingChange;
       }
 
-
       public static bool DoUpdateOnFile<TChange>(string inputFileName, string outputFileName,
                   Func<IRoot, IEnumerable<TChange>> getItems,
                   Func<TChange, bool> needsChange,
                   Func<TChange, bool> fixItem)
       {
-
          var code = File.ReadAllText(inputFileName);
          SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
          var didAnythingChange = false;
@@ -196,7 +191,6 @@ namespace RoslynDom.CSharp
          var output = RDom.CSharp.GetSyntaxNode(root);
          WriteToFile(outputFileName, output.ToFullString());
       }
-
 
       public static void WriteToFile(string outputFileName, SyntaxNode node)
       {

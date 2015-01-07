@@ -1,15 +1,14 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom
 {
    public class RDomFinallyStatement : RDomStatementBlockBase<IFinallyStatement>, IFinallyStatement
    {
-
       public RDomFinallyStatement()
-            : base()
+         : base()
       { }
 
       public RDomFinallyStatement(SyntaxNode rawItem, IDom parent, SemanticModel model)
@@ -19,7 +18,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
         "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomFinallyStatement(RDomFinallyStatement oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       { }
 
       public override IEnumerable<IDom> Children

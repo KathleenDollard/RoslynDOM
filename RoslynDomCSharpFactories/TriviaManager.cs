@@ -1,13 +1,10 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -117,7 +114,6 @@ namespace RoslynDom.CSharp
             //if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace))
             //{ whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString(); }
          }
-
       }
 
       internal void StoreWhitespaceForComment(IDom newItem, IEnumerable<SyntaxTrivia> precedingTrivia,
@@ -151,7 +147,7 @@ namespace RoslynDom.CSharp
 
       public void StoreStringWhitespace(IDom newItem, LanguageElement languageElement, string leadingWhitespace, string trailingWhitespace)
       {
-         newItem.Whitespace2Set.Add(new Whitespace2( languageElement,  leadingWhitespace, trailingWhitespace, null));
+         newItem.Whitespace2Set.Add(new Whitespace2(languageElement, leadingWhitespace, trailingWhitespace, null));
       }
 
       private string GetLeadingWhitespaceForToken(IEnumerable<SyntaxTrivia> triviaList)
@@ -180,7 +176,6 @@ namespace RoslynDom.CSharp
                                  || x.CSharpKind() == SyntaxKind.EndOfLineTrivia)
                          .Select(x => x.ToString())
                          .JoinString();
-
       }
 
       internal T AttachWhitespace<T>(T syntaxNode, Whitespace2Collection whitespace2Set,
@@ -238,7 +233,6 @@ namespace RoslynDom.CSharp
          return node;
       }
 
-
       //private T AttachWhitespaceItem<T>(T syntaxNode, Whitespace2 whitespace,
       //        WhitespaceKindLookup whitespaceLookup)
       //     where T : SyntaxNode
@@ -269,7 +263,7 @@ namespace RoslynDom.CSharp
       //               .Where(x => !x.TrailingTrivia.Any(y => RealWhitespace(y)))
       //               .Where(x => !x.LeadingTrivia.Any(y => RealWhitespace(y)));
       //      }
-      //   }           // Sometimes the token won't be there due to changes in the tree. 
+      //   }           // Sometimes the token won't be there due to changes in the tree.
       //   tokens = tokens.ToList();
       //   if (tokens.Any())
       //   {
@@ -317,7 +311,7 @@ namespace RoslynDom.CSharp
                                       .SelectMany(n => n.DescendantTokens()
                                           .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken));
                tokens = makeTokens(syntaxNode).ToList();
-            }           // Sometimes the token won't be there due to changes in the tree. 
+            }           // Sometimes the token won't be there due to changes in the tree.
          }
 
          if (tokens.Any())
@@ -336,9 +330,8 @@ namespace RoslynDom.CSharp
             var leadingTrivia = SyntaxFactory.ParseLeadingTrivia(triviaString);
             token = token.WithLeadingTrivia(leadingTrivia);
 
-
             if (tokens.First().Parent != null &&
-                  tokens.First().Parent.AncestorsAndSelf().Any(x=>x.CSharpKind() == SyntaxKind.QualifiedName ))
+                  tokens.First().Parent.AncestorsAndSelf().Any(x => x.CSharpKind() == SyntaxKind.QualifiedName))
             {
                ret = ret.ReplaceToken(tokens.First(), token);
                tokens = makeTokens(ret).ToList();
@@ -426,7 +419,5 @@ namespace RoslynDom.CSharp
          syntaxNode = AttachWhitespaceToLast(syntaxNode, whitespace2);
          return syntaxNode;
       }
-
-
    }
 }

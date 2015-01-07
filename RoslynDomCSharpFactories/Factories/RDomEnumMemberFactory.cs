@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics.CodeAnalysis;
 
 namespace RoslynDom.CSharp
 {
    public class RDomEnumMemberMiscFactory
       : RDomBaseSyntaxNodeFactory<RDomEnumMember, EnumMemberDeclarationSyntax>
    {
-
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomEnumMemberMiscFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -103,12 +101,9 @@ namespace RoslynDom.CSharp
          //    var newLeadingWhitespace = commaToken.TrailingTrivia.ToString();;
          //    if (string.IsNullOrEmpty(whitespace2.LeadingWhitespace)
          //        || newLeadingWhitespace.EndsWith("\r\n"))
-         //    { whitespace2.LeadingWhitespace = newLeadingWhitespace 
+         //    { whitespace2.LeadingWhitespace = newLeadingWhitespace
          //                                      + whitespace2.LeadingWhitespace; }
          //}
       }
    }
-
-
-
 }

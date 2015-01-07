@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RoslynDom.Common
+﻿namespace RoslynDom.Common
 {
-    public interface IDoStatement : ILoop<IDoStatement>
-    {
-
-    }
+   public interface IDoStatement : ILoop<IDoStatement>
+   {
+   }
 }

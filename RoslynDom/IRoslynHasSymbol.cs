@@ -2,8 +2,8 @@ using Microsoft.CodeAnalysis;
 
 namespace RoslynDom
 {
-    public  interface IRoslynHasSymbol
-    {
-        ISymbol Symbol { get; }
-    }
+   public interface IRoslynHasSymbol
+   {
+      ISymbol Symbol { get; }
+   }
 }

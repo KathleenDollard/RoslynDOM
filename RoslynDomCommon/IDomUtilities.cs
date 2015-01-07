@@ -8,7 +8,7 @@ namespace RoslynDom.Common
       public static IEnumerable<T> NoWhitespace<T>(this IEnumerable<T> list)
          where T : IDom
       {
-         return list.Where(x=>!(x is IVerticalWhitespace));
+         return list.Where(x => !(x is IVerticalWhitespace));
       }
    }
 }

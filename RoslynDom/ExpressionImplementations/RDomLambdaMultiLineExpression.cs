@@ -1,8 +1,7 @@
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
-using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace RoslynDom
@@ -14,11 +13,11 @@ namespace RoslynDom
 
       public RDomLambdaMultiLineExpression(IDom parent, string initialExpressionString,
                string initialExpressionLanguage)
-      : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Lambda)
+         : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Lambda)
       { }
 
       public RDomLambdaMultiLineExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
-        : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       { Initialize(); }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
@@ -47,6 +46,7 @@ namespace RoslynDom
       }
 
       private IReferencedType _returnType;
+
       [Required]
       public IReferencedType ReturnType
       {

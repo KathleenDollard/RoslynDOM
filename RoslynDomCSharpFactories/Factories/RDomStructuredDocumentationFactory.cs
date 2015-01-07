@@ -1,36 +1,32 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using RoslynDom.Common;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using RoslynDom.Common;
 
 namespace RoslynDom.CSharp
 {
    public class StructuredDocumentationFactory
                : RDomBaseSyntaxNodeFactory<RDomStructuredDocumentation, SyntaxNode>, ITriviaFactory<IStructuredDocumentation>
    {
-
       public StructuredDocumentationFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       public override RDomPriority Priority
       { get { return 0; } }
 
-       public override Type[] SpecialExplicitDomTypes
+      public override Type[] SpecialExplicitDomTypes
       { get { return new Type[] { typeof(IStructuredDocumentation) }; } }
 
       public RDomCorporation Corporation
       {
          get { return OutputContext.Corporation; }
          set
-         {            // do nothing, already set in constructor 
+         {            // do nothing, already set in constructor
          }
       }
 

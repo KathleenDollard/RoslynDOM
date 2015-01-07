@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using RoslynDom.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using RoslynDom.Common;
 
 namespace RoslynDom
 {
@@ -11,7 +11,10 @@ namespace RoslynDom
    public class RDomCorporation
    {
       // until move to C# 6 - I want to support name of as soon as possible
-      protected static string nameof<T>(T value) { return ""; }
+      protected static string nameof<T>(T value)
+      {
+         return "";
+      }
 
       private Provider provider2;
       private List<IWorker> workers = new List<IWorker>();
@@ -21,6 +24,7 @@ namespace RoslynDom
       private IDictionary<Type, IList<IRDomFactory>> domTypeLookup = new Dictionary<Type, IList<IRDomFactory>>();
       private IDictionary<Type, IList<IRDomFactory>> syntaxNodeLookup = new Dictionary<Type, IList<IRDomFactory>>();
       private IDictionary<Type, IList<IRDomFactory>> specialCreateLookup = new Dictionary<Type, IList<IRDomFactory>>();
+
       //private List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>> canCreateList =
       //            new List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>>();
       private IFactoryAccess factoryAccess;
@@ -95,7 +99,7 @@ namespace RoslynDom
       { return provider2.CheckContainer(); }
 
       /// <summary>
-      /// 
+      ///
       /// </summary>
       /// <param name="language"></param>
       /// <remarks>
@@ -103,7 +107,7 @@ namespace RoslynDom
       /// some special purpose things including comments/regions, public annotations, structured
       /// documentatio, and expressions have explicit calls.
       /// <para/>
-      /// If a factory has a create delegate, any syntax node lookup will be ignored. This is to 
+      /// If a factory has a create delegate, any syntax node lookup will be ignored. This is to
       /// allow simpler use of a default
       /// <para/>
       /// The SyntaxNode comparison is absolute against the type. Fuzzy comparisons (including derived
@@ -122,7 +126,6 @@ namespace RoslynDom
             AddFactoryToLookup(specialCreateLookup, factory, factory.SpecialExplicitDomTypes);
          }
       }
-
 
       private void AddFactoryToLookup(IDictionary<Type, IList<IRDomFactory>> dictionary, IRDomFactory factory, Type[] types)
       {
@@ -165,7 +168,7 @@ namespace RoslynDom
          return items.Cast<TSpecial>().ToList();
       }
 
-       private IRDomFactory GetFactory(Type type, IDictionary<Type, IList<IRDomFactory>> dictionary, Func<IRDomFactory, bool> canUseDelegate)
+      private IRDomFactory GetFactory(Type type, IDictionary<Type, IList<IRDomFactory>> dictionary, Func<IRDomFactory, bool> canUseDelegate)
       {
          var factories = GetFactories(type, dictionary).ToArray();
          if (!factories.Any()) { return null; }

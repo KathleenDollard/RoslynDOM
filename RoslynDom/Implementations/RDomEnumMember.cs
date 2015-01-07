@@ -1,16 +1,16 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 namespace RoslynDom
 {
    public class RDomEnumMember : RDomBase<IEnumMember, ISymbol>, IEnumMember
    {
       private AttributeCollection _attributes = new AttributeCollection();
 
-      public RDomEnumMember( string name, IExpression expression)
-            : base()
+      public RDomEnumMember(string name, IExpression expression)
+         : base()
       {
          _name = name;
          _expression = expression;
@@ -22,7 +22,7 @@ namespace RoslynDom
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
       internal RDomEnumMember(RDomEnumMember oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
          if (oldRDom.Expression != null)
@@ -34,6 +34,7 @@ namespace RoslynDom
       { get { return _attributes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -42,6 +43,7 @@ namespace RoslynDom
       }
 
       private IExpression _expression;
+
       public IExpression Expression
       {
          get { return _expression; }

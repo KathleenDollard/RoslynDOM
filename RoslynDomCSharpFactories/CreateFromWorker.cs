@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -19,6 +17,7 @@ namespace RoslynDom.CSharp
       private static string nameof<T>(T value) { return ""; }
 
       private RDomCorporation corporation;
+
       public RDomCorporation Corporation
       {
          get { return corporation; }
@@ -136,13 +135,13 @@ namespace RoslynDom.CSharp
          var itemAsCanBeNew = itemAsOO as ICanBeNew;
          if (itemAsCanBeNew != null)
          {
-
             // See note on IsNew on interface before changing
             itemAsCanBeNew.IsNew = syntaxNode.ChildTokens().Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
          }
       }
 
       private static WhitespaceKindLookup _whitespaceLookupForImplementedInterfaces;
+
       private static WhitespaceKindLookup whitespaceLookupForImplementedInterfaces
       {
          get
@@ -271,26 +270,28 @@ namespace RoslynDom.CSharp
          var precedingTrivia = new List<SyntaxTrivia>();
          foreach (var trivia in triviaList)
          {
-            // This is ugly, but we assume comments stand on their own lines. 
+            // This is ugly, but we assume comments stand on their own lines.
             var skip = (lastWasComment && trivia.CSharpKind() == SyntaxKind.EndOfLineTrivia);
             lastWasComment = false;
             if (!skip)
             {
                switch (trivia.CSharpKind())
                {
-               case SyntaxKind.EndOfLineTrivia:
-                  // TODO: Consider whether leading WS on a vert whitespace matters
-                  ret.Add(new RDomVerticalWhitespace(parent, trivia, 1, false));
-                  break;
-               case SyntaxKind.SingleLineCommentTrivia:
-               case SyntaxKind.MultiLineCommentTrivia:
-                  ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, parent, context));
-                  lastWasComment = true;
-                  break;
-               case SyntaxKind.RegionDirectiveTrivia:
-               case SyntaxKind.EndRegionDirectiveTrivia:
-                  ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
-                  break;
+                  case SyntaxKind.EndOfLineTrivia:
+                     // TODO: Consider whether leading WS on a vert whitespace matters
+                     ret.Add(new RDomVerticalWhitespace(parent, trivia, 1, false));
+                     break;
+
+                  case SyntaxKind.SingleLineCommentTrivia:
+                  case SyntaxKind.MultiLineCommentTrivia:
+                     ret.Add(MakeComment(syntaxNode, precedingTrivia, trivia, parent, context));
+                     lastWasComment = true;
+                     break;
+
+                  case SyntaxKind.RegionDirectiveTrivia:
+                  case SyntaxKind.EndRegionDirectiveTrivia:
+                     ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
+                     break;
                }
             }
             precedingTrivia.Add(trivia);
@@ -313,7 +314,7 @@ namespace RoslynDom.CSharp
       //   var precedingTrivia = new List<SyntaxTrivia>();
       //   foreach (var trivia in triviaList)
       //   {
-      //      // This is ugly, but we assume comments stand on their own lines. 
+      //      // This is ugly, but we assume comments stand on their own lines.
       //      var skip = (lastWasComment && trivia.CSharpKind() == SyntaxKind.EndOfLineTrivia);
       //      lastWasComment = false;
       //      if (!skip)
@@ -374,7 +375,6 @@ namespace RoslynDom.CSharp
 
       public Tuple<string, string, string> ExtractComment(string text)
       {
-
          if (text.StartsWith("//")) { text = text.Substring(2); }
          if (text.StartsWith("/*"))
          {
@@ -396,8 +396,8 @@ namespace RoslynDom.CSharp
       //}
 
       public IEnumerable<IStructuredDocumentation> GetStructuredDocumenation<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
-          where T : class, IDom
-          where TSyntax : SyntaxNode
+         where T : class, IDom
+         where TSyntax : SyntaxNode
       {
          return Corporation.CreateSpecial<IStructuredDocumentation>(syntaxNode, newItem, model);
       }

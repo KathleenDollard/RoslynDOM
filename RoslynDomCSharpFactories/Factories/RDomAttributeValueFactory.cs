@@ -1,19 +1,17 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
-using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace RoslynDom.CSharp
 {
    public class RDomAttributeValueMiscFactory
            : RDomBaseSyntaxNodeFactory<RDomAttributeValue, AttributeArgumentSyntax>
    {
-
       public RDomAttributeValueMiscFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       protected override IDom CreateItemFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -92,9 +90,7 @@ namespace RoslynDom.CSharp
          CreateFromWorker.StoreWhitespaceForToken(newItem, op, LanguagePart.Current, LanguageElement.AttributeValueEqualsOrColon);
          var lastToken = syntax.GetLastToken();
          CreateFromWorker.StoreWhitespaceForToken(newItem, lastToken, LanguagePart.Current, LanguageElement.AttributeValueValue);
-
       }
-
 
       private Tuple<string, AttributeValueStyle> GetAttributeValueName(AttributeArgumentSyntax arg)
       {
@@ -124,13 +120,9 @@ namespace RoslynDom.CSharp
          var arg = argNode as AttributeArgumentSyntax;
          Guardian.Assert.IsNotNull(arg, nameof(arg));
 
-         // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol 
+         // TODO: Manage multiple values because of AllowMultiples, param array, or missing symbol
          var expr = arg.Expression;
          return CreateFromWorker.GetArgumentValue(newItem, model, expr);
       }
-
-
-
    }
-
 }

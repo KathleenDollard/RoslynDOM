@@ -1,8 +1,6 @@
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 using System.ComponentModel.DataAnnotations;
-using System;
-using System.Collections.Generic;
 
 namespace RoslynDom
 {
@@ -12,11 +10,11 @@ namespace RoslynDom
 
       public RDomLambdaSingleExpression(IDom parent, string initialExpressionString,
                string initialExpressionLanguage)
-      : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Lambda)
+         : base(parent, initialExpressionString, initialExpressionLanguage, ExpressionType.Lambda)
       { }
 
       public RDomLambdaSingleExpression(SyntaxNode rawItem, IDom parent, SemanticModel model)
-        : base(rawItem, parent, model)
+         : base(rawItem, parent, model)
       { Initialize(); }
 
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
@@ -33,6 +31,7 @@ namespace RoslynDom
       }
 
       private IExpression _expression;
+
       [Required]
       public IExpression Expression
       {
@@ -41,6 +40,7 @@ namespace RoslynDom
       }
 
       private IReferencedType _returnType;
+
       [Required]
       public IReferencedType ReturnType
       {
@@ -48,9 +48,7 @@ namespace RoslynDom
          set { SetProperty(ref _returnType, value); }
       }
 
-
-      public RDomCollection<IParameter > Parameters
-      { get { return _parameters ; } }
-
+      public RDomCollection<IParameter> Parameters
+      { get { return _parameters; } }
    }
 }

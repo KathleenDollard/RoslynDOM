@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace RoslynDom
 {
@@ -52,11 +51,10 @@ namespace RoslynDom
          _stemMemberKind = stemMemberKind;
          _name = TypedSymbol.Name;
          _metadataName = TypedSymbol.ContainingNamespace + "." + TypedSymbol.MetadataName;
-
       }
 
       internal RDomBaseType(T oldIDom)
-           : base(oldIDom)
+         : base(oldIDom)
       {
          Initialize();
          var oldRDom = oldIDom as RDomBaseType<T>;
@@ -108,6 +106,7 @@ namespace RoslynDom
       }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -116,6 +115,7 @@ namespace RoslynDom
       }
 
       private string _metadataName;
+
       [Required]
       public string MetadataName
       {
@@ -124,6 +124,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
@@ -131,6 +132,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
@@ -174,7 +176,7 @@ namespace RoslynDom
       public IEnumerable<IEvent> Events
       { get { return Members.OfType<IEvent>().ToList(); } }
 
-      // This is not yet editable because it is non-trivial to ensure 
+      // This is not yet editable because it is non-trivial to ensure
       // correct interface usage (appearing once, etc). These semantics
       // may also change as "all" is confusing with other use in RoslynDon
       public RDomCollection<IReferencedType> ImplementedInterfaces
@@ -199,6 +201,7 @@ namespace RoslynDom
       { get { return _stemMemberKind; } }
 
       private IStructuredDocumentation _structuredDocumentation;
+
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
@@ -206,6 +209,7 @@ namespace RoslynDom
       }
 
       private string _description;
+
       public string Description
       {
          get { return _description; }

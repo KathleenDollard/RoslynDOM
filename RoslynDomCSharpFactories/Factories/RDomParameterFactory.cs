@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +13,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomParameterMiscFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -105,8 +104,8 @@ namespace RoslynDom.CSharp
          node = BuildSyntaxHelpers.AttachWhitespaceToFirst(node, item.Whitespace2Set[LanguageElement.ParameterFirstToken]);
          node = BuildSyntaxHelpers.AttachWhitespaceToLast(node, item.Whitespace2Set[LanguageElement.ParameterLastToken]);
          return node.PrepareForBuildSyntaxOutput(item, OutputContext);
-
       }
+
       private void MemberWhitespace(RDomParameter newItem, ParameterSyntax syntax)
       {
          CreateFromWorker.StoreWhitespaceForToken(newItem, syntax.GetFirstToken(), LanguagePart.Current, LanguageElement.ParameterFirstToken);
@@ -137,5 +136,4 @@ namespace RoslynDom.CSharp
          //}
       }
    }
-
 }

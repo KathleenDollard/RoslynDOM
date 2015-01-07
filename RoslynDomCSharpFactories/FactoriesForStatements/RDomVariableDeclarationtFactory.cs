@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoslynDom.CSharp
 {
@@ -14,7 +14,7 @@ namespace RoslynDom.CSharp
       private static WhitespaceKindLookup _whitespaceLookup;
 
       public RDomVariableDeclarationFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       private WhitespaceKindLookup WhitespaceLookup
@@ -31,12 +31,12 @@ namespace RoslynDom.CSharp
             return _whitespaceLookup;
          }
       }
-     
-       public override Type[] SupportedSyntaxNodeTypes
+
+      public override Type[] SupportedSyntaxNodeTypes
       { get { return new Type[] { typeof(VariableDeclarationSyntax), typeof(CatchDeclarationSyntax) }; } }
 
       public override Type[] SpecialExplicitDomTypes
-      { get { return new[] { typeof(IVariableDeclaration ) }; } }
+      { get { return new[] { typeof(IVariableDeclaration) }; } }
 
       protected override IEnumerable<IDom> CreateListFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       {
@@ -124,7 +124,6 @@ namespace RoslynDom.CSharp
          return newItem;
       }
 
-
       public override IEnumerable<SyntaxNode> BuildSyntax(IDom item)
       {
          var itemAsT = item as IVariableDeclaration;
@@ -183,7 +182,5 @@ namespace RoslynDom.CSharp
       //{
       //    throw new NotImplementedException();
       //}
-
-
    }
 }

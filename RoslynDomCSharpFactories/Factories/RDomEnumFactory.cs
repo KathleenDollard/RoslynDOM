@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics.CodeAnalysis;
 
 namespace RoslynDom.CSharp
 {
    public class RDomEnumFactory
         : RDomBaseSyntaxNodeFactory<RDomEnum, EnumDeclarationSyntax>
    {
-
       private static WhitespaceKindLookup _whitespaceLookup;
 
       private static WhitespaceKindLookup whitespaceLookup
@@ -34,7 +31,7 @@ namespace RoslynDom.CSharp
       }
 
       public RDomEnumFactory(RDomCorporation corporation)
-          : base(corporation)
+         : base(corporation)
       { }
 
       protected override IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -118,7 +115,7 @@ namespace RoslynDom.CSharp
             var colonToken = SyntaxFactory.Token(SyntaxKind.ColonToken);
             colonToken = BuildSyntaxHelpers.AttachWhitespaceToToken(colonToken, item.Whitespace2Set[LanguageElement.BaseListPrefix]);
             return SyntaxFactory.BaseList(colonToken,
-                SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>( SyntaxFactory.SimpleBaseType(underlyingTypeSyntax)));
+                SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(SyntaxFactory.SimpleBaseType(underlyingTypeSyntax)));
          }
          return null;
       }
@@ -143,7 +140,6 @@ namespace RoslynDom.CSharp
    //   }
    //}
 
-
    //public class RDomEnumStemMemberFactory
    //       : RDomBaseItemFactory<RDomEnum, EnumDeclarationSyntax>
    //{
@@ -161,5 +157,4 @@ namespace RoslynDom.CSharp
    //      return RDomEnumFactoryHelper.BuildSyntax((RDomEnum)item, BuildSyntaxWorker, Corporation);
    //   }
    //}
-
 }

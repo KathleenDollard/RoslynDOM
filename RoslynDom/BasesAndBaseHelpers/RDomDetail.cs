@@ -18,19 +18,21 @@ namespace RoslynDom
       }
 
       internal RDomDetail(T oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _stemMemberKind = oldRDom.StemMemberKind;
          _memberKind = oldRDom.MemberKind;
       }
 
       private StemMemberKind _stemMemberKind;
+
       public StemMemberKind StemMemberKind
       {
          get { return _stemMemberKind; }
       }
 
       private MemberKind _memberKind;
+
       public MemberKind MemberKind
       {
          get { return _memberKind; }

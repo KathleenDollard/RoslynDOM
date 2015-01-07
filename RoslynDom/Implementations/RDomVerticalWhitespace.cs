@@ -1,24 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.ComponentModel.DataAnnotations;
+
 namespace RoslynDom
 {
    public class RDomVerticalWhitespace : RDomDetail<IVerticalWhitespace>, IVerticalWhitespace
    {
-      public RDomVerticalWhitespace(IDom parent, SyntaxTrivia trivia,int count, bool isElastic = false)
-          : base(parent,StemMemberKind.Whitespace, MemberKind.Whitespace, trivia )
+      public RDomVerticalWhitespace(IDom parent, SyntaxTrivia trivia, int count, bool isElastic = false)
+         : base(parent, StemMemberKind.Whitespace, MemberKind.Whitespace, trivia)
       {
          _count = count;
          _isElastic = isElastic;
       }
 
       internal RDomVerticalWhitespace(RDomVerticalWhitespace oldRDom)
-          : base(oldRDom)
+         : base(oldRDom)
       {
          _count = oldRDom.Count;
          _isElastic = oldRDom.IsElastic;
@@ -26,6 +21,7 @@ namespace RoslynDom
 
       // TODO: This is not going to be updated by the generator, consider how this affects the RoslynDom
       private int _count;
+
       public int Count
       {
          get { return _count; }
@@ -33,6 +29,7 @@ namespace RoslynDom
       }
 
       private bool _isElastic;
+
       public bool IsElastic
       {
          get { return _isElastic; }

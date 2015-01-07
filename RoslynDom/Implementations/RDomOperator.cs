@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
-using System.Linq;
-using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+
 // TODO: Combine this with Method and constructor
 namespace RoslynDom
 {
@@ -14,19 +14,19 @@ namespace RoslynDom
       private AttributeCollection _attributes = new AttributeCollection();
 
       public RDomOperator(string name, string typeName, Operator op)
-          : this( name,  op)
+         : this(name, op)
       {
          _type = new RDomReferencedType(this, typeName, true);
       }
 
-      public RDomOperator( string name, IReferencedType type, Operator op)
-          : this( name, op)
+      public RDomOperator(string name, IReferencedType type, Operator op)
+         : this(name, op)
       {
          _type = type;
       }
 
-      private RDomOperator( string name,  Operator op)
-            : base()
+      private RDomOperator(string name, Operator op)
+         : base()
       {
          Initialize();
          _name = name;
@@ -40,7 +40,7 @@ namespace RoslynDom
       [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
        "CA1811:AvoidUncalledPrivateCode", Justification = "Called via Reflection")]
       internal RDomOperator(RDomOperator oldRDom)
-           : base(oldRDom)
+         : base(oldRDom)
       {
          Initialize();
          Attributes.AddOrMoveAttributeRange(oldRDom.Attributes.Select(x => x.Copy()));
@@ -86,6 +86,7 @@ namespace RoslynDom
       { get { return _attributes; } }
 
       private string _name;
+
       [Required]
       public string Name
       {
@@ -94,6 +95,7 @@ namespace RoslynDom
       }
 
       private IReferencedType _type;
+
       [Required]
       public IReferencedType Type
       {
@@ -102,6 +104,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _accessModifier;
+
       public AccessModifier AccessModifier
       {
          get { return _accessModifier; }
@@ -109,6 +112,7 @@ namespace RoslynDom
       }
 
       private AccessModifier _declaredAccessModifier;
+
       public AccessModifier DeclaredAccessModifier
       {
          get { return _declaredAccessModifier; }
@@ -120,6 +124,7 @@ namespace RoslynDom
       }
 
       private Operator _operator;
+
       public Operator Operator
       {
          get { return _operator; }
@@ -127,6 +132,7 @@ namespace RoslynDom
       }
 
       private bool _isStatic;
+
       public bool IsStatic
       {
          get { return _isStatic; }
@@ -134,6 +140,7 @@ namespace RoslynDom
       }
 
       private IStructuredDocumentation _structuredDocumentation;
+
       public IStructuredDocumentation StructuredDocumentation
       {
          get { return _structuredDocumentation; }
@@ -141,6 +148,7 @@ namespace RoslynDom
       }
 
       private string _description;
+
       public string Description
       {
          get { return _description; }

@@ -1,25 +1,25 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
+using System;
+using System.Collections.Generic;
 
 namespace RoslynDom.CSharp
 {
    internal interface ICSharpCreateFromWorker : ICreateFromWorker
    {
       IEnumerable<IDetail> GetDetail<T, TSyntax>(TSyntax syntaxNode, SyntaxTriviaList trivaList, T parent, SemanticModel model, OutputContext context)
-                  where TSyntax : SyntaxNode
-                  where T : class, IDom;
+         where TSyntax : SyntaxNode
+         where T : class, IDom;
 
       //IEnumerable<IPublicAnnotation> GetPublicAnnotations<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model)
       //    where TSyntax : SyntaxNode
       //    where T : class, IDom;
 
       IEnumerable<IStructuredDocumentation> GetStructuredDocumenation<T, TSyntax>(TSyntax syntaxNode, T newItem, SemanticModel model, OutputContext context)
-            where TSyntax : SyntaxNode
-            where T : class, IDom;
+         where TSyntax : SyntaxNode
+         where T : class, IDom;
 
       void LoadStemMembers(IStemContainer newItem,
                 IEnumerable<MemberDeclarationSyntax> memberSyntaxes,

@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
-using Microsoft.CodeAnalysis.MSBuild;
+﻿using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq;
 
 namespace RoslynDomExampleTests
 {
    /// <summary>
    /// This gives examples of accessing the Roslyn workspaces. RoslynDom does not
-   /// currently offer workspace features. Request any features you want. 
+   /// currently offer workspace features. Request any features you want.
    /// </summary>
    [TestClass]
    public class WorkspaceTests
@@ -16,7 +15,7 @@ namespace RoslynDomExampleTests
       [TestMethod]
       public void Workspace_open_solution()
       {
-         // Find the solution directory in this root. 
+         // Find the solution directory in this root.
          // this test will break if there are multiple solutions
          var slnFile = TestUtilities.GetNearestSolution(Environment.CurrentDirectory);
 
@@ -53,7 +52,5 @@ namespace RoslynDomExampleTests
          // I don't want to test much about the document - because things will change
          Assert.IsNotNull(document);
       }
-
-
    }
 }

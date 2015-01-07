@@ -1,15 +1,11 @@
-﻿using System;
+﻿using RoslynDom.Common;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using RoslynDom.Common;
-using System.Reflection;
 
 namespace RoslynDom
 {
    public static class RoslynDomUtilities
    {
-
       public static IEnumerable<INamespace> GetDescendantNamespaces(
           IStemContainer stemContainer,
           bool includeSelf = false)
@@ -72,6 +68,5 @@ namespace RoslynDom
          { ret = parentNamespace + (string.IsNullOrEmpty(ret) ? "" : "." + ret); }
          return ret;
       }
-
    }
 }
