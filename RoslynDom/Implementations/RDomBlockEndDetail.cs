@@ -17,9 +17,9 @@ namespace RoslynDom
    public class RDomDetailBlockEnd : RDomDetail<IDetailBlockEnd>, IDetailBlockEnd
    {
       public RDomDetailBlockEnd(IDom parent, SyntaxTrivia trivia, IDetailBlockStart blockStart, SyntaxNode structuredNode)
-           : base(parent, StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia, structuredNode )
+           : base(parent, StemMemberKind.RegionEnd, MemberKind.RegionEnd, trivia, structuredNode)
       {
-         _groupGuid = blockStart.GroupGuid;
+         // _groupGuid = blockStart.GroupGuid;
       }
 
       internal RDomDetailBlockEnd(RDomDetailBlockEnd oldRDom)
@@ -53,11 +53,14 @@ namespace RoslynDom
       public Guid GroupGuid { get { return _groupGuid; } }
 
       public IDetailBlockStart BlockStart
-      { get { return FindBlockStart(x => x.GroupGuid == this.GroupGuid); } }
+      {
+         get { return FindBlockStart(x => x.GroupGuid == this.GroupGuid); }
+         set { _groupGuid = value.GroupGuid; }
+      }
 
       private IDetailBlockStart FindBlockStart(Func<IDetailBlockStart, bool> predicate)
       {
-         var parentContainers = Ancestors.OfType<IContainer>();
+         var parentContainers = Ancestors.OfType<IRDomContainer>();
          foreach (var container in parentContainers)
          {
             // TODO: I'm pretty sure you just need predicate, not the extra lambda, but want to complete testing before I check. 
@@ -72,5 +75,8 @@ namespace RoslynDom
 
       public string BlockStyleName
       { get { return "region"; } }
+
+      public bool SemanticallyValid
+      { get { return BlockStart.Parent == this.Parent; } }
    }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RoslynDom.Common
 {
-   public interface IContainer
+   public interface IRDomContainer
    {
       IEnumerable<IDom> GetMembers();
       bool AddOrMoveMember(IDom item);

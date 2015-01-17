@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
       { get { return new Type[] { typeof(TSyntax) }; } }
 
       public virtual Type[] SpecialExplicitDomTypes
-      { get { return new Type[] {  }; } }
+      { get { return new Type[] { }; } }
 
       public virtual bool CanCreate(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
       { return true; }
@@ -84,25 +84,34 @@ namespace RoslynDom.CSharp
          var lookForTrivia = typeof(IStatement).IsAssignableFrom(typeof(T))
             || typeof(ITypeMember).IsAssignableFrom(typeof(T))
             || typeof(IStemMember).IsAssignableFrom(typeof(T));
+
+         var lookForTrailingTrivia = !typeof(IHasGroup).IsAssignableFrom(typeof(T));
+
          if (lookForTrivia)
          {
             var leading = CreateFromWorker.GetDetail(syntaxNode, syntaxNode.GetLeadingTrivia(),
                         newItems.FirstOrDefault().Parent, model, OutputContext);
-            var trailingTrivia = syntaxNode.ChildTokens().Last().LeadingTrivia;
-            var trailing = CreateFromWorker.GetDetail(syntaxNode, trailingTrivia,
-                        newItems.LastOrDefault(), model, OutputContext);
             ret.AddRange(leading.OfType<IDom>());
-            if (trailing.Any() && newItems.Any())
-            {
-               var newLastAsContainer = newItems.Last() as IContainer;
-               foreach (var newTrailing in trailing)
-               { newLastAsContainer.AddOrMoveMember(newTrailing); }
-            }
+            if (lookForTrailingTrivia)
+            { HandleTrailingTrivia(syntaxNode, model, newItems.LastOrDefault()); }
             ret.AddRange(newItems.OfType<IDom>());
          }
          else
          { ret.AddRange(newItems.OfType<IDom>()); }
          return ret;
+      }
+
+      protected void HandleTrailingTrivia(SyntaxNode syntaxNode, SemanticModel model, IDom parent)
+      {
+         var trailingTrivia = syntaxNode.ChildTokens().Last().LeadingTrivia;
+         var trailing = CreateFromWorker.GetDetail(syntaxNode, trailingTrivia,
+                     parent, model, OutputContext);
+         var container = parent as IRDomContainer;
+         if (trailing.Any() && container !=null)
+         {
+            foreach (var newTrailing in trailing)
+            { container.AddOrMoveMember(newTrailing); }
+         }
       }
 
       protected virtual IEnumerable<IDom> CreateListFromInterim(SyntaxNode syntaxNode, IDom parent, SemanticModel model)
@@ -121,5 +130,6 @@ namespace RoslynDom.CSharp
          Guardian.Assert.NeitherCreateFromNorListOverridden(this.GetType(), syntaxNode);
          return null;
       }
+
    }
 }

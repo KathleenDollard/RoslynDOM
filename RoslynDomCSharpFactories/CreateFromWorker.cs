@@ -296,10 +296,14 @@ namespace RoslynDom.CSharp
                      ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
                      break;
                   case SyntaxKind.EndRegionDirectiveTrivia:
-                     // In certain cases, generally due to grouping, ret is not the correct location for the 
-                     // end element since it must be in the same parent as the start element. Thus the element 
-                     // is added in the DetailFactory, rather than here. 
-                     context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context);
+                     //// In certain cases, generally due to grouping, ret is not the correct location for the 
+                     //// end element since it must be in the same parent as the start element. Thus the element 
+                     //// is added in the DetailFactory, rather than here. 
+                     ////// The bag is required to handle the case of an empty region or other cases where
+                     ////// the region is not yet added
+                     //////context.Bag.Add("GetDetailCurrentRetList", ret);
+                     //context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context);
+                     ret.Add(context.Corporation.GetTriviaFactory<IDetail>().CreateFrom(trivia, parent, context) as IDetail);
                      break;
                }
             }

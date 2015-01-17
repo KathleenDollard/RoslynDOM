@@ -91,23 +91,25 @@ namespace RoslynDom.CSharp
          if (!trivia.HasStructure) return null;
          var structure = trivia.GetStructure();
          var regionSyntax = structure as EndRegionDirectiveTriviaSyntax;
-         var startDirectives = regionSyntax
-                                 .GetRelatedDirectives()
-                                 .Where(x => x is RegionDirectiveTriviaSyntax);
-         if (startDirectives.Count() != 1) { throw new NotImplementedException(); }
-         var startSyntax = startDirectives.Single();
-         var startIDom = parent.DescendantsAndSelf
-                         .Where(x => (x.RawItem as SyntaxNode) != null
-                                    && x.RawItem == startSyntax)
-                         .OfType<IDetailBlockStart>()
-                         .First();
-         if (startIDom == null) throw new NotImplementedException();
-         var newItem = new RDomDetailBlockEnd(parent, trivia, startIDom, regionSyntax);
+         //var startDirectives = regionSyntax
+         //                        .GetRelatedDirectives()
+         //                        .Where(x => x is RegionDirectiveTriviaSyntax);
+         //if (startDirectives.Count() != 1) { throw new NotImplementedException(); }
+         //var startSyntax = startDirectives.Single();
+         //var startIDom = parent.DescendantsAndSelf
+         //                .Where(x => (x.RawItem as SyntaxNode) != null
+         //                           && x.RawItem == startSyntax)
+         //                .OfType<IDetailBlockStart>()
+         //                .First();
+         //if (startIDom == null) throw new NotImplementedException();
+         //var newItem = new RDomDetailBlockEnd(parent, trivia, startIDom, regionSyntax);
+         var newItem = new RDomDetailBlockEnd(parent, trivia, null, regionSyntax);
          if (trivia.Token.LeadingTrivia.Any())
          { newItem.Whitespace2Set.Add(GetWhitespace(trivia.Token.LeadingTrivia.First())); }
-         var newParent = startIDom.Parent as IContainer;
-         newParent.AddOrMoveMember(newItem);
-         return null;
+         //var newParent = startIDom.Parent as IContainer;
+         //newParent.AddOrMoveMember(newItem);
+         //return null;
+         return newItem;
       }
 
       private static bool MatchEndRegion(SyntaxNode startSyntax, SyntaxTrivia typedTrivia)

@@ -41,7 +41,7 @@ namespace RoslynDom
             var list = new List<IDom>();
             list.AddRange(base.Children.ToList());
             list.AddRange(Catches);
-            list.Add(Finally);
+            if (Finally != null) { list.Add(Finally); }
             return list;
          }
       }
