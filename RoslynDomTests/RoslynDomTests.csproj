@@ -133,6 +133,7 @@
     <Compile Include="ExpressionTests.cs" />
     <Compile Include="ConstructionTests.cs" />
     <Compile Include="RegionBlockTests.cs" />
+    <Compile Include="CSharpSpecTests.cs" />
     <Compile Include="UpdateUtilityTests.cs" />
     <Compile Include="WhitespaceTests.cs" />
   </ItemGroup>

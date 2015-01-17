@@ -338,5 +338,22 @@ namespace Company.Core
          Assert.AreEqual(expected, formatted);
 
       }
+
+      [TestMethod]
+      public void Issue_96_empty_region_null_reference()
+      {
+         var csharpCode =
+      @"
+
+public class MyClass
+{ 
+#region Properties
+#endregion
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var firstClass = root.RootClasses.First();
+         Assert.AreEqual("MyClass", firstClass.Name);
+         Assert.AreEqual(1, firstClass.Descendants.OfType<IDetailBlockStart>().Count());
+      }
    }
 }

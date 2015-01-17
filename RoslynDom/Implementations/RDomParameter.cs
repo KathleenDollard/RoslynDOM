@@ -12,7 +12,7 @@ namespace RoslynDom
       public RDomParameter( string name, string typeName,
                       int ordinal = 0, bool isOut = false, bool isRef = false,
                       bool isParamArray = false)
-          : this(name, name, null, 
+          : this(name, typeName, null, 
                 LiteralKind.Unknown, null, ordinal, isOut, isRef, isParamArray)
       { }
 
