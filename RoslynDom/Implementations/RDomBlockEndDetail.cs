@@ -60,17 +60,25 @@ namespace RoslynDom
 
       private IDetailBlockStart FindBlockStart(Func<IDetailBlockStart, bool> predicate)
       {
-         var parentContainers = Ancestors.OfType<IRDomContainer>();
-         foreach (var container in parentContainers)
+         // As a possibly premature optimization, check the parent container first as 
+         // semantically correct nesting will have it there
+         var container = this.Parent as IRDomContainer;
+         if (container != null)
          {
-            // TODO: I'm pretty sure you just need predicate, not the extra lambda, but want to complete testing before I check. 
-            var ret = container.GetMembers()
+            var fromParent = container.GetMembers()
                       .OfType<IDetailBlockStart>()
-                      .Where(x => predicate(x))
-                      .SingleOrDefault();
-            if (ret != null) { return ret; }
+                      .Where( predicate)
+                      .FirstOrDefault();
+            if (fromParent != null) { return fromParent; }
          }
-         throw new InvalidOperationException("Matching start region not found");
+         var rootOrBase = Ancestors.Last(); // Root
+         var descendants = rootOrBase.Descendants
+                      .OfType<IDetailBlockStart>()
+                      .Where(predicate)
+                      .FirstOrDefault();
+         if (descendants != null) { return descendants; }
+         throw new InvalidOperationException("Matching end region not found");
+
       }
 
       public string BlockStyleName

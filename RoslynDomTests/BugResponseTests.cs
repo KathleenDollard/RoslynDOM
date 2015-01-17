@@ -431,7 +431,7 @@ public class MyClass
          var root = RDom.CSharp.Load(csharpCode);
          var firstClass = root.RootClasses.First();
          Assert.AreEqual("MyClass", firstClass.Name);
-         var nested1= firstClass.Classes.First();
+         var nested1 = firstClass.Classes.First();
          Assert.AreEqual("NestedClass", nested1.Name);
          var nested2 = nested1.Classes.First();
          Assert.AreEqual("NestedClass2", nested2.Name);
@@ -455,7 +455,7 @@ public class MyClass
 #endregion
 }";
          var root = RDom.CSharp.Load(csharpCode);
-         var start = root.Descendants .OfType<IDetailBlockStart>().Single();
+         var start = root.Descendants.OfType<IDetailBlockStart>().Single();
          var end = root.Descendants.OfType<IDetailBlockEnd>().Single();
          Assert.IsTrue(start.SemanticallyValid);
          Assert.IsTrue(end.SemanticallyValid);
@@ -492,19 +492,156 @@ public class MyClass
 
 
       [TestMethod]
-      public void Issue_96_empty_region_null_reference_variation6()
+      public void Issue_93_multiple_regions_cause_crash_varation1()
       {
          var csharpCode =
-      @"
+       @"
 public class MyClass
 { 
+   public class NestedClass
+   {
+      public class NestedClass2
+      {
 #region Properties
+         public string Foo{get; set}
+#endregion
+#region Method
+#endregion
+      }
+   }
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var testClass = root.Descendants 
+                           .OfType<IClass>()
+                           .Last();
+         Assert.AreEqual("NestedClass2", testClass.Name);
+         Assert.AreEqual(2, testClass.Descendants.OfType<IDetailBlockStart>().Count());
+         var start = testClass.Children.OfType<IDetailBlockStart>().First();
+         var end = testClass.Children.OfType<IDetailBlockEnd>().First();
+         Assert.IsTrue(start.SemanticallyValid);
+         Assert.IsTrue(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+         start = testClass.Children.OfType<IDetailBlockStart>().Last();
+          end = testClass.Children.OfType<IDetailBlockEnd>().Last();
+         Assert.IsTrue(start.SemanticallyValid);
+         Assert.IsTrue(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+      [TestMethod]
+      public void Issue_93_multiple_regions_cause_crash_varation2()
+      {
+         var csharpCode =
+        @"
+public class MyClass
+{ 
+   public class NestedClass
+   {
+      public class NestedClass2
+      {
+#region Properties
+         public string Foo{get; set}
+#endregion
+#region StupidRegion
+      }
+   }
 #endregion
 }";
          var root = RDom.CSharp.Load(csharpCode);
-         var firstClass = root.RootClasses.First();
-         Assert.AreEqual("MyClass", firstClass.Name);
-         Assert.AreEqual(1, firstClass.Descendants.OfType<IDetailBlockStart>().Count());
+         var testClass = root.Descendants
+                           .OfType<IClass>()
+                           .Last();
+         Assert.AreEqual("NestedClass2", testClass.Name);
+         Assert.AreEqual(2, testClass.Descendants.OfType<IDetailBlockStart>().Count());
+         var start = testClass.Children.OfType<IDetailBlockStart>().First();
+         var end = testClass.Children.OfType<IDetailBlockEnd>().First();
+         Assert.IsTrue(start.SemanticallyValid);
+         Assert.IsTrue(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+         start = root.Descendants.OfType<IDetailBlockStart>().Last();
+         end = root.Descendants.OfType<IDetailBlockEnd>().Last();
+         Assert.IsFalse(start.SemanticallyValid);
+         Assert.IsFalse(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+      [TestMethod]
+      public void Issue_93_multiple_regions_cause_crash_varation3()
+      {
+         var csharpCode =
+        @"
+public class MyClass
+{ 
+   public class NestedClass
+   {
+      public class NestedClass2
+      {
+#region Properties
+         public string Foo{get; set}
+#region StupidRegion
       }
    }
+#endregion
+#endregion
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var testClass = root.Descendants
+                           .OfType<IClass>()
+                           .Last();
+         Assert.AreEqual("NestedClass2", testClass.Name);
+         Assert.AreEqual(2, testClass.Descendants.OfType<IDetailBlockStart>().Count());
+         var start = root.Descendants.OfType<IDetailBlockStart>().First();
+         var end = root.Descendants.OfType<IDetailBlockEnd>().Last();
+         Assert.IsFalse(start.SemanticallyValid);
+         Assert.IsFalse(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+         start = root.Descendants.OfType<IDetailBlockStart>().Last();
+         end = root.Descendants.OfType<IDetailBlockEnd>().First();
+         Assert.IsFalse(start.SemanticallyValid);
+         Assert.IsFalse(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+      [TestMethod]
+      public void Issue_93_multiple_regions_cause_crash_varation4()
+      {
+         var csharpCode =
+        @"
+#region Properties
+public class MyClass
+{ 
+   public class NestedClass
+   {
+      public class NestedClass2
+      {
+         public string Foo{get; set}
+#region StupidRegion
+      }
    }
+#endregion
+#endregion
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         Assert.AreEqual(2, root.Descendants.OfType<IDetailBlockStart>().Count());
+         var start = root.Descendants.OfType<IDetailBlockStart>().First();
+         var end = root.Descendants.OfType<IDetailBlockEnd>().Last();
+         Assert.IsFalse(start.SemanticallyValid);
+         Assert.IsFalse(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+         start = root.Descendants.OfType<IDetailBlockStart>().Last();
+         end = root.Descendants.OfType<IDetailBlockEnd>().First();
+         Assert.IsFalse(start.SemanticallyValid);
+         Assert.IsFalse(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+   }
+}

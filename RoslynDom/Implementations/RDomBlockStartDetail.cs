@@ -37,28 +37,28 @@ namespace RoslynDom
       }
 
       public IDetailBlockEnd BlockEnd
+      { get { return FindBlockEnd(); } }
+
+      private IDetailBlockEnd FindBlockEnd()
       {
-         get
+         // As a possibly premature optimization, check the parent container first as 
+         // semantically correct nesting will have it there
+         var container = this.Parent as IRDomContainer;
+         if (container != null)
          {
-            // As a possibly premature optimization, check the parent container first as 
-            // semantically correct nesting will have it there
-            var container = this.Parent as IRDomContainer;
-            if (container != null)
-            {
-               var fromParent = container.GetMembers()
-                         .OfType<IDetailBlockEnd>()
-                         .Where(x => x.GroupGuid == this.GroupGuid)
-                         .FirstOrDefault();
-             if (fromParent != null) { return fromParent; }
-           }
-            var rootOrBase = Ancestors.Last(); // Root
-            var descendants = rootOrBase.Descendants
-                         .OfType<IDetailBlockEnd>()
-                         .Where(x => x.GroupGuid == this.GroupGuid)
-                         .FirstOrDefault();
-            if (descendants != null) { return descendants; }
-            throw new InvalidOperationException("Matching end region not found");
+            var fromParent = container.GetMembers()
+                      .OfType<IDetailBlockEnd>()
+                      .Where(x => x.GroupGuid == this.GroupGuid)
+                      .FirstOrDefault();
+            if (fromParent != null) { return fromParent; }
          }
+         var rootOrBase = Ancestors.Last(); // Root
+         var descendants = rootOrBase.Descendants
+                      .OfType<IDetailBlockEnd>()
+                      .Where(x => x.GroupGuid == this.GroupGuid)
+                      .FirstOrDefault();
+         if (descendants != null) { return descendants; }
+         throw new InvalidOperationException("Matching end region not found");
       }
 
       public string BlockStyleName
