@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoslynDom.Common;
 using System.IO;
+using System;
 
 namespace RoslynDom.CSharp
 {
@@ -32,7 +33,46 @@ namespace RoslynDom.CSharp
 
          var triviaList = EofTrivia(syntax, newItem, model);
          newItem.StemMembersAll.AddOrMoveRange(triviaList);
+         FinishUp(newItem,  model);
          return newItem;
+      }
+
+      private void FinishUp( IDom item, SemanticModel model)
+      {
+         CheckForNulls(item);
+         FixUpBlockEnds(item);
+      }
+
+      private void CheckForNulls(IDom domItem)
+      {
+         foreach (var item in domItem.Children)
+         {
+            if (item == null) { throw new InvalidOperationException(); }
+            CheckForNulls(item);
+         }
+      }
+
+      private static void FixUpBlockEnds(IDom item)
+      {
+         var detailBlockStarts = item.Descendants
+                              .OfType<IDetailBlockStart>();
+         var detailBlockEnds = item.Descendants
+                              .OfType<IDetailBlockEnd>();
+         foreach (var end in detailBlockEnds)
+         {
+            var endSyntax = end.RawItem as EndRegionDirectiveTriviaSyntax;
+            var startSyntax = endSyntax.GetRelatedDirectives()
+                              .Where(x => x != endSyntax)
+                              .SingleOrDefault();
+            if (startSyntax != null)
+            {
+               var start = detailBlockStarts
+                           .Where(x => x.RawItem == startSyntax)
+                           .FirstOrDefault();
+               if (start == null) { throw new InvalidOperationException(); }
+               end.BlockStart = start;
+            }
+         }
       }
 
       private IEnumerable<IDetail> EofTrivia(CompilationUnitSyntax syntax, RDomRoot newItem, SemanticModel model)

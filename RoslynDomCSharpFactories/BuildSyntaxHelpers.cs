@@ -113,7 +113,7 @@ namespace RoslynDom.CSharp
       public static IEnumerable<SyntaxTrivia> TrailingTrivia(IDom item, OutputContext context)
       {
          if (item == null) { return new List<SyntaxTrivia>(); }
-         var parentAsContainer = item.Parent as IContainer;
+         var parentAsContainer = item.Parent as IRDomContainer;
          if (parentAsContainer == null) return new List<SyntaxTrivia>();
          var parentMembers = parentAsContainer.GetMembers();
          if (!ShouldOutputTrailing(item, parentMembers)) return new List<SyntaxTrivia>();
@@ -137,7 +137,7 @@ namespace RoslynDom.CSharp
          where T : IDom
       {
          if (item == null) { return new List<SyntaxTrivia>(); }
-         var parentAsContainer = item.Parent as IContainer;
+         var parentAsContainer = item.Parent as IRDomContainer;
          if (parentAsContainer == null) return new List<SyntaxTrivia>();
          var parentMembers = parentAsContainer.GetMembers();
          var details = parentMembers

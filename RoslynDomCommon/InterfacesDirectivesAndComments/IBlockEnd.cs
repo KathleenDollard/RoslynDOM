@@ -11,7 +11,8 @@ namespace RoslynDom.Common
     /// </summary>
     public interface IDetailBlockEnd : IDetail<IDetailBlockEnd>, IHasGroup
    {
-      IDetailBlockStart BlockStart { get;  }
+      IDetailBlockStart BlockStart { get; set; }
       string BlockStyleName { get; }
+      bool SemanticallyValid { get; }
    }
 }

@@ -61,6 +61,8 @@ namespace RoslynDom.CSharp
          if (item.Name.StartsWith("@")) { item.Name = item.Name.Substring(1); }
          CreateFromWorker.LoadStemMembers(item, syntax.Members, syntax.Usings, model);
 
+         HandleTrailingTrivia(syntax, model, item);
+
          // This will return the outer namespace, which in the form N is the only one. 
          // In the form N1.N2.. there is a nested level for each part (N1, N2).
          // The inner holds the children, the outer is returned.  

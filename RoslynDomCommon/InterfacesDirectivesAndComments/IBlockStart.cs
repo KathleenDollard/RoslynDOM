@@ -15,5 +15,6 @@ namespace RoslynDom.Common
       string Text { get; set; }
       string BlockStyleName { get; }
       IEnumerable<IDom> BlockContents { get; }
+      bool SemanticallyValid { get; }
    }
 }

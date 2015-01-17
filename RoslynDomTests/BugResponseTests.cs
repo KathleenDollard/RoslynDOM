@@ -344,7 +344,158 @@ namespace Company.Core
       {
          var csharpCode =
       @"
+public class MyClass
+{ 
+#region Properties
+#endregion
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var firstClass = root.RootClasses.First();
+         Assert.AreEqual("MyClass", firstClass.Name);
+         var start = firstClass.Children.OfType<IDetailBlockStart>().Single();
+         var end = firstClass.Children.OfType<IDetailBlockEnd>().Single();
+         Assert.IsTrue(start.SemanticallyValid);
+         Assert.IsTrue(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
 
+
+      [TestMethod]
+      public void Issue_96_empty_region_null_reference_variation1()
+      {
+         var csharpCode =
+      @"
+public class MyClass
+{ 
+#region Properties
+
+#endregion
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var firstClass = root.RootClasses.First();
+         Assert.AreEqual("MyClass", firstClass.Name);
+         var start = firstClass.Children.OfType<IDetailBlockStart>().Single();
+         var end = firstClass.Children.OfType<IDetailBlockEnd>().Single();
+         Assert.IsTrue(start.SemanticallyValid);
+         Assert.IsTrue(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+
+      [TestMethod]
+      public void Issue_96_empty_region_null_reference_variation2()
+      {
+         var csharpCode =
+      @"
+public class MyClass
+{ 
+#region Properties
+   public class NestedClass
+   {
+      public class NestedClass2
+      {
+      }
+   }
+#endregion
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var firstClass = root.RootClasses.First();
+         Assert.AreEqual("MyClass", firstClass.Name);
+         var start = firstClass.Children.OfType<IDetailBlockStart>().Single();
+         var end = firstClass.Children.OfType<IDetailBlockEnd>().Single();
+         Assert.IsTrue(start.SemanticallyValid);
+         Assert.IsTrue(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+      [TestMethod]
+      public void Issue_96_empty_region_null_reference_variation3()
+      {
+         var csharpCode =
+      @"
+public class MyClass
+{ 
+   public class NestedClass
+   {
+      public class NestedClass2
+      {
+#region Properties
+         public string Foo{get; set}
+#endregion
+      }
+   }
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var firstClass = root.RootClasses.First();
+         Assert.AreEqual("MyClass", firstClass.Name);
+         var nested1= firstClass.Classes.First();
+         Assert.AreEqual("NestedClass", nested1.Name);
+         var nested2 = nested1.Classes.First();
+         Assert.AreEqual("NestedClass2", nested2.Name);
+         var start = nested2.Children.OfType<IDetailBlockStart>().Single();
+         var end = nested2.Children.OfType<IDetailBlockEnd>().Single();
+         Assert.IsTrue(start.SemanticallyValid);
+         Assert.IsTrue(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+      [TestMethod]
+      public void Issue_96_empty_region_null_reference_variation4()
+      {
+         var csharpCode =
+      @"
+   public namespace NS.NestedNS
+      {
+#region Properties
+         public class Foo{}
+#endregion
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var start = root.Descendants .OfType<IDetailBlockStart>().Single();
+         var end = root.Descendants.OfType<IDetailBlockEnd>().Single();
+         Assert.IsTrue(start.SemanticallyValid);
+         Assert.IsTrue(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+
+      [TestMethod]
+      public void Issue_96_empty_region_null_reference_variation5()
+      {
+         var csharpCode =
+      @"
+public class MyClass
+{ 
+   public class NestedClass
+   {
+#region Properties
+      public class NestedClass2
+      {
+         public string Foo{get; set}
+#endregion
+      }
+   }
+}";
+         var root = RDom.CSharp.Load(csharpCode);
+         var start = root.Descendants.OfType<IDetailBlockStart>().Single();
+         var end = root.Descendants.OfType<IDetailBlockEnd>().Single();
+         Assert.IsFalse(start.SemanticallyValid);
+         Assert.IsFalse(end.SemanticallyValid);
+         Assert.AreEqual(start, end.BlockStart);
+         Assert.AreEqual(end, start.BlockEnd);
+      }
+
+
+      [TestMethod]
+      public void Issue_96_empty_region_null_reference_variation6()
+      {
+         var csharpCode =
+      @"
 public class MyClass
 { 
 #region Properties
@@ -356,4 +507,4 @@ public class MyClass
          Assert.AreEqual(1, firstClass.Descendants.OfType<IDetailBlockStart>().Count());
       }
    }
-}
+   }

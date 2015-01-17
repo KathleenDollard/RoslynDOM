@@ -40,15 +40,23 @@ namespace RoslynDom
       {
          get
          {
-            var parentContainers = Ancestors.OfType<IContainer>();
-            foreach (var container in parentContainers)
+            // As a possibly premature optimization, check the parent container first as 
+            // semantically correct nesting will have it there
+            var container = this.Parent as IRDomContainer;
+            if (container != null)
             {
-               var ret = container.GetMembers()
+               var fromParent = container.GetMembers()
                          .OfType<IDetailBlockEnd>()
                          .Where(x => x.GroupGuid == this.GroupGuid)
-                         .SingleOrDefault();
-               if (ret != null) { return ret; }
-            }
+                         .FirstOrDefault();
+             if (fromParent != null) { return fromParent; }
+           }
+            var rootOrBase = Ancestors.Last(); // Root
+            var descendants = rootOrBase.Descendants
+                         .OfType<IDetailBlockEnd>()
+                         .Where(x => x.GroupGuid == this.GroupGuid)
+                         .FirstOrDefault();
+            if (descendants != null) { return descendants; }
             throw new InvalidOperationException("Matching end region not found");
          }
       }
@@ -63,7 +71,7 @@ namespace RoslynDom
             if (BlockEnd.Parent != Parent) return null;
 
             var parentContainer = Ancestors
-                                    .OfType<IContainer>()
+                                    .OfType<IRDomContainer>()
                                     .FirstOrDefault();
             if (parentContainer == null) return null;
 
@@ -94,5 +102,8 @@ namespace RoslynDom
          get { return _text; }
          set { SetProperty(ref _text, value); }
       }
+
+      public bool SemanticallyValid
+      { get { return BlockEnd.Parent == this.Parent; } }
    }
 }

@@ -27,7 +27,4 @@ namespace RoslynDom
       IEnumerable<IDom> CreateFrom(SyntaxNode syntaxNode, IDom parent, SemanticModel model, bool skipDetail);
       IEnumerable<SyntaxNode> BuildSyntax(IDom item);
    }
-
-
-
 }
