@@ -42,8 +42,8 @@ namespace RoslynDom.CSharp
          CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);
 
          newItem.ValueExpression = OutputContext.Corporation.CreateSpecial<IExpression>(syntax.Expression, newItem, model).FirstOrDefault();
-         newItem.IsOut = syntax.ChildTokens().Any(x => x.CSharpKind() == SyntaxKind.OutKeyword);
-         newItem.IsRef = syntax.ChildTokens().Any(x => x.CSharpKind() == SyntaxKind.RefKeyword);
+         newItem.IsOut = syntax.ChildTokens().Any(x => x.Kind() == SyntaxKind.OutKeyword);
+         newItem.IsRef = syntax.ChildTokens().Any(x => x.Kind() == SyntaxKind.RefKeyword);
          if (syntax.NameColon != null)
          {
             newItem.Name = syntax.NameColon.Name.ToString();

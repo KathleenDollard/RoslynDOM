@@ -47,7 +47,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StoreWhitespace(newItem, syntax.Block, LanguagePart.Current, WhitespaceLookup);
 
             var catchSyntaxList = syntax.ChildNodes()
-                                    .Where(x => x.CSharpKind() == SyntaxKind.CatchClause)
+                                    .Where(x => x.Kind() == SyntaxKind.CatchClause)
                                     .OfType<CatchClauseSyntax>();
             foreach (var ctch in catchSyntaxList)
             {

@@ -71,7 +71,7 @@ namespace RoslynDom.CSharp
       {
          foreach (var token in syntaxNode.ChildTokens())
          {
-            var kind = token.CSharpKind();
+            var kind = token.Kind();
             var languageElement = whitespaceLookup.Lookup(kind);
             if (languageElement == LanguageElement.Identifier)
             { lookForIdentifier = false; }
@@ -102,7 +102,7 @@ namespace RoslynDom.CSharp
                         .ChildNodesAndTokens()
                         .PreviousSiblings(syntax)
                         .LastOrDefault();
-         if (prevNodeOrToken.CSharpKind() == sepKind)
+         if (prevNodeOrToken.Kind() == sepKind)
          {
             var commaToken = prevNodeOrToken.AsToken();
             var whitespace2 = newItem.Whitespace2Set[elementType];
@@ -160,12 +160,12 @@ namespace RoslynDom.CSharp
          foreach (var trivia in triviaList)
          {
             if (trivia.IsDirective
-                || trivia.CSharpKind() == SyntaxKind.MultiLineCommentTrivia
-                || trivia.CSharpKind() == SyntaxKind.SingleLineCommentTrivia
-                || trivia.CSharpKind() == SyntaxKind.MultiLineDocumentationCommentTrivia
-                || trivia.CSharpKind() == SyntaxKind.DocumentationCommentExteriorTrivia
-                || trivia.CSharpKind() == SyntaxKind.SingleLineDocumentationCommentTrivia
-                || trivia.CSharpKind() == SyntaxKind.EndOfLineTrivia)
+                || trivia.Kind() == SyntaxKind.MultiLineCommentTrivia
+                || trivia.Kind() == SyntaxKind.SingleLineCommentTrivia
+                || trivia.Kind() == SyntaxKind.MultiLineDocumentationCommentTrivia
+                || trivia.Kind() == SyntaxKind.DocumentationCommentExteriorTrivia
+                || trivia.Kind() == SyntaxKind.SingleLineDocumentationCommentTrivia
+                || trivia.Kind() == SyntaxKind.EndOfLineTrivia)
             { list = new List<string>(); }
             else
             { list.Add(trivia.ToString()); }
@@ -176,8 +176,8 @@ namespace RoslynDom.CSharp
       private string GetTrailingWhitespaceForToken(IEnumerable<SyntaxTrivia> triviaList)
       {
          return triviaList
-                         .Where(x => x.CSharpKind() == SyntaxKind.WhitespaceTrivia
-                                 || x.CSharpKind() == SyntaxKind.EndOfLineTrivia)
+                         .Where(x => x.Kind() == SyntaxKind.WhitespaceTrivia
+                                 || x.Kind() == SyntaxKind.EndOfLineTrivia)
                          .Select(x => x.ToString())
                          .JoinString();
 
@@ -245,14 +245,14 @@ namespace RoslynDom.CSharp
       //{
       //   var ret = syntaxNode;
       //   var kind = whitespaceLookup.Lookup(whitespace.LanguageElement);
-      //   var tokens = syntaxNode.ChildTokens().Where(x => x.CSharpKind() == kind);
+      //   var tokens = syntaxNode.ChildTokens().Where(x => x.Kind() == kind);
       //   if (!tokens.Any() && whitespace.LanguageElement == LanguageElement.Identifier)
       //   {
       //      var nameNode = syntaxNode.ChildNodes().OfType<NameSyntax>().FirstOrDefault();
       //      if (nameNode != null)
       //      {
       //         tokens = nameNode.DescendantTokens()
-      //                 .Where(x => x.CSharpKind() == kind);
+      //                 .Where(x => x.Kind() == kind);
       //         tokens = tokens
       //                 .Where(x => !x.TrailingTrivia.Any(y => RealWhitespace(y)));
       //         tokens = tokens
@@ -265,7 +265,7 @@ namespace RoslynDom.CSharp
       //      if (typeNode != null)
       //      {
       //         tokens = typeNode.DescendantTokens()
-      //               .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+      //               .Where(x => x.Kind() == SyntaxKind.IdentifierToken)
       //               .Where(x => !x.TrailingTrivia.Any(y => RealWhitespace(y)))
       //               .Where(x => !x.LeadingTrivia.Any(y => RealWhitespace(y)));
       //      }
@@ -294,7 +294,7 @@ namespace RoslynDom.CSharp
          var ret = syntaxNode;
          var name = ret.ToString();
          var kind = whitespaceLookup.Lookup(whitespace.LanguageElement);
-         Func<SyntaxNode, IEnumerable<SyntaxToken>> makeTokens = s => s.ChildTokens().Where(x => x.CSharpKind() == kind);
+         Func<SyntaxNode, IEnumerable<SyntaxToken>> makeTokens = s => s.ChildTokens().Where(x => x.Kind() == kind);
          var tokens = makeTokens(syntaxNode).ToList();
          if (!tokens.Any())
          {
@@ -302,12 +302,12 @@ namespace RoslynDom.CSharp
             {
                makeTokens = s => s.ChildNodes().OfType<NameSyntax>()
                                     .SelectMany(n => n.DescendantTokens()
-                                          .Where(x => x.CSharpKind() == kind));
+                                          .Where(x => x.Kind() == kind));
                tokens = makeTokens(syntaxNode).ToList();
                if (!tokens.Any() && syntaxNode.ChildTokens().Any())
                {
                   var testNode = syntaxNode.ChildTokens().First();
-                  if (Mappings.IsTypeAlias(testNode.CSharpKind()))
+                  if (Mappings.IsTypeAlias(testNode.Kind()))
                   { tokens.Add(testNode); }
                }
             }
@@ -315,7 +315,7 @@ namespace RoslynDom.CSharp
             {
                makeTokens = s => s.ChildNodes().OfType<NameSyntax>()
                                       .SelectMany(n => n.DescendantTokens()
-                                          .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken));
+                                          .Where(x => x.Kind() == SyntaxKind.IdentifierToken));
                tokens = makeTokens(syntaxNode).ToList();
             }           // Sometimes the token won't be there due to changes in the tree. 
          }
@@ -327,7 +327,7 @@ namespace RoslynDom.CSharp
             var triviaString = token.LeadingTrivia.ToFullString();
             if (whitespace.LeadingWhitespace == null)
             {
-               triviaString = triviaString.Length > 0 || token.CSharpKind() == SyntaxKind.SemicolonToken
+               triviaString = triviaString.Length > 0 || token.Kind() == SyntaxKind.SemicolonToken
                             ? triviaString
                             : " ";
             }
@@ -338,7 +338,7 @@ namespace RoslynDom.CSharp
 
 
             if (tokens.First().Parent != null &&
-                  tokens.First().Parent.AncestorsAndSelf().Any(x=>x.CSharpKind() == SyntaxKind.QualifiedName ))
+                  tokens.First().Parent.AncestorsAndSelf().Any(x=>x.Kind() == SyntaxKind.QualifiedName ))
             {
                ret = ret.ReplaceToken(tokens.First(), token);
                tokens = makeTokens(ret).ToList();
@@ -366,7 +366,7 @@ namespace RoslynDom.CSharp
 
       private bool RealWhitespace(SyntaxTrivia trivia)
       {
-         if (trivia.CSharpKind() != SyntaxKind.WhitespaceTrivia) return false;
+         if (trivia.Kind() != SyntaxKind.WhitespaceTrivia) return false;
          return (!string.IsNullOrEmpty(trivia.ToFullString()));
       }
 
@@ -390,7 +390,7 @@ namespace RoslynDom.CSharp
 
       private SyntaxToken AttachLeadingWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
       {
-         if (token.CSharpKind() == SyntaxKind.None
+         if (token.Kind() == SyntaxKind.None
                   || whitespace2 == null
                   || whitespace2.LeadingWhitespace == null)
          { return token; }
@@ -401,7 +401,7 @@ namespace RoslynDom.CSharp
 
       private SyntaxToken AttachTrailingWhitespaceToToken(SyntaxToken token, Whitespace2 whitespace2)
       {
-         if (token.CSharpKind() == SyntaxKind.None
+         if (token.Kind() == SyntaxKind.None
                   || whitespace2 == null
                   || whitespace2.TrailingWhitespace == null)
          { return token; }

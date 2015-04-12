@@ -50,7 +50,7 @@ namespace RoslynDom.CSharp
 
          var name = newItem.TypedSymbol.Name;
          newItem.Name = name;
-         newItem.Variance = Mappings.VarianceFromVarianceKind(syntax.VarianceKeyword.CSharpKind());
+         newItem.Variance = Mappings.VarianceFromVarianceKind(syntax.VarianceKeyword.Kind());
 
          var typeParameterList = syntax.Parent.ChildNodes()
                      .OfType<TypeParameterSyntax>()
@@ -74,7 +74,7 @@ namespace RoslynDom.CSharp
          //                             .PreviousSiblings(syntax)
          //                             .LastOrDefault();
          //   var sepKind = SyntaxKind.CommaToken;
-         //   if (prevNodeOrToken.CSharpKind() == sepKind)
+         //   if (prevNodeOrToken.Kind() == sepKind)
          //   {
          //      var commaToken = prevNodeOrToken.AsToken();
          //      whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();
@@ -102,7 +102,7 @@ namespace RoslynDom.CSharp
                var asClassStruct = constraint as ClassOrStructConstraintSyntax;
                if (asClassStruct != null)
                {
-                  StoreClassOrStructureConstraint(newItem, asClassStruct.ClassOrStructKeyword.CSharpKind());
+                  StoreClassOrStructureConstraint(newItem, asClassStruct.ClassOrStructKeyword.Kind());
                   continue;
                }
                var asConstructor = constraint as ConstructorConstraintSyntax;
@@ -137,7 +137,7 @@ namespace RoslynDom.CSharp
          //                             .PreviousSiblings(syntax)
          //                             .LastOrDefault();
          //   var sepKind = SyntaxKind.CommaToken;
-         //   if (prevNodeOrToken.CSharpKind() == sepKind)
+         //   if (prevNodeOrToken.Kind() == sepKind)
          //   {
          //      var commaToken = prevNodeOrToken.AsToken();
          //      whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();
@@ -157,7 +157,7 @@ namespace RoslynDom.CSharp
          //                             .PreviousSiblings(syntax)
          //                             .LastOrDefault();
          //   var sepKind = SyntaxKind.CommaToken;
-         //   if (prevNodeOrToken.CSharpKind() == sepKind)
+         //   if (prevNodeOrToken.Kind() == sepKind)
          //   {
          //      var commaToken = prevNodeOrToken.AsToken();
          //      whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();

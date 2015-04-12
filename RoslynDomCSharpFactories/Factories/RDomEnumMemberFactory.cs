@@ -96,7 +96,7 @@ namespace RoslynDom.CSharp
          //                        .PreviousSiblings(syntax)
          //                        .LastOrDefault();
          //var sepKind = WhitespaceLookup.Lookup(LanguageElement.EnumValueSeparator);
-         //if (prevNodeOrToken.CSharpKind() == sepKind)
+         //if (prevNodeOrToken.Kind() == sepKind)
          //{
          //    var commaToken = prevNodeOrToken.AsToken();
          //    var whitespace2 = newItem.Whitespace2Set[LanguageElement.Identifier];

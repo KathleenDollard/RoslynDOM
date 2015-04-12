@@ -127,7 +127,7 @@ namespace RoslynDom.CSharp
       {
          var root = tree.GetCompilationUnitRoot();
          var span = root.FullSpan;
-         root = Formatter.Format(root, span, new CustomWorkspace()) as CompilationUnitSyntax;
+         root = Formatter.Format(root, span, new AdhocWorkspace()) as CompilationUnitSyntax;
          return SyntaxFactory.SyntaxTree(root);
       }
 
@@ -135,10 +135,10 @@ namespace RoslynDom.CSharp
       {
          //var span = node.FullSpan;
          //node = Formatter.Format(node, span, new CustomWorkspace()) as SyntaxNode;
-         var ws = new CustomWorkspace();
+         var ws = new AdhocWorkspace();
          var options = ws.Options;
          // options = options.WithChangedOption(CSharpFormattingOptions.)
-         node = Formatter.Format(node, new CustomWorkspace());
+         node = Formatter.Format(node, new AdhocWorkspace());
          return node;
       }
 

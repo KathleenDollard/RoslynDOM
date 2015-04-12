@@ -47,8 +47,8 @@ namespace RoslynDom.CSharp
             {
                newArg.Name = argSyntax.NameColon.Name.ToString();
             }
-            newArg.IsRef = argSyntax.RefOrOutKeyword.CSharpKind() == SyntaxKind.RefKeyword;
-            newArg.IsOut = argSyntax.RefOrOutKeyword.CSharpKind() == SyntaxKind.OutKeyword;
+            newArg.IsRef = argSyntax.RefOrOutKeyword.Kind() == SyntaxKind.RefKeyword;
+            newArg.IsOut = argSyntax.RefOrOutKeyword.Kind() == SyntaxKind.OutKeyword;
             ret.Add(newArg);
          }
          return ret;

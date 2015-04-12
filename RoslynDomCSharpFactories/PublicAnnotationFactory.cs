@@ -52,7 +52,7 @@ namespace RoslynDom.CSharp
          str = "[" + str + "] public class {}";
          var tree = CSharpSyntaxTree.ParseText(str);
          var attrib = tree.GetRoot().DescendantNodes()
-                     .Where(x => x.CSharpKind() == SyntaxKind.Attribute)
+                     .Where(x => x.Kind() == SyntaxKind.Attribute)
                      .FirstOrDefault();
          return attrib as AttributeSyntax;
       }
@@ -90,7 +90,7 @@ namespace RoslynDom.CSharp
       //{
       //   var ret = new List<RDomPublicAnnotation>();
       //   var trivias = token.LeadingTrivia
-      //                     .Where(x => x.CSharpKind() == SyntaxKind.SingleLineCommentTrivia);
+      //                     .Where(x => x.Kind() == SyntaxKind.SingleLineCommentTrivia);
       //   foreach (var trivia in trivias)
       //   {
       //      var str = GetPublicAnnotationAsString(trivia);

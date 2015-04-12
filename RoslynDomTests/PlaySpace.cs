@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Math;
 
 namespace RoslynDom
 {
@@ -21,7 +20,6 @@ namespace RoslynDom
             var i = 2;
             var output = "";
             var x = output;
-            var y = PI;
             try
             { }
             catch
@@ -60,7 +58,7 @@ namespace RoslynDom
                var y = 42;
                z = x + y;
             }
-            catch (InvalidOperationException ex) if (z == 45)
+            catch (InvalidOperationException ex)
             { Console.WriteLine(ex + " " + z); }
             catch
             { }

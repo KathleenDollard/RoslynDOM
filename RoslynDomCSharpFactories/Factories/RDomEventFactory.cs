@@ -69,7 +69,7 @@ namespace RoslynDom.CSharp
             var eventSymbol = newItem.Symbol as IEventSymbol;
             newItem.IsStatic = eventSymbol.IsStatic;
             // See note on IsNew on interface before changing
-            newItem.IsNew = rawEvent.Modifiers.Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
+            newItem.IsNew = rawEvent.Modifiers.Any(x => x.Kind() == SyntaxKind.NewKeyword);
            // newItem.PublicAnnotations.Add(publicAnnotations);
 
          }

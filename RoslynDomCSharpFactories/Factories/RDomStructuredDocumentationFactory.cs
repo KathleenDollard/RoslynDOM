@@ -46,16 +46,16 @@ namespace RoslynDom.CSharp
             {
                IEnumerable<SyntaxTrivia> leadingTrivia = syntaxNode.GetLeadingTrivia();
                if (leadingTrivia
-                               .Any(x => x.CSharpKind() == SyntaxKind.MultiLineDocumentationCommentTrivia))
+                               .Any(x => x.Kind() == SyntaxKind.MultiLineDocumentationCommentTrivia))
                { throw new NotImplementedException(); }
 
                var trivia = leadingTrivia
-                               .Where(x => x.CSharpKind() == SyntaxKind.SingleLineDocumentationCommentTrivia)
+                               .Where(x => x.Kind() == SyntaxKind.SingleLineDocumentationCommentTrivia)
                                .First();
                var precedingTrivia = leadingTrivia.PreviousSiblings<SyntaxTrivia>(trivia)
                                .LastOrDefault();
                var leadingWs = "";
-               if (precedingTrivia.CSharpKind() == SyntaxKind.WhitespaceTrivia)
+               if (precedingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                { leadingWs = precedingTrivia.ToFullString(); }
                var xDocument = XDocument.Parse(docString);
                var summaryNode = xDocument.DescendantNodes()

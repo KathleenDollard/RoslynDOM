@@ -61,7 +61,7 @@ namespace RoslynDomTests
       [TestMethod, TestCategory(PublicAnnotationCategory)]
       public void Get_public_annotations_with_interpolated_string_args()
       {
-         var csharpCode = @"//[[ _xf_FilePathHint(""\{ExecutionPath}\..\..\..\DomainOutput\{MetadataFileName}SuperSimple.g.cs"") ]]
+         var csharpCode = @"//[[ _xf_FilePathHint(@""\{ExecutionPath}\..\..\..\DomainOutput\{MetadataFileName}SuperSimple.g.cs"") ]]
 using Foo;
 
 namespace Namespace1

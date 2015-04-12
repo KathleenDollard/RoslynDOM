@@ -82,15 +82,15 @@ namespace RoslynDom.CSharp
 
          var accessibility = itemAsHasSymbol.Symbol.DeclaredAccessibility;
          var tokens = syntaxNode.ChildTokens();
-         if (tokens.Any(x => x.CSharpKind() == SyntaxKind.PublicKeyword))
+         if (tokens.Any(x => x.Kind() == SyntaxKind.PublicKeyword))
          { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Public; }
-         else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.PrivateKeyword))
+         else if (tokens.Any(x => x.Kind() == SyntaxKind.PrivateKeyword))
          { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Private; }
-         else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.ProtectedKeyword) && tokens.Any(x => x.CSharpKind() == SyntaxKind.InternalKeyword))
+         else if (tokens.Any(x => x.Kind() == SyntaxKind.ProtectedKeyword) && tokens.Any(x => x.Kind() == SyntaxKind.InternalKeyword))
          { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.ProtectedOrInternal; }
-         else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.ProtectedKeyword))
+         else if (tokens.Any(x => x.Kind() == SyntaxKind.ProtectedKeyword))
          { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Protected; }
-         else if (tokens.Any(x => x.CSharpKind() == SyntaxKind.InternalKeyword))
+         else if (tokens.Any(x => x.Kind() == SyntaxKind.InternalKeyword))
          { itemHasAccessModifier.DeclaredAccessModifier = AccessModifier.Internal; }
          else
          {
@@ -129,7 +129,7 @@ namespace RoslynDom.CSharp
          if (itemAsOO == null) { return; }
          var itemAsDom = itemAsOO as IRoslynHasSymbol;
          //itemAsOO.IsAbstract = itemAsDom.Symbol.IsAbstract;
-         itemAsOO.IsAbstract = syntaxNode.ChildTokens().Any(x => x.CSharpKind() == SyntaxKind.AbstractKeyword);
+         itemAsOO.IsAbstract = syntaxNode.ChildTokens().Any(x => x.Kind() == SyntaxKind.AbstractKeyword);
          itemAsOO.IsVirtual = itemAsDom.Symbol.IsVirtual;
          itemAsOO.IsOverride = itemAsDom.Symbol.IsOverride;
          itemAsOO.IsSealed = itemAsDom.Symbol.IsSealed;
@@ -138,7 +138,7 @@ namespace RoslynDom.CSharp
          {
 
             // See note on IsNew on interface before changing
-            itemAsCanBeNew.IsNew = syntaxNode.ChildTokens().Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
+            itemAsCanBeNew.IsNew = syntaxNode.ChildTokens().Any(x => x.Kind() == SyntaxKind.NewKeyword);
          }
       }
 
@@ -205,7 +205,7 @@ namespace RoslynDom.CSharp
                                             .PreviousSiblings(implementedInterfaceSyntax)
                                             .LastOrDefault();
                   var sepKind = whitespaceLookupForImplementedInterfaces.Lookup(LanguageElement.Separator);
-                  if (prevNodeOrToken.CSharpKind() == sepKind)
+                  if (prevNodeOrToken.Kind() == sepKind)
                   {
                      var commaToken = prevNodeOrToken.AsToken();
                      whitespace2.LeadingWhitespace = commaToken.TrailingTrivia.ToString();
@@ -277,11 +277,11 @@ namespace RoslynDom.CSharp
          foreach (var trivia in triviaList)
          {
             // This is ugly, but we assume comments stand on their own lines. 
-            var skip = (lastWasComment && trivia.CSharpKind() == SyntaxKind.EndOfLineTrivia);
+            var skip = (lastWasComment && trivia.Kind () == SyntaxKind.EndOfLineTrivia);
             lastWasComment = false;
             if (!skip)
             {
-               switch (trivia.CSharpKind())
+               switch (trivia.Kind())
                {
                   case SyntaxKind.EndOfLineTrivia:
                      // TODO: Consider whether leading WS on a vert whitespace matters
@@ -328,11 +328,11 @@ namespace RoslynDom.CSharp
       //   foreach (var trivia in triviaList)
       //   {
       //      // This is ugly, but we assume comments stand on their own lines. 
-      //      var skip = (lastWasComment && trivia.CSharpKind() == SyntaxKind.EndOfLineTrivia);
+      //      var skip = (lastWasComment && trivia.Kind() == SyntaxKind.EndOfLineTrivia);
       //      lastWasComment = false;
       //      if (!skip)
       //      {
-      //         switch (trivia.CSharpKind())
+      //         switch (trivia.Kind())
       //         {
       //            case SyntaxKind.EndOfLineTrivia:
       //               // TODO: Consider whether leading WS on a vert whitespace matters
@@ -427,14 +427,14 @@ namespace RoslynDom.CSharp
          if (!TryLiteralExpression(expr as LiteralExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
             if (!TryTyepofExpression(expr as TypeOfExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
                if (!TryDefaultExpression(expr as DefaultExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
-                  if (!TryInterpolatedStringExpression(expr as InterpolatedStringSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
+                  if (!TryInterpolatedStringExpression(expr as InterpolatedStringExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
                      if (!TryMemberExpression(expr as MemberAccessExpressionSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
                      //if (!TryIdentifierExpression(expr as IdentifierNameSyntax, newItem, model, ref value, ref literalKind, ref constantIdentifier))
                      { }
          return Tuple.Create(value, constantIdentifier, literalKind);
       }
 
-      private bool TryInterpolatedStringExpression(InterpolatedStringSyntax interpolatedStringSyntax,
+      private bool TryInterpolatedStringExpression(InterpolatedStringExpressionSyntax interpolatedStringSyntax,
                      IDom newItem,
                      SemanticModel model,
                      ref object value,
@@ -538,7 +538,7 @@ namespace RoslynDom.CSharp
       {
          if (literalExpression == null)
          { return false; }
-         literalKind = Mappings.LiteralKindFromSyntaxKind(literalExpression.Token.CSharpKind());
+         literalKind = Mappings.LiteralKindFromSyntaxKind(literalExpression.Token.Kind());
          value = literalExpression.Token.Value;
          return true;
       }

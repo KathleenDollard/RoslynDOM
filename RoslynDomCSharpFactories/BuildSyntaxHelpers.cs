@@ -96,7 +96,7 @@ namespace RoslynDom.CSharp
          where T : SyntaxNode
       {
          var trivia = syntax.GetLeadingTrivia();
-         var newTrivia = trivia.Where(x => x.CSharpKind() != SyntaxKind.WhitespaceTrivia);
+         var newTrivia = trivia.Where(x => x.Kind() != SyntaxKind.WhitespaceTrivia);
          syntax = syntax.WithLeadingTrivia(newTrivia);
          return syntax;
       }

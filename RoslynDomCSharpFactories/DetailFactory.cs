@@ -61,8 +61,8 @@ namespace RoslynDom.CSharp
 
       public override IDom CreateFrom(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
-         if (trivia.CSharpKind() == SyntaxKind.RegionDirectiveTrivia) { return CreateStartRegion(trivia, parent, context); }
-         else if (trivia.CSharpKind() == SyntaxKind.EndRegionDirectiveTrivia) { return CreateEndRegion(trivia, parent, context); }
+         if (trivia.Kind() == SyntaxKind.RegionDirectiveTrivia) { return CreateStartRegion(trivia, parent, context); }
+         else if (trivia.Kind() == SyntaxKind.EndRegionDirectiveTrivia) { return CreateEndRegion(trivia, parent, context); }
          return CreateComment(trivia, parent, context);
       }
 
@@ -81,7 +81,7 @@ namespace RoslynDom.CSharp
       private Whitespace2 GetWhitespace(SyntaxTrivia trivia)
       {
          var str = "";
-         if (trivia.CSharpKind() == SyntaxKind.WhitespaceTrivia)
+         if (trivia.Kind() == SyntaxKind.WhitespaceTrivia)
          { str = trivia.ToFullString(); }
          return new Whitespace2(LanguagePart.Parent, LanguageElement.Detail, str, "", "");
       }
@@ -121,7 +121,7 @@ namespace RoslynDom.CSharp
 
       private IDom CreateComment(SyntaxTrivia trivia, IDom parent, OutputContext context)
       {
-         var isMultiline = (trivia.CSharpKind() == SyntaxKind.MultiLineCommentTrivia);
+         var isMultiline = (trivia.Kind() == SyntaxKind.MultiLineCommentTrivia);
          var precedingTrivia = trivia.Token.LeadingTrivia.PreviousSiblings(trivia);
          var commentText = trivia.ToString();
          var tuple = context.Corporation.CreateFromWorker.ExtractComment(trivia.ToString());

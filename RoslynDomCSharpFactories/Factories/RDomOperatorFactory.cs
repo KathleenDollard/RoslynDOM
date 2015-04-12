@@ -56,7 +56,7 @@ namespace RoslynDom.CSharp
                           as IReferencedType;
          newItem.Type = returnType;
 
-         newItem.Operator = Mappings.OperatorFromCSharpKind(syntax.OperatorToken.CSharpKind());
+         newItem.Operator = Mappings.OperatorFromCSharpKind(syntax.OperatorToken.Kind());
 
          newItem.Parameters.CreateAndAdd(syntax, x => x.ParameterList.Parameters, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IParameter>());
          //var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))

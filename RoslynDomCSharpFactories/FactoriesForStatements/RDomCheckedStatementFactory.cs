@@ -44,7 +44,7 @@ namespace RoslynDom.CSharp
             CreateFromWorker.StoreWhitespace(newItem, syntax, LanguagePart.Current, WhitespaceLookup);
             CreateFromWorker.StoreWhitespace(newItem, syntax.Block, LanguagePart.Current, WhitespaceLookup);
 
-            newItem.Unchecked = (syntax.CSharpKind() == SyntaxKind.UncheckedStatement);
+            newItem.Unchecked = (syntax.Kind() == SyntaxKind.UncheckedStatement);
 
             return newItem;
         }

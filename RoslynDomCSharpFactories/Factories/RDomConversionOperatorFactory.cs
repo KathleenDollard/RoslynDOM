@@ -59,7 +59,7 @@ namespace RoslynDom.CSharp
          newItem.Type = type;
 
          newItem.IsStatic = newItem.Symbol.IsStatic;
-         newItem.IsImplicit = (syntax.ImplicitOrExplicitKeyword.CSharpKind() == SyntaxKind.ImplicitKeyword);
+         newItem.IsImplicit = (syntax.ImplicitOrExplicitKeyword.Kind() == SyntaxKind.ImplicitKeyword);
 
          newItem.Parameters.CreateAndAdd(syntax, x => x.ParameterList.Parameters, x => OutputContext.Corporation.Create(x, newItem, model).Cast<IParameter>());
          //var parameters = ListUtilities.MakeList(syntax, x => x.ParameterList.Parameters, x => Corporation.Create(x, newItem, model))

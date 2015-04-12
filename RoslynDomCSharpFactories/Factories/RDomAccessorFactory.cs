@@ -42,7 +42,7 @@ namespace RoslynDom.CSharp
       {
          var syntax = syntaxNode as AccessorDeclarationSyntax;
          var parentProperty = parent as IProperty;
-         var accessorType = (syntaxNode.CSharpKind() == SyntaxKind.GetAccessorDeclaration)
+         var accessorType = (syntaxNode.Kind() == SyntaxKind.GetAccessorDeclaration)
                              ? AccessorType.Get : AccessorType.Set;
          var newItem = new RDomPropertyAccessor(syntaxNode, accessorType, parent, model);
          CreateFromWorker.StandardInitialize(newItem, syntaxNode, parent, model, OutputContext);

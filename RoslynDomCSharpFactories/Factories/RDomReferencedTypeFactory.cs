@@ -78,7 +78,7 @@ namespace RoslynDom.CSharp
       {
          //CreateFromWorker.StoreWhitespace(newItem, typeSyntax, LanguagePart.Current, whitespaceLookup);
          var identifierToken = typeSyntax.ChildTokens()
-                        .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+                        .Where(x => x.Kind() == SyntaxKind.IdentifierToken)
                         .FirstOrDefault();
          CreateFromWorker.StoreWhitespaceForToken(newItem, identifierToken, LanguagePart.Current, LanguageElement.Identifier);
          var firstToken = typeSyntax.GetFirstToken();
@@ -87,7 +87,7 @@ namespace RoslynDom.CSharp
          {
             CreateFromWorker.StoreWhitespaceForToken(newItem, firstToken, LanguagePart.Current, LanguageElement.FirstToken);
          }
-         if (identifierToken != lastToken && lastToken.CSharpKind() != SyntaxKind.GreaterThanToken)
+         if (identifierToken != lastToken && lastToken.Kind() != SyntaxKind.GreaterThanToken)
          {
             CreateFromWorker.StoreWhitespaceForToken(newItem, lastToken, LanguagePart.Current, LanguageElement.LastToken);
          }
@@ -106,11 +106,11 @@ namespace RoslynDom.CSharp
          //// trouble with the generalized StoreWhitespace doubling some
          //// whitespace.
          //var openTypeParam = typeSyntax.ChildTokens()
-         //               .Where(x => x.CSharpKind() == SyntaxKind.LessThanToken)
+         //               .Where(x => x.Kind() == SyntaxKind.LessThanToken)
          //               .FirstOrDefault();
          //CreateFromWorker.StoreWhitespaceForToken(newItem, openTypeParam, LanguagePart.Current, LanguageElement.TypeParameterStartDelimiter);
          //var closeTypeParam = typeSyntax.ChildTokens()
-         //               .Where(x => x.CSharpKind() == SyntaxKind.GreaterThanToken)
+         //               .Where(x => x.Kind() == SyntaxKind.GreaterThanToken)
          //               .FirstOrDefault();
          //CreateFromWorker.StoreWhitespaceForToken(newItem, closeTypeParam, LanguagePart.Current, LanguageElement.TypeParameterEndDelimiter);
       }
@@ -149,7 +149,7 @@ namespace RoslynDom.CSharp
          string name = null;
          string nSpace = null;
          var tokens = typeSyntax.ChildTokens()
-                  .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken);
+                  .Where(x => x.Kind() == SyntaxKind.IdentifierToken);
          if (tokens.Any())
          { name = tokens.First().ToString(); }
          else

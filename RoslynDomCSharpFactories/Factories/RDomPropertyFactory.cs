@@ -55,8 +55,8 @@ namespace RoslynDom.CSharp
          var propSymbol = newItem.Symbol as IPropertySymbol;
          Guardian.Assert.IsNotNull(propSymbol, nameof(propSymbol));
 
-         var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
-         var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.CSharpKind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
+         var getAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.Kind() == SyntaxKind.GetAccessorDeclaration).FirstOrDefault();
+         var setAccessorSyntax = syntax.AccessorList.Accessors.Where(x => x.Kind() == SyntaxKind.SetAccessorDeclaration).FirstOrDefault();
          if (getAccessorSyntax != null)
          { newItem.GetAccessor = OutputContext.Corporation.CreateSpecial<IAccessor>(getAccessorSyntax, newItem, model).FirstOrDefault(); }
          if (setAccessorSyntax != null)

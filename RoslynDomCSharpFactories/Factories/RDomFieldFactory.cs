@@ -77,7 +77,7 @@ namespace RoslynDom.CSharp
             newItem.IsReadOnly = fieldSymbol.IsReadOnly;
             newItem.IsConstant = fieldSymbol.HasConstantValue;
             // See note on IsNew on interface before changing
-            newItem.IsNew = rawField.Modifiers.Any(x => x.CSharpKind() == SyntaxKind.NewKeyword);
+            newItem.IsNew = rawField.Modifiers.Any(x => x.Kind() == SyntaxKind.NewKeyword);
             //newItem.PublicAnnotations.Add(fieldPublicAnnotations);
 
          }
@@ -93,7 +93,7 @@ namespace RoslynDom.CSharp
          if (itemAsT.IsReadOnly) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)); }
          if (itemAsT.IsConstant)
          {
-            modifiers = modifiers.Remove(modifiers.Where(x => x.CSharpKind() == SyntaxKind.StaticKeyword).First());
+            modifiers = modifiers.Remove(modifiers.Where(x => x.Kind() == SyntaxKind.StaticKeyword).First());
             modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.ConstKeyword));
          }
          if (itemAsT.IsVolatile) { modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.VolatileKeyword)); }

@@ -80,7 +80,7 @@ namespace RoslynDom.CSharp
          // Special case for end of file end region
          var ret = new List<IDetail>();
          var eofTokens = syntax.ChildTokens()
-                     .Where(x => x.CSharpKind() == SyntaxKind.EndOfFileToken);
+                     .Where(x => x.Kind() == SyntaxKind.EndOfFileToken);
          if (eofTokens.Any())
          {
             var eof = eofTokens.FirstOrDefault();

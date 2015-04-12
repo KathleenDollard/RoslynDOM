@@ -32,7 +32,7 @@ namespace RoslynDom.CSharp
             }
             if (!string.IsNullOrWhiteSpace(name)) return name;
             var nameToken = node.ChildTokens()
-                                      .Where(x => x.CSharpKind() == SyntaxKind.IdentifierToken)
+                                      .Where(x => x.Kind() == SyntaxKind.IdentifierToken)
                                       .SingleOrDefault();
             return nameToken.ValueText;
         }

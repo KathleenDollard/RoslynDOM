@@ -71,7 +71,7 @@ namespace RoslynDom.CSharp
 
          CreateFromWorker.StoreWhitespaceForToken(newItem, binary.OperatorToken,
                      LanguagePart.Current, LanguageElement.AssignmentOperator);
-         newItem.Operator = Mappings.AssignmentOperatorFromCSharpKind(binary.CSharpKind());
+         newItem.Operator = Mappings.AssignmentOperatorFromCSharpKind(binary.Kind());
          return newItem;
       }
 
