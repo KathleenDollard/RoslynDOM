@@ -258,8 +258,8 @@ namespace RoslynDom.CSharp
                  IEnumerable<UsingDirectiveSyntax> usingSyntaxes,
                  SemanticModel model)
       {
-         newItem.StemMembersAll.CreateAndAdd(usingSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberAndDetail>());
-         newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).Cast<IStemMemberAndDetail>());
+         newItem.StemMembersAll.CreateAndAdd(usingSyntaxes, x => Corporation.Create(x, newItem, model).OfType<IStemMemberAndDetail>());
+         newItem.StemMembersAll.CreateAndAdd(memberSyntaxes, x => Corporation.Create(x, newItem, model).OfType<IStemMemberAndDetail>());
       }
 
       public IEnumerable<IDetail> GetDetail<T, TSyntax>(
