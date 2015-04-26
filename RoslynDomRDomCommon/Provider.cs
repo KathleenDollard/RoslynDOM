@@ -18,11 +18,16 @@ namespace RoslynDom
       private IUnityContainer unityContainer = new UnityContainer();
       internal bool isLoaded;
 
-      internal void ConfigureContainer(RDomCorporation corporation)
+      internal void ConfigureContainer(RDomCorporation corporation, IEnumerable<Assembly> extraAssemblies)
       {
-         var types = AllClasses.FromAssembliesInBasePath()
-                       .Where(x => x.Namespace != null
-                                 && x.Namespace.StartsWith("RoslynDom"));
+         var types = AllClasses
+            .FromAssemblies(extraAssemblies.Concat(new[] {
+               typeof(RDomBase).Assembly, // RoslynDomCommon
+               typeof(RDomCorporation).Assembly //RoslynDomRDomCommon
+             }))
+            .Where(x => x.Namespace != null
+                && x.Namespace.StartsWith("RoslynDom"))
+            .ToList();
          // TODO: *** Load other things, at least SameIntent and IWorker
          LoadIntoContainerWithArgument<IRDomFactory, RDomCorporation>(types, corporation);
          LoadIntoContainerWithArgument<IRDomCompilationFactory, RDomCorporation>(types, corporation);
