@@ -41,7 +41,8 @@ namespace RoslynDom.CSharp
          if (parentAsHasSymbol != null)
          {
             var symbol = parentAsHasSymbol.Symbol;
-            if (symbol != null) {
+            if (symbol != null)
+            {
                var docString = symbol.GetDocumentationCommentXml();
                if (!string.IsNullOrEmpty(docString))
                {
