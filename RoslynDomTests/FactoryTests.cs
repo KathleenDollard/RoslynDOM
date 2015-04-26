@@ -101,7 +101,6 @@ namespace RoslynDomTests
       [TestMethod, TestCategory(GeneralFactoryCategory)]
       public void Can_get_root_from_string_with_invalid_code()
       {
-         Assert.Inconclusive(); // This code can't build a valid IDom structure, not sure how to report
          var csharpCode = @"
                         using System.Diagnostics.Tracing;
                         namespace testing.Namespace1
@@ -112,6 +111,15 @@ namespace RoslynDomTests
          var root = RDom.CSharp.Load(csharpCode);
          Assert.IsNotNull(root);
          Assert.AreEqual(1, root.ChildNamespaces.Count());
+      }
+
+      [TestMethod, TestCategory(GeneralFactoryCategory)]
+      public void Can_get_root_from_string_with_invalid_code2()
+      {
+         var csharpCode = @"foo";
+         var root = RDom.CSharp.Load(csharpCode);
+         Assert.IsNotNull(root);
+         Assert.AreEqual(0, root.Descendants.Count());
       }
 
       [TestMethod, TestCategory(GeneralFactoryCategory)]
