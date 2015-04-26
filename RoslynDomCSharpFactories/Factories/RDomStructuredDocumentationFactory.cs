@@ -23,7 +23,7 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return 0; } }
 
-       public override Type[] SpecialExplicitDomTypes
+      public override Type[] SpecialExplicitDomTypes
       { get { return new Type[] { typeof(IStructuredDocumentation) }; } }
 
       public RDomCorporation Corporation
@@ -57,7 +57,16 @@ namespace RoslynDom.CSharp
                var leadingWs = "";
                if (precedingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                { leadingWs = precedingTrivia.ToFullString(); }
-               var xDocument = XDocument.Parse(docString);
+               // Temp try/catch because of intermittent error
+               XDocument xDocument = null;
+               try
+               {
+                  xDocument = XDocument.Parse(docString);
+               }
+               catch (Exception ex)
+               {
+                  Logger.Log.InvalidXmlDocumentation(docString, ex.Message);
+               }
                var summaryNode = xDocument.DescendantNodes()
                                    .OfType<XElement>()
                                    .Where(x => x.Name == "summary")
@@ -72,9 +81,9 @@ namespace RoslynDom.CSharp
                newWs = new Whitespace2(LanguagePart.Inner, LanguageElement.DocumentationComment);
                newWs.LeadingWhitespace = leadingWs;
                newItem.Whitespace2Set.Add(newWs);
-
                newItem.Description = description.Trim();
                newItem.Document = docString;
+
             }
          }
 

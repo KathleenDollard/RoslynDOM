@@ -157,6 +157,7 @@
     <Compile Include="InterfacesDirectivesAndComments\IPublicAnnotation.cs" />
     <Compile Include="IRetrieveValue.cs" />
     <Compile Include="ISameIntent.cs" />
+    <Compile Include="LoggedIssue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RDomBase.cs" />
     <Compile Include="RDomCollection.cs" />

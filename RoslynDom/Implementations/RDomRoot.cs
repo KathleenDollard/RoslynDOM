@@ -67,7 +67,7 @@ namespace RoslynDom
       public bool HasSyntaxErrors
       { get { return TypedSyntax.GetDiagnostics().Count() > 0; } }
 
-      public IEnumerable<IClass> RootClasses
+       public IEnumerable<IClass> RootClasses
       {
          get
          {

@@ -22,6 +22,7 @@ namespace RoslynDom.CSharp
          if (returnStatement.Return.InitialExpressionLanguage != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }
          var fieldName = returnStatement.Return.InitialExpressionString;
          var setStatement = prop.SetAccessor.Statements.First() as IInvocationStatement;
+         if (setStatement == null) return true;
          var expected = string.Format("SetProperty(ref {0}, value)", fieldName);
          if (setStatement.Invocation.InitialExpressionLanguage != ExpectedLanguages.CSharp) { throw new InvalidOperationException(); }
          if (setStatement.Invocation.InitialExpressionString.NormalizeWhitespace() != expected.NormalizeWhitespace()) return true;

@@ -5,6 +5,8 @@ using System.Text;
 using RoslynDom.Common;
 using System.Runtime.CompilerServices;
 using System.ComponentModel;
+using RoslynDomCommon;
+using Roslyn.Common;
 
 namespace RoslynDom
 {
@@ -227,6 +229,9 @@ namespace RoslynDom
             }
          }
       }
+
+      public IEnumerable<LoggedIssue> LoggedIssues { get; } = new List<LoggedIssue>();
+
 
    }
 }

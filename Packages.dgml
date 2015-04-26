@@ -1,47 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<DirectedGraph GraphDirection="LeftToRight" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+<DirectedGraph GraphDirection="LeftToRight" Layout="Sugiyama" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
-    <Node Id="ApprovalTests 3.0.7" Category="Package" Bounds="6.80500000000029,114.58,131.07,27.29" Label="ApprovalTests 3.0.7" />
-    <Node Id="ApprovalUtilities 3.0.7" Category="Package" Bounds="0,171.87,144.68,27.29" Label="ApprovalUtilities 3.0.7" />
-    <Node Id="Microsoft.CodeAnalysis.CSharp 1.0.0-beta1-20141031-01" Category="Package" Bounds="628.458333333333,114.58,345.763333333333,27.29" Label="Microsoft.CodeAnalysis.CSharp 1.0.0-beta1-20141031-01" />
-    <Node Id="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-beta1-20141031-01" Category="Package" Bounds="538.63,57.29,417.42,27.29" Label="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-beta1-20141031-01" />
-    <Node Id="Microsoft.CodeAnalysis.Common 1.0.0-beta1-20141031-01" Category="Package" Bounds="622.486666666667,171.87,357.706666666667,27.29" Label="Microsoft.CodeAnalysis.Common 1.0.0-beta1-20141031-01" />
-    <Node Id="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-beta1-20141031-01" Category="Package" Bounds="168.658333333334,114.58,429.363333333333,27.29" Label="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-beta1-20141031-01" />
-    <Node Id="Microsoft.Composition 1.0.27" Category="Package" Bounds="320.37,57.2900000000001,187.94,27.29" Label="Microsoft.Composition 1.0.27" />
-    <Node Id="ObjectApproval 0.2.1" Category="Package" Bounds="2.42833333333351,57.2900000000001,139.823333333333,27.29" Label="ObjectApproval 0.2.1" />
-    <Node Id="RoslynDom" Category="Project" Bounds="1240.52166666667,101.58,85.6366666666668,27.29" Label="RoslynDom" UseManualLocation="True" />
-    <Node Id="RoslynDomCSharpFactories" Category="Project" Bounds="673.49,-89,177.7,27.29" Label="RoslynDomCSharpFactories" UseManualLocation="True" />
-    <Node Id="RoslynDomCSharpRefactorings" Category="Project" Bounds="425.233333333333,-79.9999999999999,198.213333333333,27.29" Label="RoslynDomCSharpRefactorings" UseManualLocation="True" />
-    <Node Id="RoslynDomExampleTests" Category="Project" Bounds="217.023333333333,-58.9999999999999,162.633333333333,27.29" Label="RoslynDomExampleTests" UseManualLocation="True" />
-    <Node Id="RoslynDomRDomCommon" Category="Project" Bounds="1232.15166666667,235.58,174.376666666667,27.29" Label="RoslynDomRDomCommon" UseManualLocation="True" />
-    <Node Id="RoslynDomTests" Category="Project" Bounds="54.9966666666667,-1.99999999999988,114.686666666667,27.29" Label="RoslynDomTests" UseManualLocation="True" />
-    <Node Id="StatePrinter 1.0.4" Category="Package" Bounds="172.646666666667,57.2900000000001,117.386666666667,27.29" Label="StatePrinter 1.0.4" />
-    <Node Id="System.Collections.Immutable 1.1.32-beta" Category="Package" Bounds="671.696666666667,286.45,259.286666666667,27.29" Label="System.Collections.Immutable 1.1.32-beta" />
-    <Node Id="System.Reflection.Metadata 1.0.17-beta" Category="Package" Bounds="832.06,229.16,246.56,27.29" Label="System.Reflection.Metadata 1.0.17-beta" />
-    <Node Id="Unity 3.5.1405-prerelease" Category="Package" Bounds="1010.47166666667,171.87,165.736666666667,27.29" Label="Unity 3.5.1405-prerelease" />
+    <Node Id="Microsoft.CodeAnalysis.Analyzers 1.0.0-rc1" Category="Package" Bounds="0,245.12,320.02,31.28" Label="Microsoft.CodeAnalysis.Analyzers 1.0.0-rc1" />
+    <Node Id="Microsoft.CodeAnalysis.CSharp 1.0.0-rc1" Category="Package" Bounds="610.256666666667,122.56,303.506666666667,31.28" Label="Microsoft.CodeAnalysis.CSharp 1.0.0-rc1" />
+    <Node Id="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-rc1" Category="Package" Bounds="381.161666666667,61.28,391.696666666667,31.28" Label="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-rc1" />
+    <Node Id="Microsoft.CodeAnalysis.Common 1.0.0-rc1" Category="Package" Bounds="520.908333333333,183.84,318.203333333333,31.28" Label="Microsoft.CodeAnalysis.Common 1.0.0-rc1" />
+    <Node Id="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-rc1" Category="Package" Bounds="173.813333333333,122.56,406.393333333333,31.28" Label="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-rc1" />
+    <Node Id="Microsoft.Composition 1.0.27" Category="Package" Bounds="263.666666666667,183.84,226.686666666667,31.28" Label="Microsoft.Composition 1.0.27" />
+    <Node Id="RoslynDom" Category="Project" Bounds="993.621666666666,0,100.776666666667,31.28" Label="RoslynDom" />
+    <Node Id="RoslynDomCSharpFactories" Category="Project" Bounds="726.97,0,214.08,31.28" Label="RoslynDomCSharpFactories" />
+    <Node Id="RoslynDomCSharpRefactorings" Category="Project" Bounds="457.35,0,239.32,31.28" Label="RoslynDomCSharpRefactorings" />
+    <Node Id="RoslynDomRDomCommon" Category="Project" Bounds="803.016666666667,61.28,209.986666666667,31.28" Label="RoslynDomRDomCommon" />
+    <Node Id="System.Collections.Immutable 1.1.33-beta" Category="Package" Bounds="522.766666666667,306.4,314.486666666667,31.28" Label="System.Collections.Immutable 1.1.33-beta" />
+    <Node Id="System.Reflection.Metadata 1.0.18-beta" Category="Package" Bounds="350.595,245.12,298.83,31.28" Label="System.Reflection.Metadata 1.0.18-beta" />
+    <Node Id="Unity 3.5.1405-prerelease" Category="Package" Bounds="944.323333333333,122.56,199.373333333333,31.28" Label="Unity 3.5.1405-prerelease" />
   </Nodes>
   <Links>
-    <Link Source="ApprovalTests 3.0.7" Target="ApprovalUtilities 3.0.7" Category="Package Dependency" Bounds="72.3399963378906,141.869995117188,0,21" />
-    <Link Source="Microsoft.CodeAnalysis.CSharp 1.0.0-beta1-20141031-01" Target="Microsoft.CodeAnalysis.Common 1.0.0-beta1-20141031-01" Category="Package Dependency" Bounds="801.340026855469,141.869995117188,0,21" />
-    <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-beta1-20141031-01" Target="Microsoft.CodeAnalysis.CSharp 1.0.0-beta1-20141031-01" Category="Package Dependency" Bounds="760.201416015625,84.5800018310547,22.1040649414063,23.4507675170898" />
-    <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-beta1-20141031-01" Target="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-beta1-20141031-01" Category="Package Dependency" Bounds="478.925964355469,84.5800018310547,181.718627929688,28.600715637207" />
-    <Link Source="Microsoft.CodeAnalysis.Common 1.0.0-beta1-20141031-01" Target="System.Collections.Immutable 1.1.32-beta" Category="Package Dependency" Bounds="801.340026855469,199.160003662109,0,78.2900085449219" />
-    <Link Source="Microsoft.CodeAnalysis.Common 1.0.0-beta1-20141031-01" Target="System.Reflection.Metadata 1.0.17-beta" Category="Package Dependency" Bounds="838.018798828125,199.160003662109,72.2071533203125,26.8619842529297" />
-    <Link Source="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-beta1-20141031-01" Target="Microsoft.CodeAnalysis.Common 1.0.0-beta1-20141031-01" Category="Package Dependency" Bounds="482.896820068359,141.869995117188,209.969696044922,28.7779083251953" />
-    <Link Source="ObjectApproval 0.2.1" Target="ApprovalTests 3.0.7" Category="Package Dependency" Bounds="72.3399963378906,84.5800018310547,0,21" />
-    <Link Source="RoslynDom" Target="Microsoft.CodeAnalysis.Common 1.0.0-beta1-20141031-01" Category="Installed Package" Bounds="903.813676035077,121.469196348373,336.707956451902,49.102123839179" />
-    <Link Source="RoslynDom" Target="Unity 3.5.1405-prerelease" Category="Installed Package" Bounds="1138.66454032644,128.869998474121,107.791812840478,39.8773108271656" />
-    <Link Source="RoslynDomCSharpFactories" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-beta1-20141031-01" Category="Installed Package" Bounds="749.657140324426,-61.7099995422363,11.2837529333932,110.046794242117" />
-    <Link Source="RoslynDomCSharpRefactorings" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-beta1-20141031-01" Category="Installed Package" Bounds="546.503582029881,-52.7099995422363,171.008840485703,105.281503672516" />
-    <Link Source="RoslynDomExampleTests" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-beta1-20141031-01" Category="Installed Package" Bounds="351.023906161375,-31.7099995422363,334.919692696705,86.743369730103" />
-    <Link Source="RoslynDomExampleTests" Target="Microsoft.Composition 1.0.27" Category="Installed Package" Bounds="311.950975533505,-31.7099995422363,82.4220384153649,82.6280995964205" />
-    <Link Source="RoslynDomRDomCommon" Target="Microsoft.CodeAnalysis.Common 1.0.0-beta1-20141031-01" Category="Installed Package" Bounds="921.214724302983,200.258704403355,310.93793168525,38.2429361741261" />
-    <Link Source="RoslynDomRDomCommon" Target="Unity 3.5.1405-prerelease" Category="Installed Package" Bounds="1150.40563109095,201.601948838616,120.53111370457,33.9780496355053" />
-    <Link Source="RoslynDomTests" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-beta1-20141031-01" Category="Installed Package" Bounds="169.683333485921,16.9991420557465,422.556504266645,39.454060750897" />
-    <Link Source="RoslynDomTests" Target="Microsoft.Composition 1.0.27" Category="Installed Package" Bounds="169.622524353878,22.8909638857045,166.383783835714,32.6652146376036" />
-    <Link Source="RoslynDomTests" Target="ObjectApproval 0.2.1" Category="Installed Package" Bounds="86.5790810761307,25.2900004577637,16.5553038593945,24.5390575029398" />
-    <Link Source="RoslynDomTests" Target="StatePrinter 1.0.4" Category="Installed Package" Bounds="139.726703239534,25.2900004577637,56.1710644833901,27.9863615727151" />
-    <Link Source="System.Reflection.Metadata 1.0.17-beta" Target="System.Collections.Immutable 1.1.32-beta" Category="Package Dependency" Bounds="846.454040527344,256.450012207031,72.2071533203125,26.8619689941406" />
+    <Link Source="Microsoft.CodeAnalysis.CSharp 1.0.0-rc1" Target="Microsoft.CodeAnalysis.Common 1.0.0-rc1" Category="Package Dependency" Bounds="708.1474609375,153.839996337891,32.934326171875,24.6123962402344" />
+    <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-rc1" Target="Microsoft.CodeAnalysis.CSharp 1.0.0-rc1" Category="Package Dependency" Bounds="624.22607421875,92.5599975585938,82.0243530273438,27.1700286865234" />
+    <Link Source="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-rc1" Target="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-rc1" Category="Package Dependency" Bounds="436.659515380859,92.5599975585938,89.3061218261719,27.3633880615234" />
+    <Link Source="Microsoft.CodeAnalysis.Common 1.0.0-rc1" Target="Microsoft.CodeAnalysis.Analyzers 1.0.0-rc1" Category="Package Dependency" Bounds="301.663543701172,215.119995117188,245.631072998047,28.9466857910156" />
+    <Link Source="Microsoft.CodeAnalysis.Common 1.0.0-rc1" Target="System.Collections.Immutable 1.1.33-beta" Category="Package Dependency" Bounds="680.010009765625,215.119995117188,0,82.2799987792969" />
+    <Link Source="Microsoft.CodeAnalysis.Common 1.0.0-rc1" Target="System.Reflection.Metadata 1.0.18-beta" Category="Package Dependency" Bounds="554.4697265625,215.119995117188,79.600341796875,27.0994873046875" />
+    <Link Source="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-rc1" Target="Microsoft.CodeAnalysis.Common 1.0.0-rc1" Category="Package Dependency" Bounds="454.342254638672,153.839996337891,139.514129638672,28.2159271240234" />
+    <Link Source="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-rc1" Target="Microsoft.Composition 1.0.27" Category="Package Dependency" Bounds="377.010009765625,153.839996337891,0,21" />
+    <Link Source="RoslynDom" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-rc1" Category="Installed Package" Bounds="723.424865722656,25.3935241699219,270.19677734375,34.8691253662109" />
+    <Link Source="RoslynDom" Target="Unity 3.5.1405-prerelease" Category="Installed Package" Bounds="1044.01000976563,31.2800006866455,0,82.2799968719482" />
+    <Link Source="RoslynDomCSharpFactories" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-rc1" Category="Installed Package" Bounds="651.356628417969,31.2800006866455,117.061340332031,27.9125270843506" />
+    <Link Source="RoslynDomCSharpRefactorings" Target="Microsoft.CodeAnalysis.CSharp.Workspaces 1.0.0-rc1" Category="Installed Package" Bounds="577.010009765625,31.2800006866455,0,20.9999980926514" />
+    <Link Source="RoslynDomRDomCommon" Target="Microsoft.CodeAnalysis.Workspaces.Common 1.0.0-rc1" Category="Installed Package" Bounds="528.264770507813,90.4943542480469,274.901123046875,31.0824508666992" />
+    <Link Source="RoslynDomRDomCommon" Target="Unity 3.5.1405-prerelease" Category="Installed Package" Bounds="942.720153808594,92.5599975585938,58.3742065429688,26.3027038574219" />
+    <Link Source="System.Reflection.Metadata 1.0.18-beta" Target="System.Collections.Immutable 1.1.33-beta" Category="Package Dependency" Bounds="545.949951171875,276.399993896484,79.6002807617188,27.0994873046875" />
   </Links>
   <Categories>
     <Category Id="Installed Package" />
@@ -56,10 +45,11 @@
     <Property Id="GroupLabel" DataType="System.String" />
     <Property Id="IsEnabled" DataType="System.Boolean" />
     <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="Layout" DataType="System.String" />
     <Property Id="TargetType" DataType="System.Type" />
-    <Property Id="UseManualLocation" DataType="System.Boolean" />
     <Property Id="Value" DataType="System.String" />
     <Property Id="ValueLabel" DataType="System.String" />
+    <Property Id="ZoomLevel" DataType="System.String" />
   </Properties>
   <Styles>
     <Style TargetType="Node" GroupLabel="Project" ValueLabel="True">

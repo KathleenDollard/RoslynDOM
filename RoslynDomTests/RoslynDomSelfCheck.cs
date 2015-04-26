@@ -27,11 +27,11 @@ namespace RoslynDomTests
             var root = RDom.CSharp.Load(csharpCode);
             var actual = RDom.CSharp.GetSyntaxNode(root);
             Assert.IsNotNull(root);
-            if (actual.ToFullString() != csharpCode)
-            {
-               File.WriteAllText(file + ".actual", actual.ToFullString());
-            }
-            // Assert.AreEqual(csharpCode, actual.ToFullString());
+            //if (actual.ToFullString() != csharpCode)
+            //{
+            //   File.WriteAllText(file + ".actual", actual.ToFullString());
+            //}
+            Assert.AreEqual(csharpCode, actual.ToFullString());
          }
       }
 
