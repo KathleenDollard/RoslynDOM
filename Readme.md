@@ -64,7 +64,7 @@ Why did I do this?
 ---
 It's been an enormous effort. 
 
-I didn't do it kust to do it. 
+I didn't do it just to do it. 
 
 I did it because I have two generation projects - CodeFirstMetadata and ExpansionFirstTemplates that entirely rely on it. The prototypes of those projects used The .NET Compiler Platform, Roslyn directly. The complexity that arose from combining the concerns of compiler detail and quirks with trying to get the generation job done made for exceedingly complex code. 
 
