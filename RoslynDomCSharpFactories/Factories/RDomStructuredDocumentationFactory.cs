@@ -23,7 +23,7 @@ namespace RoslynDom.CSharp
       public override RDomPriority Priority
       { get { return 0; } }
 
-      public override Type[] SpecialExplicitDomTypes
+       public override Type[] SpecialExplicitDomTypes
       { get { return new Type[] { typeof(IStructuredDocumentation) }; } }
 
       public RDomCorporation Corporation
@@ -41,49 +41,42 @@ namespace RoslynDom.CSharp
          if (parentAsHasSymbol != null)
          {
             var symbol = parentAsHasSymbol.Symbol;
-            var docString = symbol.GetDocumentationCommentXml();
-            if (!string.IsNullOrEmpty(docString))
-            {
-               IEnumerable<SyntaxTrivia> leadingTrivia = syntaxNode.GetLeadingTrivia();
-               if (leadingTrivia
-                               .Any(x => x.Kind() == SyntaxKind.MultiLineDocumentationCommentTrivia))
-               { throw new NotImplementedException(); }
-
-               var trivia = leadingTrivia
-                               .Where(x => x.Kind() == SyntaxKind.SingleLineDocumentationCommentTrivia)
-                               .First();
-               var precedingTrivia = leadingTrivia.PreviousSiblings<SyntaxTrivia>(trivia)
-                               .LastOrDefault();
-               var leadingWs = "";
-               if (precedingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-               { leadingWs = precedingTrivia.ToFullString(); }
-               // Temp try/catch because of intermittent error
-               XDocument xDocument = null;
-               try
+            if (symbol != null) {
+               var docString = symbol.GetDocumentationCommentXml();
+               if (!string.IsNullOrEmpty(docString))
                {
-                  xDocument = XDocument.Parse(docString);
-               }
-               catch (Exception ex)
-               {
-                  Logger.Log.InvalidXmlDocumentation(docString, ex.Message);
-               }
-               var summaryNode = xDocument.DescendantNodes()
-                                   .OfType<XElement>()
-                                   .Where(x => x.Name == "summary")
-                                   .Select(x => x.Value);
-               var newWs = new Whitespace2(LanguagePart.Current, LanguageElement.DocumentationComment);
-               newWs.LeadingWhitespace = leadingWs;
-               newItem.Whitespace2Set.Add(newWs);
+                  IEnumerable<SyntaxTrivia> leadingTrivia = syntaxNode.GetLeadingTrivia();
+                  if (leadingTrivia
+                                  .Any(x => x.Kind() == SyntaxKind.MultiLineDocumentationCommentTrivia))
+                  { throw new NotImplementedException(); }
 
-               //var description = summaryNode.FirstOrDefault().Replace("\r", "").Replace("\n", "");
-               var description = summaryNode.FirstOrDefault();
-               leadingWs = description.SubstringBefore(description.Trim());
-               newWs = new Whitespace2(LanguagePart.Inner, LanguageElement.DocumentationComment);
-               newWs.LeadingWhitespace = leadingWs;
-               newItem.Whitespace2Set.Add(newWs);
-               newItem.Description = description.Trim();
-               newItem.Document = docString;
+                  var trivia = leadingTrivia
+                                  .Where(x => x.Kind() == SyntaxKind.SingleLineDocumentationCommentTrivia)
+                                  .First();
+                  var precedingTrivia = leadingTrivia.PreviousSiblings<SyntaxTrivia>(trivia)
+                                  .LastOrDefault();
+                  var leadingWs = "";
+                  if (precedingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                  { leadingWs = precedingTrivia.ToFullString(); }
+                  var xDocument = XDocument.Parse(docString);
+                  var summaryNode = xDocument.DescendantNodes()
+                                      .OfType<XElement>()
+                                      .Where(x => x.Name == "summary")
+                                      .Select(x => x.Value);
+                  var newWs = new Whitespace2(LanguagePart.Current, LanguageElement.DocumentationComment);
+                  newWs.LeadingWhitespace = leadingWs;
+                  newItem.Whitespace2Set.Add(newWs);
 
+                  //var description = summaryNode.FirstOrDefault().Replace("\r", "").Replace("\n", "");
+                  var description = summaryNode.FirstOrDefault();
+                  leadingWs = description.SubstringBefore(description.Trim());
+                  newWs = new Whitespace2(LanguagePart.Inner, LanguageElement.DocumentationComment);
+                  newWs.LeadingWhitespace = leadingWs;
+                  newItem.Whitespace2Set.Add(newWs);
+
+                  newItem.Description = description.Trim();
+                  newItem.Document = docString;
+               }
             }
          }
 
