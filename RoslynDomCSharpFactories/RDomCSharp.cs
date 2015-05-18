@@ -25,7 +25,12 @@ namespace RoslynDom.CSharp
 
       public RDom()
       {
-         corporation = new RDomCorporation(LanguageNames.CSharp, this);
+         corporation = new RDomCorporation(
+            LanguageNames.CSharp, this,
+            new[] {
+               typeof(RDom).Assembly, // RoslynDomCSharpFactories
+               typeof(RoslynRDomBase).Assembly // RoslynDom
+            });
       }
 
       public static RDom CSharp

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.CodeAnalysis;
 using RoslynDom.Common;
 
@@ -25,12 +26,12 @@ namespace RoslynDom
       //            new List<Tuple<Func<SyntaxNode, IDom, SemanticModel, bool>, IRDomFactory>>();
       private IFactoryAccess factoryAccess;
 
-      public RDomCorporation(string language, IFactoryAccess factoryAccess)
+      public RDomCorporation(string language, IFactoryAccess factoryAccess, IEnumerable<Assembly> extraAssemblies)
       {
          language = language.Replace(ExpectedLanguages.CSharp, ExpectedLanguages.CSharpInSymbols);
          this.factoryAccess = factoryAccess;
          provider2 = new Provider();
-         provider2.ConfigureContainer(this);
+         provider2.ConfigureContainer(this, extraAssemblies);
          LoadFactories(language);
          LoadWorkers(language);
       }
