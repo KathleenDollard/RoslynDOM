@@ -34,20 +34,22 @@ namespace RoslynDomTests
       public void Can_rebuild_method_with_structured_documentation()
       {
          var csharpCode =
-@"   public class Foo
-     {
+@"public class Foo
+{
 
-        /// <summary>
-        /// This is a test
-        /// </summary>
-        /// <param name=""dummy"">With a dummy parameter</param>
-        public void Foo3(string dummy)
-        {
-            var x2 = 3;
-            var x3 = x2;
-        }
-     }";
-         var root = RDom.CSharp.Load(csharpCode);
+   /// <summary>
+   /// This is a test
+   /// </summary>
+   /// <param name=""dummy"">
+   /// With a dummy parameter
+   /// </param>
+   public void Foo3(string dummy)
+   {
+      var x2 = 3;
+      var x3 = x2;
+   }
+}";
+      var root = RDom.CSharp.Load(csharpCode);
          var output = RDom.CSharp.GetSyntaxNode(root);
          Assert.AreEqual(csharpCode, output.ToFullString());
       }

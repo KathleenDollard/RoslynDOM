@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RoslynDom.Common;
 
@@ -440,6 +441,28 @@ namespace TestRoslyn
          Assert.AreEqual(expected, StringUtilities.RemoveFileHeaderComments(test3));
          Assert.AreEqual(expected, StringUtilities.RemoveFileHeaderComments(test4));
       }
+
+      [TestMethod, TestCategory(CommentCategory)]
+      public void Can_split_string_into_lines()
+      {
+       var csharpCode =
+@"public class Foo
+{
+   /// <summary>
+   /// This is a test
+   ///
+   /// more test
+   /// </summary>
+   /// <param name=""dummy"">With a dummy parameter</param>
+   public void Foo3(string dummy)
+   {
+      Console.WriteLine(42);
+   }
+}"; var lines = StringUtilities.SplitLines(csharpCode);
+         Assert.AreEqual(13, lines.Count());
+      }
+
+
       #endregion
 
    }

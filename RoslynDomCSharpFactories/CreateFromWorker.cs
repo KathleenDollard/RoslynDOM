@@ -249,7 +249,16 @@ namespace RoslynDom.CSharp
          if (structuredDocumentation != null)
          {
             item.StructuredDocumentation = structuredDocumentation;
-            item.Description = structuredDocumentation.Description;
+            var summaryElement = structuredDocumentation
+                              .Elements
+                              .Where(x => x.Name == "summary")
+                              .FirstOrDefault();
+            if (summaryElement != null)
+               {
+               var description = summaryElement.Text;
+               if (!string.IsNullOrEmpty(description))
+               { item.Description = description; }
+            }
          }
       }
 

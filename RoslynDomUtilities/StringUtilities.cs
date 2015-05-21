@@ -115,7 +115,7 @@ namespace RoslynDom.Common
       /// <returns></returns>
       public static string RemoveFileHeaderComments(string input)
       {
-         var lines = input.Split(new[] { "\r\n" }, StringSplitOptions.None);
+         var lines = input.SplitLines().ToArray();
          var i = 0;
          while (i < lines.Count())
          {
@@ -129,5 +129,11 @@ namespace RoslynDom.Common
       {
          return allWhitespace.Replace(input, replaceWith);
       }
+
+      public static IEnumerable<string> SplitLines(this string csharpCode)
+      {
+         return csharpCode.Split(new[] { "\r\n" }, StringSplitOptions.None);
+      }
+
    }
 }

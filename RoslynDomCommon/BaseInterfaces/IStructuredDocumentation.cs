@@ -4,8 +4,7 @@ namespace RoslynDom.Common
 {
     public interface IStructuredDocumentation :  IHasSameIntentMethod , IMisc, IDom<IStructuredDocumentation>
     {
-        string Description { get; set; }
-        string Document { get; set; }
+      RDomCollection<IStructuredDocumentationElement> Elements { get;}
 
     }
 }

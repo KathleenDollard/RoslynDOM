@@ -169,6 +169,7 @@
     <Compile Include="StatementImplementations\RDomIfStatement.cs" />
     <Compile Include="StatementImplementations\RDomBlockStatement.cs" />
     <Compile Include="StructuredDocumentation.cs" />
+    <Compile Include="StructuredDocumentationElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
